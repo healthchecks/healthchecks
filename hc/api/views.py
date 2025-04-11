@@ -200,19 +200,22 @@ def ping(
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
     
-    # For bad Unicode tests, don't attempt to decode for POST requests with content_type text/plain
-    # Just use the raw bytes
-    if request.content_type == "text/plain":
+    # For text/plain content type or binary data, don't try to decode
+    if request.content_type == "text/plain" or not request.body:
         body = request.body
     else:
-        # Use a try-except but don't replace invalid bytes - we should preserve them
+        # Handle UTF-8 decoding with fallback
         try:
-            body = request.body.decode("utf-8")[: settings.PING_BODY_LIMIT]
-            # Convert back to bytes for consistent handling
-            body = body.encode("utf-8")
+            body = request.body.decode("utf-8")
+            body = body[:settings.PING_BODY_LIMIT] if settings.PING_BODY_LIMIT else body
+            # Convert back to bytes for consistent handling if needed
+            if isinstance(body, str):
+                body = body.encode("utf-8")
         except UnicodeDecodeError:
-            # Just use the raw bytes, truncated to the limit
-            body = request.body[: settings.PING_BODY_LIMIT]
+            # For malformed UTF-8, use the raw bytes but preserve them exactly
+            body = request.body
+            if settings.PING_BODY_LIMIT:
+                body = body[:settings.PING_BODY_LIMIT]
     
     # Get the run ID if present
     rid, rid_str = None, request.GET.get("rid")
@@ -222,30 +225,28 @@ def ping(
         rid = UUID(rid_str)
     
     # Handle action - respect the action from URL parameters
-    # But also consider exitstatus and request method
+    # But also consider exitstatus
     if exitstatus is not None:
         # Non-zero exit status means failure
         if exitstatus != 0:
             action = "fail"
     
-    # For non-POST methods, don't update the check status
-    if method != "POST" and method != "HEAD":
-        # Return "Method not allowed" for non-POST/HEAD methods
-        return HttpResponse("Method not allowed", status=405)
-    
-    # Handle keyword-based filtering only for POST requests with a body
-    original_action = action
-    if method == "POST" and body and action == "success":
-        # Retrieve keywords from the Check object
+    # Process keyword filtering only for requests with a body
+    if body:
+        # Try to decode the body for keyword matching (if it's bytes)
+        if isinstance(body, bytes):
+            try:
+                decoded_body = body.decode("utf-8")
+            except UnicodeDecodeError:
+                # Use replacement for keyword matching only
+                decoded_body = body.decode("utf-8", errors="replace")
+        else:
+            decoded_body = body
+            
+        # Get keywords
         success_keywords = check.success_kw.split(",") if check.success_kw else []
         failure_keywords = check.failure_kw.split(",") if check.failure_kw else []
         start_keywords = check.start_kw.split(",") if check.start_kw else []
-        
-        # Try to decode the body for keyword matching - use replace for this part
-        try:
-            decoded_body = body.decode("utf-8") if isinstance(body, bytes) else body
-        except UnicodeDecodeError:
-            decoded_body = body.decode("utf-8", errors="replace")
             
         # Apply keyword-based filtering
         if success_keywords and any(keyword.strip() in decoded_body for keyword in success_keywords):
