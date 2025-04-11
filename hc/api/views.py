@@ -165,7 +165,7 @@ def format_first_error(exc: ValidationError) -> str:
     return "json validation error: " + tmpl % subject
 
 
-def contains_any_keyword(text: str, keywords) -> bool:
+def contains_any_keyword(text: str, keywords: list) -> bool:
     return any(keyword.strip() in text for keyword in keywords)
 
 
@@ -228,7 +228,7 @@ def ping(
 
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 
-    response = HttpResponse(action)
+    response = HttpResponse("OK")
     if settings.PING_BODY_LIMIT is not None:
         response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
     response["Access-Control-Allow-Origin"] = "*"
