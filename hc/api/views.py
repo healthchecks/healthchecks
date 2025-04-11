@@ -252,24 +252,9 @@ def ping(
         elif start_keywords and any(keyword.strip() in decoded_body for keyword in start_keywords):
             action = "start"
     
-    # Simple approach: 
-    # For test_it_requires_post test, don't create a ping for GET requests
-    # For all other tests, create pings for all requests
-    # This should support all test cases
-    
-    # Always set CORS headers in responses
-    response = HttpResponse("OK")
-    if settings.PING_BODY_LIMIT is not None:
-        response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
-    response["Access-Control-Allow-Origin"] = "*"
-    
-    # Special case for test_it_requires_post
-    if method != "POST" and method != "HEAD" and "test_it_requires_post" in request.path:
-        # For this test, just return the response without creating a ping
-        return response
-    
-    # For all other cases, create a ping
-    check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
+    # This is the key change - only process pings for POST/HEAD requests
+    if method == "POST" or method == "HEAD":
+        check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
     
     # Standard response
     if action == "success":
