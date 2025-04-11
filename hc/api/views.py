@@ -216,24 +216,24 @@ def ping(
     else:
         action = "unknown"
 
-    rid, rid_str = None, request.GET.get("rid")
-    if rid_str is not None:
-        if not is_valid_uuid_string(rid_str):
-            return HttpResponseBadRequest("invalid uuid format")
-        rid = UUID(rid_str)
+rid, rid_str = None, request.GET.get("rid")
+if rid_str is not None:
+    if not is_valid_uuid_string(rid_str):
+        return HttpResponseBadRequest("invalid uuid format")
+    rid = UUID(rid_str)
 
-    # Only update the Check object if the action is not "unknown"
-    if action != "unknown":
+# Only update the Check object if the action is not "unknown"
+if action != "unknown":
     encoded_body = body.encode() if isinstance(body, str) else body
     check.ping(remote_addr, scheme, method, ua, encoded_body, action, rid, exitstatus)
 
+# Return a response based on the action
+response = HttpResponse(action.capitalize())  # Return "Success", "Fail", "Start", or "Unknown"
+if settings.PING_BODY_LIMIT is not None:
+    response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
+response["Access-Control-Allow-Origin"] = "*"
+return response
 
-    # Return a response based on the action
-    response = HttpResponse(action.capitalize())  # Return "Success", "Fail", "Start", or "Unknown"
-    if settings.PING_BODY_LIMIT is not None:
-        response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
-    response["Access-Control-Allow-Origin"] = "*"
-    return response
 
 
 @csrf_exempt
