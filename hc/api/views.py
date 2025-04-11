@@ -165,7 +165,7 @@ def format_first_error(exc: ValidationError) -> str:
     return "json validation error: " + tmpl % subject
 
 
-def contains_any_keyword(text: str, keywords: list) -> bool:
+def contains_any_keyword(text: str, keywords: list[str]) -> bool:
     return any(keyword.strip() in text for keyword in keywords)
 
 
