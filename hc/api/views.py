@@ -372,7 +372,7 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         "start_kw",
         "req_start_kw",
         "success_kw",
-        "req_success_kw"
+        "req_success_kw",
         "failure_kw",
         "req_failure_kw",
         "filter_subject",
