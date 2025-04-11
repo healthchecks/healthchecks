@@ -194,34 +194,27 @@ def ping(
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
     remote_addr = remote_addr.split(",")[0]
     if "." in remote_addr and ":" in remote_addr:
-        # If remote_addr is in a ipv4address:port format (like in Azure App Service),
-        # remove the port:
         remote_addr = remote_addr.split(":")[0]
 
     scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
     method = headers["REQUEST_METHOD"]
     ua = headers.get("HTTP_USER_AGENT", "")
-    body = request.body[: settings.PING_BODY_LIMIT]
+    body = request.body.decode("utf-8")[: settings.PING_BODY_LIMIT]  # Decode the body
 
-    success_keywords = check.req_success_kw.split(',') if check.req_success_kw else []
-    failure_keywords = check.req_failure_kw.split(",") if check.req_failure_kw else []
-    start_keywords = check.req_start_kw.split(",") if check.req_start_kw else []
+    # Retrieve keywords from the Check object
+    success_keywords = check.success_kw.split(",") if check.success_kw else []
+    failure_keywords = check.failure_kw.split(",") if check.failure_kw else []
+    start_keywords = check.start_kw.split(",") if check.start_kw else []
 
-    if exitstatus is not None and exitstatus > 0:
-        action = "fail"
-
-    if check.methods == "POST" and method != "POST":
-        action = "ign"
-
-    body_text = body.decode("utf-8", errors="replace")
-    
-    # Check each keyword list in order of priority
-    if contains_any_keyword(body_text, success_keywords):
+    # Apply keyword-based filtering
+    if any(keyword.strip() in body for keyword in success_keywords):
         action = "success"
-    elif contains_any_keyword(body_text, failure_keywords):
+    elif any(keyword.strip() in body for keyword in failure_keywords):
         action = "fail"
-    elif contains_any_keyword(body_text, start_keywords):
+    elif any(keyword.strip() in body for keyword in start_keywords):
         action = "start"
+    else:
+        action = "unknown"
 
     rid, rid_str = None, request.GET.get("rid")
     if rid_str is not None:
@@ -229,9 +222,12 @@ def ping(
             return HttpResponseBadRequest("invalid uuid format")
         rid = UUID(rid_str)
 
-    check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
+    # Only update the Check object if the action is not "unknown"
+    if action != "unknown":
+        check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
 
-    response = HttpResponse("OK")
+    # Return a response based on the action
+    response = HttpResponse(action.capitalize())  # Return "Success", "Fail", "Start", or "Unknown"
     if settings.PING_BODY_LIMIT is not None:
         response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
     response["Access-Control-Allow-Origin"] = "*"
