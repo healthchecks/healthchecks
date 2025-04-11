@@ -252,22 +252,19 @@ def ping(
         elif start_keywords and any(keyword.strip() in decoded_body for keyword in start_keywords):
             action = "start"
     
-    # Special handling for test_it_requires_post
-    # We need to save the original status for GET requests
-    if method != "POST" and method != "HEAD" and "test_it_requires_post" in request.path:
-        # For this specific test, create a Ping but don't change check status
-        # Save original status
-        original_status = check.status
-        
-        # Call ping to create the Ping object but don't update check status
-        check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
-        
-        # Restore the original status
-        check.status = original_status
-        check.save()
-    else:
-        # Normal case - create a ping for all request methods
-        check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
+    # The main issue - we need to handle GET vs POST correctly
+    # For GET requests, we don't want to process the ping
+    if method != "POST" and method != "HEAD":
+        # For GET requests, don't create a ping, just return OK
+        # with the CORS header
+        response = HttpResponse("OK")
+        if settings.PING_BODY_LIMIT is not None:
+            response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
+        response["Access-Control-Allow-Origin"] = "*"
+        return response
+
+    # Only process ping for POST and HEAD requests
+    check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
     
     # Standard response
     if action == "success":
@@ -277,7 +274,7 @@ def ping(
         
     response = HttpResponse(response_text)
     
-    # Always add the CORS header to fix the KeyError
+    # Add the headers
     if settings.PING_BODY_LIMIT is not None:
         response["Ping-Body-Limit"] = str(settings.PING_BODY_LIMIT)
     response["Access-Control-Allow-Origin"] = "*"
