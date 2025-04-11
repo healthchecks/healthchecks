@@ -216,7 +216,7 @@ if v := os.getenv("ALLOWED_HOSTS"):
 else:
     # Otherwise, populate it with the domain from SITE_ROOT
     domain, _ = split_domain_port(_site_root_parts.netloc)
-    ALLOWED_HOSTS = [domain, "127.0.0.1"]
+    ALLOWED_HOSTS = [domain]
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "static-collected"
@@ -245,25 +245,14 @@ def immutable_file_test(path: Any, url: str) -> bool:
 
 WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test
 
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST ='smtp.gmail.com'
-EMAIL_PORT =  587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'ahmadchaudhry62024@gmail.com'
-EMAIL_HOST_PASSWORD = 'bpqa nbgf axif yuhk'  # Or app-specific password if 2FA is enabled
-DEFAULT_FROM_EMAIL = 'ahmadchudhry62024@gmail.com'
-PING_SUCCESS_KEYWORDS = ["success", "ok", "completed"]
-PING_FAILURE_KEYWORDS = ["fail", "error", "timeout"]
-
-# # SMTP credentials for sending email
-# EMAIL_HOST = os.getenv("EMAIL_HOST", "")
-# EMAIL_PORT = envint("EMAIL_PORT", "587")
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-# EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
-# EMAIL_USE_SSL = envbool("EMAIL_USE_SSL", "False")
-# EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
+# SMTP credentials for sending email
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_PORT = envint("EMAIL_PORT", "587")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
+EMAIL_USE_SSL = envbool("EMAIL_USE_SSL", "False")
+EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
 EMAIL_MAIL_FROM_TMPL = os.getenv("EMAIL_MAIL_FROM_TMPL", "")
 
 # WebAuthn

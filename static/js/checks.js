@@ -194,13 +194,6 @@ $(function () {
     $("#to-uuid").click((e) => switchUrlFormat("uuid"));
     $("#to-slug").click((e) => switchUrlFormat("slug"));
 
-    $(".show-log").click(function (e) {
-        var code = $(this).closest("tr.checks-row").attr("id");
-        var url = base + "/checks/" + code + "/details/";
-        window.location = url;
-        return false;
-    });
-
     $(".pause").tooltip({
         title: "Pause this check?<br />Click again to confirm.",
         trigger: "manual",

@@ -127,9 +127,7 @@
                 <span class="ic-paused"></span>
             </button>
             {% endif %}
-            <button title="Show Details" class="btn show-log" type="button">
-                <span class="ic-dots"></span>
-            </button>
+            <a href="{% url 'hc-details' check.code %}" class="btn" title="Show Details"><span class="ic-dots"></span></a>
         </td>
     </tr>
     {% endfor %}
