@@ -224,7 +224,9 @@ def ping(
 
     # Only update the Check object if the action is not "unknown"
     if action != "unknown":
-        check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
+    encoded_body = body.encode() if isinstance(body, str) else body
+    check.ping(remote_addr, scheme, method, ua, encoded_body, action, rid, exitstatus)
+
 
     # Return a response based on the action
     response = HttpResponse(action.capitalize())  # Return "Success", "Fail", "Start", or "Unknown"
