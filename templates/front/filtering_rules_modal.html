@@ -38,6 +38,69 @@
                 <hr>
 
                 <div class="modal-body">
+                    <h2>Ping Request Body</h2>
+                    <p>
+                        Keyword matching is case-sensitive.
+                    </p>
+
+                    <div class="form-group">
+                        <label for="req_start_kw" class="col-sm-4 control-label">
+                            Start Keywords
+                        </label>
+                        <div class="col-sm-7">
+                            <input
+                                id="req_start_kw"
+                                name="req_start_kw"
+                                type="text"
+                                maxlength="200"
+                                value="{{ check.req_start_kw }}"
+                                class="form-control" />
+                            <span class="help-block">
+                                Comma-separated list of keywords. request body
+                                contains any of the keywords, classify the email as "start".
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="req_success_kw" class="col-sm-4 control-label">
+                            Success Keywords
+                        </label>
+                        <div class="col-sm-7">
+                            <input
+                                id="req_success_kw"
+                                name="req_success_kw"
+                                type="text"
+                                maxlength="200"
+                                value="{{ check.req_success_kw }}"
+                                class="form-control" />
+                            <span class="help-block">
+                                Comma-separated list of keywords. If request body
+                                contains any of the keywords, classify the email as "success".
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="req_failure_kw" class="col-sm-4 control-label">
+                            Failure Keywords
+                        </label>
+                        <div class="col-sm-7">
+                            <input
+                                id="req_failure_kw"
+                                name="req_failure_kw"
+                                type="text"
+                                maxlength="200"
+                                value="{{ check.req_failure_kw }}"
+                                class="form-control" />
+                            <span class="help-block">
+                                Comma-separated list of keywords. If request body
+                                contains any of the keywords, classify the email as "failure".
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+
+                <div class="modal-body">
                     <h2>Inbound Emails</h2>
                     <p>
                         Keyword matching is case-sensitive.

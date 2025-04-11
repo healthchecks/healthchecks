@@ -123,6 +123,9 @@ class CheckDict(TypedDict, total=False):
     start_kw: str
     success_kw: str
     failure_kw: str
+    req_start_kw: str
+    req_success_kw: str
+    req_failure_kw: str
     filter_subject: bool
     filter_body: bool
     badge_url: str
@@ -195,6 +198,9 @@ class Check(models.Model):
     start_kw = models.CharField(max_length=200, blank=True)
     success_kw = models.CharField(max_length=200, blank=True)
     failure_kw = models.CharField(max_length=200, blank=True)
+    req_start_kw = models.CharField(max_length=200, blank=True)
+    req_success_kw = models.CharField(max_length=200, blank=True)
+    req_failure_kw = models.CharField(max_length=200, blank=True)
     methods = models.CharField(max_length=30, blank=True)
     manual_resume = models.BooleanField(default=False)
     badge_key = models.UUIDField(default=uuid.uuid4, unique=True)
@@ -406,6 +412,9 @@ class Check(models.Model):
             "start_kw": self.start_kw,
             "success_kw": self.success_kw,
             "failure_kw": self.failure_kw,
+            "req_start_kw": self.req_start_kw,
+            "req_success_kw": self.req_success_kw,
+            "req_failure_kw": self.req_failure_kw,
             "filter_subject": self.filter_subject,
             "filter_body": self.filter_body,
             # Optimization: construct badge URLs manually instead of using reverse().

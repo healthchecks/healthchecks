@@ -61,6 +61,7 @@ class Spec(BaseModel):
     channels: str | None = None
     desc: str | None = None
     failure_kw: str | None = Field(None, max_length=200)
+    req_failure_kw: str | None = Field(None, max_length=200)
     filter_body: bool | None = None
     filter_subject: bool | None = None
     grace: td | None = Field(None, ge=60, le=31536000)
@@ -70,9 +71,11 @@ class Spec(BaseModel):
     schedule: str | None = Field(None, max_length=100)
     slug: str | None = Field(None, max_length=100, pattern="^[a-z0-9-_]*$")
     start_kw: str | None = Field(None, max_length=200)
+    req_start_kw: str | None = Field(None, max_length=200)
     subject: str | None = Field(None, max_length=200)
     subject_fail: str | None = Field(None, max_length=200)
     success_kw: str | None = Field(None, max_length=200)
+    req_success_kw: str | None = Field(None, max_length=200)
     tags: str | None = None
     timeout: td | None = Field(None, ge=60, le=31536000)
     tz: str | None = None
@@ -200,9 +203,9 @@ def ping(
     ua = headers.get("HTTP_USER_AGENT", "")
     body = request.body[: settings.PING_BODY_LIMIT]
 
-    success_keywords = check.success_kw.split(',') if check.success_kw else []
-    failure_keywords = check.failure_kw.split(",") if check.failure_kw else []
-    start_keywords = check.start_kw.split(",") if check.start_kw else []
+    success_keywords = check.req_success_kw.split(',') if check.req_success_kw else []
+    failure_keywords = check.req_failure_kw.split(",") if check.req_failure_kw else []
+    start_keywords = check.req_start_kw.split(",") if check.req_start_kw else []
 
     if exitstatus is not None and exitstatus > 0:
         action = "fail"
@@ -367,8 +370,11 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         "methods",
         "tz",
         "start_kw",
+        "req_start_kw",
         "success_kw",
+        "req_success_kw"
         "failure_kw",
+        "req_failure_kw",
         "filter_subject",
         "filter_body",
         "grace",

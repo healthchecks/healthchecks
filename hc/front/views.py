@@ -597,6 +597,9 @@ def filtering_rules(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespon
         check.start_kw = form.cleaned_data["start_kw"]
         check.success_kw = form.cleaned_data["success_kw"]
         check.failure_kw = form.cleaned_data["failure_kw"]
+        check.req_start_kw = form.cleaned_data["req_start_kw"]
+        check.req_success_kw = form.cleaned_data["req_success_kw"]
+        check.req_failure_kw = form.cleaned_data["req_failure_kw"]
 
         check.methods = form.cleaned_data["methods"]
         check.manual_resume = form.cleaned_data["manual_resume"]
@@ -1103,6 +1106,9 @@ def copy(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     copied.start_kw = check.start_kw
     copied.success_kw = check.success_kw
     copied.failure_kw = check.failure_kw
+    copied.req_start_kw = check.start_kw
+    copied.req_success_kw = check.success_kw
+    copied.req_failure_kw = check.failure_kw
 
     copied.methods = check.methods
     copied.manual_resume = check.manual_resume
