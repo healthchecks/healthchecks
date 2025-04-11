@@ -210,7 +210,7 @@ def ping(
     if check.methods == "POST" and method != "POST":
         action = "ign"
 
-    body_text = body.decode()
+    body_text = body.decode("utf-8", errors="replace")
     
     # Check each keyword list in order of priority
     if contains_any_keyword(body_text, success_keywords):
