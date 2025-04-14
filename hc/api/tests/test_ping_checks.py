@@ -1,11 +1,11 @@
 from django.test import TestCase
-from hc.api.models import Check, Project
+from hc.api.models import Check, Project  # type: ignore
 from django.contrib.auth.models import User
 from uuid import uuid4
 
 
 class PingTestCase(TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         # Create a User object
         self.user = User.objects.create_user(username="testuser", email="test@example.com", password="password")
 
@@ -21,7 +21,7 @@ class PingTestCase(TestCase):
         # Use the direct URL instead of reverse()
         self.ping_url = f"/ping/{self.check.code}"
 
-    def test_ping_success(self):
+    def test_ping_success(self) -> None:
         """
         Test that a request with success keywords sets the status to 'up'
         """
@@ -38,7 +38,7 @@ class PingTestCase(TestCase):
         self.assertEqual(response.content.decode(), "OK")  # Response should be "OK" for success
         self.assertEqual(self.check.status, "up")  # Status of the Check is updated to 'up'
 
-    def test_ping_failure(self):
+    def test_ping_failure(self) -> None:
         """
         Test that a request with failure keywords sets the status to 'down'
         """
@@ -55,7 +55,7 @@ class PingTestCase(TestCase):
         self.assertEqual(response.content.decode(), "Fail")  # Response matches the action
         self.assertEqual(self.check.status, "down")  # Status of the Check is updated to 'down'
 
-    def test_ping_start(self):
+    def test_ping_start(self) -> None:
         """
         Test that a request with start keywords does not change the status
         """
@@ -72,7 +72,7 @@ class PingTestCase(TestCase):
         self.assertEqual(response.content.decode(), "Start")  # Response matches the action
         self.assertIsNotNone(self.check.last_start)  # last_start should be set
 
-    def test_ping_unknown(self):
+    def test_ping_unknown(self) -> None:
         """
         Test that a request with no matching keywords uses the default action
         """
@@ -88,7 +88,7 @@ class PingTestCase(TestCase):
         self.assertEqual(response.content.decode(), "OK")  # Default response is OK
         self.assertEqual(self.check.status, "up")  # Default action is "success"
 
-    def test_ping_with_no_body(self):
+    def test_ping_with_no_body(self) -> None:
         """
         Test that an empty request body uses the default action
         """
