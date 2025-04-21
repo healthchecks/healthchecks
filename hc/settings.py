@@ -216,7 +216,8 @@ else:
     # Otherwise, populate it with the domain from SITE_ROOT
     domain, _ = split_domain_port(_site_root_parts.netloc)
     ALLOWED_HOSTS = [domain]
-
+    ALLOWED_HOSTS += ["127.0.0.1", "localhost"]
+    
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "static-collected"
 STATICFILES_FINDERS = (
