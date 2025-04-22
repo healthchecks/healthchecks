@@ -52,7 +52,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "github": ("GitHub", transports.GitHub),
     "gotify": ("Gotify", transports.Gotify),
     "group": ("Group", transports.Group),
-    "linenotify": ("LINE Notify (stops working Apr 2025)", transports.LineNotify),
+    "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
     "matrix": ("Matrix", transports.Matrix),
     "mattermost": ("Mattermost", transports.Mattermost),
     "msteams": ("MS Teams Connector (stops working Jan 2025)", transports.MsTeams),
