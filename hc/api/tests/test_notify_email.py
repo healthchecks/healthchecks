@@ -48,6 +48,15 @@ class NotifyEmailTestCase(BaseTestCase):
         self.flip.new_status = "down"
         self.flip.reason = "timeout"
 
+    def assertBodyContains(self, text: str) -> None:
+        """Test if text appears in email body and text/* alternatives."""
+        email = mail.outbox[0]
+        assert isinstance(email, EmailMultiAlternatives)
+        self.assertTrue(
+            email.body_contains(text),
+            f"'{text}' expected but not found in message body",
+        )
+
     def get_html(self, email: EmailMessage) -> str:
         assert isinstance(email, EmailMultiAlternatives)
         html, _ = email.alternatives[0]
@@ -75,17 +84,15 @@ class NotifyEmailTestCase(BaseTestCase):
         html = self.get_html(email)
         # Message
         self.assertIn("""The check "Daily Backup" has gone down.""", email.body)
-        self.assertIn("grace time passed", email.body)
         self.assertIn(""""Daily Backup" is DOWN""", html)
-        self.assertIn("grace time passed", html)
+        self.assertBodyContains("grace time passed")
 
         # Description
         self.assertIn("Line 1\nLine2", email.body)
         self.assertIn("Line 1<br>Line2", html)
 
         # Project
-        self.assertIn("Alices Project", email.body)
-        self.assertIn("Alices Project", html)
+        self.assertBodyContains("Alices Project")
 
         # Tags
         self.assertIn("foo bar", email.body)
@@ -93,20 +100,16 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertIn("bar</code>", html)
 
         # Period
-        self.assertIn("1 day", email.body)
-        self.assertIn("1 day", html)
+        self.assertBodyContains("1 day")
 
         # Source IP
-        self.assertIn("from 1.2.3.4", email.body)
-        self.assertIn("from 1.2.3.4", html)
+        self.assertBodyContains("from 1.2.3.4")
 
         # Total pings
-        self.assertIn("112233", email.body)
-        self.assertIn("112233", html)
+        self.assertBodyContains("112233")
 
         # Last ping time
-        self.assertIn("an hour ago", email.body)
-        self.assertIn("an hour ago", html)
+        self.assertBodyContains("an hour ago")
 
         # Last ping body
         self.assertIn("Body Line 1\nBody Line 2", email.body)
@@ -123,11 +126,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.flip.reason = "fail"
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        self.assertIn("received a failure signal", email.body)
-
-        html = self.get_html(email)
-        self.assertIn("received a failure signal", html)
+        self.assertBodyContains("received a failure signal")
 
     @override_settings(DEFAULT_FROM_EMAIL='"Alerts" <alerts@example.org>')
     def test_it_message_id_generation_handles_angle_brackets(self) -> None:
@@ -165,9 +164,8 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         html = self.get_html(email)
         self.assertIn("0 18-23,0-8 * * *", email.body)
-        self.assertIn("Europe/Riga", email.body)
         self.assertIn("<code>0 18-23,0-8 * * *</code>", html)
-        self.assertIn("Europe/Riga", html)
+        self.assertBodyContains("Europe/Riga")
 
     def test_it_shows_oncalendar_schedule(self) -> None:
         self.check.kind = "oncalendar"
@@ -180,9 +178,8 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         html = self.get_html(email)
         self.assertIn("Mon 2-29", email.body)
-        self.assertIn("Europe/Riga", email.body)
         self.assertIn("<code>Mon 2-29</code>", html)
-        self.assertIn("Europe/Riga", html)
+        self.assertBodyContains("Europe/Riga")
 
     def test_it_truncates_long_body(self) -> None:
         self.ping.body_raw = b"X" * 10000 + b", and the rest gets cut off"
@@ -192,8 +189,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         html = self.get_html(email)
-        self.assertIn("[truncated]", email.body)
-        self.assertIn("[truncated]", html)
+        self.assertBodyContains("[truncated]")
         self.assertNotIn("the rest gets cut off", html)
 
     def test_it_handles_missing_ping_object(self) -> None:
@@ -296,10 +292,7 @@ class NotifyEmailTestCase(BaseTestCase):
         with patch("hc.api.transports.time.sleep"):
             self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("The request body data is being processed", email.body)
-        self.assertIn("The request body data is being processed", html)
+        self.assertBodyContains("The request body data is being processed")
 
     def test_it_shows_ignored_nonzero_exitstatus(self) -> None:
         self.ping.kind = "ign"
@@ -308,10 +301,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Ignored", email.body)
-        self.assertIn("Ignored", html)
+        self.assertBodyContains("Ignored")
 
     def test_it_handles_last_ping_log(self) -> None:
         self.ping.kind = "log"
@@ -319,10 +309,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Log", email.body)
-        self.assertIn("Log", html)
+        self.assertBodyContains("Log")
 
     def test_it_handles_last_ping_exitstatus(self) -> None:
         self.ping.kind = "fail"
@@ -331,10 +318,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Exit status 123", email.body)
-        self.assertIn("Exit status 123", html)
+        self.assertBodyContains("Exit status 123")
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self) -> None:
