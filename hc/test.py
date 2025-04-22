@@ -3,6 +3,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, ParamSpec, TypeVar
 
 from django.contrib.auth.models import User
+from django.core import mail
+from django.core.mail import EmailMultiAlternatives
 from django.core.signing import TimestampSigner
 from django.test import Client, TestCase
 
@@ -77,3 +79,22 @@ class BaseTestCase(TestCase):
         session = self.client.session
         session["sudo"] = TimestampSigner().sign("active")
         session.save()
+
+    def assertEmailContainsText(self, fragment: str) -> None:
+        """Test if text appears in email body."""
+
+        self.assertIn(fragment, mail.outbox[0].body)
+
+    def assertEmailContainsHtml(self, fragment: str) -> None:
+        """Test if text appears in email's HTML content."""
+
+        email = mail.outbox[0]
+        assert isinstance(email, EmailMultiAlternatives)
+        html_content, _ = email.alternatives[0]
+        self.assertIn(fragment, html_content)
+
+    def assertEmailContains(self, fragment: str) -> None:
+        """Test if text appears in email's plain text *and* HTML content."""
+
+        self.assertEmailContainsText(fragment)
+        self.assertEmailContainsHtml(fragment)

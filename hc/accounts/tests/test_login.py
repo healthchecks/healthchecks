@@ -54,11 +54,9 @@ class LoginTestCase(BaseTestCase):
 
         # And email should have been sent
         self.assertEqual(len(mail.outbox), 1)
-        message = mail.outbox[0]
-        self.assertEqual(message.subject, f"Log in to {settings.SITE_NAME}")
-        html = self.get_html(message)
-        self.assertIn("http://testserver/static/img/logo.png", html)
-        self.assertIn("http://testserver/docs/", html)
+        self.assertEqual(mail.outbox[0].subject, f"Log in to {settings.SITE_NAME}")
+        self.assertEmailContainsHtml("http://testserver/static/img/logo.png")
+        self.assertEmailContains("http://testserver/docs/")
 
     @override_settings(SESSION_COOKIE_SECURE=True)
     def test_it_sets_secure_autologin_cookie(self) -> None:
@@ -69,8 +67,7 @@ class LoginTestCase(BaseTestCase):
     @override_settings(SITE_LOGO_URL="https://example.org/logo.svg")
     def test_it_uses_custom_logo(self) -> None:
         self.client.post("/accounts/login/", {"identity": "alice@example.org"})
-        html = self.get_html(mail.outbox[0])
-        self.assertIn("https://example.org/logo.svg", html)
+        self.assertEmailContainsHtml("https://example.org/logo.svg")
 
     def test_it_sends_link_with_next(self) -> None:
         form = {"identity": "alice@example.org"}
