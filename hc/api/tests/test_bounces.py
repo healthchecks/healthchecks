@@ -79,7 +79,7 @@ To: foo@example.com
 
         self.n.refresh_from_db()
         self.assertEqual(self.n.error, "Delivery failed (SMTP status code: 5.0.0)")
-        self.assertEqual(r.content.decode(), "OK")
+        self.assertEqual(r.text, "OK")
 
         self.channel.refresh_from_db()
         self.assertEqual(
@@ -90,7 +90,7 @@ To: foo@example.com
     def test_it_handles_transient_notification_bounce(self) -> None:
         r = self.post(status="4.0.0")
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK")
+        self.assertEqual(r.text, "OK")
 
         self.n.refresh_from_db()
         self.assertEqual(self.n.error, "Delivery failed (SMTP status code: 4.0.0)")
@@ -104,7 +104,7 @@ To: foo@example.com
     def test_it_handles_notification_non_bounce(self) -> None:
         r = self.post(status="2.0.0")
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK (ignored)")
+        self.assertEqual(r.text, "OK (ignored)")
 
     def test_it_handles_bad_signature(self) -> None:
         with override_settings(SECRET_KEY="wrong-signing-key"):
@@ -112,7 +112,7 @@ To: foo@example.com
 
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK (bad signature)")
+        self.assertEqual(r.text, "OK (bad signature)")
 
     def test_it_handles_expired_signature(self) -> None:
         with patch("hc.lib.signing.time") as mock_time:
@@ -121,20 +121,20 @@ To: foo@example.com
 
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK (bad signature)")
+        self.assertEqual(r.text, "OK (bad signature)")
 
     def test_it_checks_notification_age(self) -> None:
         self.n.created = now() - td(hours=49)
         self.n.save()
         r = self.post()
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK (notification not found)")
+        self.assertEqual(r.text, "OK (notification not found)")
 
     def test_it_handles_permanent_report_bounce(self) -> None:
         to_local = sign_bounce_id("r.alice")
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK")
+        self.assertEqual(r.text, "OK")
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.reports, "off")
@@ -144,7 +144,7 @@ To: foo@example.com
         to_local = sign_bounce_id("r.alice")
         r = self.post(status="4.0.0", to_local=to_local)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK")
+        self.assertEqual(r.text, "OK")
 
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.reports, "monthly")
@@ -153,7 +153,7 @@ To: foo@example.com
         to_local = sign_bounce_id("r.doesnotexist")
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.content.decode(), "OK (user not found)")
+        self.assertEqual(r.text, "OK (user not found)")
 
     def test_it_logs_diagnostic_code(self) -> None:
         diagnostic_code = (
