@@ -36,7 +36,7 @@ class BounceTestCase(BaseTestCase):
         diagnostic_code: str = "",
     ) -> TestHttpResponse:
         if to_local is None:
-            to_local = sign_bounce_id("n.%s" % self.n.code)
+            to_local = sign_bounce_id(f"n.{self.n.code}")
 
         msg = f"""Subject: Undelivered Mail Returned to Sender
 To: {to_local}@example.org
@@ -108,7 +108,7 @@ To: foo@example.com
 
     def test_it_handles_bad_signature(self) -> None:
         with override_settings(SECRET_KEY="wrong-signing-key"):
-            to_local = sign_bounce_id("n.%s" % self.n.code)
+            to_local = sign_bounce_id(f"n.{self.n.code}")
 
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
@@ -117,7 +117,7 @@ To: foo@example.com
     def test_it_handles_expired_signature(self) -> None:
         with patch("hc.lib.signing.time") as mock_time:
             mock_time.time.return_value = time.time() - 3600 * 48 - 1
-            to_local = sign_bounce_id("n.%s" % self.n.code)
+            to_local = sign_bounce_id(f"n.{self.n.code}")
 
         r = self.post(to_local=to_local)
         self.assertEqual(r.status_code, 200)
