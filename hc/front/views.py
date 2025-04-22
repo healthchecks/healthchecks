@@ -419,7 +419,6 @@ def index(request: HttpRequest) -> HttpResponse:
     # to move projects with overall_status=down to the front (without changing their
     # relative order)
     projects.sort(key=lambda p: getattr(p, "overall_status") != "down")
-
     ctx = {
         "page": "projects",
         "projects": projects,
