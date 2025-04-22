@@ -81,12 +81,12 @@ class BaseTestCase(TestCase):
         session.save()
 
     def assertEmailContainsText(self, fragment: str) -> None:
-        """Test if text appears in email body."""
+        """Test if fragment appears in email body."""
 
         self.assertIn(fragment, mail.outbox[0].body)
 
     def assertEmailContainsHtml(self, fragment: str) -> None:
-        """Test if text appears in email's HTML content."""
+        """Test if fragment appears in email's HTML content."""
 
         email = mail.outbox[0]
         assert isinstance(email, EmailMultiAlternatives)
@@ -95,7 +95,7 @@ class BaseTestCase(TestCase):
         self.assertIn(fragment, html_content)
 
     def assertEmailContains(self, fragment: str) -> None:
-        """Test if text appears in email's plain text *and* HTML content."""
+        """Test if fragment appears in email's plain text *and* HTML content."""
 
         self.assertEmailContainsText(fragment)
         self.assertEmailContainsHtml(fragment)
@@ -104,8 +104,9 @@ class BaseTestCase(TestCase):
         """Test if fragment is absent from both plain text *and* HTML content."""
 
         email = mail.outbox[0]
+        self.assertNotIn(fragment, email.body)
+
         assert isinstance(email, EmailMultiAlternatives)
         html_content, _ = email.alternatives[0]
-
-        self.assertNotIn(fragment, email.body)
+        assert isinstance(html_content, str)
         self.assertNotIn(fragment, html_content)
