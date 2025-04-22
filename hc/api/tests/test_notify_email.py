@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.core import mail
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
