@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.core import mail
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 
 from hc.accounts.models import Credential
@@ -14,12 +13,6 @@ class LoginTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.checks_url = f"/projects/{self.project.code}/checks/"
-
-    def get_html(self, email: EmailMessage) -> str:
-        assert isinstance(email, EmailMultiAlternatives)
-        html, _ = email.alternatives[0]
-        assert isinstance(html, str)
-        return html
 
     def test_it_shows_form(self) -> None:
         r = self.client.get("/accounts/login/")

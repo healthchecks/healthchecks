@@ -48,12 +48,6 @@ class NotifyEmailTestCase(BaseTestCase):
         self.flip.new_status = "down"
         self.flip.reason = "timeout"
 
-    def get_html(self, email: EmailMessage) -> str:
-        assert isinstance(email, EmailMultiAlternatives)
-        html, _ = email.alternatives[0]
-        assert isinstance(html, str)
-        return html
-
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_works(self) -> None:
         self.channel.notify(self.flip)
@@ -72,7 +66,6 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
         self.assertTrue(email.extra_headers["Message-ID"].endswith("@example.org>"))
 
-        html = self.get_html(email)
         # Message
         self.assertEmailContainsText("""The check "Daily Backup" has gone down.""")
         self.assertEmailContainsHtml(""""Daily Backup" is DOWN""")
@@ -106,11 +99,8 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEmailContainsText("Body Line 1\nBody Line 2")
         self.assertEmailContainsHtml("Body Line 1<br>Body Line 2")
 
-        # Check's code must not be in the html
-        self.assertNotIn(str(self.check.code), html)
-
-        # Check's code must not be in the plain text body
-        self.assertNotIn(str(self.check.code), email.body)
+        # Check's code must not be in the plain text or html
+        self.assertEmailNotContains(str(self.check.code))
 
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_handles_reason_failure(self) -> None:
@@ -172,10 +162,8 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
         self.assertEmailContains("[truncated]")
-        self.assertNotIn("the rest gets cut off", html)
+        self.assertEmailNotContains("the rest gets cut off")
 
     def test_it_handles_missing_ping_object(self) -> None:
         self.ping.delete()
@@ -190,10 +178,8 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertNotIn("Last ping", email.body)
-        self.assertNotIn("Last Ping", html)
+        self.assertEmailNotContains("Last ping")
+        self.assertEmailNotContains("Last Ping")
 
     def test_it_handles_identical_ping_and_flip_timestamp(self) -> None:
         self.ping.created = self.flip.created
@@ -214,9 +200,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEqual(email.to[0], "alice+notifications@example.org")
 
         self.assertEmailContains("Daily Backup")
-
-        self.assertNotIn("Projects Overview", email.body)
-        self.assertNotIn("Projects Overview", self.get_html(email))
+        self.assertEmailNotContains("Projects Overview")
 
     def test_it_handles_json_value(self) -> None:
         payload = {"value": "alice@example.org", "up": True, "down": True}

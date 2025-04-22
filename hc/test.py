@@ -99,3 +99,13 @@ class BaseTestCase(TestCase):
 
         self.assertEmailContainsText(fragment)
         self.assertEmailContainsHtml(fragment)
+
+    def assertEmailNotContains(self, fragment: str) -> None:
+        """Test if fragment is absent from both plain text *and* HTML content."""
+
+        email = mail.outbox[0]
+        assert isinstance(email, EmailMultiAlternatives)
+        html_content, _ = email.alternatives[0]
+
+        self.assertNotIn(fragment, email.body)
+        self.assertNotIn(fragment, html_content)
