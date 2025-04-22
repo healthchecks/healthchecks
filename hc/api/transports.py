@@ -141,7 +141,7 @@ class Transport:
 class RemovedTransport(Transport):
     """Dummy transport class for obsolete integrations."""
 
-    def is_noop(self, check) -> bool:
+    def is_noop(self, status: str) -> bool:
         return True
 
 
