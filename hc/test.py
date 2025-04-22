@@ -91,6 +91,7 @@ class BaseTestCase(TestCase):
         email = mail.outbox[0]
         assert isinstance(email, EmailMultiAlternatives)
         html_content, _ = email.alternatives[0]
+        assert isinstance(html_content, str)
         self.assertIn(fragment, html_content)
 
     def assertEmailContains(self, fragment: str) -> None:
