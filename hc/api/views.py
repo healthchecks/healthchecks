@@ -766,10 +766,13 @@ def badges(request: ApiRequest) -> JsonResponse:
         badges[tag] = {
             "svg": get_badge_url(key, tag),
             "svg3": get_badge_url(key, tag, with_late=True),
+            "svg4": get_badge_url(key, tag, with_uptime=True),
             "json": get_badge_url(key, tag, fmt="json"),
             "json3": get_badge_url(key, tag, fmt="json", with_late=True),
+            "json4": get_badge_url(key, tag, fmt="json", with_uptime=True),
             "shields": get_badge_url(key, tag, fmt="shields"),
             "shields3": get_badge_url(key, tag, fmt="shields", with_late=True),
+            "shields4": get_badge_url(key, tag, fmt="shields", with_uptime=True),
         }
 
     return JsonResponse({"badges": badges})
@@ -861,7 +864,23 @@ def badge(
                     status = "late"
 
     if fmt == "shields":
-        return _shields_response(label, status)
+        if with_uptime:
+            color = "success"
+            if uptime_percentage < 95:
+                color = "critical" 
+            elif uptime_percentage < 99:
+                color = "important"
+                
+            return JsonResponse(
+                {
+                    "schemaVersion": 1,
+                    "label": label,
+                    "message": status,
+                    "color": color,
+                }
+            )
+        else:
+            return _shields_response(label, status)
 
     if fmt == "json":
         result = {"status": status, "total": total, "grace": grace, "down": down}
@@ -884,23 +903,51 @@ def check_badge(
     check = get_object_or_404(Check, badge_key=badge_key)
     check_status = check.get_status()
     status = "up"
-    if check_status == "down":
-        status = "down"
-    elif check_status == "grace" and states == 3:
-        status = "late"
+
+    if states == 4:
+        downtimes = check.downtimes(1, "UTC")
+        if downtimes and not downtimes[0].no_data:
+            uptime_percentage = downtimes[0].monthly_uptime() * 100.0
+        else:
+            # If no downtime data, assume 100% uptime
+            uptime_percentage = 100.0 if check_status != "down" else 0.0
+            
+        status = f"{uptime_percentage:.1f}%"
+    else:
+        if check_status == "down":
+            status = "down"
+        elif check_status == "grace" and states == 3:
+            status = "late"
 
     if fmt == "shields":
-        return _shields_response(check.name_then_code(), status)
+        if states == 4:
+            color = "success"
+            if uptime_percentage < 95:
+                color = "critical"
+            elif uptime_percentage < 99:
+                color = "important"
+                
+            return JsonResponse(
+                {
+                    "schemaVersion": 1,
+                    "label": check.name_then_code(),
+                    "message": status,
+                    "color": color,
+                }
+            )
+        else:
+            return _shields_response(check.name_then_code(), status)
 
     if fmt == "json":
-        return JsonResponse(
-            {
-                "status": status,
-                "total": 1,
-                "grace": 1 if check_status == "grace" else 0,
-                "down": 1 if check_status == "down" else 0,
-            }
-        )
+        result = {
+            "status": status,
+            "total": 1,
+            "grace": 1 if check_status == "grace" else 0,
+            "down": 1 if check_status == "down" else 0,
+        }
+        if states == 4:
+            result["uptime_percentage"] = uptime_percentage
+        return JsonResponse(result)
 
     svg = get_badge_svg(check.name_then_code(), status)
     return HttpResponse(svg, content_type="image/svg+xml")
