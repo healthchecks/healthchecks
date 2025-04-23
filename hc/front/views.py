@@ -1168,12 +1168,14 @@ def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         fmt = form.cleaned_data["fmt"]
         states = form.cleaned_data["states"]
         with_late = True if states == "3" else False
+        with_uptime = True if states == "4" else False
+        
         if form.cleaned_data["target"] == "all":
             label = settings.MASTER_BADGE_LABEL
-            url = get_badge_url(project.badge_key, "*", fmt, with_late)
+            url = get_badge_url(project.badge_key, "*", fmt, with_late, with_uptime)
         elif form.cleaned_data["target"] == "tag":
             label = form.cleaned_data["tag"]
-            url = get_badge_url(project.badge_key, label, fmt, with_late)
+            url = get_badge_url(project.badge_key, label, fmt, with_late, with_uptime)
         elif form.cleaned_data["target"] == "check":
             check = project.check_set.get(code=form.cleaned_data["check"])
             url = absolute_reverse(

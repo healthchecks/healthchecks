@@ -476,7 +476,7 @@ class BadgeSettingsForm(forms.Form):
     tag = forms.CharField(max_length=100, required=False)
     check = forms.UUIDField(required=False)
     fmt = forms.ChoiceField(choices=_choices("svg,json,shields"))
-    states = forms.ChoiceField(choices=_choices("2,3"))
+    states = forms.ChoiceField(choices=_choices("2,3,4"))
 
 
 class AddGitHubForm(forms.Form):

@@ -107,10 +107,12 @@ def check_signature(badge_key: str, tag: str, sig: str) -> bool:
 
 
 def get_badge_url(
-    badge_key: str, tag: str, fmt: str = "svg", with_late: bool = False
+    badge_key: str, tag: str, fmt: str = "svg", with_late: bool = False, with_uptime: bool = False
 ) -> str:
     sig = base64_hmac(str(badge_key), tag, settings.SECRET_KEY)[:8]
-    if not with_late:
+    if with_uptime:
+        sig += "-4"
+    elif not with_late:
         sig += "-2"
 
     if tag == "*":
