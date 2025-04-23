@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from urllib.parse import quote_plus
+
 from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
@@ -71,7 +73,8 @@ class LoginTestCase(BaseTestCase):
         # The check_token link should have a ?next= query parameter:
         self.assertEqual(len(mail.outbox), 1)
         body = mail.outbox[0].body
-        self.assertTrue("/?next=" + self.channels_url in body)
+        quoted_channels_url = quote_plus(self.channels_url)
+        self.assertTrue(f"/?next={quoted_channels_url}" in body)
 
     def test_it_handles_unknown_email(self) -> None:
         form = {"identity": "surprise@example.org"}
@@ -212,10 +215,10 @@ class LoginTestCase(BaseTestCase):
         Credential.objects.create(user=self.alice, name="Alices Key")
 
         form = {"action": "login", "email": "alice@example.org", "password": "password"}
-        r = self.client.post(f"/accounts/login/?next={self.checks_url}", form)
+        r = self.client.post(f"/accounts/login/?next={self.channels_url}", form)
         self.assertRedirects(
             r,
-            f"/accounts/login/two_factor/?next={self.checks_url}",
+            f"/accounts/login/two_factor/?next={self.channels_url}",
             fetch_redirect_response=False,
         )
 
@@ -239,9 +242,9 @@ class LoginTestCase(BaseTestCase):
         self.profile.save()
 
         form = {"action": "login", "email": "alice@example.org", "password": "password"}
-        r = self.client.post(f"/accounts/login/?next={self.checks_url}", form)
+        r = self.client.post(f"/accounts/login/?next={self.channels_url}", form)
         self.assertRedirects(
-            r, f"/accounts/login/two_factor/totp/?next={self.checks_url}"
+            r, f"/accounts/login/two_factor/totp/?next={self.channels_url}"
         )
 
     def test_it_handles_missing_profile(self) -> None:

@@ -134,9 +134,10 @@ class Profile(models.Model):
         self, membership: Member | None = None, redirect_url: str | None = None
     ) -> None:
         token = self.prepare_token()
-        url = absolute_reverse("hc-check-token", args=[self.user.username, token])
-        if redirect_url:
-            url += "?next=%s" % redirect_url
+        query = {"next": redirect_url} if redirect_url else None
+        url = absolute_reverse(
+            "hc-check-token", args=[self.user.username, token], query=query
+        )
 
         ctx = {
             "button_text": "Log In",
