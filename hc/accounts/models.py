@@ -164,8 +164,11 @@ class Profile(models.Model):
     def send_transfer_request(self, project: Project) -> None:
         token = self.prepare_token()
         settings_path = reverse("hc-project-settings", args=[project.code])
-        url = absolute_reverse("hc-check-token", args=[self.user.username, token])
-        url += f"?next={settings_path}"
+        url = absolute_reverse(
+            "hc-check-token",
+            args=[self.user.username, token],
+            query={"next": settings_path},
+        )
 
         ctx = {
             "button_text": "Project Settings",
