@@ -55,6 +55,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "R" * 32)
         self.assertContains(r, "P" * 22)
         self.assertContains(r, "Prometheus metrics endpoint")
+        self.assertContains(r, f"/tv/#{self.project.api_key_readonly}=Alices%20Project")
 
     def test_it_creates_readonly_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")

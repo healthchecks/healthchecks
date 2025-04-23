@@ -135,15 +135,13 @@ def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
         # - timestamp, to limit the max time between the auth steps
         request.session["2fa_user"] = [user.id, user.email, int(time.time())]
 
-        if have_keys:
-            path = reverse("hc-login-webauthn")
-        else:
-            path = reverse("hc-login-totp")
-
+        query = {}
         redirect_url = request.GET.get("next")
         if _allow_redirect(redirect_url):
-            path += "?next=%s" % redirect_url
+            query["next"] = redirect_url
 
+        route = "hc-login-webauthn" if have_keys else "hc-login-totp"
+        path = reverse(route, query=query)
         return redirect(path)
 
     auth_login(request, user)

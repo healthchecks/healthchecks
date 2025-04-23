@@ -451,7 +451,7 @@ class Project(models.Model):
             return None
 
         frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
-        return reverse("hc-dashboard") + "#" + frag
+        return reverse("hc-dashboard", fragment=frag)
 
     def checks_url(self) -> str:
         return absolute_reverse("hc-checks", args=[self.code])

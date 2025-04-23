@@ -208,15 +208,24 @@ class LoginTestCase(BaseTestCase):
         user_id, email, valid_until = self.client.session["2fa_user"]
         self.assertEqual(user_id, self.alice.id)
 
+    def test_redirect_to_webauthn_form_preserves_next(self) -> None:
+        Credential.objects.create(user=self.alice, name="Alices Key")
+
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
+        r = self.client.post(f"/accounts/login/?next={self.checks_url}", form)
+        self.assertRedirects(
+            r,
+            f"/accounts/login/two_factor/?next={self.checks_url}",
+            fetch_redirect_response=False,
+        )
+
     def test_it_redirects_to_totp_form(self) -> None:
         self.profile.totp = "0" * 32
         self.profile.save()
 
         form = {"action": "login", "email": "alice@example.org", "password": "password"}
         r = self.client.post("/accounts/login/", form)
-        self.assertRedirects(
-            r, "/accounts/login/two_factor/totp/", fetch_redirect_response=False
-        )
+        self.assertRedirects(r, "/accounts/login/two_factor/totp/")
 
         # It should not log the user in yet
         self.assertNotIn("_auth_user_id", self.client.session)
@@ -224,6 +233,16 @@ class LoginTestCase(BaseTestCase):
         # Instead, it should set 2fa_user_id in the session
         user_id, email, valid_until = self.client.session["2fa_user"]
         self.assertEqual(user_id, self.alice.id)
+
+    def test_redirect_to_totp_form_preserves_next(self) -> None:
+        self.profile.totp = "0" * 32
+        self.profile.save()
+
+        form = {"action": "login", "email": "alice@example.org", "password": "password"}
+        r = self.client.post(f"/accounts/login/?next={self.checks_url}", form)
+        self.assertRedirects(
+            r, f"/accounts/login/two_factor/totp/?next={self.checks_url}"
+        )
 
     def test_it_handles_missing_profile(self) -> None:
         self.profile.delete()
