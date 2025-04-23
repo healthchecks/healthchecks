@@ -76,6 +76,19 @@ WIDTHS = {
 COLORS = {"up": "#4c1", "late": "#fe7d37", "down": "#e05d44"}
 
 
+def get_color_for_pct(pct_str: str) -> str:
+    try:
+        pct = float(pct_str.rstrip("%"))
+        if pct >= 99:
+            return "#4c1"
+        elif pct >= 95:
+            return "#fe7d37"
+        else:
+            return "#e05d44"
+    except ValueError:
+        return "#4c1"
+
+
 def get_width(s: str) -> int:
     total = 0
     for c in s:
@@ -94,7 +107,7 @@ def get_badge_svg(tag: str, status: str) -> str:
         "status_center_x": str(w1 + w2 / 2),
         "tag": tag,
         "status": status,
-        "color": COLORS[status],
+        "color": COLORS.get(status, get_color_for_pct(status)),
     }
 
     return render_to_string("badge.svg", ctx)
