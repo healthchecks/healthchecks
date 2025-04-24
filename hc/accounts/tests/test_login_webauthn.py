@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import time
 from unittest.mock import Mock, patch
+from urllib.parse import quote_plus
 
 from django.test.utils import override_settings
 
@@ -42,7 +43,8 @@ class LoginWebAuthnTestCase(BaseTestCase):
 
         url = self.url + "?next=" + self.channels_url
         r = self.client.get(url)
-        self.assertContains(r, "/login/two_factor/totp/?next=" + self.channels_url)
+        quoted_channels_url = quote_plus(self.channels_url)
+        self.assertContains(r, "/login/two_factor/totp/?next=" + quoted_channels_url)
 
     def test_it_requires_unauthenticated_user(self) -> None:
         self.client.login(username="alice@example.org", password="password")

@@ -136,9 +136,8 @@ def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
         request.session["2fa_user"] = [user.id, user.email, int(time.time())]
 
         query = {}
-        redirect_url = request.GET.get("next")
-        if _allow_redirect(redirect_url):
-            query["next"] = redirect_url
+        if _allow_redirect(request.GET.get("next")):
+            query["next"] = request.GET["next"]
 
         route = "hc-login-webauthn" if have_keys else "hc-login-totp"
         path = reverse(route, query=query)
@@ -874,10 +873,10 @@ def login_webauthn(request: HttpRequest) -> HttpResponse:
 
     totp_url = None
     if user.profile.totp:
-        totp_url = reverse("hc-login-totp")
-        redirect_url = request.GET.get("next")
-        if _allow_redirect(redirect_url):
-            totp_url += "?next=%s" % redirect_url
+        query = {}
+        if _allow_redirect(request.GET.get("next")):
+            query["next"] = request.GET["next"]
+        totp_url = reverse("hc-login-totp", query=query)
 
     ctx = {
         "options": options,
