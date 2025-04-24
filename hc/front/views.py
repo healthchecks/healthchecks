@@ -1542,10 +1542,7 @@ def add_pd(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     # Simple Install Flow
     if settings.PD_APP_ID:
         state = token_urlsafe()
-
-        redirect_url = absolute_reverse("hc-add-pd-complete")
-        redirect_url += "?" + urlencode({"state": state})
-
+        redirect_url = absolute_reverse("hc-add-pd-complete", query={"state": state})
         install_url = "https://app.pagerduty.com/install/integration?" + urlencode(
             {"app_id": settings.PD_APP_ID, "redirect_url": redirect_url, "version": "2"}
         )

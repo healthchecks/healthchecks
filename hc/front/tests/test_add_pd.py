@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from urllib.parse import quote_plus
 from django.test.utils import override_settings
 
 from hc.api.models import Channel
@@ -52,9 +53,13 @@ class AddPdTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    @override_settings(PD_APP_ID="FOOBAR")
+    @override_settings(PD_APP_ID="FOOBAR", SITE_ROOT="http://example.com")
     def test_it_handles_pd_app_id(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "app_id=FOOBAR")
+
+        redirect_url_fragment = "http://example.com/integrations/add_pagerduty/?state="
+        self.assertContains(r, quote_plus(redirect_url_fragment))
+
         self.assertIn("pagerduty", self.client.session)
