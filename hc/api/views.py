@@ -819,11 +819,11 @@ def badge(
         label = tag
 
     status, total, grace, down = "up", 0, 0, 0
-    uptime_percentage = 100
+    uptime_percentage = 100.0
 
     if with_uptime:
-        uptime_sum = 0
-        total_checks = 0
+        uptime_sum = 0.0
+        total_checks = 0.0
         for check in q:
             if tag != "*" and tag not in check.tags_list():
                 continue
@@ -835,7 +835,7 @@ def badge(
                 uptime_sum += downtimes[0].monthly_uptime() * 100.0
             else:
                 # No downtime means 100% uptime?
-                uptime_sum += 100
+                uptime_sum += 100.0
 
         if total_checks > 0:
             uptime_percentage = uptime_sum / total_checks
