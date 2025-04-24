@@ -943,8 +943,9 @@ class Channel(models.Model):
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
-        submit_url = absolute_reverse("hc-signal-captcha")
-        submit_url += "?" + urlencode({"host": hostname, "challenge": challenge})
+        submit_url = absolute_reverse(
+            "hc-signal-captcha", query={"host": hostname, "challenge": challenge}
+        )
         html_message = f"""
             On host <b>{hostname}</b>, run:<br>
             <pre>manage.py submitchallenge {challenge} CAPTCHA-SOLUTION-HERE</pre><br>
