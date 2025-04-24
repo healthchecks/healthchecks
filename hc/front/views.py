@@ -1931,13 +1931,14 @@ def add_pushover(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         state = token_urlsafe().lower()
 
         failure_url = absolute_reverse("hc-channels", args=[project.code])
-        success_url = absolute_reverse("hc-add-pushover", args=[project.code])
-        success_url += "?" + urlencode(
-            {
+        success_url = absolute_reverse(
+            "hc-add-pushover",
+            args=[project.code],
+            query={
                 "state": state,
                 "prio": request.POST.get("po_priority", "0"),
                 "prio_up": request.POST.get("po_priority_up", "0"),
-            }
+            },
         )
         assert settings.PUSHOVER_SUBSCRIPTION_URL
         subscription_url = (
