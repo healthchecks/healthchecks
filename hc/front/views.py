@@ -1113,8 +1113,8 @@ def copy(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     copied.channel_set.add(*check.channel_set.all())
 
-    url = reverse("hc-details", args=[copied.code])
-    return redirect(url + "?copied")
+    url = reverse("hc-details", args=[copied.code], query={"copied": 1})
+    return redirect(url)
 
 
 def status_single(request: HttpRequest, code: UUID) -> HttpResponse:

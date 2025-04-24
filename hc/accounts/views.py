@@ -704,7 +704,7 @@ def close(request: AuthenticatedHttpRequest) -> HttpResponse:
             user.delete()
 
             request.session.flush()
-            path = reverse("hc-login") + "?account-closed"
+            path = reverse("hc-login", query={"account-closed": 1})
             return redirect(path)
 
     ctx = {}
