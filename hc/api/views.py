@@ -309,7 +309,7 @@ def ping_by_slug(
     request: HttpRequest,
     ping_key: str,
     slug: str,
-    action: str = "success",
+    action: str | None = None,
     exitstatus: int | None = None,
 ) -> HttpResponse:
     created = False
