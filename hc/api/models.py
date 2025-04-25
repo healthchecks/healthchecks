@@ -511,8 +511,7 @@ class Check(models.Model):
             ping.created = frozen_now
             if action in ("start", "fail", "ign", "log"):
                 ping.kind = action
-            elif action == "success":
-                ping.kind = "success" 
+
 
             ping.remote_addr = remote_addr
             ping.scheme = scheme

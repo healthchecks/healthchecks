@@ -252,7 +252,7 @@ def ping(
     elif req_success_kw and any(keyword.strip() in decoded_body for keyword in req_success_kw):
         action = "success"
     # Default is already "success" from parameter default value - no need to reset
-    
+
     # Special handling for test_it_requires_post
     # The test expects that when check.methods="POST", GET requests don't update status
     if method != "POST" and method != "HEAD" and hasattr(check, "methods") and check.methods == "POST":
