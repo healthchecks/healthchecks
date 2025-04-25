@@ -106,7 +106,8 @@ $(function () {
                 if (data.events) {
                     lastUpdated = data.updated;
                     $("#log-container").html(data.events);
-                    switchDateFormat(lastFormat);
+                      // Make sure to call switchDateFormat only after DOM is updated
+                     setTimeout(() => switchDateFormat(lastFormat), 0);
                 }
 
                 if (data.downtimes) {
@@ -144,25 +145,38 @@ $(function () {
     function switchDateFormat(format) {
         lastFormat = format;
         var currentYear = moment().year();
-
-        document.querySelectorAll("#log tr").forEach(function(row) {
-            var dt = moment.unix(row.dataset.dt).utc();
-            format == "local" ? dt.local() : dt.tz(format);
-            var dateFormat = "MMM D";
-            if (dt.year() != currentYear) {
-                dateFormat = "MMM D, YYYY";
+    
+        const rows = document.querySelectorAll("#log-container table tr");
+        if (!rows.length) return; // no rows to process
+    
+        rows.forEach(function(row) {
+            const dtAttr = row.dataset.dt;
+            if (!dtAttr) return;
+    
+            var dt = moment.unix(dtAttr).utc();
+            format === "local" ? dt.local() : dt.tz(format);
+    
+            var dateFormat = dt.year() !== currentYear ? "MMM D, YYYY" : "MMM D";
+            const formattedDate = dt.format(dateFormat);
+            const formattedTime = dt.format("HH:mm");
+    
+            // Add to cells and tooltip
+            if (row.children[1]) {
+                row.children[1].textContent = formattedDate;
+                row.children[1].title = dt.format("YYYY-MM-DD HH:mm:ss Z");
             }
-
-            row.children[1].textContent = dt.format(dateFormat);
-            row.children[2].textContent = dt.format("HH:mm");
-        })
-
-        // The table is initially hidden to avoid flickering as we convert dates.
-        // Once it's ready, set it to visible:
+    
+            if (row.children[2]) {
+                row.children[2].textContent = formattedTime;
+                row.children[2].title = dt.format("YYYY-MM-DD HH:mm:ss Z");
+            }
+        });
+    
+        // Make table visible after processing
         $("#log").css("visibility", "visible");
     }
-
-
+    
+    
     $("#format-switcher").click(function(ev) {
         var format = ev.target.dataset.format;
         switchDateFormat(format);

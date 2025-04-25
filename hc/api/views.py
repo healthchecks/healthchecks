@@ -229,29 +229,29 @@ def ping(
     if exitstatus is not None and exitstatus != 0:
         action = "fail"
     
-    # Process keywords for body if present
-    if body:
-        # Try to decode for keyword matching
-        if isinstance(body, bytes):
-            try:
-                decoded_body = body.decode("utf-8")
-            except UnicodeDecodeError:
-                decoded_body = body.decode("utf-8", errors="replace")
-        else:
-            decoded_body = body
-            
-        # Get keywords
-        success_keywords = check.success_kw.split(",") if check.success_kw else []
-        failure_keywords = check.failure_kw.split(",") if check.failure_kw else []
-        start_keywords = check.start_kw.split(",") if check.start_kw else []
-            
-        # Apply keyword filtering
-        if success_keywords and any(keyword.strip() in decoded_body for keyword in success_keywords):
-            action = "success"
-        elif failure_keywords and any(keyword.strip() in decoded_body for keyword in failure_keywords):
-            action = "fail"
-        elif start_keywords and any(keyword.strip() in decoded_body for keyword in start_keywords):
-            action = "start"
+    # Decode the request body for keyword matching
+    if isinstance(body, bytes):
+        try:
+            decoded_body = body.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_body = body.decode("utf-8", errors="replace")
+    else:
+        decoded_body = body
+
+    # Retrieve keywords from the Check object
+    req_start_kw = check.req_start_kw.split(",") if check.req_start_kw else []
+    req_success_kw = check.req_success_kw.split(",") if check.req_success_kw else []
+    req_failure_kw = check.req_failure_kw.split(",") if check.req_failure_kw else []
+    # Apply keyword filtering for the request body
+    if req_success_kw and any(keyword.strip() in decoded_body for keyword in req_success_kw):
+        action = "success"
+    elif req_failure_kw and any(keyword.strip() in decoded_body for keyword in req_failure_kw):
+        action = "fail"
+    elif req_start_kw and any(keyword.strip() in decoded_body for keyword in req_start_kw):
+        action = "start"
+    else:
+        action = "unknown"
+
     
     # Special handling for test_it_requires_post
     # The test expects that when check.methods="POST", GET requests don't update status
