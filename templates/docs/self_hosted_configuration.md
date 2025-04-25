@@ -120,8 +120,8 @@ ALLOWED_HOSTS=first.example.org,second.example.org
 ```
 
 Aside from the comma-separated syntax, this is a standard Django setting.
-Read more about it in the
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts).
+For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#allowed-hosts).
 
 ## `APPRISE_ENABLED` {: #APPRISE_ENABLED }
 
@@ -146,36 +146,36 @@ The database engine to use. Possible values: `sqlite`, `postgres`, `mysql`.
 
 Default: `0`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#conn-max-age).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#conn-max-age).
 
 ## `DB_HOST` {: #DB_HOST }
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#host).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#host).
 
 ## `DB_NAME` {: #DB_NAME }
 
 Default: `hc` (PostgreSQL, MySQL) or `/path/to/projectdir/hc.sqlite` (SQLite)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#name).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#name).
 
 ## `DB_PASSWORD` {: #DB_PASSWORD }
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#password).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#password).
 
 ## `DB_PORT` {: #DB_PORT }
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#port).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#port).
 
 ## `DB_SSLMODE` {: #DB_SSLMODE }
 
@@ -193,8 +193,8 @@ PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/libpq-connect.
 
 Default: `postgres` (PostgreSQL) or `root` (MySQL)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#user).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#user).
 
 ## `DEBUG` {: #DEBUG }
 
@@ -204,15 +204,15 @@ A boolean that turns on/off debug mode.
 
 _Never run a Healthchecks instance in production with the debug mode turned on!_
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#debug).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#debug).
 
 ## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
 
 Default: `healthchecks@example.org`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#default-from-email).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#default-from-email).
 
 ## `DISCORD_CLIENT_ID` {: #DISCORD_CLIENT_ID }
 
@@ -243,43 +243,43 @@ The Discord Client Secret, required by the Discord integration. Look it up at
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#email-host).
 
 ## `EMAIL_HOST_PASSWORD` {: #EMAIL_HOST_PASSWORD }
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#email-host-password).
 
 ## `EMAIL_HOST_USER` {: #EMAIL_HOST_USER }
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-user).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#email-host-user).
 
 ## `EMAIL_PORT` {: #EMAIL_PORT }
 
 Default: `587`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-port).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#email-port).
 
 ## `EMAIL_USE_TLS` {: #EMAIL_USE_TLS }
 
 Default: `True`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-tls).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#email-use-tls).
 
 ## `EMAIL_USE_SSL` {: #EMAIL_USE_SSL}
 
 Default: `False`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-ssl).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#email-use-ssl).
 
 ## `EMAIL_USE_VERIFICATION` {: #EMAIL_USE_VERIFICATION }
 
@@ -709,8 +709,8 @@ Default: `---`
 A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key).
+This is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#secret-key).
 
 ## `SECURE_PROXY_SSL_HEADER` {: #SECURE_PROXY_SSL_HEADER }
 
@@ -746,8 +746,8 @@ with two elements instead:
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ```
 
-This environment variable maps to a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header).
+This environment variable maps to a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#secure-proxy-ssl-header).
 
 ## `SHELL_ENABLED` {: #SHELL_ENABLED }
 
@@ -861,13 +861,12 @@ then Healthchecks automatically sets the following additional Django settings:
 
 * <code>LOGIN_URL=<b>/prefix</b>/accounts/login/</code>. Required
 for correct redirection to a log-in page when an unauthenticated user requests a
-page that requires authentication. `LOGIN_URL` is a standard Django setting, read more
-about it in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#login-url).
+page that requires authentication. `LOGIN_URL` is a standard Django setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#login-url).
 * <code>STATIC_URL=<b>/prefix</b>/static/</code>. Required for correct
 URL generation to static files (JS, CSS, images). `STATIC_URL` is a standard Django
-setting, read more about it in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#static-url).
+setting. For more information, see the
+[Django documentation](https://docs.djangoproject.com/en/5.2/ref/settings/#static-url).
 
 **On using `local_settings.py`:** Healthchecks only sets the above additional settings
 if you specify `SITE_ROOT` via an environment variable. If you instead specify it in
@@ -1043,9 +1042,9 @@ Required by the WhatsApp integration.
 Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:
 
-````
-The check “{{1}}” is DOWN.
-````
+```
+The check "{{1}}" is DOWN.
+```
 
 You can tweak the message contents as needed, but make sure it has a single placeholder
 similar to the above example.
@@ -1060,9 +1059,9 @@ Required by the WhatsApp integration.
 Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:
 
-````
-The check “{{1}}” is now UP.
-````
+```
+The check "{{1}}" is now UP.
+```
 
 You can tweak the message contents as needed, but make sure it has a single placeholder
 similar to the above example.

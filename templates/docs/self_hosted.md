@@ -9,8 +9,8 @@ Healthchecks instance yourself.
 The building blocks are:
 
 * Python 3.10+
-* Django 5.1
-* PostgreSQL or MySQL
+* Django 5.2
+* PostgreSQL, MySQL or MariaDB
 
 ## Setting Up for Development
 
@@ -104,8 +104,8 @@ EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
 ```
 
-You can read more about handling outbound email in the Django documentation,
-[Sending Email](https://docs.djangoproject.com/en/4.2/topics/email/) section.
+For more information, have a look at Django documentation,
+[Sending Email](https://docs.djangoproject.com/en/5.2/topics/email/) section.
 
 ## Receiving Emails
 

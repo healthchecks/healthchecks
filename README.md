@@ -1,7 +1,8 @@
-# Healthchecks
+# Healthchecks JRE Fork
 
-[![Tests](https://github.com/healthchecks/healthchecks/actions/workflows/tests.yml/badge.svg)](https://github.com/healthchecks/healthchecks/actions/workflows/tests.yml)
-[![Coverage Status](https://coveralls.io/repos/healthchecks/healthchecks/badge.svg?branch=master&service=github)](https://coveralls.io/github/healthchecks/healthchecks?branch=master)
+This is a JRE-optimized fork of the [Healthchecks](https://github.com/healthchecks/healthchecks) project.
+
+[![Tests](https://github.com/jr551/healthchecks-jre/actions/workflows/tests.yml/badge.svg)](https://github.com/jr551/healthchecks-jre/actions/workflows/tests.yml)
 
 Healthchecks is a cron job monitoring service. It listens for HTTP requests
 and email messages ("pings") from your cron jobs and scheduled tasks ("checks").
@@ -14,7 +15,7 @@ team management features: projects, team members, read-only access.
 The building blocks are:
 
 * Python 3.10+
-* Django 5.1
+* Django 5.2
 * PostgreSQL, MySQL or MariaDB
 
 Healthchecks is licensed under the BSD 3-clause license.
@@ -141,7 +142,7 @@ Healthchecks reads configuration from environment variables. See the
 you can set via environment variables.
 
 In addition, Healthchecks reads settings from the `hc/local_settings.py` file if it
-exists. You can set or override any [standard Django setting](https://docs.djangoproject.com/en/5.1/ref/settings/)
+exists. You can set or override any [standard Django setting](https://docs.djangoproject.com/en/5.2/ref/settings/)
 in this file. You can copy the provided `hc/local_settings.py.example` as
 `hc/local_settings.py` and use it as a starting point.
 
@@ -191,7 +192,7 @@ environment variables:
     ```
 
 For more information, have a look at Django documentation,
-[Sending Email](https://docs.djangoproject.com/en/4.2/topics/email/) section.
+[Sending Email](https://docs.djangoproject.com/en/5.2/topics/email/) section.
 
 ## Receiving Emails
 
@@ -538,15 +539,15 @@ Here is a non-exhaustive list of pointers and things to check before launching a
 in production.
 
 * Environment variables, settings.py and local_settings.py.
-  * [DEBUG](https://docs.djangoproject.com/en/4.2/ref/settings/#debug). Make sure it is
+  * [DEBUG](https://docs.djangoproject.com/en/5.2/ref/settings/#debug). Make sure it is
     set to `False`.
-  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts).
+  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/5.2/ref/settings/#allowed-hosts).
     Make sure it contains the correct domain name you want to use.
   * Server Errors. When DEBUG=False, Django will not show detailed error pages, and
     will not print exception tracebacks to standard output. To receive exception
     tracebacks in email, review and edit the
-    [ADMINS](https://docs.djangoproject.com/en/4.2/ref/settings/#admins) and
-    [SERVER_EMAIL](https://docs.djangoproject.com/en/4.2/ref/settings/#server-email)
+    [ADMINS](https://docs.djangoproject.com/en/5.2/ref/settings/#admins) and
+    [SERVER_EMAIL](https://docs.djangoproject.com/en/5.2/ref/settings/#server-email)
     settings. Consider setting up exception logging with [Sentry](https://sentry.io/for/django/).
 * Management commands that need to be run during each deployment.
   * `manage.py compress` – creates combined JS and CSS bundles and

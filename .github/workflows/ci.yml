@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+        db: [sqlite, postgres, mysql, mariadb]
+        include:
+          - db: postgres
+            db_user: runner
+            db_password: ""
+          - db: mysql
+            db_user: root
+            db_password: root
+          - db: mariadb
+            db_user: root
+            db_password: ""
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Start MySQL
+      if: matrix.db == 'mysql'
+      run: sudo systemctl start mysql.service
+
+    - name: Start PostgreSQL
+      if: matrix.db == 'postgres'
+      run: |
+        sudo systemctl start postgresql.service
+        sudo -u postgres createuser -s runner
+
+    - name: Start MariaDB
+      if: matrix.db == 'mariadb'
+      uses: ankane/setup-mariadb@v1
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install apprise minio mysqlclient coverage coveralls
+
+    - name: Run Tests
+      env:
+        DB: ${{ matrix.db }}
+        DB_USER: ${{ matrix.db_user }}
+        DB_PASSWORD: ${{ matrix.db_password }}
+        SECRET_KEY: dummy-key
+      run: |
+        coverage run --omit=*/tests/*,*/migrations/* --source=hc manage.py test
+        coverage report -m
+
+    - name: Upload Coverage
+      if: matrix.python-version == '3.11' && matrix.db == 'sqlite'
+      run: coveralls --service=github
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  mypy:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install Dependencies
+      run: |
+        sudo apt-get update -qq
+        sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install apprise braintree minio
+        pip install mypy==1.13.0 types-braintree types-pycurl==7.45.2.20240311 types-Markdown types-pygments
+        pip install git+https://github.com/typeddjango/django-stubs.git@c3b4a7a7189ce7591b097ba54287e0d9c956fafe
+        touch hc/local_settings.py
+
+    - name: Run Mypy
+      run: mypy --strict hc
+
+  docker:
+    runs-on: ubuntu-24.04
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build and test Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: docker/Dockerfile
+        load: true
+        tags: healthchecks-jre:test
+        platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
+
+    - name: Run Docker container
+      run: |
+        docker run -d --name healthchecks -p 8000:8000 healthchecks-jre:test
+        sleep 10
+        curl -f http://localhost:8000/ 

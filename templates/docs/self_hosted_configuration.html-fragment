@@ -107,9 +107,8 @@ them all in <code>ALLOWED_HOSTS</code>, separated by commas:</p>
 <div class="highlight"><pre><span></span><code><span class="na">ALLOWED_HOSTS</span><span class="o">=</span><span class="s">first.example.org,second.example.org</span>
 </code></pre></div>
 
-<p>Aside from the comma-separated syntax, this is a standard Django setting.
-Read more about it in the
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#allowed-hosts">Django documentation</a>.</p>
 <h2 id="APPRISE_ENABLED"><code>APPRISE_ENABLED</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off the <a href="https://github.com/caronc/apprise">Apprise</a>
@@ -123,24 +122,24 @@ integration.</p>
 <p>The database engine to use. Possible values: <code>sqlite</code>, <code>postgres</code>, <code>mysql</code>.</p>
 <h2 id="DB_CONN_MAX_AGE"><code>DB_CONN_MAX_AGE</code></h2>
 <p>Default: <code>0</code></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#conn-max-age">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#conn-max-age">Django documentation</a>.</p>
 <h2 id="DB_HOST"><code>DB_HOST</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#host">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#host">Django documentation</a>.</p>
 <h2 id="DB_NAME"><code>DB_NAME</code></h2>
 <p>Default: <code>hc</code> (PostgreSQL, MySQL) or <code>/path/to/projectdir/hc.sqlite</code> (SQLite)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#name">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#name">Django documentation</a>.</p>
 <h2 id="DB_PASSWORD"><code>DB_PASSWORD</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#password">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#password">Django documentation</a>.</p>
 <h2 id="DB_PORT"><code>DB_PORT</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#port">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#port">Django documentation</a>.</p>
 <h2 id="DB_SSLMODE"><code>DB_SSLMODE</code></h2>
 <p>Default: <code>prefer</code></p>
 <p>PostgreSQL-specific, <a href="https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-SSLMODE">details</a></p>
@@ -149,18 +148,18 @@ integration.</p>
 <p>PostgreSQL-specific, <a href="https://www.postgresql.org/docs/10/libpq-connect.html#LIBPQ-CONNECT-TARGET-SESSION-ATTRS">details</a></p>
 <h2 id="DB_USER"><code>DB_USER</code></h2>
 <p>Default: <code>postgres</code> (PostgreSQL) or <code>root</code> (MySQL)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#user">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#user">Django documentation</a>.</p>
 <h2 id="DEBUG"><code>DEBUG</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off debug mode.</p>
 <p><em>Never run a Healthchecks instance in production with the debug mode turned on!</em></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#debug">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#debug">Django documentation</a>.</p>
 <h2 id="DEFAULT_FROM_EMAIL"><code>DEFAULT_FROM_EMAIL</code></h2>
 <p>Default: <code>healthchecks@example.org</code></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#default-from-email">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#default-from-email">Django documentation</a>.</p>
 <h2 id="DISCORD_CLIENT_ID"><code>DISCORD_CLIENT_ID</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Discord Client ID, required by the Discord integration.</p>
@@ -182,28 +181,28 @@ integration.</p>
 <a href="https://discordapp.com/developers/applications/me">https://discordapp.com/developers/applications/me</a>.</p>
 <h2 id="EMAIL_HOST"><code>EMAIL_HOST</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#email-host">Django documentation</a>.</p>
 <h2 id="EMAIL_HOST_PASSWORD"><code>EMAIL_HOST_PASSWORD</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#email-host-password">Django documentation</a>.</p>
 <h2 id="EMAIL_HOST_USER"><code>EMAIL_HOST_USER</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-user">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#email-host-user">Django documentation</a>.</p>
 <h2 id="EMAIL_PORT"><code>EMAIL_PORT</code></h2>
 <p>Default: <code>587</code></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-port">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#email-port">Django documentation</a>.</p>
 <h2 id="EMAIL_USE_TLS"><code>EMAIL_USE_TLS</code></h2>
 <p>Default: <code>True</code></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-tls">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#email-use-tls">Django documentation</a>.</p>
 <h2 id="EMAIL_USE_SSL"><code>EMAIL_USE_SSL</code></h2>
 <p>Default: <code>False</code></p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-ssl">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#email-use-ssl">Django documentation</a>.</p>
 <h2 id="EMAIL_USE_VERIFICATION"><code>EMAIL_USE_VERIFICATION</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off a verification step when adding an email integration.</p>
@@ -497,8 +496,8 @@ use unencrypted HTTP requests, set this value to <code>False</code>.</p>
 <p>Default: <code>---</code></p>
 <p>A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.</p>
-<p>This is a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#secret-key">Django documentation</a>.</p>
 <h2 id="SECURE_PROXY_SSL_HEADER"><code>SECURE_PROXY_SSL_HEADER</code></h2>
 <p>Default: <code>None</code></p>
 <p>Comma-separated HTTP header name and value that signifies a request is secure
@@ -524,8 +523,8 @@ with two elements instead:</p>
 <span class="na">SECURE_PROXY_SSL_HEADER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">(&quot;HTTP_X_FORWARDED_PROTO&quot;, &quot;https&quot;)</span>
 </code></pre></div>
 
-<p>This environment variable maps to a standard Django setting, read more in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header">Django documentation</a>.</p>
+<p>For more information, see the
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#secure-proxy-ssl-header">Django documentation</a>.</p>
 <h2 id="SHELL_ENABLED"><code>SHELL_ENABLED</code></h2>
 <p>Default: <code>False</code></p>
 <p>A boolean that turns on/off the "Shell Commands" integration.</p>
@@ -608,11 +607,11 @@ then Healthchecks automatically sets the following additional Django settings:</
 for correct redirection to a log-in page when an unauthenticated user requests a
 page that requires authentication. <code>LOGIN_URL</code> is a standard Django setting, read more
 about it in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#login-url">Django documentation</a>.</li>
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#login-url">Django documentation</a>.</li>
 <li><code>STATIC_URL=<b>/prefix</b>/static/</code>. Required for correct
 URL generation to static files (JS, CSS, images). <code>STATIC_URL</code> is a standard Django
 setting, read more about it in
-<a href="https://docs.djangoproject.com/en/5.1/ref/settings/#static-url">Django documentation</a>.</li>
+<a href="https://docs.djangoproject.com/en/5.2/ref/settings/#static-url">Django documentation</a>.</li>
 </ul>
 <p><strong>On using <code>local_settings.py</code>:</strong> Healthchecks only sets the above additional settings
 if you specify <code>SITE_ROOT</code> via an environment variable. If you instead specify it in
@@ -729,7 +728,7 @@ Enabled by default.</p>
 Required by the WhatsApp integration.</p>
 <p>Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:</p>
-<div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is DOWN.</span>
+<div class="highlight"><pre><span></span><code><span class="x">The check "{{1}}" is DOWN.</span>
 </code></pre></div>
 
 <p>You can tweak the message contents as needed, but make sure it has a single placeholder
@@ -740,7 +739,7 @@ similar to the above example.</p>
 Required by the WhatsApp integration.</p>
 <p>Meta requires WhatsApp message templates to be pre-registered and approved.
 Create a content template in your Twilio account with the following contents:</p>
-<div class="highlight"><pre><span></span><code><span class="x">The check “</span><span class="cp">{{</span><span class="m">1</span><span class="cp">}}</span><span class="x">” is now UP.</span>
+<div class="highlight"><pre><span></span><code><span class="x">The check "{{1}}" is now UP.</span>
 </code></pre></div>
 
 <p>You can tweak the message contents as needed, but make sure it has a single placeholder

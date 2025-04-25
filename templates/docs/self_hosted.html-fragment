@@ -6,8 +6,8 @@ Healthchecks instance yourself.</p>
 <p>The building blocks are:</p>
 <ul>
 <li>Python 3.10+</li>
-<li>Django 5.1</li>
-<li>PostgreSQL or MySQL</li>
+<li>Django 5.2</li>
+<li>PostgreSQL, MySQL or MariaDB</li>
 </ul>
 <h2>Setting Up for Development</h2>
 <p>You can set up a development environment in a Python
@@ -107,8 +107,8 @@ Example:</p>
 <span class="na">EMAIL_USE_TLS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
 </code></pre></div>
 
-<p>You can read more about handling outbound email in the Django documentation,
-<a href="https://docs.djangoproject.com/en/4.2/topics/email/">Sending Email</a> section.</p>
+<p>For more information, have a look at Django documentation,
+<a href="https://docs.djangoproject.com/en/5.2/topics/email/">Sending Email</a> section.</p>
 <h2>Receiving Emails</h2>
 <p>Healthchecks comes with a <code>smtpd</code> management command, which starts up an
 SMTP listener service. With the command running, you can ping your
