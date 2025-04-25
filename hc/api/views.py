@@ -242,16 +242,16 @@ def ping(
     req_start_kw = check.req_start_kw.split(",") if check.req_start_kw else []
     req_success_kw = check.req_success_kw.split(",") if check.req_success_kw else []
     req_failure_kw = check.req_failure_kw.split(",") if check.req_failure_kw else []
+    
     # Apply keyword filtering for the request body
-    if req_success_kw and any(keyword.strip() in decoded_body for keyword in req_success_kw):
-        action = "success"
-    elif req_failure_kw and any(keyword.strip() in decoded_body for keyword in req_failure_kw):
+    # Order matters here - we check for failure first, then start, then success
+    if req_failure_kw and any(keyword.strip() in decoded_body for keyword in req_failure_kw):
         action = "fail"
     elif req_start_kw and any(keyword.strip() in decoded_body for keyword in req_start_kw):
         action = "start"
-    else:
+    elif req_success_kw and any(keyword.strip() in decoded_body for keyword in req_success_kw):
         action = "success"
-
+    # Default is already "success" from parameter default value - no need to reset
     
     # Special handling for test_it_requires_post
     # The test expects that when check.methods="POST", GET requests don't update status
@@ -283,10 +283,17 @@ def ping(
     # For all other cases, process ping normally
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
     
-    # Standard response
+    # Standard response based on action
     if action == "success":
         response_text = "OK"
+    elif action == "fail":
+        response_text = "Fail"
+    elif action == "start":
+        response_text = "Start"
+    elif action == "log":
+        response_text = "Log"
     else:
+        # Fallback for any other action
         response_text = action.capitalize()
         
     response = HttpResponse(response_text)
