@@ -281,11 +281,7 @@ def ping(
         return response
     
     # For all other cases, process ping normally
-    check.ping(remote_addr, scheme, method, ua, body, action=None , rid=None, exitstatus=None)
-    kind = None if action in (None, "success") else action
-    ping = Ping(owner=self)
-    ping.n = self.n_pings
-    ping.kind = kind
+    check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
     
     # Standard response based on action
     if action == "success":
