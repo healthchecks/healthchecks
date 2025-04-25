@@ -246,7 +246,7 @@ class Profile(models.Model):
                 downtimes.reverse()
                 setattr(check, "past_downtimes", downtimes[:-1])
                 
-            def total_downtime(check: Check):
+            def total_downtime(check: Check) -> int:
             # calculate downtime 
                 return sum(d.duration.total_seconds() for d in getattr(check, "past_downtimes", []))
 
