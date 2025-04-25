@@ -134,9 +134,10 @@ class Profile(models.Model):
         self, membership: Member | None = None, redirect_url: str | None = None
     ) -> None:
         token = self.prepare_token()
-        url = absolute_reverse("hc-check-token", args=[self.user.username, token])
-        if redirect_url:
-            url += "?next=%s" % redirect_url
+        query = {"next": redirect_url} if redirect_url else None
+        url = absolute_reverse(
+            "hc-check-token", args=[self.user.username, token], query=query
+        )
 
         ctx = {
             "button_text": "Log In",
@@ -163,8 +164,11 @@ class Profile(models.Model):
     def send_transfer_request(self, project: Project) -> None:
         token = self.prepare_token()
         settings_path = reverse("hc-project-settings", args=[project.code])
-        url = absolute_reverse("hc-check-token", args=[self.user.username, token])
-        url += f"?next={settings_path}"
+        url = absolute_reverse(
+            "hc-check-token",
+            args=[self.user.username, token],
+            query={"next": settings_path},
+        )
 
         ctx = {
             "button_text": "Project Settings",
@@ -457,7 +461,7 @@ class Project(models.Model):
             return None
 
         frag = urlencode({self.api_key_readonly: str(self)}, quote_via=quote)
-        return reverse("hc-dashboard") + "#" + frag
+        return reverse("hc-dashboard", fragment=frag)
 
     def checks_url(self) -> str:
         return absolute_reverse("hc-checks", args=[self.code])

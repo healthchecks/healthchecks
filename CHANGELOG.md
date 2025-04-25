@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Update "?rid=<uuid>" handling to allow UUIDs with uppercase letters (#1116, @wie-niet)
 - New integration: GitHub issues (#671)
 - Add support for passing Authorization header to Prometheus metrics endpoints
+- Upgrade to Django 5.2
 
 ### Bug Fixes
 - Fix incorrect status value in Webhook integration's $JSON placeholder

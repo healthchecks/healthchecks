@@ -53,7 +53,7 @@
                     <span class="label label-danger">Disabled</span>
                 {% elif ch.kind == "email" and not ch.email_verified %}
                     <span class="label label-default">Unconfirmed</span>
-                {% elif ch.kind == "hipchat" or ch.kind == "pagerteam" %}
+                {% elif ch.kind == "linenotify" %}
                     Retired
                 {% else %}
                     Ready to deliver
@@ -84,6 +84,7 @@
                     {% if ch.kind == "email" and ch.disabled %}Fix&hellip;{% else %}Edit{% endif %}
                 </a>
                 {% endif %}
+                {% if ch.kind != "linenotify" %}
                 <form action="{% url 'hc-channel-test' ch.code %}" method="post">
                     {% csrf_token %}
                     <button
@@ -94,6 +95,7 @@
                         Test!
                     </button>
                 </form>
+                {% endif %}
                 {% if rw %}
                 <button
                     data-kind="{{ ch.get_kind_display }}"

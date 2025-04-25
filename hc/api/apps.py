@@ -114,7 +114,7 @@ def apprise_installed_check(
 
     items = []
     try:
-        import apprise
+        import apprise  # noqa
     except ImportError:
         items.append(
             Warning(

@@ -46,8 +46,14 @@ class SendDeletionScheduledTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Account Deletion Warning")
         self.assertEqual(email.to[0], "alice@example.org")
-        self.assertIn("Owner: alice@example.org", email.body)
-        self.assertIn("Number of checks in the account: 2", email.body)
+
+        self.assertEmailContainsText("Owner: alice@example.org")
+        self.assertEmailContainsText("Number of checks in the account: 2")
+
+        self.assertEmailContainsHtml("Owner: <strong>alice@example.org</strong>")
+        self.assertEmailContainsHtml(
+            "Number of checks in the account: <strong>2</strong>"
+        )
 
     def test_it_sends_notice_to_team_members(self) -> None:
         self.profile.deletion_scheduled_date = now() + td(days=31)

@@ -419,7 +419,6 @@ def index(request: HttpRequest) -> HttpResponse:
     # to move projects with overall_status=down to the front (without changing their
     # relative order)
     projects.sort(key=lambda p: getattr(p, "overall_status") != "down")
-
     ctx = {
         "page": "projects",
         "projects": projects,
@@ -1120,8 +1119,8 @@ def copy(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     copied.channel_set.add(*check.channel_set.all())
 
-    url = reverse("hc-details", args=[copied.code])
-    return redirect(url + "?copied")
+    url = reverse("hc-details", args=[copied.code], query={"copied": 1})
+    return redirect(url)
 
 
 def status_single(request: HttpRequest, code: UUID) -> HttpResponse:
@@ -1551,10 +1550,7 @@ def add_pd(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     # Simple Install Flow
     if settings.PD_APP_ID:
         state = token_urlsafe()
-
-        redirect_url = absolute_reverse("hc-add-pd-complete")
-        redirect_url += "?" + urlencode({"state": state})
-
+        redirect_url = absolute_reverse("hc-add-pd-complete", query={"state": state})
         install_url = "https://app.pagerduty.com/install/integration?" + urlencode(
             {"app_id": settings.PD_APP_ID, "redirect_url": redirect_url, "version": "2"}
         )
@@ -1943,13 +1939,14 @@ def add_pushover(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         state = token_urlsafe().lower()
 
         failure_url = absolute_reverse("hc-channels", args=[project.code])
-        success_url = absolute_reverse("hc-add-pushover", args=[project.code])
-        success_url += "?" + urlencode(
-            {
+        success_url = absolute_reverse(
+            "hc-add-pushover",
+            args=[project.code],
+            query={
                 "state": state,
                 "prio": request.POST.get("po_priority", "0"),
                 "prio_up": request.POST.get("po_priority_up", "0"),
-            }
+            },
         )
         assert settings.PUSHOVER_SUBSCRIPTION_URL
         subscription_url = (

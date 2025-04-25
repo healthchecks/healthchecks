@@ -1,6 +1,0 @@
-{% load humanize %}
-{% if status == "down" %}
-The check "{{ check.name_then_code|safe }}" is DOWN.{% if ping %} Last ping was {{ ping.created|naturaltime }}.{% endif %}
-{% else %}
-The check "{{ check.name_then_code|safe }}" is now UP.
-{% endif %}
