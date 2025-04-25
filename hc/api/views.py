@@ -250,7 +250,7 @@ def ping(
     elif req_start_kw and any(keyword.strip() in decoded_body for keyword in req_start_kw):
         action = "start"
     else:
-        action = "unknown"
+        action = "success"
 
     
     # Special handling for test_it_requires_post
