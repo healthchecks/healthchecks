@@ -3,7 +3,6 @@ from __future__ import annotations
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 
 from hc.accounts.models import Member, Project
@@ -16,12 +15,6 @@ class ProjectTestCase(BaseTestCase):
         super().setUp()
 
         self.url = f"/projects/{self.project.code}/settings/"
-
-    def get_html(self, email: EmailMessage) -> str:
-        assert isinstance(email, EmailMultiAlternatives)
-        html, _ = email.alternatives[0]
-        assert isinstance(html, str)
-        return html
 
     def test_it_checks_access(self) -> None:
         self.client.login(username="charlie@example.org", password="password")
@@ -62,6 +55,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "R" * 32)
         self.assertContains(r, "P" * 22)
         self.assertContains(r, "Prometheus metrics endpoint")
+        self.assertContains(r, f"/tv/#{self.project.api_key_readonly}=Alices%20Project")
 
     def test_it_creates_readonly_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -127,9 +121,7 @@ class ProjectTestCase(BaseTestCase):
         subj = f"You have been invited to join Alice's Project on {settings.SITE_NAME}"
         self.assertEqual(message.subject, subj)
 
-        html = self.get_html(message)
-        self.assertIn("You will be able to manage", message.body)
-        self.assertIn("You will be able to manage", html)
+        self.assertEmailContains("You will be able to manage")
 
     @override_settings(EMAIL_HOST=None)
     def test_it_skips_invite_email_if_email_host_not_set(self) -> None:
@@ -155,11 +147,7 @@ class ProjectTestCase(BaseTestCase):
 
         self.assertEqual(member.role, member.Role.READONLY)
 
-        # And an email should have been sent
-        message = mail.outbox[0]
-        html = self.get_html(message)
-        self.assertIn("You will be able to view", message.body)
-        self.assertIn("You will be able to view", html)
+        self.assertEmailContains("You will be able to view")
 
     def test_it_adds_manager_team_member(self) -> None:
         self.client.login(username="alice@example.org", password="password")

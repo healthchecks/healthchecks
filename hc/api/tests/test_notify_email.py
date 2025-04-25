@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.core import mail
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -48,12 +47,6 @@ class NotifyEmailTestCase(BaseTestCase):
         self.flip.new_status = "down"
         self.flip.reason = "timeout"
 
-    def get_html(self, email: EmailMessage) -> str:
-        assert isinstance(email, EmailMultiAlternatives)
-        html, _ = email.alternatives[0]
-        assert isinstance(html, str)
-        return html
-
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_works(self) -> None:
         self.channel.notify(self.flip)
@@ -72,62 +65,48 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertTrue("List-Unsubscribe-Post" in email.extra_headers)
         self.assertTrue(email.extra_headers["Message-ID"].endswith("@example.org>"))
 
-        html = self.get_html(email)
         # Message
-        self.assertIn("""The check "Daily Backup" has gone down.""", email.body)
-        self.assertIn("grace time passed", email.body)
-        self.assertIn(""""Daily Backup" is DOWN""", html)
-        self.assertIn("grace time passed", html)
+        self.assertEmailContainsText("""The check "Daily Backup" has gone down.""")
+        self.assertEmailContainsHtml(""""Daily Backup" is DOWN""")
+        self.assertEmailContains("grace time passed")
 
         # Description
-        self.assertIn("Line 1\nLine2", email.body)
-        self.assertIn("Line 1<br>Line2", html)
+        self.assertEmailContainsText("Line 1\nLine2")
+        self.assertEmailContainsHtml("Line 1<br>Line2")
 
         # Project
-        self.assertIn("Alices Project", email.body)
-        self.assertIn("Alices Project", html)
+        self.assertEmailContains("Alices Project")
 
         # Tags
-        self.assertIn("foo bar", email.body)
-        self.assertIn("foo</code>", html)
-        self.assertIn("bar</code>", html)
+        self.assertEmailContainsText("foo bar")
+        self.assertEmailContainsHtml("foo</code>")
+        self.assertEmailContainsHtml("bar</code>")
 
         # Period
-        self.assertIn("1 day", email.body)
-        self.assertIn("1 day", html)
+        self.assertEmailContains("1 day")
 
         # Source IP
-        self.assertIn("from 1.2.3.4", email.body)
-        self.assertIn("from 1.2.3.4", html)
+        self.assertEmailContains("from 1.2.3.4")
 
         # Total pings
-        self.assertIn("112233", email.body)
-        self.assertIn("112233", html)
+        self.assertEmailContains("112233")
 
         # Last ping time
-        self.assertIn("an hour ago", email.body)
-        self.assertIn("an hour ago", html)
+        self.assertEmailContains("an hour ago")
 
         # Last ping body
-        self.assertIn("Body Line 1\nBody Line 2", email.body)
-        self.assertIn("Body Line 1<br>Body Line 2", html)
+        self.assertEmailContainsText("Body Line 1\nBody Line 2")
+        self.assertEmailContainsHtml("Body Line 1<br>Body Line 2")
 
-        # Check's code must not be in the html
-        self.assertNotIn(str(self.check.code), html)
-
-        # Check's code must not be in the plain text body
-        self.assertNotIn(str(self.check.code), email.body)
+        # Check's code must not be in the plain text or html
+        self.assertEmailNotContains(str(self.check.code))
 
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_handles_reason_failure(self) -> None:
         self.flip.reason = "fail"
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        self.assertIn("received a failure signal", email.body)
-
-        html = self.get_html(email)
-        self.assertIn("received a failure signal", html)
+        self.assertEmailContains("received a failure signal")
 
     @override_settings(DEFAULT_FROM_EMAIL='"Alerts" <alerts@example.org>')
     def test_it_message_id_generation_handles_angle_brackets(self) -> None:
@@ -146,9 +125,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.ping.save()
 
         self.channel.notify(self.flip)
-
-        html = self.get_html(mail.outbox[0])
-        self.assertIn("Line 1<br>Line2", html)
+        self.assertEmailContainsHtml("Line 1<br>Line2")
 
         code, n = get_object.call_args.args
         self.assertEqual(code, str(self.check.code))
@@ -162,12 +139,9 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("0 18-23,0-8 * * *", email.body)
-        self.assertIn("Europe/Riga", email.body)
-        self.assertIn("<code>0 18-23,0-8 * * *</code>", html)
-        self.assertIn("Europe/Riga", html)
+        self.assertEmailContainsText("0 18-23,0-8 * * *")
+        self.assertEmailContainsHtml("<code>0 18-23,0-8 * * *</code>")
+        self.assertEmailContains("Europe/Riga")
 
     def test_it_shows_oncalendar_schedule(self) -> None:
         self.check.kind = "oncalendar"
@@ -177,12 +151,9 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Mon 2-29", email.body)
-        self.assertIn("Europe/Riga", email.body)
-        self.assertIn("<code>Mon 2-29</code>", html)
-        self.assertIn("Europe/Riga", html)
+        self.assertEmailContainsText("Mon 2-29")
+        self.assertEmailContainsHtml("<code>Mon 2-29</code>")
+        self.assertEmailContains("Europe/Riga")
 
     def test_it_truncates_long_body(self) -> None:
         self.ping.body_raw = b"X" * 10000 + b", and the rest gets cut off"
@@ -190,19 +161,15 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("[truncated]", email.body)
-        self.assertIn("[truncated]", html)
-        self.assertNotIn("the rest gets cut off", html)
+        self.assertEmailContains("[truncated]")
+        self.assertEmailNotContains("the rest gets cut off")
 
     def test_it_handles_missing_ping_object(self) -> None:
         self.ping.delete()
 
         self.channel.notify(self.flip)
 
-        html = self.get_html(mail.outbox[0])
-        self.assertIn("Daily Backup", html)
+        self.assertEmailContainsHtml("Daily Backup")
 
     def test_it_ignores_ping_after_flip(self) -> None:
         self.ping.created = self.flip.created + td(minutes=5)
@@ -210,10 +177,8 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertNotIn("Last ping", email.body)
-        self.assertNotIn("Last Ping", html)
+        self.assertEmailNotContains("Last ping")
+        self.assertEmailNotContains("Last Ping")
 
     def test_it_handles_identical_ping_and_flip_timestamp(self) -> None:
         self.ping.created = self.flip.created
@@ -221,10 +186,8 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Last ping", email.body)
-        self.assertIn("Last Ping", html)
+        self.assertEmailContainsText("Last ping")
+        self.assertEmailContainsHtml("Last Ping")
 
     def test_it_handles_missing_profile(self) -> None:
         self.channel.value = "alice+notifications@example.org"
@@ -235,11 +198,8 @@ class NotifyEmailTestCase(BaseTestCase):
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice+notifications@example.org")
 
-        html = self.get_html(email)
-        self.assertIn("Daily Backup", html)
-
-        self.assertNotIn("Projects Overview", email.body)
-        self.assertNotIn("Projects Overview", html)
+        self.assertEmailContains("Daily Backup")
+        self.assertEmailNotContains("Projects Overview")
 
     def test_it_handles_json_value(self) -> None:
         payload = {"value": "alice@example.org", "up": True, "down": True}
@@ -296,10 +256,7 @@ class NotifyEmailTestCase(BaseTestCase):
         with patch("hc.api.transports.time.sleep"):
             self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("The request body data is being processed", email.body)
-        self.assertIn("The request body data is being processed", html)
+        self.assertEmailContains("The request body data is being processed")
 
     def test_it_shows_ignored_nonzero_exitstatus(self) -> None:
         self.ping.kind = "ign"
@@ -308,10 +265,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Ignored", email.body)
-        self.assertIn("Ignored", html)
+        self.assertEmailContains("Ignored")
 
     def test_it_handles_last_ping_log(self) -> None:
         self.ping.kind = "log"
@@ -319,10 +273,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Log", email.body)
-        self.assertIn("Log", html)
+        self.assertEmailContains("Log")
 
     def test_it_handles_last_ping_exitstatus(self) -> None:
         self.ping.kind = "fail"
@@ -331,10 +282,7 @@ class NotifyEmailTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertIn("Exit status 123", email.body)
-        self.assertIn("Exit status 123", html)
+        self.assertEmailContains("Exit status 123")
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self) -> None:
@@ -361,10 +309,6 @@ tempor incididunt ut labore et dolore magna aliqua.
 
         self.channel.notify(self.flip)
 
-        email = mail.outbox[0]
-        self.assertIn("Lorem ipsum", email.body)
-        self.assertIn("Last ping subject: Foo bar baz", email.body)
-
-        html = self.get_html(email)
-        self.assertIn("Lorem ipsum", html)
-        self.assertInHTML("<b>Last Ping Subject</b><br>Foo bar baz", html)
+        self.assertEmailContains("Lorem ipsum")
+        self.assertEmailContainsText("Last ping subject: Foo bar baz")
+        self.assertEmailContainsHtml("<b>Last Ping Subject</b><br>Foo bar baz")

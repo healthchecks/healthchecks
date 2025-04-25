@@ -25,6 +25,7 @@ class PingTestCase(BaseTestCase):
     def test_it_works(self) -> None:
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.text, "OK")
         self.assertEqual(r.headers["Access-Control-Allow-Origin"], "*")
         self.assertEqual(r.headers["Ping-Body-Limit"], "10000")
 
@@ -88,7 +89,7 @@ class PingTestCase(BaseTestCase):
     def test_it_handles_missing_check(self) -> None:
         r = self.client.get("/ping/07c2f548-9850-4b27-af5d-6c9dc157ec02/")
         self.assertEqual(r.status_code, 404)
-        self.assertEqual(r.content.decode(), "not found")
+        self.assertEqual(r.text, "not found")
 
     def test_it_handles_120_char_ua(self) -> None:
         ua = (

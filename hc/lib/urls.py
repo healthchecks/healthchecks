@@ -13,7 +13,9 @@ def absolute_url(path: str) -> str:
 
 
 def absolute_reverse(
-    viewname: str | Callable[..., HttpResponse], args: Sequence[Any] | None = None
+    viewname: str | Callable[..., HttpResponse],
+    args: Sequence[Any] | None = None,
+    query: dict[str, str] | None = None,
 ) -> str:
     """Generate absolute URL (starting with http[s]://)."""
-    return absolute_url(reverse(viewname, args=args))
+    return absolute_url(reverse(viewname, args=args, query=query))

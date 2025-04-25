@@ -7,7 +7,6 @@ from unittest.mock import Mock, patch
 
 from django.conf import settings
 from django.core import mail
-from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -69,12 +68,6 @@ class SendReportsTestCase(BaseTestCase):
         self.check.status = "down"
         self.check.save()
 
-    def get_html(self, email: EmailMessage) -> str:
-        assert isinstance(email, EmailMultiAlternatives)
-        html, _ = email.alternatives[0]
-        assert isinstance(html, str)
-        return html
-
     def test_it_sends_monthly_report(self) -> None:
         cmd = Command(stdout=Mock())
         found = cmd.handle_one_report()
@@ -91,12 +84,9 @@ class SendReportsTestCase(BaseTestCase):
         self.assertIn("List-Unsubscribe-Post", email.extra_headers)
         self.assertNotIn("X-Bounce-ID", email.extra_headers)
         self.assertEqual(email.subject, "Monthly Report")
-        self.assertIn("This is a monthly report", email.body)
-
-        html = self.get_html(email)
-        self.assertIn("This is a monthly report", html)
-        self.assertIn("Nov. 2019", html)
-        self.assertIn("Dec. 2019", html)
+        self.assertEmailContains("This is a monthly report")
+        self.assertEmailContainsHtml("Nov. 2019")
+        self.assertEmailContainsHtml("Dec. 2019")
 
     def test_it_sends_weekly_report(self) -> None:
         self.profile.reports = "weekly"
@@ -107,12 +97,9 @@ class SendReportsTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Weekly Report")
-        self.assertIn("This is a weekly report", email.body)
-
-        html = self.get_html(email)
-        self.assertIn("This is a weekly report", html)
-        self.assertIn("Dec 30 - Jan 5", html)
-        self.assertIn("Jan 6 - Jan 12", html)
+        self.assertEmailContains("This is a weekly report")
+        self.assertEmailContainsHtml("Dec 30 - Jan 5")
+        self.assertEmailContainsHtml("Jan 6 - Jan 12")
 
     def test_it_handles_positive_utc_offset(self) -> None:
         self.profile.reports = "weekly"
@@ -122,15 +109,13 @@ class SendReportsTestCase(BaseTestCase):
         cmd = Command(stdout=Mock())
         cmd.handle_one_report()
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
         # UTC:      Monday, Jan 13, 2AM.
         # New York: Sunday, Jan 12, 9PM.
         # The report should not contain the Jan 6 - Jan 12 week, because
         # in New York it is the current week.
-        self.assertIn("Dec 23 - Dec 29", html)
-        self.assertIn("Dec 30 - Jan 5", html)
-        self.assertNotIn("Jan 6 - Jan 12", html)
+        self.assertEmailContainsHtml("Dec 23 - Dec 29")
+        self.assertEmailContainsHtml("Dec 30 - Jan 5")
+        self.assertEmailNotContains("Jan 6 - Jan 12")
 
     def test_it_handles_negative_utc_offset(self) -> None:
         self.profile.reports = "weekly"
@@ -140,13 +125,11 @@ class SendReportsTestCase(BaseTestCase):
         cmd = Command(stdout=Mock())
         cmd.handle_one_report()
 
-        email = mail.outbox[0]
-        html = self.get_html(email)
         # UTC:   Monday, Jan 13, 2AM.
         # Tokyo: Monday, Jan 13, 11AM
-        self.assertNotIn("Dec 23 - Dec 29", html)
-        self.assertIn("Dec 30 - Jan 5", html)
-        self.assertIn("Jan 6 - Jan 12", html)
+        self.assertEmailNotContains("Dec 23 - Dec 29")
+        self.assertEmailContainsHtml("Dec 30 - Jan 5")
+        self.assertEmailContainsHtml("Jan 6 - Jan 12")
 
     def test_it_obeys_next_report_date(self) -> None:
         self.profile.next_report_date = CURRENT_TIME + td(days=1)
@@ -207,10 +190,7 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 1)
 
         email = mail.outbox[0]
-        html = self.get_html(email)
-        self.assertNotIn(str(self.check.code), email.body)
-        self.assertNotIn(str(self.check.code), html)
-
+        self.assertEmailNotContains(str(self.check.code))
         self.assertEqual(email.body, NAG_TEXT)
 
     def test_it_obeys_next_nag_date(self) -> None:
@@ -253,13 +233,8 @@ class SendReportsTestCase(BaseTestCase):
         found = cmd.handle_one_nag()
         self.assertTrue(found)
 
-        email = mail.outbox[0]
-        self.assertIn("Foo", email.body)
-        self.assertNotIn("Foobar", email.body)
-
-        html = self.get_html(email)
-        self.assertIn("Foo", html)
-        self.assertNotIn("Foobar", html)
+        self.assertEmailContains("Foo")
+        self.assertEmailNotContains("Foobar")
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self) -> None:

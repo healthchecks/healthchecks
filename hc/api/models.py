@@ -52,7 +52,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "github": ("GitHub", transports.GitHub),
     "gotify": ("Gotify", transports.Gotify),
     "group": ("Group", transports.Group),
-    "linenotify": ("LINE Notify (stops working Apr 2025)", transports.LineNotify),
+    "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
     "matrix": ("Matrix", transports.Matrix),
     "mattermost": ("Mattermost", transports.Mattermost),
     "msteams": ("MS Teams Connector (stops working Jan 2025)", transports.MsTeams),
@@ -954,8 +954,9 @@ class Channel(models.Model):
         subject = "Signal CAPTCHA proof required"
         message = f"Challenge token: {challenge}"
         hostname = socket.gethostname()
-        submit_url = absolute_reverse("hc-signal-captcha")
-        submit_url += "?" + urlencode({"host": hostname, "challenge": challenge})
+        submit_url = absolute_reverse(
+            "hc-signal-captcha", query={"host": hostname, "challenge": challenge}
+        )
         html_message = f"""
             On host <b>{hostname}</b>, run:<br>
             <pre>manage.py submitchallenge {challenge} CAPTCHA-SOLUTION-HERE</pre><br>

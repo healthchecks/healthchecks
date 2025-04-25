@@ -512,6 +512,8 @@ class NotifySignalTestCase(BaseTestCase):
         # It should notify ADMINS
         email = emails["admin@example.org"]
         self.assertEqual(email.subject, "[Django] Signal CAPTCHA proof required")
+        html = self.get_html(email)
+        self.assertIn("challenge=fddc87d7", html)
 
         # It should notify the user
         email = emails["alice@example.org"]

@@ -138,6 +138,13 @@ class Transport:
         return q.last()
 
 
+class RemovedTransport(Transport):
+    """Dummy transport class for obsolete integrations."""
+
+    def is_noop(self, status: str) -> bool:
+        return True
+
+
 class Email(Transport):
     def notify(self, flip: Flip, notification: Notification) -> None:
         if not self.channel.email_verified:
@@ -1393,23 +1400,6 @@ class Spike(HttpTransport):
         }
 
         self.post(url, json=payload, headers=headers)
-
-
-class LineNotify(HttpTransport):
-    URL = "https://notify-api.line.me/api/notify"
-
-    def notify(self, flip: Flip, notification: Notification) -> None:
-        headers = {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": f"Bearer {self.channel.linenotify_token}",
-        }
-        ctx = {
-            "check": flip.owner,
-            "status": flip.new_status,
-            "ping": self.last_ping(flip),
-        }
-        msg = tmpl("linenotify_message.html", **ctx)
-        self.post(self.URL, headers=headers, params={"message": msg})
 
 
 class SignalRateLimitFailure(TransportError):

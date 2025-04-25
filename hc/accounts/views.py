@@ -135,15 +135,12 @@ def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
         # - timestamp, to limit the max time between the auth steps
         request.session["2fa_user"] = [user.id, user.email, int(time.time())]
 
-        if have_keys:
-            path = reverse("hc-login-webauthn")
-        else:
-            path = reverse("hc-login-totp")
+        query = {}
+        if _allow_redirect(request.GET.get("next")):
+            query["next"] = request.GET["next"]
 
-        redirect_url = request.GET.get("next")
-        if _allow_redirect(redirect_url):
-            path += "?next=%s" % redirect_url
-
+        route = "hc-login-webauthn" if have_keys else "hc-login-totp"
+        path = reverse(route, query=query)
         return redirect(path)
 
     auth_login(request, user)
@@ -707,7 +704,7 @@ def close(request: AuthenticatedHttpRequest) -> HttpResponse:
             user.delete()
 
             request.session.flush()
-            path = reverse("hc-login") + "?account-closed"
+            path = reverse("hc-login", query={"account-closed": 1})
             return redirect(path)
 
     ctx = {}
@@ -876,10 +873,10 @@ def login_webauthn(request: HttpRequest) -> HttpResponse:
 
     totp_url = None
     if user.profile.totp:
-        totp_url = reverse("hc-login-totp")
-        redirect_url = request.GET.get("next")
-        if _allow_redirect(redirect_url):
-            totp_url += "?next=%s" % redirect_url
+        query = {}
+        if _allow_redirect(request.GET.get("next")):
+            query["next"] = request.GET["next"]
+        totp_url = reverse("hc-login-totp", query=query)
 
     ctx = {
         "options": options,

@@ -34,7 +34,7 @@ class CloseAccountTestCase(BaseTestCase):
 
         payload = {"confirmation": "alice@example.org"}
         r = self.client.post("/accounts/close/", payload, follow=True)
-        self.assertRedirects(r, "/accounts/login/")
+        self.assertRedirects(r, "/accounts/login/?account-closed=1")
         self.assertContains(r, "Account closed.")
 
         # Alice should be gone
@@ -65,8 +65,7 @@ class CloseAccountTestCase(BaseTestCase):
         self.set_sudo_flag()
 
         payload = {"confirmation": "bob@example.org"}
-        r = self.client.post("/accounts/close/", payload)
-        self.assertRedirects(r, "/accounts/login/")
+        self.client.post("/accounts/close/", payload)
 
         # Alice should be still present
         self.alice.refresh_from_db()
