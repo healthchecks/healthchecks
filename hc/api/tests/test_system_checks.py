@@ -13,7 +13,7 @@ class SystemChecksCase(BaseTestCase):
         ids = [item.id for item in settings_check(None, None)]
         self.assertEqual(ids, ["hc.api.W001"])
 
-    @override_settings(SITE_ROOT="http://surprise.example.com")
+    @override_settings(SITE_ROOT="http://surprise.example.com", ALLOWED_HOSTS=["example.com"])
     def test_it_checks_site_root_host_is_present_in_allowed_hosts(self) -> None:
         ids = [item.id for item in settings_check(None, None)]
         self.assertEqual(ids, ["hc.api.E002"])
