@@ -37,8 +37,9 @@
                     {% endif %}
                     <div>
                         Browser's time zone<br>
-                        <span data-format="local"></span>
+                        <span class="browser-timezone" data-timestamp="{{ ping.created|date:'c' }}"></span>
                     </div>
+                    
                 </div>
 
             </p>

@@ -2,7 +2,7 @@ name: Mypy
 
 on:
     push:
-        branches: [master]
+        branches: [master, minaissue]
     pull_request:
         branches: [master]
 

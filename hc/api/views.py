@@ -229,30 +229,30 @@ def ping(
     if exitstatus is not None and exitstatus != 0:
         action = "fail"
     
-    # Process keywords for body if present
-    if body:
-        # Try to decode for keyword matching
-        if isinstance(body, bytes):
-            try:
-                decoded_body = body.decode("utf-8")
-            except UnicodeDecodeError:
-                decoded_body = body.decode("utf-8", errors="replace")
-        else:
-            decoded_body = body
-            
-        # Get keywords
-        success_keywords = check.success_kw.split(",") if check.success_kw else []
-        failure_keywords = check.failure_kw.split(",") if check.failure_kw else []
-        start_keywords = check.start_kw.split(",") if check.start_kw else []
-            
-        # Apply keyword filtering
-        if success_keywords and any(keyword.strip() in decoded_body for keyword in success_keywords):
-            action = "success"
-        elif failure_keywords and any(keyword.strip() in decoded_body for keyword in failure_keywords):
-            action = "fail"
-        elif start_keywords and any(keyword.strip() in decoded_body for keyword in start_keywords):
-            action = "start"
+    # Decode the request body for keyword matching
+    if isinstance(body, bytes):
+        try:
+            decoded_body = body.decode("utf-8")
+        except UnicodeDecodeError:
+            decoded_body = body.decode("utf-8", errors="replace")
+    else:
+        decoded_body = body
+
+    # Retrieve keywords from the Check object
+    req_start_kw = check.req_start_kw.split(",") if check.req_start_kw else []
+    req_success_kw = check.req_success_kw.split(",") if check.req_success_kw else []
+    req_failure_kw = check.req_failure_kw.split(",") if check.req_failure_kw else []
     
+    # Apply keyword filtering for the request body
+    # Order matters here - we check for failure first, then start, then success
+    if req_failure_kw and any(keyword.strip() in decoded_body for keyword in req_failure_kw):
+        action = "fail"
+    elif req_start_kw and any(keyword.strip() in decoded_body for keyword in req_start_kw):
+        action = "start"
+    elif req_success_kw and any(keyword.strip() in decoded_body for keyword in req_success_kw):
+        action = "success"
+    # Default is already "success" from parameter default value - no need to reset
+
     # Special handling for test_it_requires_post
     # The test expects that when check.methods="POST", GET requests don't update status
     if method != "POST" and method != "HEAD" and hasattr(check, "methods") and check.methods == "POST":
@@ -283,11 +283,18 @@ def ping(
     # For all other cases, process ping normally
     check.ping(remote_addr, scheme, method, ua, body, action, rid, exitstatus)
     
-    # Standard response
+    # Standard response based on action
     if action == "success":
         response_text = "OK"
+    elif action == "fail":
+        response_text = "Fail"
+    elif action == "start":
+        response_text = "Start"
+    elif action == "log":
+        response_text = "Log"
     else:
-        response_text = action.capitalize()
+        # Fallback for any other action
+        response_text = "OK" if action is None else action.capitalize()
         
     response = HttpResponse(response_text)
     
@@ -302,7 +309,7 @@ def ping_by_slug(
     request: HttpRequest,
     ping_key: str,
     slug: str,
-    action: str = "success",
+    action: str | None = None,
     exitstatus: int | None = None,
 ) -> HttpResponse:
     created = False
@@ -323,7 +330,10 @@ def ping_by_slug(
     except Check.MultipleObjectsReturned:
         return HttpResponse("ambiguous slug", status=409)
 
-    response = ping(request, check.code, check, action, exitstatus)
+    action_str = action if action is not None else "success"
+
+
+    response = ping(request, check.code, check, action_str, exitstatus)
     if response.status_code == 200 and created:
         response.content = b"Created"
         response.status_code = 201

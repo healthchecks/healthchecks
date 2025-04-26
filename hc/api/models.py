@@ -512,6 +512,7 @@ class Check(models.Model):
             if action in ("start", "fail", "ign", "log"):
                 ping.kind = action
 
+
             ping.remote_addr = remote_addr
             ping.scheme = scheme
             ping.method = method
