@@ -333,7 +333,7 @@ def ping_by_slug(
     action_str = action if action is not None else "success"
 
 
-    response = ping(request, check.code, check, action, exitstatus)
+    response = ping(request, check.code, check, action_str, exitstatus)
     if response.status_code == 200 and created:
         response.content = b"Created"
         response.status_code = 201
