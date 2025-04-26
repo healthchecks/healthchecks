@@ -330,6 +330,9 @@ def ping_by_slug(
     except Check.MultipleObjectsReturned:
         return HttpResponse("ambiguous slug", status=409)
 
+    action_str = action if action is not None else "success"
+
+
     response = ping(request, check.code, check, action, exitstatus)
     if response.status_code == 200 and created:
         response.content = b"Created"
