@@ -516,7 +516,11 @@ class Mattermost(Slackalike):
         if not settings.MATTERMOST_ENABLED:
             raise TransportError("Mattermost notifications are not enabled.")
 
-        self.post(self.channel.slack_webhook_url, json=self.payload(flip))
+        prepared_payload = self.payload(flip)
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+
+        self.post(self.channel.slack_webhook_url, json=prepared_payload)
 
 
 class Discord(Slackalike):
