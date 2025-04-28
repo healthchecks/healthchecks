@@ -79,6 +79,8 @@ class Spec(BaseModel):
     req_success_kw: str | None = Field(None, max_length=200)
     tags: str | None = None
     timeout: td | None = Field(None, ge=60, le=31536000)
+    min_duration: td | None = Field(None, ge=0, le=31536000)
+    max_duration: td | None = Field(None, ge=0, le=31536000)
     tz: str | None = None
     unique: list[Literal["name", "slug", "tags", "timeout", "grace"]] | None = None
 
@@ -447,6 +449,8 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         "filter_subject",
         "filter_body",
         "grace",
+        "min_duration",
+        "max_duration",
     ):
         v = getattr(spec, key)
         if v is not None and getattr(check, key) != v:
