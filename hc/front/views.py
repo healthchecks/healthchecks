@@ -621,6 +621,8 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.kind = "simple"
         check.timeout = simple_form.cleaned_data["timeout"]
         check.grace = simple_form.cleaned_data["grace"]
+        check.min_duration = simple_form.cleaned_data["min_duration"]
+        check.max_duration = simple_form.cleaned_data["max_duration"]
     elif kind == "cron":
         cron_form = forms.CronForm(request.POST)
         if not cron_form.is_valid():
