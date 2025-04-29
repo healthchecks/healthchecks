@@ -2,7 +2,7 @@ name: Tests
 
 on:
     push:
-        branches: [master, minaissue,benjamin-issue-712-average-execution-time]
+        branches: [master, minaissue, benjamin-issue-712-average-execution-time]
     pull_request:
         branches: [master]
 
