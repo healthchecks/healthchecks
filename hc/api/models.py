@@ -216,6 +216,9 @@ class Check(models.Model):
     success_keywords = models.TextField(blank=True, help_text="Comma-separated list of success keywords.")
     failure_keywords = models.TextField(blank=True, help_text="Comma-separated list of failure keywords.")
 
+    min_duration = models.IntegerField(null=True, default=0)
+    max_duration = models.IntegerField(null=True, default=0)
+
     class Meta:
         indexes = [
             # Index for the alert_after field. Exclude rows with status=down.
