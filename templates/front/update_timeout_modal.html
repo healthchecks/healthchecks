@@ -6,6 +6,8 @@
                 <input type="hidden" name="kind" value="simple" />
                 <input type="hidden" name="timeout" id="update-timeout-timeout" />
                 <input type="hidden" name="grace" id="update-timeout-grace" />
+                <input type="hidden" name="min_duration" id="update-timeout-min-duration" />
+                <input type="hidden" name="max_duration" id="update-timeout-max-duration" />
 
                 <div class="modal-body">
                     <div class="interval-controls">
@@ -37,6 +39,34 @@
                         </select>
                     </div>
                     <div id="grace-slider"></div>
+                    <div class="interval-controls">
+                        <label for="min-duration-value">Min. Duration</label>
+                        <input
+                            id="min-duration-value"
+                            type="number"
+                            min="0"
+                            class="min-duration-input form-control input-lg" />
+                        <select id="min-duration-unit" class="min-duration-input form-control input-lg">
+                            <option value="1">seconds</option>
+                            <option value="60">minutes</option>
+                            <option value="3600">hours</option>
+                        </select>
+                    </div>
+                    
+                    <div class="interval-controls">
+                        <label for="max-duration-value">Max. Duration</label>
+                        <input
+                            id="max-duration-value"
+                            type="number"
+                            min="0"
+                            class="max-duration-input form-control input-lg" />
+                        <select id="max-duration-unit" class="max-duration-input form-control input-lg">
+                            <option value="1">seconds</option>
+                            <option value="60">minutes</option>
+                            <option value="3600">hours</option>
+                            <option value="86400">days</option>
+                        </select>
+                    </div>
 
                     <div class="update-timeout-terms">
                         <p>
@@ -47,6 +77,14 @@
                             <span>Grace Time</span>
                             – When a check is late, <strong>or</strong> has
                             received a "start" signal, how long to wait to send an alert.
+                        </p>
+                        <p>
+                            <span>Min. Duration</span>
+                            – The shortest acceptable execution time between a start ping and a success/fail ping.
+                        </p>
+                        <p>
+                            <span>Max. Duration</span>
+                            – The longest acceptable execution time between a start ping and a success/fail ping.
                         </p>
                     </div>
                 </div>
