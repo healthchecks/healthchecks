@@ -12,6 +12,7 @@ from django.templatetags.static import static
 from django.utils.html import escape, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
+from django.utils.timesince import timesince
 
 from hc.lib.date import format_approx_duration, format_duration, format_hms
 from hc.lib.urls import absolute_url

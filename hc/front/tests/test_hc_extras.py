@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import timedelta as td
+from datetime import timedelta
 from unittest import TestCase
 from urllib.parse import urlparse
 
@@ -28,7 +28,7 @@ class HcExtrasTestCase(TestCase):
         ]
 
         for seconds, expected_result in samples:
-            result = hc_duration(td(seconds=seconds))
+            result = hc_duration(timedelta(seconds=seconds))
             self.assertEqual(result, expected_result)
 
 
