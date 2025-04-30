@@ -470,7 +470,7 @@ class Check(models.Model):
             # lead to a deadlock
             self = Check.objects.select_for_update().get(id=self.id)
             frozen_now = now()
-
+            ping_duration = None
             if self.status == "paused" and self.manual_resume:
                 action = "ign"
 
@@ -489,6 +489,7 @@ class Check(models.Model):
                     if self.last_start_rid == rid:
                         # rid matches: calculate last_duration, clear last_start
                         self.last_duration = self.last_ping - self.last_start
+                        ping_duration = self.last_duration
                         self.last_start = None
                     elif action == "fail" or rid is None:
                         # clear last_start (exit the "running" state) on:
@@ -527,6 +528,7 @@ class Check(models.Model):
                 ping.body_raw = body
             ping.rid = rid
             ping.exitstatus = exitstatus
+            ping.duration = ping_duration
             ping.save()
 
         # Upload ping body to S3 outside the DB transaction, because this operation
@@ -655,6 +657,7 @@ class Ping(models.Model):
     id = models.BigAutoField(primary_key=True)
     n = models.IntegerField(null=True)
     owner = models.ForeignKey(Check, models.CASCADE)
+    duration = models.DurationField(null=True, blank=True)
     created = models.DateTimeField(default=now)
     kind = models.CharField(max_length=6, blank=True, null=True)
     scheme = models.CharField(max_length=10, default="http")
@@ -754,31 +757,15 @@ class Ping(models.Model):
 
         return "Success"
 
-    @cached_property
-    def duration(self) -> td | None:
-        # Return early if this is not a success or failure ping,
-        # or if this is the very first ping:
-        if self.kind not in (None, "", "fail") or self.n == 1:
-            return None
 
-        pings = Ping.objects.filter(owner=self.owner_id)
-        # only look backwards but don't look further than MAX_DURATION in the past
-        pings = pings.filter(id__lt=self.id, created__gte=self.created - MAX_DURATION)
-
-        # Look for a "start" event, with no success/fail event in between:
-        for ping in pings.order_by("-id").only("created", "kind", "rid"):
-            if ping.kind == "start" and ping.rid == self.rid:
-                return self.created - ping.created
-            elif ping.kind in (None, "", "fail") and ping.rid == self.rid:
-                return None
-
-        return None
 
     def formatted_kind_created(self) -> str:
         """Return a string in "Success, 10 minutes" form."""
         # xa0 is non-breaking spaces, we want regular spaces
         created_str = naturaltime(self.created).replace("\xa0", " ")
         return f"{self.get_kind_display()}, {created_str}"
+
+
 
 
 class WebhookSpec(BaseModel):
