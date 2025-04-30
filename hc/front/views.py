@@ -25,7 +25,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.core.exceptions import PermissionDenied
-from django.db.models import Case, Count, F, Q, QuerySet, When
+from django.db.models import Case, Count, F, Q, QuerySet, When, Avg, Min, Max
 from django.db.models.functions import Substr
 from django.http import (
     Http404,
@@ -1014,6 +1014,33 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     _refresh_last_active_date(request)
     check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
+    # Define the period for statistics (e.g., last 30 days)
+    # Use fewer days if the check was created more recently
+    summary_period_days = 30
+    cutoff_date = now() - td(days=summary_period_days)
+    if check.created > cutoff_date:
+        cutoff_date = check.created
+        # Adjust the displayed period based on actual start date
+        summary_period_days = (now() - cutoff_date).days + 1
+
+    # Query relevant pings within the period that have a duration
+    # Assuming 'duration' field exists on Ping model for completed pings
+    relevant_pings = Ping.objects.filter(
+        owner=check,
+        created__gte=cutoff_date,
+        kind__in=[None, "", "fail"],  # Pings marking task completion
+        duration__isnull=False  # Ensure duration is recorded
+    )
+
+    # Calculate statistics using Django ORM aggregation
+    num_pings_for_stats = relevant_pings.count()
+    ping_stats = {}
+    if num_pings_for_stats > 0:
+        ping_stats = relevant_pings.aggregate(
+            avg_duration=Avg('duration'),
+            min_duration=Min('duration'),
+            max_duration=Max('duration')
+        )
     if request.GET.get("urls") in ("uuid", "slug") and rw:
         check.project.show_slugs = request.GET["urls"] == "slug"
         check.project.save()
@@ -1045,6 +1072,9 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "tz": request.profile.tz,
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
+        "ping_stats": ping_stats,  # Pass the whole dict
+        "num_pings_for_stats": num_pings_for_stats,
+        "ping_summary_period_days": summary_period_days,
     }
 
     return render(request, "front/details.html", ctx)
