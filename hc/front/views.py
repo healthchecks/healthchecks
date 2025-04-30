@@ -999,50 +999,23 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.project.show_slugs = request.GET["urls"] == "slug"
         check.project.save()
 
-    # --- Statistics Calculation Block (with DETAILED debugging) ---
-    print(f"\n--- Inside details view STATS BLOCK for Check {check.code} ---")
+    # --- Final Statistics Calculation Block ---
     summary_period_days = 30  # Default period
     cutoff_date = now() - td(days=summary_period_days)
     if check.created > cutoff_date:
         cutoff_date = check.created
         # Adjust the displayed period based on actual start date
-        summary_period_days = (now() - cutoff_date).days + 1 if (now() - cutoff_date).days >= 0 else 1
-    print(f"Cutoff Date for Stats: {cutoff_date}")
+        calculated_days = (now() - cutoff_date).days
+        summary_period_days = calculated_days + 1 if calculated_days >= 0 else 1
 
-    # --- START DETAILED LOGGING ---
-    pings_owner = Ping.objects.filter(owner=check) # Base queryset for the check
-    print(f"Total pings for check: {pings_owner.count()}")
-
-    completion_pings_count = pings_owner.filter(kind__in=[None, "", "fail"]).count()
-    print(f"Total completion pings count (kind is NULL/''/fail): {completion_pings_count}")
-
-    pings_with_duration_count = pings_owner.filter(duration__isnull=False).count()
-    print(f"Total pings with NON-NULL duration count: {pings_with_duration_count}")
-
-    # Pings matching date and kind criteria (BEFORE duration check)
-    completion_pings_in_range = Ping.objects.filter(
-        owner=check,
-        created__gte=cutoff_date,
-        kind__in=[None, "", "fail"]
-    )
-    print(f"Completion pings IN DATE RANGE count: {completion_pings_in_range.count()}")
-
+    # Query for relevant pings using Q objects
     relevant_pings_with_duration = Ping.objects.filter(
         Q(owner=check),
         Q(created__gte=cutoff_date),
-        (Q(kind__isnull=True) | Q(kind="") | Q(kind="fail")),  # Use Q objects for kind
+        (Q(kind__isnull=True) | Q(kind="") | Q(kind="fail")), # Use Q objects for kind
         Q(duration__isnull=False)
     )
     num_pings_for_stats = relevant_pings_with_duration.count()
-    print(f"Pings matching ALL criteria (num_pings_for_stats): {num_pings_for_stats}")
-
-    # --- Also, let's list the kinds and durations of recent pings ---
-    print("--- Recent Ping Details (Kind, Duration from DB) ---")
-    recent_pings_details = Ping.objects.filter(owner=check).order_by('-created')[:10].values('n', 'kind', 'duration', 'created')
-    for p_data in recent_pings_details:
-         print(f"  n={p_data['n']}, kind={repr(p_data['kind'])}, duration={repr(p_data['duration'])}, created={p_data['created']}")
-    print("--- End Recent Ping Details ---")
-    # --- END DETAILED LOGGING ---
 
     ping_stats = {}
     if num_pings_for_stats > 0:
@@ -1051,18 +1024,13 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             min_duration=Min('duration'),
             max_duration=Max('duration')
         )
-
-    print(f"Aggregated ping_stats dictionary: {ping_stats}")
-    print(f"--- End details view STATS BLOCK for Check {check.code} ---\n")
     # --- End Statistics Calculation Block ---
 
-
-    # --- Original view logic continues below ---
+    # --- Fetch channels, tags, etc. ---
     all_channels = check.project.channel_set.order_by("created")
     regular_channels: list[Channel] = []
     group_channels: list[Channel] = []
     for channel in all_channels:
-        # This line requires 'Channel' to be imported from hc.api.models
         channels_list = group_channels if channel.kind == "group" else regular_channels
         channels_list.append(channel)
 
@@ -1071,9 +1039,9 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     for sibling in sibling_checks:
         if sibling.tags:
             all_tags.update(sibling.tags.split(" "))
+    # --- End Fetching ---
 
-    # This requires 'all_timezones' to be imported from hc.lib.tz
-    # This requires the '_common_timezones' helper function defined elsewhere in views.py
+    # --- Prepare Context ---
     ctx = {
         "page": "details",
         "project": check.project,
@@ -1081,20 +1049,20 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "rw": rw,
         "channels": regular_channels,
         "group_channels": group_channels,
-        "enabled_channels": list(check.channel_set.all()), # check.channel_set should work
+        "enabled_channels": list(check.channel_set.all()),
         "common_timezones": _common_timezones(sibling_checks),
         "timezones": all_timezones,
-        "downtimes": check.downtimes(3, request.profile.tz), # Assumes check.downtimes exists
+        "downtimes": check.downtimes(3, request.profile.tz),
         "tz": request.profile.tz,
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
-        # --- Statistics context variables ---
+        # Statistics context variables:
         "ping_stats": ping_stats,
         "num_pings_for_stats": num_pings_for_stats,
         "ping_summary_period_days": summary_period_days,
     }
+    # --- End Context ---
 
-    # This requires 'render' to be imported from django.shortcuts
     return render(request, "front/details.html", ctx)
 
 
