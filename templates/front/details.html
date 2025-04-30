@@ -218,6 +218,26 @@
             {% endif %}
         </div>
 
+        {% if num_pings_for_stats > 0 %}
+          {# Use a class consistent with other blocks, e.g., "details-block" #}
+          <div class="details-block execution-stats-block">
+            <h2>Execution Time Statistics</h2> {# Changed h4 to h2 for consistency #}
+            <p>
+              Summary for the last {{ ping_summary_period_days }} day{{ ping_summary_period_days|pluralize }}
+              ({{ num_pings_for_stats }} measurement{{ num_pings_for_stats|pluralize }}):<br>
+              Average: <strong>{{ ping_stats.avg_duration|hc_duration }}</strong> |
+              Min: <strong>{{ ping_stats.min_duration|hc_duration }}</strong> |
+              Max: <strong>{{ ping_stats.max_duration|hc_duration }}</strong>
+
+            </p>
+          </div>
+        {% else %}
+           <div class="details-block execution-stats-block">
+             <h2>Execution Time Statistics</h2> {# Changed h4 to h2 #}
+             <p>No duration data available for the last {{ ping_summary_period_days }} day{{ ping_summary_period_days|pluralize }}.</p>
+           </div>
+        {% endif %}
+
         <div class="details-block">
             {% if group_channels %}
             <h2>Notification Groups</h2>
@@ -401,6 +421,5 @@
 <script src="{% static 'js/ping_details.js' %}"></script>
 <script src="{% static 'js/details.js' %}"></script>
 <script src="{% static 'js/slug-suggestions.js' %}"></script>
-<!-- <script src="{% static 'js/tooltip.js' %}"></script> -->
 {% endcompress %}
 {% endblock %}

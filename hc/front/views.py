@@ -25,7 +25,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import signing
 from django.core.exceptions import PermissionDenied
-from django.db.models import Case, Count, F, Q, QuerySet, When
+from django.db.models import Case, Count, F, Q, QuerySet, When, Avg, Min, Max
 from django.db.models.functions import Substr
 from django.http import (
     Http404,
@@ -905,16 +905,13 @@ class PingAnnotations(TypedDict):
 
 
 def _get_events(
-    check: Check,
-    page_limit: int,
-    start: datetime,
-    end: datetime,
-    kinds: tuple[str, ...] | None = None,
+        check: Check,
+        page_limit: int,
+        start: datetime,
+        end: datetime,
+        kinds: tuple[str, ...] | None = None,
 ) -> list[Notification | WithAnnotations[Ping, PingAnnotations] | Flip]:
-    # Sorting by "n" instead of "id" is important here. Both give the same
-    # query results, but sorting by "id" can cause postgres to pick
-    # api_ping.id index (slow if the api_ping table is big). Sorting by
-    # "n" works around the problem--postgres picks the api_ping.owner_id index.
+    # Sorting by "n" instead of "id" is important here.
     pq = check.visible_pings.order_by("-n")
     pq = pq.filter(created__gte=start, created__lte=end)
     if kinds is not None:
@@ -923,41 +920,31 @@ def _get_events(
             kinds_filter = kinds_filter | Q(kind__isnull=True) | Q(kind="")
         pq = pq.filter(kinds_filter)
 
-    # Optimization: defer loading body_raw, instead load its first 150 bytes
-    # as "body_raw_preview". This reduces both network I/O to database, and disk I/O
-    # on the database host if the database contains large request bodies.
     pq = pq.defer("body_raw")
     pq = pq.annotate(body_raw_preview=Substr("body_raw", 1, 151))
     pings = list(pq[:page_limit])
 
-    # Optimization: the template will access Ping.duration, which would generate a
-    # SQL query per displayed ping. Since we've already fetched a list of pings,
-    # for some of them we can calculate durations more efficiently, without causing
-    # additional SQL queries:
     starts: dict[UUID | None, datetime | None] = {}
-    num_misses = 0
-    for ping in reversed(pings):
-        if ping.kind == "start":
-            starts[ping.rid] = ping.created
-        elif ping.kind in (None, "", "fail"):
-            if ping.rid not in starts:
-                # We haven't seen a start, success or fail event for this rid.
-                # Will need to fall back to Ping.duration().
-                num_misses += 1
-            else:
-                ping.duration = None
-                matching_start = starts[ping.rid]
-                if matching_start is not None:
-                    if ping.created - matching_start < MAX_DURATION:
-                        ping.duration = ping.created - matching_start
+    # First pass (reversed): Collect the timestamp of the *latest* relevant 'start'
+    # event encountered so far for each rid.
+    for p in reversed(pings):
+        if p.kind == "start":
+            if p.rid not in starts:  # Only store the first 'start' we see for an rid when going backwards
+                starts[p.rid] = p.created
 
-            starts[ping.rid] = None
-
-    # If we will need to fall back to Ping.duration() more than 10 times
-    # then disable duration display altogether:
-    if num_misses > 10:
-        for ping in pings:
-            ping.duration = None
+    # Second pass (reversed): Calculate and assign durations to ping instances
+    for ping_instance in reversed(pings):
+        setattr(ping_instance, 'duration', None)  # Initialize/reset duration attribute on the instance
+        if ping_instance.kind in (None, "", "fail"):
+            if ping_instance.rid in starts:
+                start_ts = starts[ping_instance.rid]
+                if start_ts is not None:  # Check if a potential start exists
+                    delta = ping_instance.created - start_ts
+                    # Ensure duration is positive and within reasonable limits
+                    if delta >= td() and delta < MAX_DURATION:
+                        setattr(ping_instance, 'duration', delta)  # Set duration on the instance
+                        # Mark start as "used" for this rid by setting its timestamp to None
+                        starts[ping_instance.rid] = None
 
     alerts: list[Notification] = []
     if kinds and "notification" in kinds:
@@ -977,7 +964,6 @@ def _get_events(
     # If timestamps are equal, put flips chronologically after pings
     events.sort(key=lambda el: (el.created, isinstance(el, Flip)), reverse=True)
     return events[:page_limit]
-
 
 @login_required
 def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
@@ -1018,6 +1004,34 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.project.show_slugs = request.GET["urls"] == "slug"
         check.project.save()
 
+    # Define the period for statistics (e.g., last 30 days)
+    # Use fewer days if the check was created more recently
+    summary_period_days = 30
+    cutoff_date = now() - td(days=summary_period_days)
+    if check.created > cutoff_date:
+        cutoff_date = check.created
+        # Adjust the displayed period based on actual start date
+        summary_period_days = (now() - cutoff_date).days + 1
+
+    # Query relevant pings within the period that have a duration
+    # Assuming 'duration' field exists on Ping model for completed pings
+    relevant_pings = Ping.objects.filter(
+        owner=check,
+        created__gte=cutoff_date,
+        kind__in=[None, "", "fail"],  # Pings marking task completion
+        duration__isnull=False  # Ensure duration is recorded
+    )
+
+    # Calculate statistics using Django ORM aggregation
+    num_pings_for_stats = relevant_pings.count()
+    ping_stats = {}
+    if num_pings_for_stats > 0:
+        ping_stats = relevant_pings.aggregate(
+            avg_duration=Avg('duration'),
+            min_duration=Min('duration'),
+            max_duration=Max('duration')
+        )
+
     all_channels = check.project.channel_set.order_by("created")
     regular_channels: list[Channel] = []
     group_channels: list[Channel] = []
@@ -1045,10 +1059,14 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "tz": request.profile.tz,
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
+        # --- ADDED statistics context variables ---
+        "ping_stats": ping_stats,
+        "num_pings_for_stats": num_pings_for_stats,
+        "ping_summary_period_days": summary_period_days,
+        # --- END of added context variables ---
     }
 
     return render(request, "front/details.html", ctx)
-
 
 @login_required
 def uncloak(request: AuthenticatedHttpRequest, unique_key: str) -> HttpResponse:
