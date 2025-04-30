@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
+from unittest import mock
 from unittest.mock import Mock, patch
+import uuid
 
 from django.test.utils import override_settings
-from django.utils.timezone import now
+from django.utils import timezone
 
 from hc.api.models import Check, Ping
 from hc.lib.s3 import GetObjectError
@@ -57,18 +59,37 @@ class PingDetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
 
-    def test_it_displays_duration(self) -> None:
+    @mock.patch("hc.api.models.now")  # Patch 'now' where Check.ping uses it
+    def test_it_displays_duration(self, mock_now: mock.Mock) -> None:
+        """Test the ping details view renders the calculated duration."""
         expected_duration = td(minutes=5)
-        end_time = now()
+        # Define times using the mock for precision
+        end_time = timezone.now()  # Use timezone.now() which will be mocked
         start_time = end_time - expected_duration
+        rid = uuid.uuid4()
 
-        Ping.objects.create(owner=self.check, created=start_time, n=1, kind="start")
-        Ping.objects.create(owner=self.check, created=end_time, n=2, kind="")
+        # 1. Simulate the "start" ping
+        mock_now.return_value = start_time
+        self.check.ping("1.2.3.4", "http", "post", "", b"", "start", rid=rid)
+
+        # Reload check state
+        self.check.refresh_from_db()
+
+        # 2. Simulate the "end" ping (this should calculate and save duration)
+        mock_now.return_value = end_time
+        self.check.ping("1.2.3.4", "http", "post", "", b"", "success", rid=rid)
 
         self.client.login(username="alice@example.org", password="password")
+
         r = self.client.get(self.url)
 
-        self.assertContains(r, "5 min 0 sec", status_code=200)
+        # Verify the template rendered the duration correctly.
+        self.assertContains(
+            r,
+            "5 min 0 sec",
+            status_code=200,
+            msg_prefix="The formatted duration string was not found in the response.",
+        )
 
     def test_it_requires_logged_in_user(self) -> None:
         Ping.objects.create(owner=self.check, n=1)
