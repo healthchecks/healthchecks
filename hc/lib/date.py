@@ -23,18 +23,36 @@ WEEK = Unit("week", DAY.nsecs * 7)
 def format_duration(duration: timedelta) -> str:
     remaining_seconds = int(duration.total_seconds())
 
+    # Handle zero or negative duration
+    if remaining_seconds <= 0:
+        return "0 seconds"
+
     result = []
 
-    for unit in (WEEK, DAY, HOUR, MINUTE):
+    # --- Include SECOND in the loop now ---
+    for unit in (WEEK, DAY, HOUR, MINUTE, SECOND):
+        # Skip units larger than the remaining time
+        if remaining_seconds < unit.nsecs:
+            continue
+
+        # Skip weeks if it doesn't divide evenly
         if unit == WEEK and remaining_seconds % unit.nsecs != 0:
-            # Say "8 days" instead of "1 week 1 day"
             continue
 
         v, remaining_seconds = divmod(remaining_seconds, unit.nsecs)
         if v == 1:
-            result.append("1 %s" % unit.name)
+            result.append(f"1 {unit.name}")
         elif v > 1:
-            result.append("%d %s" % (v, unit.plural))
+            result.append(f"{v} {unit.plural}")
+
+        # Optimization: If seconds become 0 after processing a unit, we can stop
+        if remaining_seconds == 0 and unit != SECOND:  # Allow loop to finish for seconds
+            break
+
+    # If the result list is empty after loop (e.g. duration was < 1 second but > 0)
+    # The initial check for <= 0 should handle this, but as a fallback:
+    if not result:
+        return "< 1 second"
 
     return " ".join(result)
 
