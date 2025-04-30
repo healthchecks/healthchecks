@@ -225,10 +225,10 @@
             <p>
               Summary for the last {{ ping_summary_period_days }} day{{ ping_summary_period_days|pluralize }}
               ({{ num_pings_for_stats }} measurement{{ num_pings_for_stats|pluralize }}):<br>
-              Average: <strong>{{ ping_stats.avg_duration|format_duration }}</strong> |
-              Min: <strong>{{ ping_stats.min_duration|format_duration }}</strong> |
-              Max: <strong>{{ ping_stats.max_duration|format_duration }}</strong>
-              {# NOTE: You might need to create a 'format_duration' template filter #}
+              Average: <strong>{{ ping_stats.avg_duration|hc_duration }}</strong> |
+              Min: <strong>{{ ping_stats.min_duration|hc_duration }}</strong> |
+              Max: <strong>{{ ping_stats.max_duration|hc_duration }}</strong>
+
             </p>
           </div>
         {% else %}
