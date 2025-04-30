@@ -621,8 +621,8 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.kind = "simple"
         check.timeout = simple_form.cleaned_data["timeout"]
         check.grace = simple_form.cleaned_data["grace"]
-        check.min_duration = simple_form.cleaned_data.get("min_duration", 0)
-        check.max_duration = simple_form.cleaned_data.get("max_duration", 0)
+        check.min_duration = simple_form.cleaned_data.get("min_duration") or td()
+        check.max_duration = simple_form.cleaned_data.get("max_duration") or td()
     elif kind == "cron":
         cron_form = forms.CronForm(request.POST)
         if not cron_form.is_valid():
@@ -632,8 +632,6 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.schedule = cron_form.cleaned_data["schedule"]
         check.tz = cron_form.cleaned_data["tz"]
         check.grace = cron_form.cleaned_data["grace"]
-        check.min_duration = cron_form.cleaned_data.get("min_duration", 0)
-        check.max_duration = cron_form.cleaned_data.get("max_duration", 0)
     elif kind == "oncalendar":
         oncalendar_form = forms.OnCalendarForm(request.POST)
         if not oncalendar_form.is_valid():
@@ -643,8 +641,6 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.schedule = oncalendar_form.cleaned_data["schedule"]
         check.tz = oncalendar_form.cleaned_data["tz"]
         check.grace = oncalendar_form.cleaned_data["grace"]
-        check.min_duration = oncalendar_form.cleaned_data.get("min_duration", 0)
-        check.max_duration = oncalendar_form.cleaned_data.get("max_duration", 0)
 
     check.alert_after = check.going_down_after()
     if check.status == "up":

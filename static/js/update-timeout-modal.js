@@ -8,6 +8,10 @@ $(function () {
     var graceCronUnit = document.getElementById("update-timeout-grace-cron-unit");
     var graceOncalendar = document.getElementById("update-timeout-grace-oncalendar");
     var graceOncalendarUnit = document.getElementById("update-timeout-grace-oncalendar-unit");
+    var minDuration = document.getElementById("min-duration-value");
+    var minDurationUnit = document.getElementById("min-duration-unit");
+    var maxDuration = document.getElementById("max-duration-value");
+    var maxDurationUnit = document.getElementById("max-duration-unit");
 
 
     $(".rw .timeout-grace").click(function() {
@@ -36,6 +40,28 @@ $(function () {
         graceSlider.noUiSlider.set(this.dataset.grace);
         $("#update-timeout-grace").val(this.dataset.grace);
 
+        // Min Duration
+        if (this.dataset.minDuration) {
+            var parsed = secsToUnits(this.dataset.minDuration);
+            minDuration.value = parsed.value;
+            minDurationUnit.value = parsed.unit;
+            $("#update-timeout-min-duration").val(this.dataset.minDuration);
+        } else {
+            minDuration.value = "";
+            $("#update-timeout-min-duration").val("");
+        }
+        
+        // Max Duration
+        if (this.dataset.maxDuration) {
+            var parsed = secsToUnits(this.dataset.maxDuration);
+            maxDuration.value = parsed.value;
+            maxDurationUnit.value = parsed.unit;
+            $("#update-timeout-max-duration").val(this.dataset.maxDuration);
+        } else {
+            maxDuration.value = "";
+            $("#update-timeout-max-duration").val("");
+        }
+
         // Cron
         cronPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
@@ -62,14 +88,16 @@ $(function () {
     });
 
     var secsToUnits = function(secs) {
-        if (secs % 86400 == 0) {
+        if (secs % 86400 == 0 && secs > 0) {
             return {value: secs / 86400, unit: 86400}
         }
-        if (secs % 3600 == 0) {
+        if (secs % 3600 == 0 && secs > 0) {
             return {value: secs / 3600, unit: 3600}
         }
-
-        return {value: Math.round(secs / 60), unit: 60}
+        if (secs % 60 == 0 && secs > 0) {
+            return {value: secs / 60, unit: 60}
+        }
+        return {value: secs, unit: 1}
     }
 
     var pipLabels = {
@@ -191,11 +219,24 @@ $(function () {
         }
     });
 
+    // Update the hidden field when user changes min duration inputs
+    $("#update-timeout-modal .min-duration-input").on("keyup change", function() {
+        var secs = Math.round(minDuration.value * minDurationUnit.value);
+        $("#update-timeout-min-duration").val(secs || "");
+    });
+
+    // Update the hidden field when user changes max duration inputs
+    $("#update-timeout-modal .max-duration-input").on("keyup change", function() {
+        var secs = Math.round(maxDuration.value * maxDurationUnit.value);
+        $("#update-timeout-max-duration").val(secs || "");
+    });
+
     function showPanel(kind) {
         $("#update-timeout-form").toggle(kind == "simple");
         $("#update-cron-form").toggle(kind == "cron");
         $("#update-oncalendar-form").toggle(kind == "oncalendar");
     }
+    
 
     var cronPreviewHash = "";
     function updateCronPreview() {

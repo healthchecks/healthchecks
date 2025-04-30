@@ -212,7 +212,9 @@
                     data-timeout="{{ check.timeout.total_seconds|floatformat:'0' }}"
                     data-grace="{{ check.grace.total_seconds|floatformat:'0' }}"
                     data-schedule="{{ check.schedule }}"
-                    data-tz="{{ check.tz }}">
+                    data-tz="{{ check.tz }}"
+                    {% if check.min_duration %}data-min-duration="{{ check.min_duration.total_seconds|floatformat:'0' }}"{% endif %}
+                    {% if check.max_duration %}data-max-duration="{{ check.max_duration.total_seconds|floatformat:'0' }}"{% endif %}>
                     Change Schedule&hellip;</button>
             </div>
             {% endif %}
