@@ -41,7 +41,7 @@ NEVER = datetime(3000, 1, 1, tzinfo=timezone.utc)
 CHECK_KINDS = (("simple", "Simple"), ("cron", "Cron"), ("oncalendar", "OnCalendar"))
 # max time between start and ping where we will consider both events related:
 MAX_DURATION = td(hours=72)
-REASONS = (("", "Unknown"), ("timeout", "Timeout"), ("fail", "Fail signal"))
+REASONS = (("", "Unknown"), ("timeout", "Timeout"), ("fail", "Fail signal"), ("duration", "Duration out of bounds"))
 
 
 TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
@@ -139,6 +139,8 @@ class CheckDict(TypedDict, total=False):
     timeout: int
     schedule: str
     tz: str
+    min_duration: int
+    max_duration: int
 
 
 @dataclass
@@ -216,8 +218,8 @@ class Check(models.Model):
     success_keywords = models.TextField(blank=True, help_text="Comma-separated list of success keywords.")
     failure_keywords = models.TextField(blank=True, help_text="Comma-separated list of failure keywords.")
 
-    min_duration = models.IntegerField(null=True, default=0)
-    max_duration = models.IntegerField(null=True, default=0)
+    min_duration = models.DurationField(null=True, default=td())
+    max_duration = models.DurationField(null=True, default=td())
 
     class Meta:
         indexes = [
@@ -423,6 +425,8 @@ class Check(models.Model):
             # Optimization: construct badge URLs manually instead of using reverse().
             # This is significantly quicker when returning hundreds of checks.
             "badge_url": f"{settings.SITE_ROOT}/b/2/{self.badge_key}.svg",
+            "min_duration": int(self.min_duration.total_seconds()) if self.min_duration else 0,
+            "max_duration": int(self.max_duration.total_seconds()) if self.max_duration else 0,
         }
 
         if self.last_duration:
@@ -485,11 +489,25 @@ class Check(models.Model):
             else:
                 self.last_ping = frozen_now
                 self.last_duration = None
+                duration_out_of_bounds = False
+                
                 if self.last_start:
                     if self.last_start_rid == rid:
                         # rid matches: calculate last_duration, clear last_start
                         self.last_duration = self.last_ping - self.last_start
                         ping_duration = self.last_duration
+                        
+                        if action != "fail":
+                            if self.min_duration and self.min_duration.total_seconds() > 0:
+                                if self.last_duration.total_seconds() < self.min_duration.total_seconds():
+                                    action = "fail"
+                                    duration_out_of_bounds = True
+                                    
+                            if self.max_duration and self.max_duration.total_seconds() > 0 and not duration_out_of_bounds:
+                                if self.last_duration.total_seconds() > self.max_duration.total_seconds():
+                                    action = "fail"
+                                    duration_out_of_bounds = True
+                        
                         self.last_start = None
                     elif action == "fail" or rid is None:
                         # clear last_start (exit the "running" state) on:
@@ -499,7 +517,7 @@ class Check(models.Model):
 
                 new_status = "down" if action == "fail" else "up"
                 if self.status != new_status:
-                    reason = "fail" if action == "fail" else ""
+                    reason = "duration" if duration_out_of_bounds else ("fail" if action == "fail" else "")
                     self.create_flip(new_status, reason=reason)
                     self.status = new_status
 
@@ -1242,6 +1260,8 @@ class Flip(models.Model):
             return "success signal did not arrive on time, grace time passed"
         if self.reason == "fail":
             return "received a failure signal"
+        if self.reason == "duration":
+            return "execution time was outside of allowed bounds"
         return None
 
 

@@ -140,7 +140,7 @@ class FilteringRulesForm(forms.Form):
 class TimeoutForm(forms.Form):
     timeout = forms.IntegerField(min_value=60, max_value=31536000)
     grace = forms.IntegerField(min_value=60, max_value=31536000)
-    in_duration = forms.IntegerField(min_value=0, max_value=31536000, required=False)
+    min_duration = forms.IntegerField(min_value=0, max_value=31536000, required=False)
     max_duration = forms.IntegerField(min_value=0, max_value=31536000, required=False)
 
     def clean_timeout(self) -> td:
@@ -148,15 +148,15 @@ class TimeoutForm(forms.Form):
 
     def clean_grace(self) -> td:
         return td(seconds=self.cleaned_data["grace"])
-    
+
     def clean_min_duration(self) -> td | None:
-        if self.cleaned_data["min_duration"] is None:
-            return None
+        if not self.cleaned_data.get("min_duration"):
+            return td()
         return td(seconds=self.cleaned_data["min_duration"])
 
     def clean_max_duration(self) -> td | None:
-        if self.cleaned_data["max_duration"] is None:
-            return None
+        if not self.cleaned_data.get("max_duration"):
+            return td()
         return td(seconds=self.cleaned_data["max_duration"])
 
 
