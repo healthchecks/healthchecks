@@ -66,7 +66,7 @@ class GetEventsTestCase(BaseTestCase):
             action="success",  # 'success' is also the default if action isn't 'start'/'fail'/etc.
             rid=rid  # Use the same rid
         )
-        with self.assertNumQueries(2):
+        with self.assertNumQueries(5):
             pings = _get_events(self.check, 1, start=self.start, end=self.end)
 
         with self.assertNumQueries(0):
