@@ -13,3 +13,8 @@ pyotp==2.9.0
 segno==1.6.6
 statsd==4.0.1
 whitenoise==6.9.0
+
+pydantic_core~=2.27.2
+asgiref~=3.8.1
+urllib3~=2.4.0
+freezegun~=1.5.1
