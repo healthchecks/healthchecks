@@ -13,6 +13,8 @@ from django.utils.timezone import now
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check
 from hc.test import BaseTestCase
+from hc.api.models import DowntimeRecord
+
 
 CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=timezone.utc)
 MOCK_NOW = Mock(return_value=CURRENT_TIME)
@@ -235,6 +237,29 @@ class SendReportsTestCase(BaseTestCase):
 
         self.assertEmailContains("Foo")
         self.assertEmailNotContains("Foobar")
+        
+
+    def test_checks_are_sorted_by_downtime(self) -> None:
+        self.profile.reports = "weekly"
+        self.profile.save()
+
+        check1 = Check.objects.create(project=self.project, name="Check 1", status="up")
+        check2 = Check.objects.create(project=self.project, name="Check 2", status="up")
+
+        # Simulate two downtime durations (in seconds)
+        check1.past_downtimes = [DowntimeRecord(boundary=now(), tz="UTC", no_data=False, duration=td(seconds=300), count=1)]
+        check2.past_downtimes = [DowntimeRecord(boundary=now(), tz="UTC", no_data=False, duration=td(seconds=100), count=1)]
+
+        checks = [check1, check2]
+
+        def total_downtime(check):
+            return sum(d.duration.total_seconds() for d in getattr(check, "past_downtimes", []))
+
+        checks.sort(key=total_downtime, reverse=True)
+
+        self.assertEqual(checks[0].name, "Check 1")
+        self.assertEqual(checks[1].name, "Check 2")
+
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_it_sets_custom_mail_from(self) -> None:
