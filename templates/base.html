@@ -140,6 +140,9 @@
                 <li {% if page == 'project' %} class="active" {% endif %}>
                     <a href="{% url 'hc-project-settings' project.code %}">Settings</a>
                 </li>
+            <li {% if page == 'report' %} class="active" {% endif %}>
+                    <a href="{% url 'hc-reports' project.code %}">Reports</a>
+                </li>
             </ul>
             {% endif %}
 

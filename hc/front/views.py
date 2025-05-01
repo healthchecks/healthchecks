@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 import email
 import json
 import logging
@@ -12,6 +13,7 @@ from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
 from email.message import EmailMessage
+from io import StringIO
 from itertools import islice
 from secrets import token_urlsafe
 from typing import Literal, TypedDict, cast
@@ -33,7 +35,7 @@ from django.http import (
     HttpResponse,
     HttpResponseBadRequest,
     HttpResponseForbidden,
-    JsonResponse,
+    JsonResponse, FileResponse,
 )
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import get_template, render_to_string
@@ -69,6 +71,7 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import curl, github
 from hc.lib.badges import get_badge_url
+from hc.lib.date import month_boundaries
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
 
@@ -2872,3 +2875,72 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
 
 
 # Forks: add custom views after this line
+@login_required
+def reports(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project, rw = _get_project_for_user(request, code)
+    ctx = {
+        "project": project,
+        "projects": request.profile.projects(),
+        "page": "reports",
+        "tz": request.profile.tz
+    }
+    if request.method == "POST" or ("months" in request.GET and "_export" in request.GET):
+        # form = forms.ProjectReportForm(request.POST)
+        # if not form.is_valid():
+        #     return HttpResponseBadRequest()
+        ctx['projects'] = {}
+        m = request.POST['months'] if request.method == "POST" else request.GET['months']
+        projects = request.POST.getlist("projects") if request.method == "POST" else request.GET['projects'].split(",")
+        ctx['selected_projects'] = ','.join(projects)
+        months = int(m)
+        ctx["months"] = months
+        boundaries = month_boundaries(months, request.profile.tz, exclude_current_month =True)
+        for project in projects:
+            checks = Check.objects.filter(project=project)
+            for check in checks:
+                downtimes = check.downtimes_by_boundary(boundaries, request.profile.tz)
+                # downtimes_by_boundary returns records in descending order,
+                # but the template will need them in ascending order:
+                # downtimes.reverse()
+                setattr(check, "past_downtimes", downtimes)
+
+            ctx["projects"].update({checks[0].project.name:{'checks':checks, "boundaries":boundaries,
+                        "monthly_or_weekly": "monthly",
+                        }})
+        # boundaries are in descending order, but the template
+        # will need them in ascending order:
+        if "_export" in request.GET:
+                req = StringIO()
+                h = ['Name','Project', 'Status', ]
+                for boundary in boundaries:
+                    b = boundary.strftime("%b %Y")
+                    h.extend([b + " Count", b + " Duration (mins)"])
+                json = []
+                for project in ctx["projects"]:
+                    for check in ctx["projects"][project]["checks"]:
+                        s= check.get_status().upper()
+                        s = "LATE" if s == "GRACE" else s
+                        r= {"Name": check.name if check.name else "unamed",
+                            "Status": s, "Project": project,
+                          }
+                        for d in check.past_downtimes:
+                            current_month = d.boundary.strftime("%b %Y")
+                            if d.count == 0:
+                                r.update({current_month + " Count": "0", current_month + " Duration (mins)": "0"})
+                            else:
+                                r.update({current_month + " Count": d.count, current_month + " Duration (mins)": "%0.2f"%(d.duration.total_seconds()/60) })
+                        json.append(r)
+                if request.GET["_export"] == "csv":
+                    writer = csv.DictWriter(req, fieldnames = h, quotechar = '"', quoting = csv.QUOTE_ALL)
+                    writer.writeheader()
+                    writer.writerows(json)
+                    req.seek(0)
+                    res =  HttpResponse(req.getvalue(), content_type="text/csv")
+                    res['Content-Disposition'] = 'attachment; filename=hc_report.csv'
+                    return res
+                elif request.GET["_export"] == "json":
+                    res  =  JsonResponse(json, safe=False)
+                    res['Content-Disposition'] = 'attachment; filename=hc_report.json'
+                    return res
+        return render(request, "reports/result.html", ctx)
+    return render(request, "front/reports.html", ctx)

@@ -80,13 +80,18 @@ def format_approx_duration(duration: timedelta) -> str:
     return f"{mins} min {secs} sec"
 
 
-def month_boundaries(months: int, tzstr: str) -> list[datetime]:
+def month_boundaries(months: int, tzstr: str, exclude_current_month:bool=False) -> list[datetime]:
     """Return month start times in descending order starting from the current month."""
     tz = ZoneInfo(tzstr)
     result: list[datetime] = []
 
     now_value = now().astimezone(tz)
     y, m = now_value.year, now_value.month
+    if exclude_current_month:
+        m -= 1
+        if m == 0:
+            m = 12
+            y = y - 1
     for x in range(0, months):
         result.append(datetime(y, m, 1, tzinfo=tz))
 
