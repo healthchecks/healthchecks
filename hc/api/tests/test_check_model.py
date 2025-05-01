@@ -4,9 +4,11 @@ from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 from unittest.mock import Mock, patch
+from uuid import uuid4
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+from freezegun import freeze_time
 
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
@@ -16,6 +18,85 @@ MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class CheckModelTestCase(BaseTestCase):
+    @freeze_time("2025-01-01 12:00:00")
+    def test_ping_handles_duration_out_of_bounds(self):
+        """ Test that pings fail if duration is outside min/max bounds. """
+        # Ensure the migration changing min/max_duration to DurationField is applied
+        check = Check.objects.create(project=self.project)
+        check.status = "up"  # Start in 'up' state
+        check.last_ping = now()  # Needs a last_ping for get_grace_start
+        # Set bounds: min 5s, max 15s
+        check.min_duration = td(seconds=5)
+        check.max_duration = td(seconds=15)
+        check.save()
+
+        rid_short = uuid4()
+        rid_long = uuid4()
+        rid_ok = uuid4()
+
+        # --- Test duration BELOW minimum ---
+        with freeze_time("2025-01-01 12:01:00") as ft:
+            check.ping("1.1.1.1", "http", "GET", "", b"", "start", rid_short)
+            ft.tick(td(seconds=3))  # Only 3 seconds pass
+            check.ping("1.1.1.1", "http", "GET", "", b"", "success", rid_short)
+
+        ping_short = Ping.objects.filter(owner=check, rid=rid_short).latest("created")
+        flip_short = check.flip_set.latest("created")
+        check.refresh_from_db()
+
+        self.assertEqual(ping_short.kind, "fail", "Ping kind should be 'fail' for short duration")
+        self.assertEqual(flip_short.reason, "duration", "Flip reason should be 'duration' for short duration")
+        self.assertEqual(flip_short.new_status, "down", "Check status should flip to 'down' for short duration")
+        self.assertEqual(check.status, "down", "Check status in DB should be 'down' after short duration")
+        self.assertIsNotNone(ping_short.duration, "Duration should be saved even on failure")
+        self.assertEqual(ping_short.duration, td(seconds=3), "Saved duration incorrect for short ping")
+
+        # --- Test duration ABOVE maximum ---
+        # Reset check status and last_start for next part
+        check.status = "up"
+        check.last_start = None
+        check.last_start_rid = None
+        check.last_ping = now()  # Reset last_ping time
+        check.save()
+        with freeze_time("2025-01-01 12:02:00") as ft:
+            check.ping("1.1.1.1", "http", "GET", "", b"", "start", rid_long)
+            ft.tick(td(seconds=20))  # 20 seconds pass (more than 15 max)
+            check.ping("1.1.1.1", "http", "GET", "", b"", "success", rid_long)
+
+        ping_long = Ping.objects.filter(owner=check, rid=rid_long).latest("created")
+        flip_long = check.flip_set.latest("created")
+        check.refresh_from_db()
+
+        self.assertEqual(ping_long.kind, "fail", "Ping kind should be 'fail' for long duration")
+        self.assertEqual(flip_long.reason, "duration", "Flip reason should be 'duration' for long duration")
+        self.assertEqual(flip_long.new_status, "down", "Check status should flip to 'down' for long duration")
+        self.assertEqual(check.status, "down", "Check status in DB should be 'down' after long duration")
+        self.assertIsNotNone(ping_long.duration, "Duration should be saved even on failure")
+        self.assertEqual(ping_long.duration, td(seconds=20), "Saved duration incorrect for long ping")
+
+        # --- Test duration WITHIN bounds ---
+        # Reset check status and last_start
+        check.status = "up"
+        check.last_start = None
+        check.last_start_rid = None
+        check.last_ping = now()  # Reset last_ping time
+        check.save()
+        with freeze_time("2025-01-01 12:03:00") as ft:
+            check.ping("1.1.1.1", "http", "GET", "", b"", "start", rid_ok)
+            ft.tick(td(seconds=10))  # 10 seconds pass (between 5 and 15)
+            check.ping("1.1.1.1", "http", "GET", "", b"", "success", rid_ok)
+
+        ping_ok = Ping.objects.filter(owner=check, rid=rid_ok).latest("created")
+        # No new flip should be created if status stays 'up'
+        flip_ok_count = check.flip_set.filter(created__gt=ping_ok.created - td(seconds=1)).count()
+        check.refresh_from_db()
+
+        self.assertIsNone(ping_ok.kind, "Ping kind should be None (success) for OK duration")
+        self.assertEqual(flip_ok_count, 0, "No status flip should occur for OK duration")
+        self.assertEqual(check.status, "up", "Check status in DB should remain 'up' after OK duration")
+        self.assertIsNotNone(ping_ok.duration, "Duration should be saved for OK duration")
+        self.assertEqual(ping_ok.duration, td(seconds=10), "Saved duration incorrect for OK ping")
+
     def test_it_strips_tags(self) -> None:
         check = Check()
 
