@@ -30,7 +30,7 @@ class CheckDetailsStatsTestCase(TestCase):
     # --- END Type hints ---
 
     @classmethod
-    def setUpTestData(cls):
+    def setUpTestData(cls) -> None:
         # Use setUpTestData for objects needed by multiple tests
         # This runs once per class, outside the per-test transaction
         super().setUpTestData() # Keep this call
