@@ -8,26 +8,20 @@ from uuid import uuid4
 from django.test import TestCase # Use standard TestCase
 from django.urls import reverse
 from django.utils.timezone import now
-from django.db.models import Q # Import Q
 
 from django.contrib.auth.models import User
 from hc.accounts.models import Profile, Project
 from hc.api.models import Check, Ping
 
-from hc.front.templatetags.hc_extras import hc_duration
-
 from freezegun import freeze_time
 
 
-# Use standard TestCase which handles transactions differently
 class CheckDetailsStatsTestCase(TestCase):
-    # --- ADD Class-level type hints for attributes set in setUpTestData ---
     alice: User
     profile: Profile
     project: Project
     check: Check
     details_url: str
-    # --- END Type hints ---
 
     @classmethod
     def setUpTestData(cls) -> None:
