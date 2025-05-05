@@ -5,6 +5,8 @@ from urllib.parse import quote, unquote
 from django.urls import include, path, register_converter
 
 from hc.api import views
+from hc.api.views import email_ping_with_slug
+
 
 
 class QuoteConverter:
@@ -50,6 +52,7 @@ api_urls = [
     path("checks/<uuid:code>", views.single, name="hc-api-single"),
     path("checks/<sha1:unique_key>", views.get_check_by_unique_key),
     path("checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
+    path("email-slug/", views.email_ping_with_slug, name="email-ping-slug"),
     path("checks/<uuid:code>/resume", views.resume, name="hc-api-resume"),
     path(
         "notifications/<uuid:code>/status",
@@ -75,6 +78,7 @@ urlpatterns = [
     path("ping/<uuid:code>", views.ping),
     path("ping/<uuid:code>/", include(uuid_urls)),
     path("ping/<slug:ping_key>/<slug:slug>", views.ping_by_slug),
+    path("email-slug/", views.email_ping_with_slug, name="email-ping-slug"),
     path("ping/<slug:ping_key>/<slug:slug>/", include(slug_urls)),
     path("api/v1/", include(api_urls)),
     path("api/v2/", include(api_urls)),

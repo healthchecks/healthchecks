@@ -34,6 +34,8 @@ from django.views.decorators.http import require_POST
 from oncalendar import OnCalendar, OnCalendarError
 from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
 from pydantic_core import PydanticCustomError
+from django.http import HttpResponseBadRequest
+import re
 
 from hc.accounts.models import Profile, Project
 from hc.api.decorators import ApiRequest, authorize, authorize_read, cors
@@ -1032,6 +1034,36 @@ def status(request: HttpRequest) -> HttpResponse:
         c.fetchone()
 
     return HttpResponse("OK")
+@csrf_exempt
+@cors("POST")
+def email_ping_with_slug(request: HttpRequest) -> HttpResponse:
+    """Accepts POST email with slug in the To address: ping+slug@example.com"""
+    if request.method != "POST":
+        return HttpResponseBadRequest("Only POST requests allowed")
+
+    to_email = request.POST.get("to", "")
+    match = re.match(r"ping\+([\w\-]+)@[\w\.-]+", to_email)
+    if not match:
+        return HttpResponseBadRequest("Invalid or missing slug in address")
+
+    slug = match.group(1)
+
+    try:
+        check = Check.objects.get(slug=slug)
+    except Check.DoesNotExist:
+        return HttpResponseBadRequest("No check found with that slug")
+
+    # Register the ping
+    check.ping(
+    scheme="email",
+    method="POST",
+    ua="email-slug-test-form",
+    body=b"(no body)",
+    action="",
+    rid=None,
+    remote_addr=request.META.get("REMOTE_ADDR")
+    )
+    return HttpResponse("Ping received via email slug.", status=200)
 
 
 @csrf_exempt
@@ -1097,3 +1129,4 @@ def bounces(request: HttpRequest) -> HttpResponse:
         profile.save()
 
     return HttpResponse("OK")
+    
