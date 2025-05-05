@@ -24,6 +24,8 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from django.utils.text import slugify
+from django.db import IntegrityError
 from oncalendar import OnCalendar
 from pydantic import BaseModel, Field
 
@@ -184,7 +186,7 @@ class DowntimeRecorder:
 
 class Check(models.Model):
     name = models.CharField(max_length=100, blank=True)
-    slug = models.CharField(max_length=100, blank=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
     tags = models.CharField(max_length=500, blank=True)
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     desc = models.TextField(blank=True)
@@ -634,6 +636,41 @@ class Check(models.Model):
     def downtimes(self, months: int, tz: str) -> list[DowntimeRecord]:
         boundaries = month_boundaries(months, tz)
         return self.downtimes_by_boundary(boundaries, tz)
+    
+
+
+    def save(self, *args, **kwargs):
+        # If there's no slug, generate one
+        if not self.slug and self.name:
+            base_slug = slugify(self.name)
+            slug = base_slug
+            counter = 1
+
+            while Check.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        try:
+            super().save(*args, **kwargs)
+
+        except IntegrityError as e:
+            if "UNIQUE constraint failed: api_check.slug" in str(e):
+                # Regenerate a new unique slug
+                base_slug = self.slug or "check"
+                counter = 1
+                new_slug = f"{base_slug}-{counter}"
+
+                while Check.objects.filter(slug=new_slug).exists():
+                    counter += 1
+                    new_slug = f"{base_slug}-{counter}"
+
+                self.slug = new_slug
+                super().save(*args, **kwargs)
+            else:
+                raise
+
 
     def create_flip(
         self, new_status: str, reason: str = "", mark_as_processed: bool = False
