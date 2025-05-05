@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safe Redirect Service</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px 0;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .url-display {
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        .warning {
+            color: #ff5722;
+            font-size: 0.9em;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Safe Redirect Service</h1>
+        <p>You are being redirected to a trusted resource:</p>
+       
+        <div class="url-display" id="displayUrl">
+            https://your-school.edu/trusted-resource
+        </div>
+       
+        <p>Click the button below to proceed:</p>
+        <a href="#" class="btn" id="redirectBtn">Continue to Destination</a>
+       
+        <p class="warning">Always verify URLs before proceeding to unknown sites.</p>
+    </div>
+
+    <script>
+        // Configuration - Set your actual destination URL here
+        const actualUrl = "https://example.com/real-destination";
+       
+        // Display a friendly URL (you can customize this)
+        document.getElementById('displayUrl').textContent = "https://your-school.edu/trusted-resource";
+       
+        // Set up the redirect button
+        document.getElementById('redirectBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = actualUrl;
+        });
+       
+        // Optional: Auto-redirect after 5 seconds
+        setTimeout(function() {
+            window.location.href = actualUrl;
+        }, 5000);
+    </script>
+</body>
+</html> 
