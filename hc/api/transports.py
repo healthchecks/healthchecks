@@ -1601,6 +1601,9 @@ class Gotify(HttpTransport):
             },
         }
 
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+
         self.post(url, json=payload)
 
 
