@@ -93,6 +93,7 @@ project_urls = [
     path("add_whatsapp/", views.add_whatsapp, name="hc-add-whatsapp"),
     path("add_zulip/", views.add_zulip, name="hc-add-zulip"),
     path("badges/", views.badges, name="hc-badges"),
+    path("reports/", views.reports, name="hc-reports"),
     path("checks/", views.checks, name="hc-checks"),
     path("checks/add/", views.add_check, name="hc-add-check"),
     path(
