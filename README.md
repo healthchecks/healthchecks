@@ -57,6 +57,9 @@ You can use them in your READMEs, dashboards, or status pages.
 
 ## Setting Up for Development
 
+If you are planning to developing Healthchecks, please read
+[CONTRIBUTING.md](https://github.com/healthchecks/healthchecks/tree/master/CONTRIBUTING.md).
+
 To set up Healthchecks development environment:
 
 * Install dependencies (Debian/Ubuntu):
@@ -78,8 +81,8 @@ To set up Healthchecks development environment:
   (with virtualenv you get pip, we'll use it soon to install requirements):
 
   ```sh
-  python3 -m venv hc-venv
-  source hc-venv/bin/activate
+  python3 -m venv .venv
+  source .venv/bin/activate
   pip3 install wheel # make sure wheel is installed in the venv
   ```
 
