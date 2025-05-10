@@ -136,7 +136,9 @@ def _remove_objects(code: UUID, upto_n: int) -> None:
                     statsd.incr("hc.lib.s3.removeObjectsErrors")
                     logger.error("remove_objects error: [%s] %s", e.code, e.message)
         except ReadTimeoutError:
-            logger.exception("ReadTimeoutError while removing %d objects", num_objs)
+            logger.exception(
+                f"ReadTimeoutError while removing {num_objs} objects for {code}"
+            )
             statsd.incr("hc.lib.s3.removeObjectsErrors")
 
 
