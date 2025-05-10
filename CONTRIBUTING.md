@@ -7,7 +7,7 @@ bugfix, please open an issue so we can discuss it first. Otherwise you are riski
 
 ## AI Policy
 
-I do not accept content generated or touched up by LLMs. Do not
+I do not accept content generated or touched up by AI tools. Do not
 submit pull requests or issues produced with the help of LLMs or code generation
 assistants, they will be closed with no discussion. Do not write emails
 generated or rewritten by LLMs, they will be marked as spam.
