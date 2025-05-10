@@ -1189,6 +1189,13 @@ class Apprise(HttpTransport):
 
 
 class MsTeams(HttpTransport):
+    @classmethod
+    def raise_for_response(cls, response: curl.Response) -> NoReturn:
+        permanent = response.status_code == 403
+        raise TransportError(
+            f"Received status code {response.status_code}", permanent=permanent
+        )
+
     def payload(self, flip: Flip) -> JSONDict:
         check = flip.owner
         name = check.name_then_code()

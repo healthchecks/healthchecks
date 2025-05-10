@@ -193,3 +193,11 @@ class NotifyMsTeamsTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         section = payload["sections"][-1]
         self.assertNotIn("Hello", section["text"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_403(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 403
+
+        self.channel.notify(self.flip)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
