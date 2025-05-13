@@ -1,0 +1,71 @@
+{% extends "base_project.html" %}
+{% load compress static hc_extras %}
+
+{% block title %}Project Report - {{ site_name }}{% endblock %}
+
+{% block content %}
+<div id="status-badges" class="row">
+    <div class="col-sm-12">
+        <h1>Report</h1>
+        <p>
+            {{ site_name }} provides reports for the health of the checks during specific interval
+        </p>
+    </div>
+
+    <div class="col-md-6 col-md-offset-3">
+        <h2>Report Generator</h2>
+        {% csrf_token %}
+        <form id="reports-form" method="POST" action="">
+            {% csrf_token %}
+        <div class="form-group">
+            <label for="id_month">Months</label>
+            <select id="id_month" required name="months" class="form-control" autocomplete="off">
+                <option value="" selected="selected">Choose Month</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+            </select>
+        </div>
+            <div class="form-group">
+                <label>Projects</label>
+                <select id="id_projects" required name="projects" class="form-control" autocomplete="off" multiple="multiple">
+                    {% for p in projects %}
+                        <option value="{{ p.id }}" {% if project.id == p.id %}selected{% endif %}>{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+{#            <div class="form-group">#}
+{#            <label for="id_end_date" class="col-sm-3 control-label">Start Date</label>#}
+{#            <input#}
+{#                type="date"#}
+{#                id="id_end_date"#}
+{#                name="end_date"#}
+{#                class="form-control"#}
+{#                required#}
+{#                autocomplete="off"/>#}
+{##}
+{##}
+{#        </div>#}
+            <div class="form-group">
+                <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+{% compress js %}
+<script src="{% static 'js/badges.js' %}"></script>
+{% endcompress %}
+{% endblock %}
