@@ -10,6 +10,7 @@ Please submit additions and corrections
 * [crontask.sh](https://github.com/pforret/crontask) – Bash wrapper to use in crontab. Supports pinging.
 * [task-mon](https://github.com/dimo414/task-mon) – A small binary for notifying Healthchecks.io when a command runs, written in Rust.
 * [hc-monitor](https://gist.github.com/odolbeau/bd6d8eb7910d1289e2687682c8db9275) – Bash wrapper, supports pinging.
+* [pytocron](https://github.com/hartwork/pytocron) – Cron implementation in Python with built-in Healthchecks support.
 
 ## Tools for Self-Hosting
 
