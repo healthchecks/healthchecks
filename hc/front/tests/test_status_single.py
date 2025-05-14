@@ -26,7 +26,7 @@ class StatusSingleTestCase(BaseTestCase):
         self.assertIn("not received any pings yet", doc["events"])
 
     def test_status_text_shows_elapsed_run_time(self) -> None:
-        p = Ping.objects.create(owner=self.check, n=1, kind="start")
+        Ping.objects.create(owner=self.check, n=1, kind="start")
         self.check.status = "new"
         self.check.n_pings = 1
         self.check.last_start = now() - td(minutes=1)

@@ -9,7 +9,6 @@ from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 from typing import Any, TypedDict
-from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
 from cronsim import CronSim

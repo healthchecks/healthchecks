@@ -16,7 +16,7 @@ from hc.lib.tz import all_timezones
 
 class LowercaseEmailField(forms.EmailField):
     def clean(self, value: str) -> str:
-        value = super(LowercaseEmailField, self).clean(value)
+        value = super().clean(value)
         return value.lower()
 
 
@@ -30,7 +30,7 @@ class SignupForm(forms.Form):
 
     def __init__(self, request: HttpRequest):
         self.request = request
-        super(SignupForm, self).__init__(request.POST)
+        super().__init__(request.POST)
 
     def clean_identity(self) -> str:
         if not TokenBucket.authorize_auth_ip(self.request):
@@ -63,7 +63,7 @@ class EmailLoginForm(forms.Form):
 
     def __init__(self, request: HttpRequest | None = None):
         self.request = request
-        super(EmailLoginForm, self).__init__(request.POST if request else None)
+        super().__init__(request.POST if request else None)
 
     def clean_identity(self) -> str:
         v = self.cleaned_data["identity"]
@@ -142,7 +142,7 @@ class ChangeEmailForm(forms.Form):
         v = self.cleaned_data["email"]
         assert isinstance(v, str)
         if User.objects.filter(email=v).exists():
-            raise forms.ValidationError("%s is already registered" % v)
+            raise forms.ValidationError(f"{v} is already registered")
 
         return v
 
@@ -179,7 +179,7 @@ class TotpForm(forms.Form):
 
     def __init__(self, totp: TOTP, post: Any = None):
         self.totp = totp
-        super(TotpForm, self).__init__(post)
+        super().__init__(post)
 
     def clean_code(self) -> str:
         assert isinstance(self.cleaned_data["code"], str)

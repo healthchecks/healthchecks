@@ -470,6 +470,6 @@ class CreateCheckTestCase(BaseTestCase):
             )
 
     def test_it_rejects_long_slug(self) -> None:
-        r = self.post(
+        self.post(
             {"name": "Foo", "slug": "a" * 101}, v=3, expect_fragment="slug is too long"
         )
