@@ -21,16 +21,6 @@ class VerifyEmailTestCase(BaseTestCase):
         channel = Channel.objects.get(code=self.channel.code)
         assert channel.email_verified
 
-    def test_it_works_with_sha1_token(self) -> None:
-        token = self.channel.make_token(use_sha1=True)
-        url = f"/integrations/{self.channel.code}/verify/{token}/"
-
-        r = self.client.get(url)
-        assert r.status_code == 200, r.status_code
-
-        channel = Channel.objects.get(code=self.channel.code)
-        assert channel.email_verified
-
     def test_it_handles_bad_token(self) -> None:
         url = f"/integrations/{self.channel.code}/verify/bad-token/"
 

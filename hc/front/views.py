@@ -1299,7 +1299,7 @@ def update_channel_name(request: AuthenticatedHttpRequest, code: UUID) -> HttpRe
 
 def verify_email(request: HttpRequest, code: UUID, token: str) -> HttpResponse:
     channel = get_object_or_404(Channel, code=code)
-    if channel.make_token() == token or channel.make_token(use_sha1=True) == token:
+    if channel.make_token() == token:
         channel.email_verified = True
         channel.save()
         return render(request, "front/verify_email_success.html")
@@ -1332,7 +1332,7 @@ def unsubscribe_email(
         ctx["autosubmit"] = True
 
     channel = get_object_or_404(Channel, code=code, kind="email")
-    if channel.make_token() != token and channel.make_token(use_sha1=True) != token:
+    if channel.make_token() != token:
         return render(request, "bad_link.html")
 
     if request.method != "POST":

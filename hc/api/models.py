@@ -919,12 +919,9 @@ class Channel(models.Model):
         checks = Check.objects.filter(project=self.project)
         self.checks.add(*checks)
 
-    def make_token(self, use_sha1: bool = False) -> str:
+    def make_token(self) -> str:
         seed = str(self.code) + settings.SECRET_KEY
         seed_bytes = seed.encode()
-        if use_sha1:
-            return hashlib.sha1(seed_bytes).hexdigest()
-
         return hashlib.sha256(seed_bytes).hexdigest()
 
     def send_verify_link(self) -> None:

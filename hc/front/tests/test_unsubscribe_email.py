@@ -32,15 +32,6 @@ class UnsubscribeEmailTestCase(BaseTestCase):
         q = Channel.objects.filter(code=self.channel.code)
         self.assertEqual(q.count(), 0)
 
-    def test_it_handles_sha1_token(self) -> None:
-        signer = TimestampSigner(salt="alerts")
-        token = signer.sign(self.channel.make_token(use_sha1=True))
-        r = self.client.post(f"/integrations/{self.channel.code}/unsub/{token}/")
-        self.assertContains(r, "has been unsubscribed", status_code=200)
-
-        q = Channel.objects.filter(code=self.channel.code)
-        self.assertEqual(q.count(), 0)
-
     def test_fresh_signature_does_not_autosubmit(self) -> None:
         r = self.client.get(self.url)
         self.assertContains(
