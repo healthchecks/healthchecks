@@ -814,7 +814,7 @@ def ping_body(request: AuthenticatedHttpRequest, code: UUID, n: int) -> HttpResp
         raise Http404("not found")
 
     response = HttpResponse(body, content_type="application/octet-stream")
-    filename = "%s-%s" % (check.code, ping.n)
+    filename = f"{check.code}-{ping.n}"
     response["Content-Disposition"] = f'attachment; filename="{filename}.txt"'
     return response
 
@@ -1371,7 +1371,7 @@ def send_test_notification(
         error = channel.notify(dummy_flip, is_test=True)
 
     if error:
-        messages.warning(request, "Could not send a test notification. %s." % error)
+        messages.warning(request, f"Could not send a test notification. {error}.")
     else:
         messages.success(request, "Test notification sent!")
 

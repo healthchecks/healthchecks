@@ -72,8 +72,9 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {}, follow=True)
 
-        self.assertContains(r, "Could not send a test notification")
-        self.assertContains(r, "Email not verified")
+        self.assertContains(
+            r, "Could not send a test notification. Email not verified."
+        )
 
         self.channel.refresh_from_db()
         self.assertEqual(self.channel.last_error, "Email not verified")

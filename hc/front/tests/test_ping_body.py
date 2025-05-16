@@ -20,6 +20,7 @@ class PingBodyTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.content, b"this is body")
+        self.assertTrue(f"{self.check.code}-1.txt" in r.headers["Content-Disposition"])
 
     def test_it_requires_logged_in_user(self) -> None:
         r = self.client.get(self.url)
