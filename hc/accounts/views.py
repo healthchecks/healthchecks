@@ -3,9 +3,10 @@ from __future__ import annotations
 import logging
 import time
 from datetime import timedelta as td
-from secrets import token_urlsafe
 from urllib.parse import urlparse
 from uuid import UUID, uuid4
+import string
+import secrets
 
 import pyotp
 import segno
@@ -44,6 +45,8 @@ from hc.lib.webauthn import CreateHelper, GetHelper
 from hc.payments.models import Subscription
 
 logger = logging.getLogger(__name__)
+
+ALPHABET = string.ascii_letters + string.digits
 
 POST_LOGIN_ROUTES = (
     "hc-checks",
@@ -147,14 +150,12 @@ def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
     return _redirect_after_login(request)
 
 
-def _new_key(nbytes: int = 24, prefix: str = "") -> str:
-    while True:
-        candidate = token_urlsafe(nbytes)
-        if candidate[-1] not in "-_":
-            if prefix:
-                return prefix + "_" +candidate
-            elif candidate[0] not in "-_":
-                return candidate
+def _new_key(len: int = 32, prefix: str = "") -> str:
+    key = ''.join(secrets.choice(ALPHABET) for i in range(len))
+    if prefix:
+        return prefix + "_" + key
+    else:
+        return key
 
 
 def _set_autologin_cookie(response: HttpResponse) -> None:
@@ -386,11 +387,11 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
                 return HttpResponseForbidden()
 
             if request.POST["create_key"] == "api_key":
-                project.api_key = _new_key(24, "RW")
+                project.api_key = _new_key(28, "hcw")  #28 + 4 = 32
             elif request.POST["create_key"] == "api_key_readonly":
-                project.api_key_readonly = _new_key(24, "RO")
+                project.api_key_readonly = _new_key(28, "hcr")  #28 + 4 = 32
             elif request.POST["create_key"] == "ping_key":
-                project.ping_key = _new_key(16)
+                project.ping_key = _new_key(22)
             project.save()
 
             ctx["key_created"] = True
