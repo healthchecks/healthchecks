@@ -65,8 +65,8 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.project.refresh_from_db()
-        self.assertTrue(self.project.api_key_readonly.startswith('RO_'))
-        self.assertEqual(len(self.project.api_key_readonly), 3 + 32)
+        self.assertTrue(self.project.api_key_readonly.startswith('hcr_'))
+        self.assertEqual(len(self.project.api_key_readonly), 32)
         self.assertFalse("b'" in self.project.api_key_readonly)
 
     def test_it_requires_rw_access_to_create_key(self) -> None:
