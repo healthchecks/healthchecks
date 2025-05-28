@@ -150,12 +150,8 @@ def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
     return _redirect_after_login(request)
 
 
-def _new_key(len: int = 32, prefix: str = "") -> str:
-    key = ''.join(secrets.choice(ALPHABET) for i in range(len))
-    if prefix:
-        return prefix + "_" + key
-    else:
-        return key
+def _new_key(nbytes: int = 32, prefix: str = "") -> str:
+    return prefix + ''.join(secrets.choice(ALPHABET) for i in range(nbytes - len(prefix)))
 
 
 def _set_autologin_cookie(response: HttpResponse) -> None:
@@ -387,9 +383,9 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
                 return HttpResponseForbidden()
 
             if request.POST["create_key"] == "api_key":
-                project.api_key = _new_key(28, "hcw")  #28 + 4 = 32
+                project.api_key = _new_key(32, "hcw_")
             elif request.POST["create_key"] == "api_key_readonly":
-                project.api_key_readonly = _new_key(28, "hcr")  #28 + 4 = 32
+                project.api_key_readonly = _new_key(32, "hcr_")
             elif request.POST["create_key"] == "ping_key":
                 project.ping_key = _new_key(22)
             project.save()
