@@ -497,6 +497,12 @@ class Project(models.Model):
         self.api_key_readonly = key_hash
         return key
 
+    def set_ping_key(self) -> None:
+        while True:
+            self.ping_key = token_urlsafe(16)  # 22 character string
+            if "_" not in self.ping_key and "-" not in self.ping_key:
+                break
+
     def compare_api_key(self, key: str) -> bool:
         digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
         if key.startswith("hcr_"):
