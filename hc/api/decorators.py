@@ -94,10 +94,11 @@ def authorize(f: ViewFunc) -> ViewFunc:
         if len(api_key) != 32:
             return error("missing api key", 401)
 
-        request.project = lookup_project(api_key, require_rw=True)
-        if request.project is None:
+        project = lookup_project(api_key, require_rw=True)
+        if project is None:
             return error("wrong api key", 401)
 
+        request.project = project
         request.readonly = False
         request.v = _get_api_version(request)
         return f(request, *args, **kwds)
@@ -116,10 +117,11 @@ def authorize_read(f: ViewFunc) -> ViewFunc:
         if len(api_key) != 32:
             return error("missing api key", 401)
 
-        request.project = lookup_project(api_key, require_rw=False)
-        if request.project is None:
+        project = lookup_project(api_key, require_rw=False)
+        if project is None:
             return error("wrong api key", 401)
 
+        request.project = project
         request.readonly = (
             api_key.startswith("hcr_") or api_key == request.project.api_key_readonly
         )
