@@ -6,6 +6,9 @@ from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
 from uuid import UUID
 
+if TYPE_CHECKING:
+    from hc.api.models import Check
+
 from django import template
 from django.conf import settings
 from django.templatetags.static import static
@@ -294,7 +297,7 @@ def decode(v: bytes) -> str:
 
 
 @register.inclusion_tag('front/timezone_format_buttons.html', takes_context=True)
-def timezone_format_buttons(context, check):
+def timezone_format_buttons(context: dict[str, Any], check: Check) -> dict[str, Any]:
     """
     Generate time zone format buttons with client-side deduplication.
     

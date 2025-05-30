@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from typing import Any
 from unittest.mock import Mock
 
 from django.test import TestCase, RequestFactory
@@ -16,7 +17,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
     This tests time zone deduplication based on current offsets with proper priority ordering.
     """
     
-    def create_mock_context(self, user_preference=None):
+    def create_mock_context(self, user_preference: str | None = None) -> dict[str, Any]:
         """Helper method to create a mock context for testing."""
         mock_user = Mock()
         mock_user.is_authenticated = True
@@ -29,7 +30,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         
         return {'request': mock_request}
 
-    def test_simple_check_shows_utc_and_browser(self):
+    def test_simple_check_shows_utc_and_browser(self) -> None:
         """Simple checks should show UTC and browser time zone buttons."""
         check = Mock()
         check.kind = "simple"
@@ -56,7 +57,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         self.assertEqual(browser_button["priority"], 3)
         self.assertFalse(browser_button["is_default"])
 
-    def test_cron_check_with_utc_timezone(self):
+    def test_cron_check_with_utc_timezone(self) -> None:
         """Cron check with UTC time zone should show only UTC and browser (no duplicate UTC)."""
         check = Mock()
         check.kind = "cron"
@@ -82,7 +83,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         self.assertEqual(browser_button["type"], "browser")
         self.assertEqual(browser_button["priority"], 3)
 
-    def test_cron_check_with_different_timezone(self):
+    def test_cron_check_with_different_timezone(self) -> None:
         """Cron check with non-UTC time zone should show all 3 buttons."""
         check = Mock()
         check.kind = "cron"
@@ -117,7 +118,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         self.assertEqual(browser_button["type"], "browser")
         self.assertEqual(browser_button["priority"], 3)
 
-    def test_cron_check_with_asia_jerusalem(self):
+    def test_cron_check_with_asia_jerusalem(self) -> None:
         """Test Asia/Jerusalem time zone (DST time zone for comprehensive testing)."""
         check = Mock()
         check.kind = "cron"
@@ -144,7 +145,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         # Israel Standard Time (UTC+2) or Israel Daylight Time (UTC+3)
         self.assertIn(check_button["current_offset_minutes"], [120, 180])
 
-    def test_oncalendar_check_same_as_cron(self):
+    def test_oncalendar_check_same_as_cron(self) -> None:
         """OnCalendar checks should behave the same as cron checks."""
         check = Mock()
         check.kind = "oncalendar"
@@ -169,7 +170,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         self.assertEqual(check_button["priority"], 1)
         self.assertTrue(check_button["is_default"])
 
-    def test_invalid_timezone_handling(self):
+    def test_invalid_timezone_handling(self) -> None:
         """Invalid time zones should be handled gracefully."""
         check = Mock()
         check.kind = "cron"
@@ -192,7 +193,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         self.assertEqual(check_button["type"], "check")
         self.assertEqual(check_button["current_offset_minutes"], 0)
 
-    def test_utc_equivalent_timezone_etc_utc(self):
+    def test_utc_equivalent_timezone_etc_utc(self) -> None:
         """Test that Etc/UTC is handled properly."""
         check = Mock()
         check.kind = "cron"
@@ -218,7 +219,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         
         # Both have same offset (0) - client-side JS should deduplicate
 
-    def test_button_data_attributes(self):
+    def test_button_data_attributes(self) -> None:
         """Test that buttons have correct data attributes for client-side processing."""
         check = Mock()
         check.kind = "cron"
@@ -243,7 +244,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         self.assertEqual(browser_button["data_format"], "local")
         self.assertNotIn("current_offset_minutes", browser_button)
 
-    def test_priority_ordering(self):
+    def test_priority_ordering(self) -> None:
         """Test that buttons are returned in correct display order with proper priorities."""
         check = Mock()
         check.kind = "cron"
@@ -261,7 +262,7 @@ class TimezoneFormatButtonsTestCase(TestCase):
         priorities = [button["priority"] for button in buttons]
         self.assertEqual(priorities, [2, 1, 3])  # utc, check, browser
 
-    def test_default_button_selection(self):
+    def test_default_button_selection(self) -> None:
         """Test that the correct button is marked as default."""
         # Simple check - UTC should be default
         check_simple = Mock()
@@ -289,15 +290,15 @@ class TimezonePreferenceTestCase(TestCase):
     Tests for user time zone preference functionality in appearance settings.
     """
     
-    def setUp(self):
+    def setUp(self) -> None:
         self.user = User.objects.create(username="testuser", email="test@example.com")
         self.profile = Profile.objects.for_user(self.user)
 
-    def test_default_timezone_selection_field_default_value(self):
+    def test_default_timezone_selection_field_default_value(self) -> None:
         """Test that default_timezone_selection defaults to 'default'."""
         self.assertEqual(self.profile.default_timezone_selection, "default")
 
-    def test_set_timezone_preference_utc(self):
+    def test_set_timezone_preference_utc(self) -> None:
         """Test setting UTC as default time zone preference."""
         self.profile.default_timezone_selection = "utc"
         self.profile.save()
@@ -305,7 +306,7 @@ class TimezonePreferenceTestCase(TestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.default_timezone_selection, "utc")
 
-    def test_set_timezone_preference_check(self):
+    def test_set_timezone_preference_check(self) -> None:
         """Test setting check's time zone as default preference."""
         self.profile.default_timezone_selection = "check"
         self.profile.save()
@@ -313,7 +314,7 @@ class TimezonePreferenceTestCase(TestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.default_timezone_selection, "check")
 
-    def test_set_timezone_preference_browser(self):
+    def test_set_timezone_preference_browser(self) -> None:
         """Test setting browser's time zone as default preference."""
         self.profile.default_timezone_selection = "browser"
         self.profile.save()
@@ -321,7 +322,7 @@ class TimezonePreferenceTestCase(TestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.default_timezone_selection, "browser")
 
-    def test_set_timezone_preference_default(self):
+    def test_set_timezone_preference_default(self) -> None:
         """Test setting time zone preference back to default."""
         self.profile.default_timezone_selection = "utc"
         self.profile.save()
@@ -333,7 +334,7 @@ class TimezonePreferenceTestCase(TestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.default_timezone_selection, "default")
 
-    def test_timezone_format_buttons_respects_user_preference_utc(self):
+    def test_timezone_format_buttons_respects_user_preference_utc(self) -> None:
         """Test that timezone_format_buttons respects user UTC preference."""
         # Set up user preference for UTC
         self.profile.default_timezone_selection = "utc"
@@ -370,7 +371,7 @@ class TimezonePreferenceTestCase(TestCase):
         browser_button = buttons[2]
         self.assertEqual(browser_button['type'], 'browser')
 
-    def test_timezone_format_buttons_respects_user_preference_check(self):
+    def test_timezone_format_buttons_respects_user_preference_check(self) -> None:
         """Test that timezone_format_buttons respects user check time zone preference."""
         # Set up user preference for check's time zone
         self.profile.default_timezone_selection = "check"
@@ -392,7 +393,7 @@ class TimezonePreferenceTestCase(TestCase):
         self.assertEqual(result['request'], mock_request)
         self.assertEqual(result['check'], check)
 
-    def test_timezone_format_buttons_respects_user_preference_browser(self):
+    def test_timezone_format_buttons_respects_user_preference_browser(self) -> None:
         """Test that timezone_format_buttons respects user browser time zone preference."""
         # Set up user preference for browser time zone
         self.profile.default_timezone_selection = "browser"
@@ -422,7 +423,7 @@ class TimezonePreferenceTestCase(TestCase):
         self.assertEqual(browser_button['type'], 'browser')
         self.assertEqual(browser_button['display_name'], "Browser's time zone")
 
-    def test_timezone_format_buttons_with_default_preference(self):
+    def test_timezone_format_buttons_with_default_preference(self) -> None:
         """Test that timezone_format_buttons works with default preference."""
         # Keep default preference
         self.assertEqual(self.profile.default_timezone_selection, "default")
@@ -446,7 +447,7 @@ class TimezonePreferenceTestCase(TestCase):
         buttons = result['buttons']
         self.assertEqual(len(buttons), 3)
 
-    def test_timezone_format_buttons_with_unauthenticated_user(self):
+    def test_timezone_format_buttons_with_unauthenticated_user(self) -> None:
         """Test that timezone_format_buttons works with unauthenticated user."""
         # Create context with unauthenticated user
         mock_user = Mock()
@@ -469,10 +470,10 @@ class TimezonePreferenceTestCase(TestCase):
         buttons = result['buttons']
         self.assertEqual(len(buttons), 2)
 
-    def test_timezone_format_buttons_context_missing_request(self):
+    def test_timezone_format_buttons_context_missing_request(self) -> None:
         """Test that timezone_format_buttons handles missing request in context."""
         # Create context without request
-        context = {}
+        context: dict[str, Any] = {}
         
         # Create a check
         check = Mock()

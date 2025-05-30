@@ -13,7 +13,7 @@ class TimezoneButtonsTemplateTestCase(TestCase):
     Tests the template integration and HTML output for time zone deduplication functionality
     """
 
-    def test_template_renders_buttons_correctly(self):
+    def test_template_renders_buttons_correctly(self) -> None:
         """Test that the template renders all buttons with correct attributes."""
         template_content = """
         {% load hc_extras %}
@@ -46,7 +46,7 @@ class TimezoneButtonsTemplateTestCase(TestCase):
         # Check offset attributes (should have offset for server-side time zones)
         self.assertIn('data-offset="', rendered)  # Asia/Jerusalem and UTC should have offsets
 
-    def test_template_renders_javascript(self):
+    def test_template_renders_javascript(self) -> None:
         """Test that the JavaScript deduplication code is included."""
         template_content = """
         {% load hc_extras %}
@@ -70,7 +70,7 @@ class TimezoneButtonsTemplateTestCase(TestCase):
         # Check for deduplication logic
         self.assertIn('display: none', rendered)
 
-    def test_template_simple_check_rendering(self):
+    def test_template_simple_check_rendering(self) -> None:
         """Test template rendering for simple checks."""
         template_content = """
         {% load hc_extras %}
@@ -92,7 +92,7 @@ class TimezoneButtonsTemplateTestCase(TestCase):
         # Should not have check time zone button (since it would be duplicate of UTC)
         self.assertNotIn('data-type="check"', rendered)
 
-    def test_template_format_switcher_structure(self):
+    def test_template_format_switcher_structure(self) -> None:
         """Test that the format switcher has correct structure."""
         template_content = """
         {% load hc_extras %}
