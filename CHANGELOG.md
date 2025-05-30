@@ -103,7 +103,7 @@ https://github.com/healthchecks/healthchecks/tree/master/docker#upgrading-databa
 - Improve performance of loading ping body previews (#1023)
 - Implement MS Teams Workflows integration (#1024)
 - Add "uuid" field in API responses when read/write key is used (#1007)
-- Update timezone dropdowns to show frequently used timezones at the top
+- Update time zone dropdowns to show frequently used time zones at the top
 - Update the "Set Password" page to reject very weak passwords
 - Implement search by slug in the checks list (#1048)
 - Add support for $SLUG placeholder in webhook payloads (#1049)
@@ -125,7 +125,7 @@ https://github.com/healthchecks/healthchecks/tree/master/docker#upgrading-databa
 - Update the Sign In page to hide "Email Link" option if SMTP is not configured (#922)
 - Update Slack integration to use channel name as the integration name (#1003)
 - Update Ping Details dialog to also show formatted datetimes (#975)
-- Add data migration to update legacy timezones to current canonical timezones
+- Add data migration to update legacy time zones to current canonical time zones
 
 ### Bug Fixes
 - Fix hc.front.views.docs_search to handle words "AND", "OR", "NOT" as queries
@@ -236,7 +236,7 @@ version is 3.10.
 - Add support for the $EXITSTATUS placeholder in webhook payloads (#826)
 - Add API support for filtering checks by slug (#844)
 - Add support for Telegram topics (#852)
-- For cron checks, switch to using check's (not browser's) timezone to format dates
+- For cron checks, switch to using check's (not browser's) time zone to format dates
 - Upgrade to cronsim 2.5 (adds support for "LW" in the day-of-month field)
 
 ### Bug Fixes
@@ -348,13 +348,13 @@ version is 3.10.
 - Add ntfy integration (#728)
 - Add ".txt" suffix to the filename when downloading ping body (#738)
 - Add API support for fetching ping bodies (#737)
-- Change "Settings - Email Reports" page to allow manual timezone selection
+- Change "Settings - Email Reports" page to allow manual time zone selection
 
 ### Bug Fixes
 - Fix the most recent ping lookup in the "Ping Details" dialog
 - Fix binary data handling in the hc.front.views.ping_body view
 - Fix downtime summaries in weekly reports (#736)
-- Fix week, month boundary calculation to use user's timezone
+- Fix week, month boundary calculation to use user's time zone
 
 ## v2.4.1 - 2022-10-18
 
@@ -799,7 +799,7 @@ this up.
 - Show the number of downtimes and total downtime minutes in "Check Details" page
 - Add the `pruneflips` management command
 - Add Mattermost integration (#276)
-- Three choices in timezone switcher (UTC / check's timezone / browser's timezone) (#278)
+- Three choices in time zone switcher (UTC / check's time zone / browser's time zone) (#278)
 - After adding a new check redirect to the "Check Details" page
 
 ### Bug Fixes
@@ -881,7 +881,7 @@ this up.
 ### Bug Fixes
 - Fix after-login redirects (the "?next=" query parameter)
 - Update Check.status field when user edits timeout & grace settings
-- Use timezone-aware datetimes with croniter, avoid ambiguities around DST
+- Use time zone aware datetimes with croniter, avoid ambiguities around DST
 - Validate and reject cron schedules with six components
 
 
@@ -916,7 +916,7 @@ this up.
 - Added Trello integration
 
 ### Bug Fixes
-- Timezones were missing in the "Change Schedule" dialog, fixed.
+- Time zones were missing in the "Change Schedule" dialog, fixed.
 - Fix hamburger menu button in "Login" page.
 
 

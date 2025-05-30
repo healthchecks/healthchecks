@@ -33,11 +33,11 @@ class CronPreviewTestCase(BaseTestCase):
         for tz in ["", "not-a-timezone"]:
             payload = {"schedule": "* * * * *", "tz": tz}
             r = self.client.post(self.url, payload)
-            self.assertContains(r, "Invalid timezone", status_code=200)
+            self.assertContains(r, "Invalid time zone", status_code=200)
 
     def test_it_handles_missing_arguments(self) -> None:
         r = self.client.post(self.url, {})
-        self.assertContains(r, "Invalid timezone", status_code=200)
+        self.assertContains(r, "Invalid time zone", status_code=200)
 
     def test_it_rejects_get(self) -> None:
         r = self.client.get(self.url, {})

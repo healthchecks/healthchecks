@@ -340,10 +340,10 @@ class Profile(models.Model):
         """Calculate the target date for the next monthly/weekly report.
 
         Monthly reports should get sent on 1st of each month, between
-        9AM and 11AM in user's timezone.
+        9AM and 11AM in user's time zone.
 
         Weekly reports should get sent on Mondays, between
-        9AM and 11AM in user's timezone.
+        9AM and 11AM in user's time zone.
 
         """
 

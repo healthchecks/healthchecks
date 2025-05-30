@@ -2,7 +2,7 @@ $(function () {
     var activeRequest = null;
     var slider = document.getElementById("end");
 
-    // Look up the active tz switch to determine the initial display timezone:
+    // Look up the active tz switch to determine the initial display time zone:
     var dateFormat = $(".active", "#format-switcher").data("format");
     function fromUnix(timestamp) {
         var dt = moment.unix(timestamp);

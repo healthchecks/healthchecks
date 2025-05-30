@@ -134,7 +134,7 @@ So why not just use that? There are several drawbacks:
 ## Looking up Your Machine's Time Zone
 
 If your cron job consistently pings SITE_NAME an hour early or an hour late,
-the likely cause is a timezone mismatch: your machine may be using a timezone
+the likely cause is a time zone mismatch: your machine may be using a time zone
 different from what you have configured on SITE_NAME.
 
 On modern GNU/Linux systems, you can look up the time zone using the

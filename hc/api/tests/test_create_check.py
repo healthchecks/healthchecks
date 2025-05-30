@@ -329,7 +329,7 @@ class CreateCheckTestCase(BaseTestCase):
     def test_it_validates_timezone(self) -> None:
         r = self.post(
             {"schedule": "* * * * *", "tz": "not-a-timezone", "grace": 60},
-            expect_fragment="tz is not a valid timezone",
+            expect_fragment="tz is not a valid time zone",
         )
         self.assertEqual(r.status_code, 400)
 

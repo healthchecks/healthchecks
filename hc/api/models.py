@@ -139,7 +139,7 @@ class CheckDict(TypedDict, total=False):
 
 @dataclass
 class DowntimeRecord:
-    boundary: datetime  # The start of this time interval (timezone-aware)
+    boundary: datetime  # The start of this time interval (time zone aware)
     tz: str  # For calculating total seconds in a month
     no_data: bool  # True if the check did not yet exist in this time interval
     duration: td  # Total downtime in this time interval
@@ -156,7 +156,7 @@ class DowntimeRecord:
 class DowntimeRecorder:
     def __init__(self, boundaries: list[datetime], tz: str, created: datetime) -> None:
         """
-        `boundaries` is a list of timezone-aware datetimes of the starts of time
+        `boundaries` is a list of time zone aware datetimes of the starts of time
         intervals (months or weeks), and should be pre-sorted in descending order.
         """
         self.records = []
@@ -281,11 +281,11 @@ class Check(models.Model):
             assert self.last_ping is not None
             # The complex case, next ping is expected based on cron schedule.
             # Don't convert to naive datetimes (and so avoid ambiguities around
-            # DST transitions). cronsim will handle the timezone-aware datetimes.
+            # DST transitions). cronsim will handle the time zone aware datetimes.
             last_local = self.last_ping.astimezone(ZoneInfo(self.tz))
             result = next(CronSim(self.schedule, last_local))
-            # Important: convert from the local timezone back to UTC.
-            # If the result is kept in the local timezone, adding
+            # Important: convert from the local time zone back to UTC.
+            # If the result is kept in the local time zone, adding
             # a timedelta to it later (in `going_down_after` and in `get_status`)
             # may yield incorrect results during DST transitions.
             result = result.astimezone(timezone.utc)
@@ -566,7 +566,7 @@ class Check(models.Model):
 
         Returns a list of DowntimeRecord instances in descending datetime order.
 
-        `boundaries` are timezone-aware datetimes of the first days of time intervals
+        `boundaries` are time zone aware datetimes of the first days of time intervals
         (months or weeks), and should be pre-sorted in descending order.
 
         """

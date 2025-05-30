@@ -100,12 +100,12 @@ class Spec(BaseModel):
     @classmethod
     def check_tz(cls, v: str) -> str:
         if v in legacy_timezones:
-            # Replace legacy timezone with the current canonical time zone
+            # Replace legacy time zone with the current canonical time zone
             # (for example, Europe/Kiev -> Europe/Kyiv)
             v = legacy_timezones[v]
 
         if v not in all_timezones:
-            raise PydanticCustomError("tz_syntax", "not a valid timezone")
+            raise PydanticCustomError("tz_syntax", "not a valid time zone")
         return v
 
     @field_validator("schedule")
@@ -150,7 +150,7 @@ CUSTOM_ERRORS = {
     "literal_error": "%s has unexpected value",
     "list_type": "%s is not an array",
     "cron_syntax": "%s is not a valid cron or OnCalendar expression",
-    "tz_syntax": "%s is not a valid timezone",
+    "tz_syntax": "%s is not a valid time zone",
     "time_delta_type": "%s is not a number",
 }
 

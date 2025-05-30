@@ -64,9 +64,9 @@ for complete cron syntax reference.
 You will need to specify Cron Expression, Server's Time Zone, and Grace Time.
 
 * **Cron Expression** is the cron expression you specified in the crontab.
-* **Server's Time Zone** is the timezone of your server. The cron daemon typically uses
-the system's local time. If the machine does not use the UTC timezone, specify its
-timezone here.
+* **Server's Time Zone** is the time zone of your server. The cron daemon typically uses
+the system's local time. If the machine does not use the UTC time zone, specify its
+time zone here.
 * **Grace Time**, same as for simple schedules, is how long to wait before sending an
 alert for a late check.
 

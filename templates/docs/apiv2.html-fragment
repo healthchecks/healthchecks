@@ -414,7 +414,7 @@ the <code>timeout</code> value.</p>
 <dt>tz</dt>
 <dd>
 <p>string, optional, default value: "UTC".</p>
-<p>Server's timezone. This setting only has an effect in combination with the
+<p>Server's time zone. This setting only has an effect in combination with the
 <code>schedule</code> parameter.</p>
 <p>Example:</p>
 <p><pre>{"tz": "Europe/Riga"}</pre></p>
@@ -664,7 +664,7 @@ the <code>timeout</code>.</p>
 <dt>tz</dt>
 <dd>
 <p>string, optional.</p>
-<p>Server's timezone. This setting only has an effect in combination with the
+<p>Server's time zone. This setting only has an effect in combination with the
 "schedule" parameter.</p>
 <p>Example:</p>
 <p><pre>{"tz": "Europe/Riga"}</pre></p>

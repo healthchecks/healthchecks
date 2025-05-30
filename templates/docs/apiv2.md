@@ -411,7 +411,7 @@ schedule
 tz
 :   string, optional, default value: "UTC".
 
-    Server's timezone. This setting only has an effect in combination with the
+    Server's time zone. This setting only has an effect in combination with the
     `schedule` parameter.
 
     Example:
@@ -724,7 +724,7 @@ schedule
 tz
 :   string, optional.
 
-    Server's timezone. This setting only has an effect in combination with the
+    Server's time zone. This setting only has an effect in combination with the
     "schedule" parameter.
 
     Example:

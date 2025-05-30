@@ -51,8 +51,8 @@ class SignupForm(forms.Form):
             return self.cleaned_data["tz"]
 
         # Otherwise, return None, and *don't* throw a validation exception:
-        # If user's browser reports a timezone we don't recognize, we
-        # should ignore the timezone but still save the rest of the form.
+        # If user's browser reports a time zone we don't recognize, we
+        # should ignore the time zone but still save the rest of the form.
         return None
 
 
@@ -125,8 +125,8 @@ class ReportSettingsForm(forms.Form):
             return self.cleaned_data["tz"]
 
         # Otherwise, return None, and *don't* throw a validation exception:
-        # If user's browser reports a timezone we don't recognize, we
-        # should ignore the timezone but still save the rest of the form.
+        # If user's browser reports a time zone we don't recognize, we
+        # should ignore the time zone but still save the rest of the form.
         return None
 
 
