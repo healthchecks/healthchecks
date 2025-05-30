@@ -358,8 +358,12 @@ def timezone_format_buttons(context: dict[str, Any], check: Check) -> dict[str, 
         # No offset - will be calculated client-side
     })
     
+    # Get the effective browser timezone (includes override and browser-detected fallback)
+    effective_browser_tz = context.get('effective_browser_tz')
+    
     return {
         'buttons': buttons, 
         'check': check,
-        'request': context.get('request')
+        'request': context.get('request'),
+        'effective_browser_tz': effective_browser_tz
     }

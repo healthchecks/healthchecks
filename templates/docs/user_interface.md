@@ -20,6 +20,23 @@ This setting affects how timestamps are displayed when you view:
 * Ping details dialogs
 * Event summaries
 
+### Browser Time Zone Override
+
+SITE_NAME can override your browser's automatic time zone detection with a specific time zone of your choice. This feature is useful when:
+
+* You want to view events in a specific time zone regardless of your current location
+* Your browser's time zone detection is incorrect
+* You frequently work with systems in a different time zone
+
+To configure this setting:
+
+1. Go to your account settings
+2. Navigate to the "Appearance" section
+3. Find the "Browser Time Zone Override" panel
+4. Select your preferred time zone from the dropdown, or choose "Default" to use automatic browser detection
+
+When a browser time zone override is set, it will be used anywhere SITE_NAME would normally use your browser's detected time zone. The override takes precedence over automatic detection, ensuring consistent time zone display across all your monitoring views.
+
 ### Time Zone Button Deduplication
 
 When viewing event logs, SITE_NAME displays time zone buttons that allow you to switch between different time zone views. To improve the user interface, SITE_NAME automatically deduplicates these buttons when they would show identical times.

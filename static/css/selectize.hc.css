@@ -182,6 +182,37 @@
   max-height: 200px;
   -webkit-overflow-scrolling: touch;
 }
+
+/* Default height for time zone override dropdown - allows for 8-10 options */
+.selectize-timezone .selectize-dropdown-content,
+select[name="browser_timezone_override"] + .selectize-control .selectize-dropdown-content {
+  max-height: 280px;
+}
+
+/* Support for upward opening dropdowns */
+.selectize-control .selectize-dropdown {
+  z-index: 1001 !important; /* Ensure dropdown appears above other elements */
+}
+
+/* Force upward positioning when needed */
+.selectize-dropdown.dropdown-upward {
+  position: absolute !important;
+  top: auto !important;
+  bottom: 100% !important;
+  margin-bottom: 1px !important;
+  margin-top: 0 !important;
+}
+
+/* Ensure dropdown fits better in smaller viewports */
+@media (max-height: 600px) {
+  .selectize-dropdown-content {
+    max-height: 120px;
+  }
+  .selectize-timezone .selectize-dropdown-content,
+  select[name="browser_timezone_override"] + .selectize-control .selectize-dropdown-content {
+    max-height: 200px;
+  }
+}
 .selectize-control.single .selectize-input,
 .selectize-control.single .selectize-input input {
   cursor: pointer;

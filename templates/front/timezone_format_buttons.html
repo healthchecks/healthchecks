@@ -14,7 +14,28 @@
 <script>
 // Deduplicate time zone buttons based on current offsets
 document.addEventListener('DOMContentLoaded', function() {
-    var browserOffsetMinutes = -new Date().getTimezoneOffset(); // Browser offset in minutes from UTC
+    var browserOffsetMinutes;
+    
+    // Use effective browser time zone if available, otherwise use browser detection
+    {% if effective_browser_tz %}
+    try {
+        var effectiveTimeZone = '{{ effective_browser_tz|escapejs }}';
+        browserOffsetMinutes = moment.tz(effectiveTimeZone).utcOffset();
+    } catch (e) {
+        // Fall back to browser's actual time zone if there's an error
+        browserOffsetMinutes = -new Date().getTimezoneOffset();
+    }
+    {% else %}
+    // No effective browser time zone override, use browser detection
+    try {
+        var detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        browserOffsetMinutes = moment.tz(detectedTimezone).utcOffset();
+    } catch (e) {
+        // Fallback to JavaScript's getTimezoneOffset if moment.js fails
+        browserOffsetMinutes = -new Date().getTimezoneOffset();
+    }
+    {% endif %}
+    
     var formatSwitcher = document.getElementById('format-switcher');
     var allButtons = formatSwitcher.querySelectorAll('label');
     var userPreference = {% if request.user.is_authenticated and request.user.profile.default_timezone_selection and request.user.profile.default_timezone_selection != "default" %}'{{ request.user.profile.default_timezone_selection }}'{% else %}null{% endif %};
@@ -124,52 +145,57 @@ document.addEventListener('DOMContentLoaded', function() {
     Object.keys(offsetMap).forEach(function(offset) {
         var buttonsForOffset = offsetMap[offset];
         
+        // Sort by priority to find the visible button and maintain order
+        buttonsForOffset.sort(function(a, b) { return a.priority - b.priority; });
+        var visibleButton = buttonsForOffset[0].button;
+        
         if (buttonsForOffset.length > 1) {
-            // Sort by priority to find the visible button and maintain order
-            buttonsForOffset.sort(function(a, b) { return a.priority - b.priority; });
-            var visibleButton = buttonsForOffset[0].button;
-            
-            // Get names of all time zones with this offset, ordered by priority
-            var timezoneNames = buttonsForOffset.map(function(item) {
-                if (item.type === 'browser') {
-                    try {
-                        return Intl.DateTimeFormat().resolvedOptions().timeZone;
-                    } catch (e) {
-                        return 'Browser';
-                    }
-                } else if (item.type === 'utc') {
-                    return 'UTC';
-                } else {
-                    return item.button.textContent.trim();
-                }
-            });
-            
-            // Create tooltip text showing merged time zones (deduplicated)
-            if (timezoneNames.length > 1) {
-                // Remove duplicates from time zone names
-                var uniqueTimezoneNames = [];
-                for (var i = 0; i < timezoneNames.length; i++) {
-                    if (uniqueTimezoneNames.indexOf(timezoneNames[i]) === -1) {
-                        uniqueTimezoneNames.push(timezoneNames[i]);
-                    }
-                }
+            // Multiple buttons with same offset - show tooltip indicating merged time zones
+            // Determine which sources are present in consistent order: UTC, Check's time zone, Browser's time zone
+            var sources = [];
+            var hasUTC = false;
+            var hasCheck = false;
+            var hasBrowser = false;
                 
-                // Only show tooltip if there are actually multiple unique time zones
-                if (uniqueTimezoneNames.length > 1) {
-                    var tooltipText = 'Represents: ' + uniqueTimezoneNames.join(', ');
-                    visibleButton.setAttribute('title', tooltipText);
+                buttonsForOffset.forEach(function(item) {
+                    if (item.type === 'utc') {
+                        hasUTC = true;
+                    } else if (item.type === 'check') {
+                        hasCheck = true;
+                    } else if (item.type === 'browser') {
+                        hasBrowser = true;
+                    }
+                });
+                
+                // Add sources in the consistent order
+                if (hasUTC) sources.push('UTC');
+                if (hasCheck) sources.push("Check's time zone");
+                if (hasBrowser) sources.push("Browser's time zone");
+                
+                var tooltipText;
+                if (sources.length === 2) {
+                    tooltipText = 'Represents: ' + sources.join(' and ');
+                } else if (sources.length > 2) {
+                    var lastItem = sources.pop();
+                    tooltipText = 'Represents: ' + sources.join(', ') + ' and ' + lastItem;
+                } else {
+                    tooltipText = 'Represents: ' + sources[0];
                 }
-            }
+                visibleButton.setAttribute('title', tooltipText);
         } else {
-            // Single time zone - add tooltip for browser time zone (just the time zone name)
-            var button = buttonsForOffset[0].button;
-            if (button.dataset.type === 'browser') {
+            // Single button with this offset - only add tooltip for browser time zone to show effective time zone
+            if (visibleButton.dataset.type === 'browser') {
+                {% if effective_browser_tz %}
+                visibleButton.setAttribute('title', '{{ effective_browser_tz|escapejs }}');
+                {% else %}
                 try {
                     var singleBrowserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                    button.setAttribute('title', singleBrowserTimeZone);
+                    visibleButton.setAttribute('title', singleBrowserTimeZone);
                 } catch (e) {
                 }
+                {% endif %}
             }
+            // UTC and check time zone buttons don't need tooltips when unmerged - their labels are self-explanatory
         }
     });
     

@@ -69,7 +69,7 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.lib import curl, github
 from hc.lib.badges import get_badge_url
-from hc.lib.tz import all_timezones
+from hc.lib.tz import all_timezones, get_effective_browser_timezone
 from hc.lib.urls import absolute_reverse
 
 logger = logging.getLogger(__name__)
@@ -981,6 +981,11 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         smin = max(smin, oldest_ping.created)
 
     events = _get_events(check, 1000, start=smin, end=smax)
+    
+    # Get the effective browser time zone (respects user's override setting)
+    browser_tz = request.GET.get("tz")  # Browser-detected time zone from query param
+    effective_browser_tz = get_effective_browser_timezone(request.profile, browser_tz)
+    
     ctx = {
         "page": "log",
         "project": check.project,
@@ -989,6 +994,7 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "max": smax,
         "events": events,
         "oldest_ping": oldest_ping,
+        "effective_browser_tz": effective_browser_tz,
     }
 
     if events:
@@ -1022,6 +1028,10 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         if sibling.tags:
             all_tags.update(sibling.tags.split(" "))
 
+    # Get the effective browser time zone (respects user's override setting)
+    browser_tz = request.GET.get("tz")  # Browser-detected time zone from query param
+    effective_browser_tz = get_effective_browser_timezone(request.profile, browser_tz)
+    
     ctx = {
         "page": "details",
         "project": check.project,
@@ -1034,6 +1044,7 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "timezones": all_timezones,
         "downtimes": check.downtimes(3, request.profile.tz),
         "tz": request.profile.tz,
+        "effective_browser_tz": effective_browser_tz,
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
     }

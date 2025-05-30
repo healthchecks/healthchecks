@@ -937,6 +937,9 @@ def appearance(request: AuthenticatedHttpRequest) -> HttpResponse:
         "profile": profile,
         "theme_status": "default",
         "timezone_status": "default",
+        "browser_tz_status": "default",
+        "all_timezones": all_timezones,
+        "show_detected_timezone": True,
     }
 
     if request.method == "POST":
@@ -955,5 +958,17 @@ def appearance(request: AuthenticatedHttpRequest) -> HttpResponse:
                 profile.default_timezone_selection = default_timezone_selection
                 profile.save()
                 ctx["timezone_status"] = "info"
+        
+        # Handle browser time zone override form submission
+        elif "browser_timezone_override" in request.POST:
+            browser_timezone_override = request.POST.get("browser_timezone_override", "")
+            # Validate that the submitted time zone is in the all_timezones list, "default", or empty
+            if browser_timezone_override in ("", "default") or browser_timezone_override in all_timezones:
+                # Convert "default" to empty string for storage
+                if browser_timezone_override == "default":
+                    browser_timezone_override = ""
+                profile.browser_timezone_override = browser_timezone_override
+                profile.save()
+                ctx["browser_tz_status"] = "info"
 
     return render(request, "accounts/appearance.html", ctx)

@@ -262,6 +262,36 @@ class TimezoneFormatButtonsTestCase(TestCase):
         priorities = [button["priority"] for button in buttons]
         self.assertEqual(priorities, [2, 1, 3])  # utc, check, browser
 
+    def test_etc_gmt_plus3_vs_asia_jerusalem_not_deduplicated(self) -> None:
+        """Test that Etc/GMT+3 and Asia/Jerusalem are NOT deduplicated due to opposite offsets."""
+        # Etc/GMT+3 is actually GMT-3 (offset -180), not GMT+3
+        # Asia/Jerusalem is GMT+2/+3 (offset +120/+180) depending on DST
+        # These should NOT be deduplicated as they have opposite signs
+        
+        check = Mock()
+        check.kind = "cron"
+        check.tz = "Etc/GMT+3"
+        
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
+        buttons = result["buttons"]
+        
+        self.assertEqual(len(buttons), 3)
+        
+        # UTC button
+        utc_button = buttons[0]
+        self.assertEqual(utc_button["display_name"], "UTC")
+        self.assertEqual(utc_button["current_offset_minutes"], 0)
+        
+        # Etc/GMT+3 button - should have negative offset (GMT-3)
+        check_button = buttons[1]
+        self.assertEqual(check_button["display_name"], "Etc/GMT+3")
+        self.assertEqual(check_button["current_offset_minutes"], -180)  # 3 hours behind UTC
+        
+        # Browser button (no offset in data)
+        browser_button = buttons[2]
+        self.assertEqual(browser_button["display_name"], "Browser's time zone")
+
     def test_default_button_selection(self) -> None:
         """Test that the correct button is marked as default."""
         # Simple check - UTC should be default

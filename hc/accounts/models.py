@@ -108,6 +108,11 @@ class Profile(models.Model):
         ],
         help_text="Default time zone selection for event logs"
     )
+    browser_timezone_override = models.CharField(
+        max_length=50,
+        blank=True,
+        help_text="Override browser time zone detection with a specific time zone"
+    )
 
     totp = models.CharField(max_length=32, null=True, blank=True)
     totp_created = models.DateTimeField(null=True, blank=True)

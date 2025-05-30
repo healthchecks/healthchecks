@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from hc.accounts.models import Profile
+
 all_timezones = [
     "Africa/Abidjan",
     "Africa/Accra",
@@ -601,3 +606,23 @@ legacy_timezones = {
     "W-SU": "Europe/Moscow",
     "Zulu": "Etc/UTC",
 }
+
+
+def get_effective_browser_timezone(profile: "Profile | None", browser_timezone: str | None = None) -> str | None:
+    """
+    Get the effective browser time zone for a user profile.
+    
+    If the user has set a browser_timezone_override, return that.
+    Otherwise, return the browser-detected time zone or None if not available.
+    
+    Args:
+        profile: User profile object
+        browser_timezone: The time zone detected by the browser (optional)
+        
+    Returns:
+        String representing the time zone to use, or None if browser detection should be used
+    """
+    if profile and profile.browser_timezone_override:
+        return profile.browser_timezone_override
+    
+    return browser_timezone  # Returns None if no browser_timezone provided

@@ -121,6 +121,35 @@
             </div>
             {% endif %}
         </div>
+
+        <div class="panel panel-{{ browser_tz_status }}">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Browser Time Zone Override</h2>
+                    <p class="help-block">
+                        Override your browser's time zone detection. By default, Healthchecks detects your browser's time zone automatically. 
+                        You can override this with a specific time zone of your choice.
+                    </p>
+                    
+                    <div class="form-group">
+                        <select id="browser_timezone_override" name="browser_timezone_override" class="form-control selectize-timezone">
+                            <option value="default" {% if profile.browser_timezone_override == "default" or not profile.browser_timezone_override %}selected{% endif %} id="default-option">
+                                Default
+                            </option>
+                            {% for tz in all_timezones %}
+                            <option value="{{ tz }}" {% if profile.browser_timezone_override == tz %}selected{% endif %}>{{ tz }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+            {% if browser_tz_status == "info" %}
+            <div class="panel-footer">
+                Your settings have been updated!
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}

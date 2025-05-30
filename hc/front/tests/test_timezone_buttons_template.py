@@ -126,5 +126,7 @@ class TimezoneButtonsTemplateTestCase(TestCase):
         
         # Should contain merged time zone tooltip logic
         self.assertIn('Represents:', rendered)
-        self.assertIn('uniqueTimezoneNames.join', rendered)
-        self.assertIn('uniqueTimezoneNames.indexOf', rendered)
+        self.assertIn('sources.join', rendered)
+        self.assertIn('hasUTC', rendered)
+        self.assertIn('hasCheck', rendered)
+        self.assertIn('hasBrowser', rendered)
