@@ -83,7 +83,9 @@
                     <tr>
                         <td>API key</td>
                         <td>
-                            {% if project.api_key %}
+                            {% if project.api_key|length == 72 %}
+                                <code>hcw_****************************</code>
+                            {% elif project.api_key %}
                             {% if show_keys %}
                                 <code>{{ project.api_key }}</code>
                             {% else %}
@@ -106,7 +108,9 @@
                     <tr>
                         <td>API key (read-only)</td>
                         <td>
-                            {% if project.api_key_readonly %}
+                            {% if project.api_key_readonly|length == 72 %}
+                                <code>hcr_****************************</code>
+                            {% elif project.api_key_readonly %}
                             {% if show_keys %}
                                 <code>{{ project.api_key_readonly }}</code>
                             {% else %}
@@ -638,6 +642,27 @@
     </div>
 </div>
 {% endif %}
+
+{% if new_key %}
+<div id="key-created-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>API Key Created!</h4>
+            </div>
+            <div class="modal-body">
+                <p>Copy the key and store it securely. The key will not be shown again:</p>
+                <input type="text" class="form-control" value="{{ new_key }}" readonly />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK, I copied the key</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
 
 {% endwith %}
 {% endblock %}
