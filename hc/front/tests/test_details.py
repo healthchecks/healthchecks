@@ -31,7 +31,8 @@ class DetailsTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "How To Ping", status_code=200)
         self.assertContains(r, "ping-now")
-        # The page should contain timezone strings
+
+        # The page should contain time zone strings
         self.assertContains(r, "Europe/Riga")
 
         self.assertContains(r, "Foo – Mychecks", status_code=200)

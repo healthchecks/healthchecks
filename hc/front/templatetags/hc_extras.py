@@ -291,3 +291,70 @@ def pct(v: float) -> str:
 @register.filter
 def decode(v: bytes) -> str:
     return bytes(v).decode(errors="replace")
+
+
+@register.inclusion_tag('front/timezone_format_buttons.html')
+def timezone_format_buttons(check):
+    """
+    Generate time zone format buttons with client-side deduplication.
+    
+    Deduplicate time zone buttons based on  current offsets with priority: check's tz > UTC > browser's time zone.
+    """
+    from datetime import datetime
+    import zoneinfo
+    
+    now_ = datetime.now()
+    buttons = []
+    
+    # Calculate check's time zone offset if it's a cron/oncalendar check
+    check_offset_minutes = 0
+    if check.kind in ("cron", "oncalendar"):
+        try:
+            tz = zoneinfo.ZoneInfo(check.tz)
+            current_time = now_.replace(tzinfo=tz)
+            offset = current_time.utcoffset()
+            check_offset_minutes = int(offset.total_seconds() / 60) if offset else 0
+        except Exception:
+            check_offset_minutes = 0
+    
+    # Generate buttons in display order: UTC, Check's time zone, Browser's time zone
+    
+    # Add UTC first if check is simple or check's time zone isn't UTC
+    if check.kind == "simple" or check.tz != "UTC":
+        buttons.append({
+            'name': 'UTC',
+            'display_name': mark_safe('UTC'), 
+            'data_format': 'UTC',
+            'is_default': check.kind == "simple",
+            'type': 'utc',
+            'priority': 2,
+            'current_offset_minutes': 0  # UTC is always 0 offset
+        })
+    
+    # Add check's time zone second if it's a cron/oncalendar check
+    if check.kind in ("cron", "oncalendar"):
+        buttons.append({
+            'name': check.tz,
+            'display_name': mark_safe(check.tz),
+            'data_format': check.tz,
+            'is_default': True,
+            'type': 'check',
+            'priority': 1,
+            'current_offset_minutes': check_offset_minutes
+        })
+    
+    # Always add browser time zone last
+    buttons.append({
+        'name': 'Browser',
+        'display_name': mark_safe("Browser's time zone"),
+        'data_format': 'local',
+        'is_default': False,
+        'type': 'browser',
+        'priority': 3
+        # No offset - will be calculated client-side
+    })
+    
+    return {
+        'buttons': buttons, 
+        'check': check
+    }

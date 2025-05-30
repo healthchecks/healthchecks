@@ -79,7 +79,7 @@ $(function () {
     });
 
     var statusUrl = document.getElementById("events").dataset.statusUrl;
-    // Look up the active tz switch to determine the initial display timezone:
+    // Look up the active tz switch to determine the initial display time zone:
     var lastFormat = $(".active", "#format-switcher").data("format");
     var lastStatusText = "";
     var lastUpdated = "";

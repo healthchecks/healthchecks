@@ -1,0 +1,147 @@
+<div id="format-switcher" class="btn-group" data-toggle="buttons" style="visibility: hidden;">
+    {% for button in buttons %}
+    <label class="btn btn-default btn-xs {% if button.is_default %}active{% endif %}" 
+           data-format="{{ button.data_format }}" 
+           data-type="{{ button.type }}"
+           data-priority="{{ button.priority }}"
+           {% if button.current_offset_minutes is not None %}data-offset="{{ button.current_offset_minutes }}"{% endif %}>
+        <input type="radio" name="date-format" {% if button.is_default %}checked{% endif %}>
+        {{ button.display_name }}
+    </label>
+    {% endfor %}
+</div>
+
+<script>
+// Deduplicate time zone buttons based on current offsets
+document.addEventListener('DOMContentLoaded', function() {
+    var browserOffsetMinutes = -new Date().getTimezoneOffset(); // Browser offset in minutes from UTC
+    var formatSwitcher = document.getElementById('format-switcher');
+    var allButtons = formatSwitcher.querySelectorAll('label');
+    
+    // Collect all offsets and their corresponding buttons
+    var offsetMap = {};
+    
+    allButtons.forEach(function(button) {
+        var type = button.dataset.type;
+        var priority = parseInt(button.dataset.priority);
+        var offset;
+        
+        if (type === 'browser') {
+            offset = browserOffsetMinutes;
+        } else {
+            offset = parseInt(button.dataset.offset);
+        }
+        
+        if (!offsetMap[offset]) {
+            offsetMap[offset] = [];
+        }
+        
+        offsetMap[offset].push({
+            button: button,
+            priority: priority,
+            type: type
+        });
+    });
+    
+    // For each offset, keep only the button with the highest priority (lowest number)
+    var buttonsToHide = [];
+    
+    Object.keys(offsetMap).forEach(function(offset) {
+        var buttonsForOffset = offsetMap[offset];
+        
+        if (buttonsForOffset.length > 1) {
+            // Sort by priority (1 = highest priority)
+            buttonsForOffset.sort(function(a, b) {
+                return a.priority - b.priority;
+            });
+            
+            // Keep the first (highest priority), hide the rest
+            for (var i = 1; i < buttonsForOffset.length; i++) {
+                buttonsToHide.push(buttonsForOffset[i].button);
+            }
+        }
+    });
+    
+    // Hide duplicate buttons and handle active state
+    var activeButtonHidden = false;
+    
+    buttonsToHide.forEach(function(button) {
+        if (button.classList.contains('active')) {
+            activeButtonHidden = true;
+        }
+        button.style.display = 'none';
+    });
+    
+    // Ensure there's always an active button after deduplication
+    var activeButtons = formatSwitcher.querySelectorAll('label.active:not([style*="display: none"])');
+    
+    if (activeButtons.length === 0) {
+        // No active button visible, activate the first visible one
+        var visibleButtons = formatSwitcher.querySelectorAll('label:not([style*="display: none"])');
+        if (visibleButtons.length > 0) {
+            var firstVisible = visibleButtons[0];
+            firstVisible.classList.add('active');
+            var input = firstVisible.querySelector('input');
+            if (input) {
+                input.checked = true;
+            }
+        }
+    }
+    
+    // Add tooltips showing merged time zones
+    Object.keys(offsetMap).forEach(function(offset) {
+        var buttonsForOffset = offsetMap[offset];
+        
+        if (buttonsForOffset.length > 1) {
+            // Sort by priority to find the visible button and maintain order
+            buttonsForOffset.sort(function(a, b) { return a.priority - b.priority; });
+            var visibleButton = buttonsForOffset[0].button;
+            
+            // Get names of all time zones with this offset, ordered by priority
+            var timezoneNames = buttonsForOffset.map(function(item) {
+                if (item.type === 'browser') {
+                    try {
+                        return Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    } catch (e) {
+                        return 'Browser';
+                    }
+                } else if (item.type === 'utc') {
+                    return 'UTC';
+                } else {
+                    return item.button.textContent.trim();
+                }
+            });
+            
+            // Create tooltip text showing merged time zones (deduplicated)
+            if (timezoneNames.length > 1) {
+                // Remove duplicates from time zone names
+                var uniqueTimezoneNames = [];
+                for (var i = 0; i < timezoneNames.length; i++) {
+                    if (uniqueTimezoneNames.indexOf(timezoneNames[i]) === -1) {
+                        uniqueTimezoneNames.push(timezoneNames[i]);
+                    }
+                }
+                
+                // Only show tooltip if there are actually multiple unique time zones
+                if (uniqueTimezoneNames.length > 1) {
+                    var tooltipText = 'Represents: ' + uniqueTimezoneNames.join(', ');
+                    visibleButton.setAttribute('title', tooltipText);
+                }
+            }
+        } else {
+            // Single time zone - add tooltip for browser time zone (just the time zone name)
+            var button = buttonsForOffset[0].button;
+            if (button.dataset.type === 'browser') {
+                try {
+                    var singleBrowserTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    button.setAttribute('title', singleBrowserTimeZone);
+                } catch (e) {
+                }
+            }
+        }
+    });
+    
+    // Show the format switcher after deduplication is complete
+    formatSwitcher.style.visibility = 'visible';
+});
+</script>

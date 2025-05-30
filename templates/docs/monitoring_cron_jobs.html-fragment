@@ -105,7 +105,7 @@ failures, the MAILTO variable:</p>
 </ul>
 <h2>Looking up Your Machine's Time Zone</h2>
 <p>If your cron job consistently pings SITE_NAME an hour early or an hour late,
-the likely cause is a timezone mismatch: your machine may be using a time zone
+the likely cause is a time zone mismatch: your machine may be using a time zone
 different from what you have configured on SITE_NAME.</p>
 <p>On modern GNU/Linux systems, you can look up the time zone using the
 <code>timedatectl status</code> command and looking for "Time zone" in its output:</p>
