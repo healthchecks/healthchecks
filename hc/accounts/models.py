@@ -97,6 +97,17 @@ class Profile(models.Model):
     last_active_date = models.DateTimeField(null=True, blank=True)
     tz = models.CharField(max_length=36, default="UTC")
     theme = models.CharField(max_length=10, null=True, blank=True)
+    default_timezone_selection = models.CharField(
+        max_length=20, 
+        default="default",
+        choices=[
+            ("default", "Default"),
+            ("utc", "UTC"),
+            ("check", "Check's time zone"),
+            ("browser", "Browser's time zone"),
+        ],
+        help_text="Default time zone selection for event logs"
+    )
 
     totp = models.CharField(max_length=32, null=True, blank=True)
     totp_created = models.DateTimeField(null=True, blank=True)

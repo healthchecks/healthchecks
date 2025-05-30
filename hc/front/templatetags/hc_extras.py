@@ -293,12 +293,13 @@ def decode(v: bytes) -> str:
     return bytes(v).decode(errors="replace")
 
 
-@register.inclusion_tag('front/timezone_format_buttons.html')
-def timezone_format_buttons(check):
+@register.inclusion_tag('front/timezone_format_buttons.html', takes_context=True)
+def timezone_format_buttons(context, check):
     """
     Generate time zone format buttons with client-side deduplication.
     
-    Deduplicate time zone buttons based on  current offsets with priority: check's tz > UTC > browser's time zone.
+    Deduplicate time zone buttons based on current offsets with priority: check's tz > UTC > browser's time zone.
+    Uses user's default time zone selection preference if set.
     """
     from datetime import datetime
     import zoneinfo
@@ -356,5 +357,6 @@ def timezone_format_buttons(check):
     
     return {
         'buttons': buttons, 
-        'check': check
+        'check': check,
+        'request': context.get('request')
     }

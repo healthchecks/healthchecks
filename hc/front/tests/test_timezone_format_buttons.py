@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from unittest.mock import Mock
 
-from django.test import TestCase
+from django.test import TestCase, RequestFactory
+from django.contrib.auth.models import User
 
 from hc.front.templatetags.hc_extras import timezone_format_buttons
+from hc.accounts.models import Profile
 
 
 class TimezoneFormatButtonsTestCase(TestCase):
@@ -13,6 +15,19 @@ class TimezoneFormatButtonsTestCase(TestCase):
     
     This tests time zone deduplication based on current offsets with proper priority ordering.
     """
+    
+    def create_mock_context(self, user_preference=None):
+        """Helper method to create a mock context for testing."""
+        mock_user = Mock()
+        mock_user.is_authenticated = True
+        mock_profile = Mock()
+        mock_profile.default_timezone_selection = user_preference
+        mock_user.profile = mock_profile
+        
+        mock_request = Mock()
+        mock_request.user = mock_user
+        
+        return {'request': mock_request}
 
     def test_simple_check_shows_utc_and_browser(self):
         """Simple checks should show UTC and browser time zone buttons."""
@@ -20,7 +35,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "simple"
         check.tz = "UTC"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 2)
@@ -46,7 +62,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "UTC"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 2)
@@ -71,7 +88,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "America/New_York"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 3)
@@ -105,7 +123,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "Asia/Jerusalem"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 3)
@@ -131,7 +150,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "oncalendar"
         check.tz = "Europe/London"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 3)
@@ -155,7 +175,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "Invalid/Timezone"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 3)
@@ -177,7 +198,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "Etc/UTC"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         self.assertEqual(len(buttons), 3)
@@ -202,7 +224,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "Asia/Tokyo"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         # UTC button should be first
@@ -226,7 +249,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check.kind = "cron"
         check.tz = "Pacific/Auckland"
         
-        result = timezone_format_buttons(check)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check)
         buttons = result["buttons"]
         
         # Verify display order (UTC first, then check time zone, then browser)
@@ -244,7 +268,8 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check_simple.kind = "simple"
         check_simple.tz = "UTC"
         
-        result = timezone_format_buttons(check_simple)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check_simple)
         defaults = [btn["is_default"] for btn in result["buttons"]]
         self.assertEqual(defaults, [True, False])  # UTC=True, Browser=False
         
@@ -253,6 +278,212 @@ class TimezoneFormatButtonsTestCase(TestCase):
         check_cron.kind = "cron"
         check_cron.tz = "Asia/Tokyo"
         
-        result = timezone_format_buttons(check_cron)
+        context = self.create_mock_context()
+        result = timezone_format_buttons(context, check_cron)
         defaults = [btn["is_default"] for btn in result["buttons"]]
         self.assertEqual(defaults, [False, True, False])  # UTC=False, Check=True, Browser=False
+
+
+class TimezonePreferenceTestCase(TestCase):
+    """
+    Tests for user time zone preference functionality in appearance settings.
+    """
+    
+    def setUp(self):
+        self.user = User.objects.create(username="testuser", email="test@example.com")
+        self.profile = Profile.objects.for_user(self.user)
+
+    def test_default_timezone_selection_field_default_value(self):
+        """Test that default_timezone_selection defaults to 'default'."""
+        self.assertEqual(self.profile.default_timezone_selection, "default")
+
+    def test_set_timezone_preference_utc(self):
+        """Test setting UTC as default time zone preference."""
+        self.profile.default_timezone_selection = "utc"
+        self.profile.save()
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.default_timezone_selection, "utc")
+
+    def test_set_timezone_preference_check(self):
+        """Test setting check's time zone as default preference."""
+        self.profile.default_timezone_selection = "check"
+        self.profile.save()
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.default_timezone_selection, "check")
+
+    def test_set_timezone_preference_browser(self):
+        """Test setting browser's time zone as default preference."""
+        self.profile.default_timezone_selection = "browser"
+        self.profile.save()
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.default_timezone_selection, "browser")
+
+    def test_set_timezone_preference_default(self):
+        """Test setting time zone preference back to default."""
+        self.profile.default_timezone_selection = "utc"
+        self.profile.save()
+        
+        # Now set it back to default
+        self.profile.default_timezone_selection = "default"
+        self.profile.save()
+        
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.default_timezone_selection, "default")
+
+    def test_timezone_format_buttons_respects_user_preference_utc(self):
+        """Test that timezone_format_buttons respects user UTC preference."""
+        # Set up user preference for UTC
+        self.profile.default_timezone_selection = "utc"
+        self.profile.save()
+        
+        # Create a check and context
+        check = Mock()
+        check.kind = "cron"
+        check.tz = "America/New_York"
+        
+        # Create context with authenticated user
+        mock_request = Mock()
+        mock_request.user = self.user
+        context = {'request': mock_request}
+        
+        result = timezone_format_buttons(context, check)
+        
+        # Verify that request is included in result for template access
+        self.assertEqual(result['request'], mock_request)
+        
+        # Verify buttons are generated correctly
+        buttons = result['buttons']
+        self.assertEqual(len(buttons), 3)  # UTC, Check, Browser
+        
+        # UTC button should be first
+        utc_button = buttons[0]
+        self.assertEqual(utc_button['type'], 'utc')
+        
+        # Check button should be second
+        check_button = buttons[1]
+        self.assertEqual(check_button['type'], 'check')
+        
+        # Browser button should be third
+        browser_button = buttons[2]
+        self.assertEqual(browser_button['type'], 'browser')
+
+    def test_timezone_format_buttons_respects_user_preference_check(self):
+        """Test that timezone_format_buttons respects user check time zone preference."""
+        # Set up user preference for check's time zone
+        self.profile.default_timezone_selection = "check"
+        self.profile.save()
+        
+        # Create a check and context
+        check = Mock()
+        check.kind = "cron"
+        check.tz = "Europe/London"
+        
+        # Create context with authenticated user
+        mock_request = Mock()
+        mock_request.user = self.user
+        context = {'request': mock_request}
+        
+        result = timezone_format_buttons(context, check)
+        
+        # Verify that request is included in result for template access
+        self.assertEqual(result['request'], mock_request)
+        self.assertEqual(result['check'], check)
+
+    def test_timezone_format_buttons_respects_user_preference_browser(self):
+        """Test that timezone_format_buttons respects user browser time zone preference."""
+        # Set up user preference for browser time zone
+        self.profile.default_timezone_selection = "browser"
+        self.profile.save()
+        
+        # Create a check and context
+        check = Mock()
+        check.kind = "simple"
+        check.tz = "UTC"
+        
+        # Create context with authenticated user
+        mock_request = Mock()
+        mock_request.user = self.user
+        context = {'request': mock_request}
+        
+        result = timezone_format_buttons(context, check)
+        
+        # Verify that request is included in result for template access
+        self.assertEqual(result['request'], mock_request)
+        
+        # For simple checks, should have UTC and Browser buttons
+        buttons = result['buttons']
+        self.assertEqual(len(buttons), 2)
+        
+        # Find browser button
+        browser_button = next(btn for btn in buttons if btn['type'] == 'browser')
+        self.assertEqual(browser_button['type'], 'browser')
+        self.assertEqual(browser_button['display_name'], "Browser's time zone")
+
+    def test_timezone_format_buttons_with_default_preference(self):
+        """Test that timezone_format_buttons works with default preference."""
+        # Keep default preference
+        self.assertEqual(self.profile.default_timezone_selection, "default")
+        
+        # Create a check and context
+        check = Mock()
+        check.kind = "cron"
+        check.tz = "Asia/Tokyo"
+        
+        # Create context with authenticated user
+        mock_request = Mock()
+        mock_request.user = self.user
+        context = {'request': mock_request}
+        
+        result = timezone_format_buttons(context, check)
+        
+        # Verify that request is included in result for template access
+        self.assertEqual(result['request'], mock_request)
+        
+        # Should have all 3 buttons for cron check
+        buttons = result['buttons']
+        self.assertEqual(len(buttons), 3)
+
+    def test_timezone_format_buttons_with_unauthenticated_user(self):
+        """Test that timezone_format_buttons works with unauthenticated user."""
+        # Create context with unauthenticated user
+        mock_user = Mock()
+        mock_user.is_authenticated = False
+        mock_request = Mock()
+        mock_request.user = mock_user
+        context = {'request': mock_request}
+        
+        # Create a check
+        check = Mock()
+        check.kind = "cron"
+        check.tz = "UTC"
+        
+        result = timezone_format_buttons(context, check)
+        
+        # Should still work and include the request
+        self.assertEqual(result['request'], mock_request)
+        
+        # Should have UTC and Browser buttons (UTC time zone matches check)
+        buttons = result['buttons']
+        self.assertEqual(len(buttons), 2)
+
+    def test_timezone_format_buttons_context_missing_request(self):
+        """Test that timezone_format_buttons handles missing request in context."""
+        # Create context without request
+        context = {}
+        
+        # Create a check
+        check = Mock()
+        check.kind = "simple"
+        check.tz = "UTC"
+        
+        result = timezone_format_buttons(context, check)
+        
+        # Should handle missing request gracefully
+        self.assertIsNone(result['request'])
+        
+        # Should still generate buttons
+        buttons = result['buttons']
+        self.assertEqual(len(buttons), 2)  # UTC and Browser for simple check

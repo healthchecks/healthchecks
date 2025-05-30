@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var browserOffsetMinutes = -new Date().getTimezoneOffset(); // Browser offset in minutes from UTC
     var formatSwitcher = document.getElementById('format-switcher');
     var allButtons = formatSwitcher.querySelectorAll('label');
+    var userPreference = {% if request.user.is_authenticated and request.user.profile.default_timezone_selection and request.user.profile.default_timezone_selection != "default" %}'{{ request.user.profile.default_timezone_selection }}'{% else %}null{% endif %};
     
     // Collect all offsets and their corresponding buttons
     var offsetMap = {};
@@ -72,19 +73,50 @@ document.addEventListener('DOMContentLoaded', function() {
         button.style.display = 'none';
     });
     
-    // Ensure there's always an active button after deduplication
-    var activeButtons = formatSwitcher.querySelectorAll('label.active:not([style*="display: none"])');
+    // Apply user preference or ensure there's always an active button after deduplication
+    var visibleButtons = formatSwitcher.querySelectorAll('label:not([style*="display: none"])');
+    var buttonToActivate = null;
     
-    if (activeButtons.length === 0) {
-        // No active button visible, activate the first visible one
-        var visibleButtons = formatSwitcher.querySelectorAll('label:not([style*="display: none"])');
-        if (visibleButtons.length > 0) {
-            var firstVisible = visibleButtons[0];
-            firstVisible.classList.add('active');
-            var input = firstVisible.querySelector('input');
-            if (input) {
-                input.checked = true;
+    // First, try to apply user preference if it exists
+    if (userPreference && visibleButtons.length > 0) {
+        for (var i = 0; i < visibleButtons.length; i++) {
+            var button = visibleButtons[i];
+            if (button.dataset.type === userPreference) {
+                buttonToActivate = button;
+                break;
             }
+        }
+    }
+    
+    // If no user preference or preference not found, check for existing active button
+    if (!buttonToActivate) {
+        var activeButtons = formatSwitcher.querySelectorAll('label.active:not([style*="display: none"])');
+        if (activeButtons.length > 0) {
+            buttonToActivate = activeButtons[0];
+        }
+    }
+    
+    // Fall back to first visible button if nothing else worked
+    if (!buttonToActivate && visibleButtons.length > 0) {
+        buttonToActivate = visibleButtons[0];
+    }
+    
+    // Clear all active states and set the chosen button as active
+    if (buttonToActivate) {
+        // Remove active class from all buttons
+        visibleButtons.forEach(function(button) {
+            button.classList.remove('active');
+            var input = button.querySelector('input');
+            if (input) {
+                input.checked = false;
+            }
+        });
+        
+        // Set the chosen button as active
+        buttonToActivate.classList.add('active');
+        var input = buttonToActivate.querySelector('input');
+        if (input) {
+            input.checked = true;
         }
     }
     

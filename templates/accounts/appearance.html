@@ -26,7 +26,7 @@
     </div>
 
     <div class="col-sm-9 col-md-6">
-        <div class="panel panel-{{ status }}">
+        <div class="panel panel-{{ theme_status }}">
             <div class="panel-body settings-block">
                 <form method="post">
                     {% csrf_token %}
@@ -90,7 +90,32 @@
                     </div>
                 </form>
             </div>
-            {% if status == "info" %}
+            {% if theme_status == "info" %}
+            <div class="panel-footer">
+                Your settings have been updated!
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="panel panel-{{ timezone_status }}">
+            <div class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Time Zone Display</h2>
+                    <p class="help-block">
+                        Choose which time zone button should be automatically selected when viewing event logs. 
+                        "Default" uses the current automatic selection behavior.
+                    </p>
+                    
+                    <select id="default_timezone_selection" name="default_timezone_selection" class="form-control">
+                        <option value="default" {% if profile.default_timezone_selection == "default" %}selected{% endif %}>Default</option>
+                        <option value="utc" {% if profile.default_timezone_selection == "utc" %}selected{% endif %}>UTC</option>
+                        <option value="check" {% if profile.default_timezone_selection == "check" %}selected{% endif %}>Check's time zone</option>
+                        <option value="browser" {% if profile.default_timezone_selection == "browser" %}selected{% endif %}>Browser's time zone</option>
+                    </select>
+                </form>
+            </div>
+            {% if timezone_status == "info" %}
             <div class="panel-footer">
                 Your settings have been updated!
             </div>
@@ -102,6 +127,7 @@
 
 {% block scripts %}
 {% compress js %}
+<script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/appearance.js' %}"></script>
 {% endcompress %}
 {% endblock %}

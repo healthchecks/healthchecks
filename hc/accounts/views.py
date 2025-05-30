@@ -935,14 +935,25 @@ def appearance(request: AuthenticatedHttpRequest) -> HttpResponse:
     ctx = {
         "page": "appearance",
         "profile": profile,
-        "status": "default",
+        "theme_status": "default",
+        "timezone_status": "default",
     }
 
     if request.method == "POST":
-        theme = request.POST.get("theme", "")
-        if theme in ("", "dark", "system"):
-            profile.theme = theme
-            profile.save()
-            ctx["status"] = "info"
+        # Handle theme form submission
+        if "theme" in request.POST:
+            theme = request.POST.get("theme", "")
+            if theme in ("", "dark", "system"):
+                profile.theme = theme
+                profile.save()
+                ctx["theme_status"] = "info"
+        
+        # Handle time zone selection form submission  
+        elif "default_timezone_selection" in request.POST:
+            default_timezone_selection = request.POST.get("default_timezone_selection", "")
+            if default_timezone_selection in ("default", "utc", "check", "browser"):
+                profile.default_timezone_selection = default_timezone_selection
+                profile.save()
+                ctx["timezone_status"] = "info"
 
     return render(request, "accounts/appearance.html", ctx)
