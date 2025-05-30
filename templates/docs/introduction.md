@@ -139,6 +139,13 @@ For more information on integrations, see
 
 ---
 
+**User Interface**. SITE_NAME provides several features to customize your monitoring 
+experience, including time zone display preferences for event logs and automatic 
+deduplication of time zone buttons. See [User interface features](user_interface/) 
+for details on personalizing your monitoring dashboard.
+
+---
+
 **Project**. To keep things organized, you can group checks and integrations in **Projects**.
 Your account starts with a single default project, but you can create
 additional projects as needed. You can transfer existing checks between projects

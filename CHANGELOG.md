@@ -1,6 +1,13 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## Next
+
+### Improvements
+- Add user-configurable default time zone selection for event logs in appearance settings
+- Implement intelligent time zone button deduplication in event logs (merge buttons with identical offsets)
+- Add auto-hide functionality for success messages in account settings pages
+
 ## v3.10 - 2025-05-09
 
 ### Improvements
