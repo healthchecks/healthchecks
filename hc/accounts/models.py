@@ -504,12 +504,17 @@ class Project(models.Model):
                 break
 
     def compare_api_key(self, key: str) -> bool:
-        digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
         if key.startswith("hcr_"):
-            expected = self.api_key_readonly[8:]
+            expected = self.api_key_readonly
         else:
-            expected = self.api_key[8:]
-        return hmac.compare_digest(digest.hex(), expected)
+            expected = self.api_key
+
+        # Only calculate and compare digest if db key length is 8 + 64 = 72
+        if len(expected) != 72:
+            return False
+
+        digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
+        return hmac.compare_digest(digest.hex(), expected[8:])
 
 
 class Member(models.Model):

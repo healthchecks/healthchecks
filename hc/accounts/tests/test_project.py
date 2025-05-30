@@ -57,6 +57,18 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "Prometheus metrics endpoint")
         self.assertContains(r, f"/tv/#{self.project.api_key_readonly}=Alices%20Project")
 
+    def test_it_creates_api_key(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"create_key": "api_key"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        self.project.refresh_from_db()
+        self.assertEqual(len(self.project.api_key), 72)
+        self.assertContains(r, "key-created-modal")
+        self.assertContains(r, "hcw_" + self.project.api_key[:8])
+
     def test_it_creates_readonly_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
@@ -66,7 +78,8 @@ class ProjectTestCase(BaseTestCase):
 
         self.project.refresh_from_db()
         self.assertEqual(len(self.project.api_key_readonly), 72)
-        self.assertFalse("b'" in self.project.api_key_readonly)
+        self.assertContains(r, "key-created-modal")
+        self.assertContains(r, "hcr_" + self.project.api_key_readonly[:8])
 
     def test_it_requires_rw_access_to_create_key(self) -> None:
         self.bobs_membership.role = "r"
