@@ -7,3 +7,9 @@ __pycache__/
 hc.sqlite
 hc/local_settings.py
 static-collected
+
+# IDE files
+.idea/
+
+# System files
+.DS_Store
