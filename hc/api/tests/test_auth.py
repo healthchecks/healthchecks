@@ -35,7 +35,6 @@ class AuthTestCase(BaseTestCase):
     def test_ro_endpoint_accepts_hashed_api_key(self) -> None:
         key = self.project.set_api_key()
         self.project.save()
-
         r = self.get(key=key)
         self.assertEqual(r.status_code, 200)
 

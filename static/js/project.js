@@ -1,6 +1,8 @@
 $(function () {
     $("#key-created-modal").modal("show");
 
+    $("[title]").tooltip();
+
     $(".member-remove").click(function () {
         $("#rtm-email").text(this.dataset.email);
         $("#remove-team-member-email").val(this.dataset.email);
@@ -40,4 +42,11 @@ $(function () {
         $("#create-key-type").val(this.dataset.createKey);
         $("#create-key-form").submit();
     });
+
+    $("code[data-plaintext]").tooltip({"title": "Click to reveal"});
+    $("code[data-plaintext]").click(function () {
+        $(this).text(this.dataset.plaintext).tooltip("destroy");
+    });
+
+
 });

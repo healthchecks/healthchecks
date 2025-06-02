@@ -2,3 +2,7 @@
     color: var(--text-muted);
     font-style: italic;
 }
+
+#api-keys code[data-plaintext] {
+    cursor: pointer;
+}

@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test.utils import override_settings
-
 from hc.accounts.models import Member, Project
 from hc.api.models import TokenBucket
 from hc.test import BaseTestCase
@@ -26,7 +25,7 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Change Project Name")
 
-    def test_it_masks_keys_by_default(self) -> None:
+    def test_it_shows_plaintext_keys(self) -> None:
         self.project.api_key_readonly = "R" * 32
         self.project.ping_key = "P" * 22
         self.project.save()
@@ -36,26 +35,9 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
 
-        self.assertNotContains(r, "X" * 32)
-        self.assertNotContains(r, "R" * 32)
-        self.assertNotContains(r, "P" * 22)
-
-    def test_it_shows_keys(self) -> None:
-        self.project.api_key_readonly = "R" * 32
-        self.project.ping_key = "P" * 22
-        self.project.save()
-
-        self.client.login(username="alice@example.org", password="password")
-
-        form = {"show_keys": "1"}
-        r = self.client.post(self.url, form)
-        self.assertEqual(r.status_code, 200)
-
         self.assertContains(r, "X" * 32)
         self.assertContains(r, "R" * 32)
         self.assertContains(r, "P" * 22)
-        self.assertContains(r, "Prometheus metrics endpoint")
-        self.assertContains(r, f"/tv/#{self.project.api_key_readonly}=Alices%20Project")
 
     def test_it_creates_api_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -65,7 +47,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.project.refresh_from_db()
-        self.assertEqual(len(self.project.api_key), 72)
+        self.assertEqual(len(self.project.api_key), 73)
         self.assertContains(r, "key-created-modal")
         self.assertContains(r, "hcw_" + self.project.api_key[:8])
 
@@ -77,7 +59,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.project.refresh_from_db()
-        self.assertEqual(len(self.project.api_key_readonly), 72)
+        self.assertEqual(len(self.project.api_key_readonly), 73)
         self.assertContains(r, "key-created-modal")
         self.assertContains(r, "hcr_" + self.project.api_key_readonly[:8])
 

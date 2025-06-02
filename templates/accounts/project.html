@@ -83,16 +83,12 @@
                     <tr>
                         <td>API key</td>
                         <td>
-                            {% if project.api_key|length == 72 %}
+                            {% if "." in project.api_key %}
                                 <code>hcw_****************************</code>
                             {% elif project.api_key %}
-                            {% if show_keys %}
-                                <code>{{ project.api_key }}</code>
+                                <code data-plaintext="{{ project.api_key }}">{{ project.api_key|mask_key }}</code>
                             {% else %}
-                                <code>{{ project.api_key|mask_key }}</code>
-                            {% endif %}
-                            {% else %}
-                            <span class="not-set">not set</span>
+                                <span class="not-set">not set</span>
                             {% endif %}
                         </td>
                         <td class="text-right">
@@ -108,16 +104,12 @@
                     <tr>
                         <td>API key (read-only)</td>
                         <td>
-                            {% if project.api_key_readonly|length == 72 %}
+                            {% if "." in project.api_key_readonly %}
                                 <code>hcr_****************************</code>
                             {% elif project.api_key_readonly %}
-                            {% if show_keys %}
-                                <code>{{ project.api_key_readonly }}</code>
+                                <code data-plaintext="{{ project.api_key_readonly }}">{{ project.api_key_readonly|mask_key }}</code>
                             {% else %}
-                                <code>{{ project.api_key_readonly|mask_key }}</code>
-                            {% endif %}
-                            {% else %}
-                            <span class="not-set">not set</span>
+                                <span class="not-set">not set</span>
                             {% endif %}
                         </td>
                         <td class="text-right">
@@ -134,11 +126,7 @@
                         <td>Ping key</td>
                         <td>
                             {% if project.ping_key %}
-                            {% if show_keys %}
-                                <code>{{ project.ping_key }}</code>
-                            {% else %}
-                                <code>{{ project.ping_key|mask_key }}</code>
-                            {% endif %}
+                                <code data-plaintext="{{ project.ping_key }}">{{ project.ping_key|mask_key }}</code>
                             {% else %}
                             <span class="not-set">not set</span>
                             {% endif %}
@@ -158,30 +146,8 @@
                 <p>See also:</p>
                 <ul>
                     <li><a href="{% url 'hc-serve-doc' 'api' %}">API documentation</a></li>
-                    {% if project.api_key_readonly and show_keys %}
-                    {% if enable_prometheus %}
-                    <li>
-                        <a href="{% url 'hc-metrics' project.code project.api_key_readonly %}">Prometheus metrics endpoint</a>
-                    </li>
-                    {% endif %}
-                    <li>
-                        <a href="{{ project.dashboard_url }}">Read-only dashboard</a>
-                        (<a href="https://github.com/healthchecks/dashboard/#security">security considerations</a>)
-                    </li>
-                    {% endif %}
+                    <li><a href="{% url 'hc-serve-doc' 'http_api' %}">Pinging API documentation</a></li>
                 </ul>
-
-                {% if not show_keys %}
-                {% if project.api_key or project.api_key_readonly or project.ping_key %}
-                <form method="post">
-                    {% csrf_token %}
-                    <button
-                        type="submit"
-                        name="show_keys"
-                        class="btn btn-default pull-right">Show Keys</button>
-                </form>
-                {% endif %}
-                {% endif %}
             </div>
 
             {% if key_created %}
