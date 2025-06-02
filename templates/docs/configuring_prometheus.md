@@ -7,8 +7,8 @@ SITE_NAME supports exporting metrics and check statuses to
 
 Create a read-only API key in <strong>Project Settings › API Access</strong>.
 
-Make sure to use a <strong>read-only</strong> API key. Prometheus does not read-write
-API access.
+Make sure to use a <strong>read-only</strong> API key. Prometheus does not need
+read-write API access.
 
 ![Project's API Keys](IMG_URL/prometheus_api_keys.png)
 

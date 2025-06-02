@@ -3,8 +3,8 @@
 <a href="https://prometheus.io/">Prometheus</a>, for use with <a href="https://grafana.com/">Grafana</a>.</p>
 <h2>Create read-only API key</h2>
 <p>Create a read-only API key in <strong>Project Settings › API Access</strong>.</p>
-<p>Make sure to use a <strong>read-only</strong> API key. Prometheus does not read-write
-API access.</p>
+<p>Make sure to use a <strong>read-only</strong> API key. Prometheus does not need
+read-write API access.</p>
 <p><img alt="Project's API Keys" src="IMG_URL/prometheus_api_keys.png" /></p>
 <h2>Update the prometheus.yml</h2>
 <p>Add the following scrape configuration to Prometheus:</p>
