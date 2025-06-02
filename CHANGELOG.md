@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.11-dev - Unreleased
+
+### Improvements
+- Store project API keys in the database in a hashed form (#1167)
+- Use "hcw_" and "hcr_" prefixes in project API keys (#1148)
+
 ## v3.10 - 2025-05-09
 
 ### Improvements
