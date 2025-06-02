@@ -39,6 +39,17 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "R" * 32)
         self.assertContains(r, "P" * 22)
 
+    def test_it_requires_rw_access_to_show_keys(self) -> None:
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertNotContains(r, "X" * 32)
+        self.assertNotContains(r, "R" * 32)
+        self.assertNotContains(r, "P" * 22)
+
     def test_it_creates_api_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
@@ -384,11 +395,3 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.assertNotContains(r, "Prometheus metrics endpoint")
-
-    def test_it_requires_rw_access_to_show_api_key(self) -> None:
-        self.bobs_membership.role = "r"
-        self.bobs_membership.save()
-
-        self.client.login(username="bob@example.org", password="password")
-        r = self.client.post(self.url, {"show_keys": "1"})
-        self.assertEqual(r.status_code, 403)

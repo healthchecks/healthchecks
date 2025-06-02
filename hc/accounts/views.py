@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import time
 from datetime import timedelta as td
-from secrets import token_urlsafe
 from urllib.parse import urlparse
 from uuid import UUID, uuid4
 
@@ -33,7 +32,6 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
-
 from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.http import AuthenticatedHttpRequest
@@ -385,7 +383,6 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
             ctx["key_created"] = True
             ctx["api_status"] = "success"
-            ctx["show_keys"] = True
         elif "revoke_key" in request.POST:
             if not rw:
                 return HttpResponseForbidden()
@@ -400,11 +397,6 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
             ctx["key_revoked"] = True
             ctx["api_status"] = "info"
-        elif "show_keys" in request.POST:
-            if not rw:
-                return HttpResponseForbidden()
-
-            ctx["show_keys"] = True
         elif "invite_team_member" in request.POST:
             if not is_manager:
                 return HttpResponseForbidden()
