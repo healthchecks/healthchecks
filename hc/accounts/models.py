@@ -485,7 +485,7 @@ class Project(models.Model):
 
         key = f"{prefix}{secret}"
         digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
-        return key, secret[:8] + digest.hex()
+        return key, secret[:8] + "." + digest.hex()
 
     def set_api_key(self) -> str:
         key, key_hash = self._make_api_key("hcw_")
@@ -510,11 +510,12 @@ class Project(models.Model):
             expected = self.api_key
 
         # Only calculate and compare digest if db key length is 8 + 64 = 72
-        if len(expected) != 72:
+        if "." not in expected:
             return False
+        _, key_hash = expected.split(".", maxsplit=1)
 
         digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
-        return hmac.compare_digest(digest.hex(), expected[8:])
+        return hmac.compare_digest(digest.hex(), key_hash)
 
 
 class Member(models.Model):
