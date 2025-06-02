@@ -36,11 +36,13 @@ $(function () {
         $("#revoke-key-type").val(this.dataset.revokeKey);
         $("#revoke-key-modal .name").text(this.dataset.name);
         $("#revoke-key-modal").modal("show");
+        return false;
     });
 
     $("a[data-create-key]").click(function () {
         $("#create-key-type").val(this.dataset.createKey);
         $("#create-key-form").submit();
+        return false;
     });
 
     $("code[data-plaintext]").tooltip({"title": "Click to reveal"});
