@@ -1,8 +1,8 @@
 <h1>Status Badges</h1>
 <p>SITE_NAME provides status badges that you can embed in your READMEs, internal
 dashboards, or public status pages. Each SITE_NAME badge reports the combined status of
-checks tagged with a particular tag. There is also a catch-all badge that reflects
-the status of all checks in a project.</p>
+all checks in the project, the status of checks tagged with a specific tag, or the
+status of a single specific check.</p>
 <p><img alt="The &quot;Badges&quot; page" src="IMG_URL/badges.png" /></p>
 <p>The badges have public but hard-to-guess URLs. Badges do not expose information
 other than the badge label and the aggregate status of their corresponding checks.
@@ -16,7 +16,7 @@ It is not possible to reverse-engineer ping URLs from badge URLs.</p>
 </ul>
 <p>By default, SITE_NAME displays badge URLs that only report the
 <strong>up</strong> and <strong>down</strong> states (and treat <strong>late</strong> as <strong>up</strong>). Using the "Badge states"
-button, you can switch to alternate URLs that report all three states.</p>
+radio buttons, you can switch to alternate URLs that report all three states.</p>
 <h2>Badge Formats</h2>
 <p>SITE_NAME offers badges in three different formats:</p>
 <ul>
@@ -31,6 +31,3 @@ button, you can switch to alternate URLs that report all three states.</p>
   on how to use it. The main benefit of using Shields.io to generate badges is
   the extra visual styles and customization options that Shields.io supports.</li>
 </ul>
-<h2>Badge for a Single Check</h2>
-<p>If you need a status badge for a specific check, assign the check a unique tag.
-Then use that tag's badge.</p>

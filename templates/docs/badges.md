@@ -2,8 +2,8 @@
 
 SITE_NAME provides status badges that you can embed in your READMEs, internal
 dashboards, or public status pages. Each SITE_NAME badge reports the combined status of
-checks tagged with a particular tag. There is also a catch-all badge that reflects
-the status of all checks in a project.
+all checks in the project, the status of checks tagged with a specific tag, or the
+status of a single specific check.
 
 ![The "Badges" page](IMG_URL/badges.png)
 
@@ -21,7 +21,7 @@ Each badge can be in one of the following three states:
 
 By default, SITE_NAME displays badge URLs that only report the
 **up** and **down** states (and treat **late** as **up**). Using the "Badge states"
-button, you can switch to alternate URLs that report all three states.
+radio buttons, you can switch to alternate URLs that report all three states.
 
 ## Badge Formats
 
@@ -37,9 +37,3 @@ SITE_NAME offers badges in three different formats:
   Shields.io-compatible JSON document. See [Shields.io documentation](https://shields.io/endpoint)
   on how to use it. The main benefit of using Shields.io to generate badges is
   the extra visual styles and customization options that Shields.io supports.
-
-## Badge for a Single Check
-
-If you need a status badge for a specific check, assign the check a unique tag.
-Then use that tag's badge.
-
