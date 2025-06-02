@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test.utils import override_settings
-
 from hc.accounts.models import Member, Project
 from hc.api.models import TokenBucket
 from hc.test import BaseTestCase
@@ -26,7 +25,7 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Change Project Name")
 
-    def test_it_masks_keys_by_default(self) -> None:
+    def test_it_shows_plaintext_keys(self) -> None:
         self.project.api_key_readonly = "R" * 32
         self.project.ping_key = "P" * 22
         self.project.save()
@@ -36,26 +35,32 @@ class ProjectTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 200)
 
+        self.assertContains(r, "X" * 32)
+        self.assertContains(r, "R" * 32)
+        self.assertContains(r, "P" * 22)
+
+    def test_it_requires_rw_access_to_show_keys(self) -> None:
+        self.bobs_membership.role = "r"
+        self.bobs_membership.save()
+
+        self.client.login(username="bob@example.org", password="password")
+        r = self.client.get(self.url)
+
         self.assertNotContains(r, "X" * 32)
         self.assertNotContains(r, "R" * 32)
         self.assertNotContains(r, "P" * 22)
 
-    def test_it_shows_keys(self) -> None:
-        self.project.api_key_readonly = "R" * 32
-        self.project.ping_key = "P" * 22
-        self.project.save()
-
+    def test_it_creates_api_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
-        form = {"show_keys": "1"}
+        form = {"create_key": "api_key"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 200)
 
-        self.assertContains(r, "X" * 32)
-        self.assertContains(r, "R" * 32)
-        self.assertContains(r, "P" * 22)
-        self.assertContains(r, "Prometheus metrics endpoint")
-        self.assertContains(r, f"/tv/#{self.project.api_key_readonly}=Alices%20Project")
+        self.project.refresh_from_db()
+        self.assertEqual(len(self.project.api_key), 73)
+        self.assertContains(r, "key-created-modal")
+        self.assertContains(r, "hcw_" + self.project.api_key[:8])
 
     def test_it_creates_readonly_key(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -65,8 +70,9 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.project.refresh_from_db()
-        self.assertEqual(len(self.project.api_key_readonly), 32)
-        self.assertFalse("b'" in self.project.api_key_readonly)
+        self.assertEqual(len(self.project.api_key_readonly), 73)
+        self.assertContains(r, "key-created-modal")
+        self.assertContains(r, "hcr_" + self.project.api_key_readonly[:8])
 
     def test_it_requires_rw_access_to_create_key(self) -> None:
         self.bobs_membership.role = "r"
@@ -389,11 +395,3 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 200)
 
         self.assertNotContains(r, "Prometheus metrics endpoint")
-
-    def test_it_requires_rw_access_to_show_api_key(self) -> None:
-        self.bobs_membership.role = "r"
-        self.bobs_membership.save()
-
-        self.client.login(username="bob@example.org", password="password")
-        r = self.client.post(self.url, {"show_keys": "1"})
-        self.assertEqual(r.status_code, 403)

@@ -30,6 +30,44 @@ def _get_api_version(request: HttpRequest) -> int:
     return 1
 
 
+def lookup_project(api_key: str, require_rw: bool) -> Project | None:
+    """Look up project by API key.
+
+    This handles both the old plain text API keys, and the new hashed API keys.
+    For the hashed API keys, it looks up project by the first 8 characters of the
+    random part of the key, then calls Project.compare_api_key().
+    """
+
+    # Hashed keys
+    if api_key.startswith("hcw_"):
+        secret8 = api_key[4:12]
+        for project in Project.objects.filter(api_key__startswith=secret8):
+            if project.compare_api_key(api_key):
+                return project
+
+    if not require_rw and api_key.startswith("hcr_"):
+        secret8 = api_key[4:12]
+        for project in Project.objects.filter(api_key_readonly__startswith=secret8):
+            if project.compare_api_key(api_key):
+                return project
+
+    # Plain text keys
+    if require_rw:
+        try:
+            return Project.objects.get(api_key=api_key)
+        except Project.DoesNotExist:
+            pass
+    else:
+        write_key_match = Q(api_key=api_key)
+        read_key_match = Q(api_key_readonly=api_key)
+        try:
+            return Project.objects.get(write_key_match | read_key_match)
+        except Project.DoesNotExist:
+            pass
+
+    return None
+
+
 def authorize(f: ViewFunc) -> ViewFunc:
     @wraps(f)
     def wrapper(request: ApiRequest, *args: Any, **kwds: Any) -> HttpResponse:
@@ -56,11 +94,11 @@ def authorize(f: ViewFunc) -> ViewFunc:
         if len(api_key) != 32:
             return error("missing api key", 401)
 
-        try:
-            request.project = Project.objects.get(api_key=api_key)
-        except Project.DoesNotExist:
+        project = lookup_project(api_key, require_rw=True)
+        if project is None:
             return error("wrong api key", 401)
 
+        request.project = project
         request.readonly = False
         request.v = _get_api_version(request)
         return f(request, *args, **kwds)
@@ -79,14 +117,14 @@ def authorize_read(f: ViewFunc) -> ViewFunc:
         if len(api_key) != 32:
             return error("missing api key", 401)
 
-        write_key_match = Q(api_key=api_key)
-        read_key_match = Q(api_key_readonly=api_key)
-        try:
-            request.project = Project.objects.get(write_key_match | read_key_match)
-        except Project.DoesNotExist:
+        project = lookup_project(api_key, require_rw=False)
+        if project is None:
             return error("wrong api key", 401)
 
-        request.readonly = api_key == request.project.api_key_readonly
+        request.project = project
+        request.readonly = (
+            api_key.startswith("hcr_") or api_key == request.project.api_key_readonly
+        )
         request.v = _get_api_version(request)
         return f(request, *args, **kwds)
 

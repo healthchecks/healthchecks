@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 import time
 from datetime import timedelta as td
-from secrets import token_urlsafe
 from urllib.parse import urlparse
 from uuid import UUID, uuid4
 
@@ -33,7 +32,6 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
-
 from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.http import AuthenticatedHttpRequest
@@ -145,13 +143,6 @@ def _check_2fa(request: HttpRequest, user: User) -> HttpResponse:
 
     auth_login(request, user)
     return _redirect_after_login(request)
-
-
-def _new_key(nbytes: int = 24) -> str:
-    while True:
-        candidate = token_urlsafe(nbytes)
-        if candidate[0] not in "-_" and candidate[-1] not in "-_":
-            return candidate
 
 
 def _set_autologin_cookie(response: HttpResponse) -> None:
@@ -383,16 +374,15 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
                 return HttpResponseForbidden()
 
             if request.POST["create_key"] == "api_key":
-                project.api_key = _new_key(24)
+                ctx["new_key"] = project.set_api_key()
             elif request.POST["create_key"] == "api_key_readonly":
-                project.api_key_readonly = _new_key(24)
+                ctx["new_key"] = project.set_api_key_readonly()
             elif request.POST["create_key"] == "ping_key":
-                project.ping_key = _new_key(16)
+                project.set_ping_key()
             project.save()
 
             ctx["key_created"] = True
             ctx["api_status"] = "success"
-            ctx["show_keys"] = True
         elif "revoke_key" in request.POST:
             if not rw:
                 return HttpResponseForbidden()
@@ -407,11 +397,6 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
             ctx["key_revoked"] = True
             ctx["api_status"] = "info"
-        elif "show_keys" in request.POST:
-            if not rw:
-                return HttpResponseForbidden()
-
-            ctx["show_keys"] = True
         elif "invite_team_member" in request.POST:
             if not is_manager:
                 return HttpResponseForbidden()

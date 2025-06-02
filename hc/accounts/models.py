@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hmac
 import random
 import uuid
 from datetime import date, datetime
@@ -465,6 +466,56 @@ class Project(models.Model):
 
     def get_absolute_url(self) -> str:
         return reverse("hc-checks", args=[self.code])
+
+    def _make_api_key(self, prefix: str) -> tuple[str, str]:
+        """Generate an API key with specified prefix, return (key, key_hash) tuple.
+
+        * `key` is what will be presented to the user,
+        * `key_hash` will be stored in the database.
+
+        `key_hash` consists of two parts:
+        * first 8 characters: the first 8 characters of plain text key
+          (for efficiently looking up project in the database by its API key)
+        * next 64 characters: HMAC(SECRET_KEY, key)
+        """
+        while True:
+            secret = token_urlsafe(21)
+            if "-" not in secret and "_" not in secret:
+                break
+
+        key = f"{prefix}{secret}"
+        digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
+        return key, secret[:8] + "." + digest.hex()
+
+    def set_api_key(self) -> str:
+        key, key_hash = self._make_api_key("hcw_")
+        self.api_key = key_hash
+        return key
+
+    def set_api_key_readonly(self) -> str:
+        key, key_hash = self._make_api_key("hcr_")
+        self.api_key_readonly = key_hash
+        return key
+
+    def set_ping_key(self) -> None:
+        while True:
+            self.ping_key = token_urlsafe(16)  # 22 character string
+            if "_" not in self.ping_key and "-" not in self.ping_key:
+                break
+
+    def compare_api_key(self, key: str) -> bool:
+        if key.startswith("hcr_"):
+            expected = self.api_key_readonly
+        else:
+            expected = self.api_key
+
+        # Only calculate and compare digest if db key length is 8 + 64 = 72
+        if "." not in expected:
+            return False
+        _, key_hash = expected.split(".", maxsplit=1)
+
+        digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
+        return hmac.compare_digest(digest.hex(), key_hash)
 
 
 class Member(models.Model):
