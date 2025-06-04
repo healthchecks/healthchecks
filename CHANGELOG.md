@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Store project API keys in the database in a hashed form (#1167)
 - Use "hcw_" and "hcr_" prefixes in project API keys (#1148)
+- New integration: Google Chat (#423)
 
 ## v3.10 - 2025-05-09
 
