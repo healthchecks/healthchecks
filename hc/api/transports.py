@@ -1741,7 +1741,7 @@ class GoogleChat(HttpTransport):
             fields.add("Period", format_duration(check.timeout))
 
         if check.kind in ("cron", "oncalendar"):
-            fields.add("Schedule", fix_asterisks(check.schedule))
+            fields.add("Schedule", check.schedule)
             fields.add("Time Zone", check.tz)
 
         if ping := self.last_ping(flip):
