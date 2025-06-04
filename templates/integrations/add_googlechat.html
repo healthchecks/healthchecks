@@ -1,0 +1,45 @@
+{% extends "base_project.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Google Chat Integration for {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Google Chat</h1>
+
+    <p>If your team uses <a href="https://chat.google.com/">Google Chat</a>, you can set
+    up {{ site_name }} to post status updates directly to an appropriate
+    Google Chat space.</p>
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group {{ form.room_id.css_classes }}">
+            <label for="url" class="col-sm-2 control-label">Webhook URL</label>
+            <div class="col-sm-6">
+                <input
+                    id="url"
+                    type="text"
+                    class="form-control"
+                    name="value"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.url.errors %}
+                <div class="help-block">
+                    {{ form.url.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

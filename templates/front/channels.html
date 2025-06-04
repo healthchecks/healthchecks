@@ -177,6 +177,13 @@
         {% endif %}
 
         <li>
+            <img src="{% static 'img/integrations/googlechat.png' %}" class="icon" alt="Google Chat icon" />
+            <h2>Google Chat</h2>
+            <p>Google's communication tool for teams, successor of Hangouts.</p>
+            <a href="{% url 'hc-add-googlechat' project.code %}" class="btn btn-primary">Add Integration</a>
+        </li>
+
+        <li>
             <img src="{% static 'img/integrations/gotify.png' %}" class="icon" alt="Gotify icon" />
             <h2>Gotify</h2>
             <p> Self-hosted push notification service.</p>

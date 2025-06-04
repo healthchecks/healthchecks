@@ -1,9 +1,9 @@
 @font-face {
     font-family: "icomoon";
     src:
-        url("../fonts/icomoon.ttf?f9uhnl") format("truetype"),
-        url("../fonts/icomoon.woff?f9uhnl") format("woff"),
-        url("../fonts/icomoon.svg?f9uhnl#icomoon") format("svg");
+        url("../fonts/icomoon.ttf?3uqi8v") format("truetype"),
+        url("../fonts/icomoon.woff?3uqi8v") format("woff"),
+        url("../fonts/icomoon.svg?3uqi8v#icomoon") format("svg");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -24,6 +24,10 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.ic-googlechat:after {
+  content: "\e933";
+  color: #00ac47;
+}
 .ic-github:after {
     content: "\e902";
     color: #24292f;
