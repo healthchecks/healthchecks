@@ -16,8 +16,6 @@ from django.conf import settings
 from django.db import close_old_connections
 from django.template.loader import render_to_string
 from django.utils.html import escape
-from pydantic import BaseModel, ValidationError
-
 from hc.accounts.models import Profile
 from hc.front.templatetags.hc_extras import (
     absolute_site_logo_url,
@@ -30,6 +28,7 @@ from hc.lib.html import extract_signal_styles
 from hc.lib.signing import sign_bounce_id
 from hc.lib.string import replace
 from hc.lib.typealias import JSONDict, JSONList, JSONValue
+from pydantic import BaseModel, ValidationError
 
 if TYPE_CHECKING:
     from hc.api.models import Channel, Check, Flip, Notification, Ping
@@ -1710,3 +1709,77 @@ class GitHub(HttpTransport):
 
         headers = {"Authorization": f"Bearer {token}"}
         self.post(url, json=payload, headers=headers)
+
+
+class GoogleChatFields(list[JSONValue]):
+    """Helper class for preparing [{"title": ..., "value": ... }, ...] structures."""
+
+    def add(self, title: str, value: str) -> None:
+        self.append({"decoratedText": {"topLabel": title, "text": value}})
+
+
+class GoogleChat(HttpTransport):
+    def notify(self, flip: Flip, notification: Notification) -> None:
+        ping = self.last_ping(flip)
+        check = flip.owner
+
+        fields = GoogleChatFields()
+
+        emoji = "🔴" if flip.new_status == "down" else "🟢"
+        title = f"{emoji} <b>{check.name_then_code()}</b> is <b>{flip.new_status.upper()}</b>. "
+        if flip.reason:
+            title += f"Reason: {flip.reason_long()}."
+        fields.append({"textParagraph": {"text": title}})
+
+        if check.project.name:
+            fields.add("Project", check.project.name)
+
+        if tags := check.tags_list():
+            fields.add("Tags", ", ".join(tags))
+
+        if check.kind == "simple":
+            fields.add("Period", format_duration(check.timeout))
+
+        if check.kind in ("cron", "oncalendar"):
+            fields.add("Schedule", check.schedule)
+            fields.add("Time Zone", check.tz)
+
+        if ping := self.last_ping(flip):
+            fields.add("Total Pings", str(ping.n))
+            fields.add("Last Ping", ping.formatted_kind_created())
+        else:
+            fields.add("Total Pings", "0")
+            fields.add("Last Ping", "Never")
+
+        fields.append(
+            {
+                "buttonList": {
+                    "buttons": [
+                        {
+                            "text": f"View in {settings.SITE_NAME}",
+                            "type": "FILLED",
+                            "onClick": {"openLink": {"url": check.cloaked_url()}},
+                        },
+                    ]
+                }
+            }
+        )
+
+        payload = {
+            "cardsV2": [
+                {
+                    "card": {
+                        "sections": {
+                            "collapsible": True,
+                            "uncollapsibleWidgetsCount": 1,
+                            "widgets": fields,
+                        }
+                    }
+                }
+            ]
+        }
+
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+
+        self.post(self.channel.value, json=payload)

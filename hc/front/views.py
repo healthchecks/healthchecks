@@ -42,9 +42,6 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django_stubs_ext import WithAnnotations
-from oncalendar import OnCalendar, OnCalendarError
-from pydantic import BaseModel, TypeAdapter, ValidationError
-
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Member, Profile, Project
 from hc.api.models import (
@@ -71,6 +68,8 @@ from hc.lib import curl, github
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
+from oncalendar import OnCalendar, OnCalendarError
+from pydantic import BaseModel, TypeAdapter, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -1357,6 +1356,7 @@ def send_test_notification(
     dummy_flip.created = now()
     dummy_flip.old_status = "up"
     dummy_flip.new_status = "down"
+    dummy_flip.reason = "timeout"
 
     # Delete all older test notifications for this channel
     Notification.objects.filter(channel=channel, owner=None).delete()
@@ -2869,6 +2869,27 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
 
     messages.success(request, "Success, integration added!")
     return redirect("hc-channels", project.code)
+
+
+@login_required
+def add_googlechat(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+
+    if request.method == "POST":
+        form = forms.AddUrlForm(request.POST)
+        if form.is_valid():
+            channel = Channel(project=project, kind="googlechat")
+            channel.value = form.cleaned_data["value"]
+            channel.save()
+
+            channel.assign_all_checks()
+            messages.success(request, "The Google Chat integration has been added!")
+            return redirect("hc-channels", project.code)
+    else:
+        form = forms.AddUrlForm()
+
+    ctx = {"page": "channels", "project": project, "form": form}
+    return render(request, "integrations/add_googlechat.html", ctx)
 
 
 # Forks: add custom views after this line

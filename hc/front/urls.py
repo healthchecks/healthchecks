@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from django.urls import include, path
-
 from hc.front import views
 
 # /checks/<code>/
@@ -68,6 +67,7 @@ project_urls = [
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_github/", views.add_github, name="hc-add-github"),
     path("add_github/save/", views.add_github_save, name="hc-add-github-save"),
+    path("add_googlechat/", views.add_googlechat, name="hc-add-googlechat"),
     path("add_gotify/", views.add_gotify, name="hc-add-gotify"),
     path("add_group/", views.add_group, name="hc-add-group"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),

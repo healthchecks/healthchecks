@@ -1,0 +1,132 @@
+{% extends "base_project.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Google Chat Integration for {{ site_name }}{% endblock %}
+
+{% block content %}
+<div class="row">
+<div class="col-sm-12">
+    <h1>Google Chat</h1>
+    <div class="jumbotron">
+        {% if request.user.is_authenticated %}
+        <p>If your team uses <a href="https://chat.google.com/">Google Chat</a>, you can set
+        up {{ site_name }} to post alerts directly to an appropriate
+        Google Chat space when a check goes <strong>up</strong>
+            or <strong>down</strong>.
+        </p>
+        {% else %}
+        <p>
+            {{ site_name }} is a free and
+            <a href="https://github.com/healthchecks/healthchecks">open source</a>
+            service for monitoring <strong>cron jobs</strong>, <strong>background processes</strong> and
+            <strong>scheduled tasks</strong>. When {% site_name %} detects a problem, it can notify
+            you by posting to a Google Chat space. To set up the Google Chat
+            integration, please log into {{ site_name }}:
+        </p>
+
+        <div class="text-center">
+            <a href="{% url 'hc-login' %}"
+               class="btn btn-primary btn-lg">Log In</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <h2>Setup Guide</h2>
+
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                From a browser, log into your Google Chat account, and go to the space
+                where you want to post {% site_name %} notifications.
+            </p>
+            <p>
+                Next to the space title, click the down arrow, and then click <strong>Apps & integrations</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_googlechat_1.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Click <strong>+ Add webhooks</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_googlechat_2.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                In the <strong>Name</strong> field, enter
+                <strong>{% site_name %}</strong>.
+            </p>
+            <p>
+                Click <strong>Save</strong>.
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_googlechat_3.png' %}">
+        </div>
+    </div>
+    <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+            <p>
+                Copy the the webhook URL and paste it in the form below. Done!
+            </p>
+        </div>
+        <div class="col-sm-6">
+            <img
+                class="ai-guide-screenshot"
+                alt="Screenshot"
+                src="{% static 'img/integrations/setup_googlechat_4.png' %}">
+        </div>
+    </div>
+
+
+    <h2>Integration Settings</h2>
+
+    <form method="post" class="form-horizontal">
+        {% csrf_token %}
+
+        <div class="form-group {{ form.room_id.css_classes }}">
+            <label for="url" class="col-sm-2 control-label">Webhook URL</label>
+            <div class="col-sm-6">
+                <input
+                    id="url"
+                    type="text"
+                    class="form-control"
+                    name="value"
+                    value="{{ form.value.value|default:"" }}">
+
+                {% if form.url.errors %}
+                <div class="help-block">
+                    {{ form.url.errors|join:"" }}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <button type="submit" class="btn btn-primary">Save Integration</button>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+{% endblock %}

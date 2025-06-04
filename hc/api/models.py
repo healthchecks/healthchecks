@@ -23,15 +23,14 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
-from oncalendar import OnCalendar
-from pydantic import BaseModel, Field
-
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries, seconds_in_month
 from hc.lib.s3 import GetObjectError, get_object, put_object, remove_objects
 from hc.lib.urls import absolute_reverse
+from oncalendar import OnCalendar
+from pydantic import BaseModel, Field
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -49,6 +48,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
     "discord": ("Discord", transports.Discord),
     "email": ("Email", transports.Email),
     "github": ("GitHub", transports.GitHub),
+    "googlechat": ("Google Chat", transports.GoogleChat),
     "gotify": ("Gotify", transports.Gotify),
     "group": ("Group", transports.Group),
     "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
