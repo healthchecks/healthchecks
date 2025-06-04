@@ -51,8 +51,7 @@ You will need to make changes in the following files:
 * Add a new class in `/hc/api/transports.py`.
 * Add a new notification template in `/templates/integrations/`.
 * Write testcases for the new transport class in `/hc/api/tests/test_notify_<kind>.py`.
-* Update `CHANNEL_KINDS` in `/hc/api/models.py`.
-* Update `Channel.transport()` in `/hc/api/models.py`.
+* Update `TRANSPORTS` in `/hc/api/models.py`.
 * Create a view for provisioning the new integration in `/hc/front/views.py`.
 * Write a HTML template for the new view in `/templates/front/add_<kind>.py`, and
   prepare any supporting illustrations in `/static/img/integrations/`.
