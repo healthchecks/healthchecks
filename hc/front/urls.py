@@ -40,6 +40,7 @@ channel_urls = [
     path("pagerduty/", views.pd_help, name="hc-pagerduty-help"),
     path("mattermost/", views.mattermost_help, name="hc-mattermost-help"),
     path("rocketchat/", views.rocketchat_help, name="hc-rocketchat-help"),
+    path("googlechat/", views.googlechat_help, name="hc-googlechat-help"),
     path("add_slack/", views.slack_help, name="hc-slack-help"),
     path("add_slack_btn/", views.add_slack_complete),
     path("add_telegram/", views.add_telegram, name="hc-add-telegram"),

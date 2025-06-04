@@ -2871,6 +2871,10 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
     return redirect("hc-channels", project.code)
 
 
+def googlechat_help(request: HttpRequest) -> HttpResponse:
+    return render(request, "integrations/add_googlechat.html")
+
+
 @login_required
 def add_googlechat(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
