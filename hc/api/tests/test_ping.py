@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from uuid import UUID
 from datetime import timedelta as td
 from unittest.mock import Mock, patch
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 from django.test import Client
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase
 
@@ -149,6 +147,17 @@ class PingTestCase(BaseTestCase):
         ping = Ping.objects.get()
         self.assertEqual(r.status_code, 200)
         self.assertEqual(ping.remote_addr, "1.1.1.1")
+
+    def test_it_handles_ipv4_mapped_ipv6_address(self) -> None:
+        ip = "::ffff:1.1.1.1"
+        r = self.client.get(
+            self.url,
+            HTTP_X_FORWARDED_FOR=ip,
+            REMOTE_ADDR="3.3.3.3",
+        )
+        ping = Ping.objects.get()
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(ping.remote_addr, "::ffff:1.1.1.1")
 
     def test_it_reads_forwarded_protocol(self) -> None:
         r = self.client.get(self.url, HTTP_X_FORWARDED_PROTO="https")

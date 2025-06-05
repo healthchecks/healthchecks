@@ -7,6 +7,7 @@ from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
 from email import message_from_bytes
+from ipaddress import ip_address
 from typing import Any, Literal
 from uuid import UUID
 
@@ -30,10 +31,6 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from oncalendar import OnCalendar, OnCalendarError
-from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
-from pydantic_core import PydanticCustomError
-
 from hc.accounts.models import Profile, Project
 from hc.api.decorators import ApiRequest, authorize, authorize_read, cors
 from hc.api.forms import FlipsFiltersForm
@@ -42,6 +39,9 @@ from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string
 from hc.lib.tz import all_timezones, legacy_timezones
+from oncalendar import OnCalendar, OnCalendarError
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
+from pydantic_core import PydanticCustomError
 
 
 class BadChannelException(Exception):
@@ -165,6 +165,14 @@ def format_first_error(exc: ValidationError) -> str:
     return "json validation error: " + tmpl % subject
 
 
+def valid_ip(ip: str) -> bool:
+    try:
+        ip_address(ip)
+        return True
+    except ValueError:
+        return False
+
+
 @csrf_exempt
 @never_cache
 def ping(
@@ -186,10 +194,13 @@ def ping(
     headers = request.META
     remote_addr = headers.get("HTTP_X_FORWARDED_FOR", headers["REMOTE_ADDR"])
     remote_addr = remote_addr.split(",")[0]
-    if "." in remote_addr and ":" in remote_addr:
-        # If remote_addr is in a ipv4address:port format (like in Azure App Service),
-        # remove the port:
-        remote_addr = remote_addr.split(":")[0]
+
+    # If remote_addr does not validate but appears to be in ipv4:port form
+    # (like Azure App Service reports), then remove the port
+    if not valid_ip(remote_addr):
+        parts = remote_addr.split(".")
+        if len(parts) == 4 and ":" in parts[-1]:
+            remote_addr = remote_addr.split(":")[0]
 
     scheme = headers.get("HTTP_X_FORWARDED_PROTO", "http")
     method = headers["REQUEST_METHOD"]
