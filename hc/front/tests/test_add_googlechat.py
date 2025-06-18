@@ -21,7 +21,6 @@ class AddGoogleChatTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        print(r.content.decode())
         self.assertRedirects(r, self.channels_url)
 
         c = Channel.objects.get()
