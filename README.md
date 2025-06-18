@@ -475,12 +475,13 @@ please do not use the Healthchecks.io logo as your bot's user picture, use
 your own logo.
 * After creating the bot you will have the bot's name and token. Put them
 in `TELEGRAM_BOT_NAME` and `TELEGRAM_TOKEN` environment variables.
-* Run `settelegramwebhook` management command. This command tells Telegram
+* Run `settelegramwebhook` management command inside the `web` container. This command tells Telegram
 where to forward channel messages by invoking Telegram's
 [setWebhook](https://core.telegram.org/bots/api#setwebhook) API call:
 
     ```sh
-    ./manage.py settelegramwebhook
+    docker exec -ti docker-web-1 /bin/bash
+    /opt/healthchecks/manage.py settelegramwebhook
     Done, Telegram's webhook set to: https://my-monitoring-project.com/integrations/telegram/bot/
     ```
 
