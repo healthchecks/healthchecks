@@ -5,7 +5,6 @@ from collections.abc import Iterable
 from secrets import token_bytes
 from typing import Any
 
-import fido2.features
 from fido2.server import Fido2Server
 from fido2.webauthn import (
     AttestedCredentialData,
@@ -13,8 +12,6 @@ from fido2.webauthn import (
     PublicKeyCredentialUserEntity,
     UserVerificationRequirement,
 )
-
-fido2.features.webauthn_json_mapping.enabled = True
 
 
 class CreateHelper:
