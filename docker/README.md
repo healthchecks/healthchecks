@@ -36,6 +36,22 @@ termination.
 * Open [http://localhost:8000](http://localhost:8000) in your browser and log in with
   the credentials from the previous step.
 
+## Running `manage.py` Commands
+
+* `collectstatic`, `compress` – when running with Docker, you do
+  not need to manually run these. These are run while building the container image,
+  and their results are baked in the image (you can find them listed in the [Dockerfile](https://github.com/healthchecks/healthchecks/blob/master/docker/Dockerfile)).
+* `migrate`, `sendalerts`, `sendreports`, `smtpd` – when running with Docker, you
+  also do  not need to manually run these. They are run automatically on
+  container startup (you can find them listed in [uwsgi.ini](https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini)
+* `createsuperuser`, `pruneobjects`, `prunetokenbucket`, `pruneusers`,
+  `settelegramwebhook` – you need to run them **inside the container**, not on
+  the host system. Do it like so:
+
+  ```sh
+  docker compose run web /opt/healthchecks/manage.py <command>
+  ```
+
 ## uWSGI Configuration
 
 The reference Dockerfile uses [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/)
@@ -148,3 +164,7 @@ replace the "build" section with:
 ```text
 image: healthchecks/healthchecks:vX.Y
 ```
+
+To upgrade to a newer Healthchecks version, edit `docker-compose.yml` and update the
+version number in the container image name (the "X.Y" part) and run
+`docker compose up`.
