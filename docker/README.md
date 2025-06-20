@@ -43,7 +43,7 @@ termination.
   and their results are baked in the image (you can find them listed in the [Dockerfile](https://github.com/healthchecks/healthchecks/blob/master/docker/Dockerfile)).
 * `migrate`, `sendalerts`, `sendreports`, `smtpd` – when running with Docker, you
   also do  not need to manually run these. They are run automatically on
-  container startup (you can find them listed in [uwsgi.ini](https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini)
+  container startup (you can find them listed in [uwsgi.ini](https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini)).
 * `createsuperuser`, `pruneobjects`, `prunetokenbucket`, `pruneusers`,
   `settelegramwebhook` – you need to run them **inside the container**, not on
   the host system. Do it like so:
