@@ -6,7 +6,6 @@ from threading import Thread
 from uuid import UUID
 
 from django.conf import settings
-
 from hc.lib.statsd import statsd
 
 try:
@@ -134,7 +133,12 @@ def _remove_objects(code: UUID, upto_n: int) -> None:
                 errors = client().remove_objects(settings.S3_BUCKET, delete_objs)
                 for e in errors:
                     statsd.incr("hc.lib.s3.removeObjectsErrors")
-                    logger.error("remove_objects error: [%s] %s", e.code, e.message)
+                    logger.error(
+                        "remove_objects error for %s: [%s] %s",
+                        start_after,
+                        e.code,
+                        e.message,
+                    )
         except ReadTimeoutError:
             logger.exception(
                 f"ReadTimeoutError while removing {num_objs} objects for {code}"
