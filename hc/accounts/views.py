@@ -715,7 +715,9 @@ def add_webauthn(request: AuthenticatedHttpRequest) -> HttpResponse:
     if not settings.RP_ID:
         return HttpResponse(status=404)
 
-    credentials = request.user.credentials.values_list("data", flat=True)
+    q = request.user.credentials.values_list("data", flat=True)
+    # CreateHelper wants list[bytes] so normalize to that
+    credentials = [bytes(item) for item in q]
     helper = CreateHelper(settings.RP_ID, credentials)
 
     if request.method == "POST":
@@ -838,7 +840,9 @@ def login_webauthn(request: HttpRequest) -> HttpResponse:
     except User.DoesNotExist:
         return HttpResponseBadRequest()
 
-    credentials = user.credentials.values_list("data", flat=True)
+    q = user.credentials.values_list("data", flat=True)
+    # GetHelper wants list[bytes] so normalize to that
+    credentials = [bytes(item) for item in q]
     helper = GetHelper(settings.RP_ID, credentials)
 
     if request.method == "POST":

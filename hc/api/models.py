@@ -702,7 +702,7 @@ class Ping(models.Model):
                 raise self.GetBodyError()
 
         if self.body_raw:
-            return self.body_raw
+            return bytes(self.body_raw)
 
         return None
 
