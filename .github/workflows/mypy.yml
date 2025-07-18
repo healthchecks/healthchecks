@@ -22,7 +22,7 @@ jobs:
                   python -m pip install --upgrade pip
                   pip install -r requirements.txt
                   pip install apprise braintree minio
-                  pip install mypy==1.17.0 types-braintree django-stubs==5.2.0 types-pycurl==7.45.2.20240311 types-Markdown types-pygments
+                  pip install mypy==1.17.0 types-braintree django-stubs==5.2.2 types-pycurl==7.45.2.20240311 types-Markdown types-pygments
                   touch hc/local_settings.py
             - name: Run Mypy
               run: mypy --strict --show-traceback hc
