@@ -83,6 +83,8 @@ To access the administration panel, if you haven't already, create a superuser a
 
     $ ./manage.py createsuperuser
 
+*The command can be run non-interactively by setting the `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` environment variables beforehand.*
+
 Then, log into the site using the superuser credentials. Once logged in,
 click on the "Account" dropdown in top navigation, and select "Site Administration".
 
