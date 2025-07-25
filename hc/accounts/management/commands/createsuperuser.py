@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import os
+
 from getpass import getpass
 from typing import Any
 
@@ -15,10 +17,10 @@ class Command(BaseCommand):
     help = """Create a super-user account."""
 
     def handle(self, **options: Any) -> str:
-        email = None
-        password = None
+        email = os.getenv("SUPERUSER_EMAIL")
+        password = os.getenv("SUPERUSER_PASSWORD")
 
-        while not email:
+        while email is None:
             raw = input("Email address:")
             try:
                 email = LowercaseEmailField().clean(raw)
@@ -30,7 +32,7 @@ class Command(BaseCommand):
                 email = None
                 continue
 
-        while not password:
+        while password is None:
             p1 = getpass()
             p2 = getpass("Password (again):")
             if p1.strip() == "":
