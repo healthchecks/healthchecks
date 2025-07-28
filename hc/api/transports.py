@@ -769,6 +769,8 @@ class Pushover(HttpTransport):
             payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
             payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
         self.post(self.URL, data=payload)
 
 

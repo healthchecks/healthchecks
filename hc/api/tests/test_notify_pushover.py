@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
@@ -13,6 +12,7 @@ API = "https://api.pushover.net/1"
 
 
 @override_settings(PUSHOVER_API_TOKEN="dummy-token")
+@patch("hc.api.transports.close_old_connections", Mock())
 class NotifyPushoverTestCase(BaseTestCase):
     def _setup_data(
         self, value: str, status: str = "down", email_verified: bool = True
