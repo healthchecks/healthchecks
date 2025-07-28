@@ -46,30 +46,32 @@ class Command(BaseCommand):
 
         if email is not None:
             email = self.validate_email(email)
-            if email is None:
-                self.stderr.write("Invalid email argument.")
-                sys.exit(2)
 
         if password is not None:
             password = self.validate_password(password)
-            if password is None:
-                self.stderr.write("Invalid password argument.")
-                sys.exit(2)
 
-        while email is None:
-            raw = input("Email address:")
-            email = self.validate_email(raw)
+        if sys.stdin.isatty():
+            while email is None:
+                raw = input("Email address:")
+                email = self.validate_email(raw)
+        elif email is None:
+            self.stderr.write("Missing or invalid required argument: --email")
+            sys.exit(2)
 
-        while password is None:
-            p1 = getpass()
-            p2 = getpass("Password (again):")
+        if sys.stdin.isatty():
+            while password is None:
+                p1 = getpass()
+                p2 = getpass("Password (again):")
 
-            if p1 != p2:
-                self.stderr.write("Error: Your passwords didn't match.")
-                password = None
-                continue
+                if p1 != p2:
+                    self.stderr.write("Error: Your passwords didn't match.")
+                    password = None
+                    continue
 
-            password = self.validate_password(p1)
+                password = self.validate_password(p1)
+        elif password is None:
+            self.stderr.write("Missing or invalid required argument: --password/--pass")
+            sys.exit(2)
 
         user = _make_user(email)
         user.set_password(password)
