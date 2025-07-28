@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import os
+import sys
 
 from getpass import getpass
 from typing import Any
@@ -46,8 +46,15 @@ class Command(BaseCommand):
 
         if email is not None:
             email = self.validate_email(email)
+            if email is None:
+                self.stderr.write("Invalid email argument.")
+                sys.exit(2)
+
         if password is not None:
             password = self.validate_password(password)
+            if password is None:
+                self.stderr.write("Invalid password argument.")
+                sys.exit(2)
 
         while email is None:
             raw = input("Email address:")
