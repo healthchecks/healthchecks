@@ -37,7 +37,7 @@ class Command(BaseCommand):
         return password
 
     def add_arguments(self, parser):
-        parser.add_argument("--email", type=str, )
+        parser.add_argument("--email", type=str)
         parser.add_argument("--password", "--pass", type=str)
 
     def handle(self, **options: Any) -> str:
