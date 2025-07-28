@@ -16,33 +16,53 @@ from hc.accounts.views import _make_user
 class Command(BaseCommand):
     help = """Create a super-user account."""
 
+    def validate_email(self, raw_email):
+        try:
+            email = LowercaseEmailField().clean(raw_email)
+        except ValidationError as e:
+            self.stderr.write("Error: " + " ".join(e.messages))
+            return None
+
+        if User.objects.filter(email=email).exists():
+            self.stderr.write(f"Error: email {email} is already taken")
+            return None
+
+        return email
+
+    def validate_password(self, password):
+        if password.strip() == "":
+            self.stderr.write("Error: Blank passwords aren't allowed.")
+            return None
+
+        return password
+
+    def add_arguments(self, parser):
+        parser.add_argument("--email", type=str, )
+        parser.add_argument("--password", "--pass", type=str)
+
     def handle(self, **options: Any) -> str:
-        email = os.getenv("SUPERUSER_EMAIL")
-        password = os.getenv("SUPERUSER_PASSWORD")
+        email = options["email"]
+        password = options["password"]
+
+        if email is not None:
+            email = self.validate_email(email)
+        if password is not None:
+            password = self.validate_password(password)
 
         while email is None:
             raw = input("Email address:")
-            try:
-                email = LowercaseEmailField().clean(raw)
-            except ValidationError as e:
-                self.stderr.write("Error: " + " ".join(e.messages))
-                continue
-            if User.objects.filter(email=email).exists():
-                self.stderr.write(f"Error: email {email} is already taken")
-                email = None
-                continue
+            email = self.validate_email(raw)
 
         while password is None:
             p1 = getpass()
             p2 = getpass("Password (again):")
-            if p1.strip() == "":
-                self.stderr.write("Error: Blank passwords aren't allowed.")
-                continue
+
             if p1 != p2:
                 self.stderr.write("Error: Your passwords didn't match.")
+                password = None
                 continue
 
-            password = p1
+            password = self.validate_password(p1)
 
         user = _make_user(email)
         user.set_password(password)
