@@ -532,7 +532,12 @@ class Discord(Slackalike):
 
     def notify(self, flip: Flip, notification: Notification) -> None:
         url = self.channel.discord_webhook_url + "/slack"
-        self.post(url, json=self.payload(flip))
+
+        prepared_payload = self.payload(flip)
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+
+        self.post(url, json=prepared_payload)
 
 
 class Opsgenie(HttpTransport):
