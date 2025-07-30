@@ -33,7 +33,11 @@ termination.
 
         $ docker-compose run web /opt/healthchecks/manage.py createsuperuser
 
-  *The command can be run non-interactively by setting the `SUPERUSER_EMAIL` and `SUPERUSER_PASSWORD` environment variables beforehand.*
+    This will trigger an interactive prompt.
+
+    You can also provide credentials via parameters, bypassing the interactive prompt:
+
+        $ docker compose run web /opt/healthchecks/manage.py createsuperuser --email user@example.com --password changeme123
 
 * Open [http://localhost:8000](http://localhost:8000) in your browser and log in with
   the credentials from the previous step.
