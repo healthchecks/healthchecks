@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+from argparse import ArgumentParser
 from getpass import getpass
 from typing import Any
 
@@ -14,7 +15,7 @@ from hc.accounts.views import _make_user
 class Command(BaseCommand):
     help = """Create a super-user account."""
 
-    def validate_email(self, raw_email):
+    def validate_email(self, raw_email: str) -> str | None:
         try:
             email = LowercaseEmailField().clean(raw_email)
         except ValidationError as e:
@@ -27,14 +28,14 @@ class Command(BaseCommand):
 
         return email
 
-    def validate_password(self, password):
+    def validate_password(self, password: str) -> str | None:
         if password.strip() == "":
             self.stderr.write("Error: Blank passwords aren't allowed.")
             return None
 
         return password
 
-    def add_arguments(self, parser):
+    def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument("--email", type=str)
         parser.add_argument("--password", "--pass", type=str)
 
