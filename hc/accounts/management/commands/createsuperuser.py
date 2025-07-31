@@ -36,8 +36,17 @@ class Command(BaseCommand):
         return password
 
     def add_arguments(self, parser: ArgumentParser) -> None:
-        parser.add_argument("--email", type=str)
-        parser.add_argument("--password", "--pass", type=str)
+        parser.add_argument(
+            "--email",
+            type=str,
+            help="Email address of the account. If this isn't provided or the value is invalid, will prompt for the email address.",
+        )
+        parser.add_argument(
+            "--password",
+            "--pass",
+            type=str,
+            help="Password of the account. If this isn't provided or the value is invalid, will prompt for the password.",
+        )
 
     def handle(self, **options: Any) -> str:
         email = options["email"]
