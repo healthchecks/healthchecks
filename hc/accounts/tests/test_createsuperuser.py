@@ -33,3 +33,10 @@ class CreateSuperuserTestCase(BaseTestCase):
 
         u = User.objects.get(email="alice2@example.org")
         self.assertTrue(u.is_superuser)
+
+    def test_it_accepts_arguments(self) -> None:
+        cmd = Command(stdout=Mock())
+        cmd.handle(email="superuser@example.org", password="hunter2")
+
+        u = User.objects.get(email="superuser@example.org")
+        self.assertTrue(u.is_superuser)
