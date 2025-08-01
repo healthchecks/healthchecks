@@ -1,0 +1,28 @@
+{% extends "base_project.html" %}
+{% load compress static hc_extras %}
+
+{% block title %}Project Report - {{ site_name }}{% endblock %}
+
+{% block content %}
+
+<div id="report_results" class="row">
+<div class="row">
+    <div class="col-sm-6">
+        <h1>Report</h1>
+    </div>
+    <div class="col-sm-6">
+        <a href="?months={{ months }}&projects={{ selected_projects }}&_export=csv">
+            <button class="btn btn-default pull-right" id="download_report" onclick="?_export=csv">CSV</button>
+        </a>
+        <a href="?months={{ months }}&projects={{ selected_projects }}&_export=json">
+            <button class="btn btn-default pull-right" id="download_report" >JSON</button>
+        </a>
+
+    </div>
+    </div>
+
+</div>
+    <div class="row">
+        {% include 'reports/report.html' %}
+    </div>
+{% endblock %}
