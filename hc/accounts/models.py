@@ -19,7 +19,6 @@ from django.db.models import Q, QuerySet
 from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.timezone import now
-
 from hc.lib import emails
 from hc.lib.date import month_boundaries, week_boundaries
 from hc.lib.signing import sign_bounce_id
@@ -373,6 +372,52 @@ class Profile(models.Model):
         self.save()
 
 
+class ProjectManager(models.Manager["Project"]):
+    def for_api_key(
+        self, api_key: str, accept_rw: bool, accept_ro: bool
+    ) -> Project | None:
+        """Look up project by API key.
+
+        This handles both the old plain text API keys, and the new hashed API keys.
+        For the hashed API keys, it looks up project by the first 8 characters of the
+        random part of the key, then calls Project.compare_api_key().
+        """
+
+        # Hashed keys
+        if accept_rw and api_key.startswith("hcw_"):
+            secret8 = api_key[4:12]
+            for project in Project.objects.filter(api_key__startswith=secret8):
+                if project.compare_api_key(api_key):
+                    return project
+
+        if accept_ro and api_key.startswith("hcr_"):
+            secret8 = api_key[4:12]
+            for project in Project.objects.filter(api_key_readonly__startswith=secret8):
+                if project.compare_api_key(api_key):
+                    return project
+
+        # Plain text keys
+        if accept_rw and accept_ro:
+            write_key_match = Q(api_key=api_key)
+            read_key_match = Q(api_key_readonly=api_key)
+            try:
+                return Project.objects.get(write_key_match | read_key_match)
+            except Project.DoesNotExist:
+                pass
+        elif accept_rw:
+            try:
+                return Project.objects.get(api_key=api_key)
+            except Project.DoesNotExist:
+                pass
+        elif accept_ro:
+            try:
+                return Project.objects.get(api_key_readonly=api_key)
+            except Project.DoesNotExist:
+                pass
+
+        return None
+
+
 class Project(models.Model):
     code = models.UUIDField(default=uuid.uuid4, unique=True)
     name = models.CharField(max_length=200, blank=True)
@@ -382,6 +427,8 @@ class Project(models.Model):
     badge_key = models.CharField(max_length=150, unique=True)
     ping_key = models.CharField(max_length=128, blank=True, null=True, unique=True)
     show_slugs = models.BooleanField(default=False)
+
+    objects = ProjectManager()
 
     def __str__(self) -> str:
         return self.name or self.owner.email
