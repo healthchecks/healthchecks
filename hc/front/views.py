@@ -44,6 +44,7 @@ from django.views.decorators.http import require_POST
 from django_stubs_ext import WithAnnotations
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Member, Profile, Project
+from hc.api.decorators import lookup_project
 from hc.api.models import (
     DEFAULT_GRACE,
     DEFAULT_TIMEOUT,
@@ -2494,10 +2495,8 @@ def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpRes
     if len(key) != 32:
         return HttpResponseBadRequest()
 
-    q = Project.objects.filter(code=code, api_key_readonly=key)
-    try:
-        project = q.get()
-    except Project.DoesNotExist:
+    project = lookup_project(key, accept_rw=False, accept_ro=True)
+    if project is None:
         return HttpResponseForbidden()
 
     checks = Check.objects.filter(project_id=project.id).order_by("id")

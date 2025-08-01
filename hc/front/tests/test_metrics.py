@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -32,6 +31,18 @@ class MetricsTestCase(BaseTestCase):
         self.assertContains(r, f"hc_check_started{alice_spec} 0")
         self.assertContains(r, 'hc_tag_up{tag="foo"} 1')
         self.assertContains(r, "hc_checks_total 1")
+
+    def test_it_accepts_hashed_ro_key(self) -> None:
+        key = self.project.set_api_key_readonly()
+        self.project.save()
+        r = self.client.get(f"/projects/{self.project.code}/metrics/{key}")
+        self.assertEqual(r.status_code, 200)
+
+    def test_it_rejects_hashed_rw_key(self) -> None:
+        key = self.project.set_api_key()
+        self.project.save()
+        r = self.client.get(f"/projects/{self.project.code}/metrics/{key}")
+        self.assertEqual(r.status_code, 403)
 
     def test_authenticated_request_requires_bearer_token(self) -> None:
         r = self.client.get(self.auth_url)
