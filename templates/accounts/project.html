@@ -84,7 +84,7 @@
                         <td>API key</td>
                         <td>
                             {% if "." in project.api_key %}
-                                <code>hcw_****************************</code>
+                                <code>{{ project.api_key|mask_rw_key }}</code>
                             {% elif project.api_key %}
                                 <code data-plaintext="{{ project.api_key }}">{{ project.api_key|mask_key }}</code>
                             {% else %}
@@ -105,7 +105,7 @@
                         <td>API key (read-only)</td>
                         <td>
                             {% if "." in project.api_key_readonly %}
-                                <code>hcr_****************************</code>
+                                <code>{{ project.api_key_readonly|mask_ro_key }}</code>
                             {% elif project.api_key_readonly %}
                                 <code data-plaintext="{{ project.api_key_readonly }}">{{ project.api_key_readonly|mask_key }}</code>
                             {% else %}

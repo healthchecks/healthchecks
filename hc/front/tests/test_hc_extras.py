@@ -5,10 +5,12 @@ from unittest import TestCase
 from urllib.parse import urlparse
 
 from django.test.utils import override_settings
-
 from hc.front.templatetags.hc_extras import (
     absolute_site_logo_url,
     hc_duration,
+    mask_key,
+    mask_ro_key,
+    mask_rw_key,
     site_hostname,
 )
 
@@ -88,3 +90,13 @@ class SiteHostnameTestCase(TestCase):
     @override_settings(SITE_ROOT="http://example.org/foo")
     def test_it_handles_subpath(self) -> None:
         self.assertEqual(site_hostname(), "example.org")
+
+
+class MaskKeyTestCase(TestCase):
+    def test_it_works(self) -> None:
+        self.assertEqual(mask_key("X" * 32), "XXXX" + "*" * 28)
+
+    def test_it_handles_hashed_key(self) -> None:
+        key = f"ABCDEFGH.{'0' * 64}"
+        self.assertEqual(mask_rw_key(key), "hcw_ABCD" + "*" * 24)
+        self.assertEqual(mask_ro_key(key), "hcr_ABCD" + "*" * 24)

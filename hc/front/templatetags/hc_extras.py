@@ -12,7 +12,6 @@ from django.templatetags.static import static
 from django.utils.html import escape, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
-
 from hc.lib.date import format_approx_duration, format_duration, format_hms
 from hc.lib.urls import absolute_url
 
@@ -242,6 +241,16 @@ def format_ping_endpoint(ping_url: str) -> SafeString:
 @register.filter
 def mask_key(key: str) -> str:
     return key[:4] + "*" * len(key[4:])
+
+
+@register.filter
+def mask_rw_key(key: str) -> str:
+    return "hcw_" + key[:4] + "*" * 24
+
+
+@register.filter
+def mask_ro_key(key: str) -> str:
+    return "hcr_" + key[:4] + "*" * 24
 
 
 @register.filter
