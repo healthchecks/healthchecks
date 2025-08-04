@@ -257,7 +257,7 @@ class Check(models.Model):
     def cloaked_url(self) -> str:
         return absolute_reverse("hc-uncloak", args=[self.unique_key])
 
-    def email(self) -> str:
+    def email(self) -> str | None:
         """Return check's ping email address in user's preferred style.
 
         Note: this method reads self.project. If project is not loaded already,
