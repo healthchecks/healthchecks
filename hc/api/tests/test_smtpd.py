@@ -4,7 +4,6 @@ from unittest.mock import Mock
 
 from aiosmtpd.smtp import Envelope, Session
 from django.test.utils import override_settings
-
 from hc.api.management.commands.smtpd import PingHandler, _process_message
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
@@ -212,7 +211,10 @@ class SmtpdTestCase(BaseTestCase):
 
         envelope = Envelope()
         envelope.mail_from = "foo@example.org"
-        envelope.rcpt_tos = ["bar@example.org", self.email]
+        envelope.rcpt_tos = [
+            "763c0772-307f-42f6-bdf0-1bb2ff647a09@example.org",  # valid UUID but check does not exist
+            self.email,
+        ]
         envelope.content = b"hello world"
 
         handler = PingHandler(NullSink())
@@ -225,16 +227,78 @@ class SmtpdTestCase(BaseTestCase):
         self.assertEqual(bytes(ping.body_raw), b"hello world")
         self.assertEqual(ping.kind, None)
 
-    async def test_it_rejects_non_uuid_mailboxes(self) -> None:
+    async def test_rcpt_handler_accepts_uuid(self) -> None:
+        session = Session(loop=Mock())
+        handler = PingHandler(NullSink())
+        address = "763c0772-307f-42f6-bdf0-1bb2ff647a09@hc.example.com"
+        result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
+        self.assertTrue(result.startswith("250"))
+
+    async def test_rcpt_handler_accepts_slug(self) -> None:
+        session = Session(loop=Mock())
+        handler = PingHandler(NullSink())
+        address = f"{self.project.ping_key}+foo@hc.example.com"
+        result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
+        self.assertTrue(result.startswith("250"))
+
+    async def test_rcpt_handler_rejects_non_uuid_mailboxes(self) -> None:
         session = Session(loop=Mock())
         handler = PingHandler(NullSink())
         address = "foo@example.com"
         result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
         self.assertTrue(result.startswith("550"))
 
-    async def test_it_rejects_wrong_domain(self) -> None:
+    async def test_rcpt_handler_rejects_invalid_ping_key(self) -> None:
+        session = Session(loop=Mock())
+        handler = PingHandler(NullSink())
+        address = "tooshort+foo@hc.example.com"
+        result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
+        self.assertTrue(result.startswith("550"))
+
+    async def test_rcpt_handler_rejects_invalid_slug(self) -> None:
+        session = Session(loop=Mock())
+        handler = PingHandler(NullSink())
+        address = f"{self.project.ping_key}+x.y.z@hc.example.com"
+        result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
+        self.assertTrue(result.startswith("550"))
+
+    async def test_rcpt_handler_rejects_wrong_domain(self) -> None:
         session = Session(loop=Mock())
         handler = PingHandler(NullSink())
         address = f"{self.check.code}@bad.domain"
         result = await handler.handle_RCPT(Mock(), session, Envelope(), address, [])
         self.assertTrue(result.startswith("550"))
+
+    def test_it_handles_slug(self) -> None:
+        self.check.slug = "testslug"
+        self.check.save()
+
+        mailto = f"{self.project.ping_key}+testslug@example.org"
+        _process_message("1.2.3.4", "foobar@example.org", mailto, b"hello world")
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "email")
+        self.assertEqual(ping.ua, "Email from foobar@example.org")
+        assert ping.body_raw
+        self.assertEqual(bytes(ping.body_raw), b"hello world")
+        self.assertEqual(ping.kind, None)
+
+    def test_it_handles_missing_slug(self) -> None:
+        mailto = f"{self.project.ping_key}+missing@example.org"
+        result = _process_message(
+            "1.2.3.4", "foobar@example.org", mailto, b"hello world"
+        )
+        self.assertEqual(result, f"Check not found: {mailto}")
+
+    def test_it_handles_ambiguous_slug(self) -> None:
+        self.check.slug = "testslug"
+        self.check.save()
+
+        # Another one with the same slug
+        Check.objects.create(project=self.project, slug="testslug")
+
+        mailto = f"{self.project.ping_key}+testslug@example.org"
+        result = _process_message(
+            "1.2.3.4", "foobar@example.org", mailto, b"hello world"
+        )
+        self.assertEqual(result, f"Ambiguous slug: {mailto}")
