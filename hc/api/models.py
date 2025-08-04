@@ -258,7 +258,21 @@ class Check(models.Model):
         return absolute_reverse("hc-uncloak", args=[self.unique_key])
 
     def email(self) -> str:
-        return "%s@%s" % (self.code, settings.PING_EMAIL_DOMAIN)
+        """Return check's ping email address in user's preferred style.
+
+        Note: this method reads self.project. If project is not loaded already,
+        this causes a SQL query.
+
+        """
+        if self.project_id and self.project.show_slugs:
+            if not self.slug:
+                return None
+
+            # If ping_key is not set, use dummy placeholder
+            key = self.project.ping_key or "{ping_key}"
+            return f"{key}+{self.slug}@{settings.PING_EMAIL_DOMAIN}"
+
+        return f"{self.code}@{settings.PING_EMAIL_DOMAIN}"
 
     def clamped_last_duration(self) -> td | None:
         if self.last_duration and self.last_duration < MAX_DURATION:

@@ -86,10 +86,14 @@
                 {% if check.url %}
                 <code>{{ check.url }}</code>
                 {% else %}
-                <code>(unavailable, set name first)</code>
+                <code>(unavailable, set slug first)</code>
                 {% endif %}
-                <p>Ping by sending email:</p>
+                <p>Or by sending email to:</p>
+                {% if check.email %}
                 <code>{{ check.email }}</code>
+                {% else %}
+                <code>(unavailable, set slug first)</code>
+                {% endif %}
 
                 <p>You can also explicitly
                     <a href="{% url 'hc-serve-doc' 'signaling_failures' %}">

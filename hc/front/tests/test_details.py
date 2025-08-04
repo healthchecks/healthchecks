@@ -6,7 +6,6 @@ from datetime import timezone
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase
 
@@ -261,7 +260,7 @@ class DetailsTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "(unavailable, set name first)", status_code=200)
+        self.assertContains(r, "(unavailable, set slug first)", status_code=200)
         self.assertNotContains(r, "Copy URL")
         self.assertNotContains(r, "ping-now")
 
