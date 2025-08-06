@@ -1,0 +1,94 @@
+{% load humanize hc_extras tz %}
+{% timezone tz %}
+{% spaceless %}
+{% for project,value in projects.items %}
+    <div class="row">
+    <div class="col-sm-6">
+        <h2>{{ project }}</h2>
+    </div>
+    </div>
+<table style="margin: 0; width: 100%; font-size: 16px;" cellpadding="0" cellspacing="0">
+    <tr>
+        <td colspan="2" style="font-weight: bold; padding: 32px 8px 8px 8px; color: #333;">
+            {{ group.grouper|mangle_link }}
+        </td>
+        {% for dt in value.boundaries %}
+        <td style="padding: 32px 8px 8px 8px; margin: 0; font-size: 12px; color: #9BA2AB; font-family: Helvetica, Arial, sans-serif;">
+            {% if monthly_or_weekly == "weekly" %}
+            {{ dt|date:"M j"}} - {{ dt|add6days|date:"M j"}}
+            {% else %}
+            {{ dt|date:"N Y"}}
+            {% endif %}
+        </td>
+        {% endfor %}
+    </tr>
+    {% for check in value.checks %}
+    <tr>
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px;">
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                {% with check.get_status as status %}
+                    {% if status == "new" %}
+                        <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; margin: 0; border-radius: 3px;">NEW</td>
+                    {% elif status == "paused" %}
+                        <td style="background: #AAA; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">PAUSED</td>
+                    {% elif status == "grace" %}
+                        <td style="background: #f0ad4e; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">LATE</td>
+                    {% elif status == "up" %}
+                        <td style="background: #5cb85c; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">UP</td>
+                    {% elif status == "down" %}
+                        <td style="background: #d9534f; font-family: Helvetica, Arial, sans-serif; font-weight: bold; font-size: 10px; line-height: 10px; color: white; padding: 6px; border-radius: 3px;">DOWN</td>
+                    {% endif %}
+                {% endwith %}
+                </tr>
+            </table>
+        </td>
+        <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+            {% if check.name %}
+                {{ check.name|mangle_link }}
+            {% else %}
+                <span style="color: #74787E; font-style: italic;">unnamed</span>
+            {% endif %}
+            {% if check.tags %}
+                <br />
+                <table cellpadding="0" cellspacing="0">
+                    <tr>
+                    {% for tag in check.tags_list %}
+                    <td style="padding-right: 4px">
+                        <table cellpadding="0" cellspacing="0">
+                            <tr>
+                            <td style="background: #eee; font-family: Helvetica, Arial, sans-serif; font-size: 10px; line-height: 10px; color: #555; padding: 4px; margin: 0; border-radius: 2px;">
+                                {{ tag|mangle_link }}
+                            </td>
+                            </tr>
+                        </table>
+                    </td>
+                    {% endfor %}
+                    </tr>
+                </table>
+            {% endif %}
+        </td>
+        {% for d in check.past_downtimes %}
+        {% if d.count %}
+            <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif;">
+                {{ d.count }}&nbsp;downtime{{ d.count|pluralize }},
+                <br />
+                {{ d.duration|hc_approx_duration }} total
+            </td>
+        {% else %}
+            <td style="border-top: 1px solid #EDEFF2; padding: 16px 8px; font-family: Helvetica, Arial, sans-serif; color: #9BA2AB;">
+                {% if d.no_data %}
+                    {% comment %} The check didn't exist yet {% endcomment %}
+                {% else %}
+                    All good!
+                {% endif %}
+            </td>
+        {% endif %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+<br />
+    {% endfor %}
+{% endspaceless %}
+{% endtimezone %}
