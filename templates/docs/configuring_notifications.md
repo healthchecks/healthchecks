@@ -19,12 +19,16 @@ set it up in each project separately.
 The "Checks" page in the web interface shows a visual overview of which alerting
 methods are active for each check. You can click the icons to toggle them on and off:
 
-![Integration icons in the checks list](IMG_URL/checks_integrations.png)
+<video autoplay loop muted playsinline>
+  <source src="IMG_URL/checks_integrations.webm" type="video/webm">
+</video>
 
 You can also toggle the integrations by clicking the "ON" / "OFF" labels on
 each check's details pages:
 
-![Integration on/off toggles in the check details page](IMG_URL/details_integrations.png)
+<video autoplay loop muted playsinline>
+  <source src="IMG_URL/details_integrations.webm" type="video/webm">
+</video>
 
 ## SMS, WhatsApp, and Phone Call Monthly Quotas
 

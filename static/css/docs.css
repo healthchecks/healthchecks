@@ -69,14 +69,16 @@ h2.rule {
     margin-left: 0;
 }
 
-.docs-content img {
+.docs-content img,
+.docs-content video {
     max-width: 66%;
     border: 6px solid var(--border-color);
 }
 
 
 @media (max-width: 992px) {
-    .docs-content img {
+    .docs-content img,
+    .docs-content video {
         max-width: 100%;
     }
 }

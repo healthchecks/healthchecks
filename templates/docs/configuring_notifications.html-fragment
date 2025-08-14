@@ -16,10 +16,16 @@ if you want to use a notification method in multiple projects, you must
 set it up in each project separately.</p>
 <p>The "Checks" page in the web interface shows a visual overview of which alerting
 methods are active for each check. You can click the icons to toggle them on and off:</p>
-<p><img alt="Integration icons in the checks list" src="IMG_URL/checks_integrations.png" /></p>
+<video autoplay loop muted playsinline>
+  <source src="IMG_URL/checks_integrations.webm" type="video/webm">
+</video>
+
 <p>You can also toggle the integrations by clicking the "ON" / "OFF" labels on
 each check's details pages:</p>
-<p><img alt="Integration on/off toggles in the check details page" src="IMG_URL/details_integrations.png" /></p>
+<video autoplay loop muted playsinline>
+  <source src="IMG_URL/details_integrations.webm" type="video/webm">
+</video>
+
 <h2>SMS, WhatsApp, and Phone Call Monthly Quotas</h2>
 <p>SITE_NAME sets a quota on the maximum number of SMS, WhatsApp, and phone-call
 notifications an account can send per month. The specific limit depends on the
