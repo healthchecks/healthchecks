@@ -82,12 +82,16 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
         except Check.DoesNotExist:
             return f"Check not found: {mailto}"
 
+    # Parse email message to extract From header
+    data_str = data.decode(errors="replace")
+    message = email.message_from_string(data_str, policy=email.policy.SMTP)
+    assert isinstance(message, EmailMessage)
+    
+    # Extract From header, fallback to envelope sender
+    from_header = message.get("From", mailfrom)
+
     action = "success"
     if check.filter_subject or check.filter_body:
-        data_str = data.decode(errors="replace")
-        # Specify policy, the default policy does not decode encoded headers:
-        message = email.message_from_string(data_str, policy=email.policy.SMTP)
-        assert isinstance(message, EmailMessage)
         text = _to_text(message, check.filter_subject, check.filter_body)
 
         action = "ign"
@@ -98,7 +102,7 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
         elif check.start_kw and _match(text, check.start_kw):
             action = "start"
 
-    ua = f"Email from {mailfrom}"
+    ua = f"Email from {from_header}"
     check.ping(remote_addr, "email", "", ua, data, action, None)
 
     return f"Processed ping for {mailto}"
