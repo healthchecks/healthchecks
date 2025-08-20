@@ -29,6 +29,7 @@ Please submit additions and corrections
 <h3>PowerShell</h3>
 <ul>
 <li><a href="https://github.com/davehope/HealthChecksIOStatusReport">davehope/HealthChecksIOStatusReport</a> – Supports pinging.</li>
+<li><a href="https://github.com/ptmorris1/healthchecks-pwsh">ptmorris1/healthchecks-pwsh</a> – Supports pinging and all Management API calls.</li>
 </ul>
 <h3>Python</h3>
 <ul>

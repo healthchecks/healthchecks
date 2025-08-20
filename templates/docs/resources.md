@@ -32,6 +32,7 @@ Please submit additions and corrections
 ### PowerShell
 
 * [davehope/HealthChecksIOStatusReport](https://github.com/davehope/HealthChecksIOStatusReport) – Supports pinging.
+* [ptmorris1/healthchecks-pwsh](https://github.com/ptmorris1/healthchecks-pwsh) – Supports pinging and all Management API calls.
 
 ### Python
 
