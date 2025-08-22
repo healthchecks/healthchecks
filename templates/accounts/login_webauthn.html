@@ -11,31 +11,23 @@
     encrypt="multipart/form-data">
     <h1>Two-factor Authentication</h1>
 
+    {% if totp_url %}
     <div id="pick-method">
-        {% if totp_url %}
         <p>Please select how you want to authenticate.</p>
-        {% else %}
-        <p>
-            Please authenticate using your security key.<br />
-            When you are ready, press the button below.
-        </p>
-        {% endif %}
-
         <button
             id="use-key-btn"
             type="button"
             class="btn btn-primary">Use security key</button>
-        {% if totp_url %}
         <a href="{{ totp_url }}" class="btn btn-default">
             Use authenticator app
         </a>
-        {% endif %}
     </div>
+    {% endif %}
 
     {% csrf_token %}
     <input id="response" type="hidden" name="response">
 
-    <div id="waiting" class="hide">
+    <div id="waiting" {% if totp_url %}class="hide"{% endif %}>
         <h2>Waiting for security key</h2>
         <p>
             Follow your browser's steps to authenticate with your security key.

@@ -23,4 +23,9 @@ $(function() {
 
     $("#use-key-btn").click(authenticate);
     $("#retry").click(authenticate);
+
+    // If we're not showing the TOTP option then start authentication on page load
+    if ($("#pick-method").length == 0) {
+        authenticate();
+    }
 });
