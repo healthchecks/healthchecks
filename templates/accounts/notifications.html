@@ -46,6 +46,15 @@
                         <input
                             type="radio"
                             name="reports"
+                            value="daily"
+                            {% if profile.reports == "daily" %} checked {% endif %}>
+                        <span class="radiomark"></span>
+                        <strong>Daily</strong> between 9:00 and 11:00
+                    </label>
+                    <label class="radio-container">
+                        <input
+                            type="radio"
+                            name="reports"
                             value="weekly"
                             {% if profile.reports == "weekly" %} checked {% endif %}>
                         <span class="radiomark"></span>
@@ -97,7 +106,9 @@
                     <select id="tz" name="tz" class="form-control" value="{{ profile.tz }}">
                         <option{% if profile.tz == "UTC" %} selected{% endif %}>UTC</option>
                         {% for tz in timezones %}
+                        {% if tz != "UTC" %}
                         <option{% if profile.tz == tz %} selected{% endif %}>{{ tz }}</option>
+                        {% endif %}
                         {% endfor %}
                     </select>
 

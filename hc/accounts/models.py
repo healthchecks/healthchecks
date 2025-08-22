@@ -39,7 +39,12 @@ NAG_PERIODS = (
     (td(days=1), "Daily"),
 )
 
-REPORT_CHOICES = (("off", "Off"), ("weekly", "Weekly"), ("monthly", "Monthly"))
+REPORT_CHOICES = (
+    ("off", "Off"),
+    ("daily", "Daily"),
+    ("weekly", "Weekly"),
+    ("monthly", "Monthly"),
+)
 # How long an account can be over limits before it is scheduled for deletion
 OVER_LIMIT_GRACE = td(days=31)
 # When scheduling for deletion, how many days in the future to schedule
@@ -355,6 +360,8 @@ class Profile(models.Model):
 
         while True:
             dt += td(days=1)
+            if self.reports == "daily":
+                return dt
             if self.reports == "monthly" and dt.day == 1:
                 return dt
             elif self.reports == "weekly" and dt.weekday() == 0:

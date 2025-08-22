@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Fix the ping view to handle IPv4-mapped IPv6 addresses (#1169)
 - Update Dockerfile to listen on IPv6 as well (#1177)
 - Add "ping_key+slug@..." address support when pinging by email (#1009)
+- Add daily email report option (#1202)
 
 ## v3.10 - 2025-05-09
 
