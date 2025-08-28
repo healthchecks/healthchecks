@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.11-dev - Unreleased
+## v3.11 - 2025-08-28
 
 ### Improvements
 - Store project API keys in the database in a hashed form (#1167)
