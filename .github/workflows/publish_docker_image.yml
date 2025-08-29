@@ -21,7 +21,7 @@ jobs:
 
             - name: Extract metadata (tags, labels) for Docker
               id: meta
-              uses: docker/metadata-action@v4
+              uses: docker/metadata-action@v5
               with:
                   images: healthchecks/healthchecks
 
@@ -42,3 +42,5 @@ jobs:
                   push: true
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
+                  annotations: ${{ steps.meta.outputs.annotations }}
+                  sbom: true
