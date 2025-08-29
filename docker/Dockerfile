@@ -1,4 +1,4 @@
-FROM python:3.13.1-slim-bookworm AS builder
+FROM python:3.13.7-slim-bookworm AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -15,7 +15,7 @@ RUN \
     rm -rf /opt/healthchecks/.git && \
     rm -rf /opt/healthchecks/stuff
 
-FROM python:3.13.0-slim-bookworm
+FROM python:3.13.7-slim-bookworm
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
