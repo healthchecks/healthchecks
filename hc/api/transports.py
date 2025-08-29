@@ -643,6 +643,9 @@ class PagerDuty(HttpTransport):
             "details": details,
         }
 
+        # Give up database connection before potentially long network IO:
+        close_old_connections()
+
         self.post(self.URL, json=payload)
 
 
