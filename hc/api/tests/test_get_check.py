@@ -3,8 +3,8 @@ from __future__ import annotations
 from datetime import timedelta as td
 from uuid import UUID
 
+from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase, TestHttpResponse
 
@@ -39,6 +39,7 @@ class GetCheckTestCase(BaseTestCase):
         url = f"/api/v{v}/checks/{code}"
         return self.client.get(url, HTTP_X_API_KEY=api_key)
 
+    @override_settings(SITE_ROOT="http://testserver")
     def test_it_works(self) -> None:
         r = self.get(self.a1.code)
         self.assertEqual(r.status_code, 200)
@@ -68,10 +69,10 @@ class GetCheckTestCase(BaseTestCase):
         self.assertTrue(doc["filter_subject"])
         self.assertFalse(doc["filter_body"])
         self.assertEqual(
-            doc["badge_url"], f"http://localhost:8000/b/2/{self.a1.badge_key}.svg"
+            doc["badge_url"], f"http://testserver/b/2/{self.a1.badge_key}.svg"
         )
         self.assertEqual(
-            doc["update_url"], f"http://localhost:8000/api/v1/checks/{self.a1.code}"
+            doc["update_url"], f"http://testserver/api/v1/checks/{self.a1.code}"
         )
 
     def test_it_handles_invalid_uuid(self) -> None:
