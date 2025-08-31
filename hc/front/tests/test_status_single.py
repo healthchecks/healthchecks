@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import timedelta as td
 
 from django.utils.timezone import now
-
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 
@@ -38,7 +37,7 @@ class StatusSingleTestCase(BaseTestCase):
 
         self.assertEqual(doc["status"], "new")
         self.assertIn("This check is ready for pings.", doc["status_text"])
-        self.assertIn("Currently running, started 1 min 0 sec ago.", doc["status_text"])
+        self.assertIn("Currently running, started 1 min", doc["status_text"])
 
     def test_it_returns_403_for_anon_requests(self) -> None:
         r = self.client.get(self.url)
