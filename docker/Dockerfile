@@ -23,7 +23,7 @@ WORKDIR /opt/healthchecks
 
 RUN \
     apt-get update && \
-    apt-get install -y libcurl4 libexpat1 libpq5 libmariadb3 libxml2 && \
+    apt-get install -y libcurl4t64 libexpat1 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache && \
     rm -rf /var/lib/apt/lists
 
