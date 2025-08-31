@@ -66,6 +66,17 @@ To adjust the number of uWSGI processes (for example, to save memory), set:
 
 Read more about configuring uWSGI in [uWSGI documentation](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables).
 
+## IPv6
+
+uWSGI is configured to listen on IPv4 only by default. To also listen on IPv6, set
+the LISTEN_IPV6 environment variable:
+
+    LISTEN_IPV6=1
+
+Unfortunately this cannot be enabled by default because on an IPv4-only system
+uWSGI would crash while trying to open an IPv6 socket
+(see [issue #1207](https://github.com/healthchecks/healthchecks/issues/1207)).
+
 ## SMTP Listener Configuration via `SMTPD_PORT`
 
 Healthchecks comes with a `smtpd` management command, which runs a SMTP listener
