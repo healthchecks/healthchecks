@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v3.11.1 - 2025-08-31
 
+### Improvements
+- Update Dockerfile to use Debian Trixie as the base
+
 ### Bug Fixes
 - Update Docker image to listen on IPv6 only if LISTEN_IPV6 env var is set (#1207)
 
