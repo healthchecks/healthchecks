@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.11.2 - 2025-09-02
+
+### Bug Fixes
+- Update Docker image to handle legacy time zones (#1210)
+
 ## v3.11.1 - 2025-08-31
 
 ### Improvements
