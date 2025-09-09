@@ -4,9 +4,9 @@ import json
 from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
+from django.test.utils import override_settings
 from django.utils.timezone import now
-
-from hc.api.models import Channel, Check, Flip, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
 
@@ -229,3 +229,15 @@ class NotifyNtfyTestCase(BaseTestCase):
 
         headers = mock_post.call_args.kwargs["headers"]
         self.assertEqual(headers["Authorization"], "Bearer tk_test")
+
+    @override_settings(SECRET_KEY="test-secret")
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_obeys_rate_limit(self, mock_post: Mock) -> None:
+        # "5ce7..." is sha1("https://example.org-foo-test-secret")
+        obj = TokenBucket(value="ntfy-5ce7382812a391e509699d832270d27729ca4bba")
+        obj.tokens = 0
+        obj.save()
+
+        self.channel.notify(self.flip)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Rate limit exceeded")

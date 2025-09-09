@@ -1650,6 +1650,12 @@ class Ntfy(HttpTransport):
         return self.priority(status) == 0
 
     def notify(self, flip: Flip, notification: Notification) -> None:
+        ntfy = self.channel.ntfy
+        from hc.api.models import TokenBucket
+
+        if not TokenBucket.authorize_ntfy(ntfy.url, ntfy.topic):
+            raise TransportError("Rate limit exceeded")
+
         ctx = {
             "flip": flip,
             "check": flip.owner,

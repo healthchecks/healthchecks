@@ -1356,6 +1356,14 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(f"po-{hashed}", 6, 60)
 
     @staticmethod
+    def authorize_ntfy(server: str, topic: str) -> bool:
+        salted_encoded = f"{server}-{topic}-{settings.SECRET_KEY}".encode()
+        hashed = hashlib.sha1(salted_encoded).hexdigest()
+
+        # 6 messages for a single topic per minute:
+        return TokenBucket.authorize(f"ntfy-{hashed}", 6, 60)
+
+    @staticmethod
     def authorize_sudo_code(user: User) -> bool:
         value = "sudo-%d" % user.id
 
