@@ -1682,6 +1682,8 @@ class Ntfy(HttpTransport):
         headers = {}
         if self.channel.ntfy.token:
             headers = {"Authorization": f"Bearer {self.channel.ntfy.token}"}
+        elif url == "https://ntfy.sh" and settings.NTFY_SH_TOKEN:
+            headers = {"Authorization": f"Bearer {settings.NTFY_SH_TOKEN}"}
 
         # Give up database connection before potentially long network IO:
         close_old_connections()

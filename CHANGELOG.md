@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.12-dev - Unreleased
+
+### Improvements
+- Add rate limiting and a default ntfy.sh token support for ntfy notifications
+
 ## v3.11.2 - 2025-09-02
 
 ### Bug Fixes

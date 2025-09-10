@@ -241,3 +241,33 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Rate limit exceeded")
+
+    @override_settings(NTFY_SH_TOKEN="test-default-token")
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_uses_default_ntfy_sh_token(self, mock_post: Mock) -> None:
+        self.channel.value = json.dumps(
+            {
+                "url": "https://ntfy.sh",
+                "topic": "foo",
+                "priority": 5,
+                "priority_up": 1,
+            }
+        )
+        self.channel.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+
+        headers = mock_post.call_args.kwargs["headers"]
+        self.assertEqual(headers["Authorization"], "Bearer test-default-token")
+
+    @override_settings(NTFY_SH_TOKEN="test-default-token")
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_uses_default_token_only_on_ntfy_sh(self, mock_post: Mock) -> None:
+        self.channel.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+
+        headers = mock_post.call_args.kwargs["headers"]
+        self.assertNotIn("Authorization", headers)

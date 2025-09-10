@@ -35,6 +35,7 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#MATRIX_USER_ID">MATRIX_USER_ID</a></li>
 <li><a href="#MATTERMOST_ENABLED">MATTERMOST_ENABLED</a></li>
 <li><a href="#MSTEAMS_ENABLED">MSTEAMS_ENABLED</a></li>
+<li><a href="#NTFY_SH_TOKEN">NTFY_SH_TOKEN</a></li>
 <li><a href="#OPSGENIE_ENABLED">OPSGENIE_ENABLED</a></li>
 <li><a href="#PAGERTREE_ENABLED">PAGERTREE_ENABLED</a></li>
 <li><a href="#PD_APP_ID">PD_APP_ID</a></li>
@@ -279,7 +280,17 @@ integration.</p>
 <p>A boolean that turns on/off the Mattermost integration. Enabled by default.</p>
 <h2 id="MSTEAMS_ENABLED"><code>MSTEAMS_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
-<p>A boolean that turns on/off the MS Teams integration. Enabled by default.</p>
+<p>A boolean that turns on/off the MS Teams integration. Enabled</p>
+<h2 id="NTFY_SH_TOKEN"><code>NTFY_SH_TOKEN</code></h2>
+<p>Default: <code>None</code></p>
+<p>The default access token to use when sending ntfy notifications to the hosted ntfy.sh
+server. This token will be only used when sending to the ntfy server at
+<code>https://ntfy.sh</code> and when the user has not specified their own access token
+when setting up the ntfy integration.</p>
+<p>Use this setting if your Healthchecks instance is hitting ntfy.sh free plan's
+<a href="https://docs.ntfy.sh/publish/#limitations">daily sending limit</a> and you want to ensure
+reliable notification delivery for ntfy integrations that do not bring their own
+access token.</p>
 <h2 id="OPSGENIE_ENABLED"><code>OPSGENIE_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Opsgenie integration. Enabled by default.</p>

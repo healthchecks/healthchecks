@@ -13,8 +13,8 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
 
-from django.http.request import split_domain_port
 import django_stubs_ext
+from django.http.request import split_domain_port
 
 django_stubs_ext.monkeypatch()
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -300,6 +300,9 @@ MATTERMOST_ENABLED = envbool("MATTERMOST_ENABLED", "True")
 
 # MS Teams
 MSTEAMS_ENABLED = envbool("MSTEAMS_ENABLED", "True")
+
+# ntfy.sh
+NTFY_SH_TOKEN = os.getenv("NTFY_SH_TOKEN")
 
 # Opsgenie
 OPSGENIE_ENABLED = envbool("OPSGENIE_ENABLED", "True")
