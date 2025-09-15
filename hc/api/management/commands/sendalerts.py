@@ -14,7 +14,6 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import close_old_connections
 from django.utils.timezone import now
-
 from hc.api.models import Check, Flip
 from hc.lib.statsd import statsd
 
@@ -22,13 +21,6 @@ logger = logging.getLogger("hc")
 
 
 def notify(flip: Flip) -> str | None:
-    # First, mark the flip as processed:
-    q = Flip.objects.filter(id=flip.id, processed=None)
-    num_updated = q.update(processed=now())
-    if num_updated != 1:
-        # Nothing got updated: another sendalerts process got there first.
-        return None
-
     # Set or clear dates for followup nags
     check = flip.owner
     check.project.update_next_nag_dates()
@@ -105,6 +97,14 @@ class Command(BaseCommand):
         if flip is None:
             self.seats.release()
             return False  # No work found, main thread should wait a bit
+
+        # Mark the flip as processed:
+        q = Flip.objects.filter(id=flip.id, processed=None)
+        num_updated = q.update(processed=now())
+        if num_updated != 1:
+            self.seats.release()
+            # Nothing got updated: another sendalerts process got there first.
+            return True
 
         f = self.executor.submit(notify, flip)
         f.add_done_callback(self.on_notify_done)
