@@ -172,8 +172,11 @@ class Command(BaseCommand):
         self.shutdown = True
 
     def handle(self, num_workers: int, pool: bool, **options: Any) -> str:
+        db = settings.DATABASES["default"]
+        if "OPTIONS" in db and "application_name" in db["OPTIONS"]:
+            db["OPTIONS"]["application_name"] = "sendalerts"
+
         if pool:
-            db = settings.DATABASES["default"]
             # psycopg_pool requires non-persistent connections:
             db["CONN_MAX_AGE"] = 0
             options = db.setdefault("OPTIONS", {})

@@ -170,6 +170,7 @@ if os.getenv("DB") == "postgres":
             "CONN_MAX_AGE": envint("DB_CONN_MAX_AGE", "0"),
             "TEST": {"CHARSET": "UTF8"},
             "OPTIONS": {
+                "application_name": "hc",
                 "sslmode": os.getenv("DB_SSLMODE", "prefer"),
                 "target_session_attrs": os.getenv(
                     "DB_TARGET_SESSION_ATTRS", "read-write"
@@ -357,7 +358,7 @@ TWILIO_USE_WHATSAPP = envbool("TWILIO_USE_WHATSAPP", "False")
 WHATSAPP_DOWN_CONTENT_SID = os.getenv("WHATSAPP_DOWN_CONTENT_SID")
 WHATSAPP_UP_CONTENT_SID = os.getenv("WHATSAPP_UP_CONTENT_SID")
 
-# Trello
+# Trello (https://trello.com/app-key)
 TRELLO_APP_KEY = os.getenv("TRELLO_APP_KEY")
 
 # VictorOps
