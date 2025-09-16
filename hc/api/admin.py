@@ -15,11 +15,14 @@ from django.urls import reverse
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django_stubs_ext import WithAnnotations
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.date import format_duration
 
 Lookups = Iterable[tuple[str, str]]
+
+
+class CheckAnnotations(TypedDict):
+    owner_email: str
 
 
 @admin.register(Check)
@@ -46,13 +49,15 @@ class ChecksAdmin(ModelAdmin[Check]):
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Check]:
         qs = super().get_queryset(request)
-        qs = qs.annotate(email=F("project__owner__email"))
+        qs = qs.annotate(owner_email=F("project__owner__email"))
         return qs
 
-    def project_(self, obj: Check) -> str:
+    def project_(self, obj: WithAnnotations[Check, CheckAnnotations]) -> str:
         url = obj.project.get_absolute_url()
         name = obj.project.name or "Default"
-        return format_html("""{} &rsaquo; <a href="{}">{}</a>""", obj.email, url, name)
+        return format_html(
+            """{} &rsaquo; <a href="{}">{}</a>""", obj.owner_email, url, name
+        )
 
     def name_tags(self, obj: Check) -> str:
         url = obj.details_url(full=False)
