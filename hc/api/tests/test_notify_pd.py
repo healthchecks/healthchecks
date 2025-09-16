@@ -10,7 +10,6 @@ from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 
-@patch("hc.api.transports.close_old_connections", Mock())
 class NotifyPdTestCase(BaseTestCase):
     def _setup_data(
         self, value: str, status: str = "down", email_verified: bool = True

@@ -9,11 +9,9 @@ from django.test.utils import override_settings
 from django.utils.timezone import now
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
-from hc.lib.typealias import JSONValue
 from hc.test import BaseTestCase
 
 
-@patch("hc.api.transports.close_old_connections", Mock())
 class NotifyGoogleChatTestCase(BaseTestCase):
     def _setup_data(self, status: str = "down", email_verified: bool = True) -> None:
         self.check = Check(project=self.project)

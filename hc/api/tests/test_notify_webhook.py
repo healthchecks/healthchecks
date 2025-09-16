@@ -6,13 +6,11 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
 
 
-@patch("hc.api.transports.close_old_connections", Mock())
 class NotifyWebhookTestCase(BaseTestCase):
     def _setup_data(
         self, value: str, status: str = "down", email_verified: bool = True

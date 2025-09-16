@@ -12,7 +12,6 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import close_old_connections
 from django.utils.timezone import now
 from hc.api.models import Check, Flip
 from hc.lib.statsd import statsd
@@ -69,7 +68,6 @@ class Command(BaseCommand):
         )
 
     def on_notify_done(self, future: Future[str | None]) -> None:
-        close_old_connections()
         self.seats.release()
 
         try:
@@ -177,10 +175,9 @@ class Command(BaseCommand):
             db["OPTIONS"]["application_name"] = "sendalerts"
 
         if pool:
-            # psycopg_pool requires non-persistent connections:
-            db["CONN_MAX_AGE"] = 0
-            options = db.setdefault("OPTIONS", {})
-            options["pool"] = True
+            self.stdout.write(
+                "WARNING: The --pool argument is not supported any more and will be ignored.\n"
+            )
 
         self.seats = BoundedSemaphore(num_workers)
         self.executor = ThreadPoolExecutor(max_workers=num_workers)

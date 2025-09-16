@@ -13,7 +13,6 @@ from typing import TYPE_CHECKING, Any, NoReturn, cast
 from urllib.parse import quote, urlencode, urljoin
 
 from django.conf import settings
-from django.db import close_old_connections
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from hc.accounts.models import Profile
@@ -409,8 +408,6 @@ class Webhook(HttpTransport):
             # Header values should contain ASCII and latin-1 only
             headers[key] = self.prepare(value, flip, latin1=True)
 
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
         self.request(method, url, retry=retry, data=body_bytes, headers=headers)
 
 
@@ -516,9 +513,6 @@ class Mattermost(Slackalike):
             raise TransportError("Mattermost notifications are not enabled.")
 
         prepared_payload = self.payload(flip)
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
-
         self.post(self.channel.slack_webhook_url, json=prepared_payload)
 
 
@@ -534,9 +528,6 @@ class Discord(Slackalike):
         url = self.channel.discord_webhook_url + "/slack"
 
         prepared_payload = self.payload(flip)
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
-
         self.post(url, json=prepared_payload)
 
 
@@ -642,9 +633,6 @@ class PagerDuty(HttpTransport):
             "client_url": check.details_url(),
             "details": details,
         }
-
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
 
         self.post(self.URL, json=payload)
 
@@ -777,8 +765,6 @@ class Pushover(HttpTransport):
             payload["retry"] = settings.PUSHOVER_EMERGENCY_RETRY_DELAY
             payload["expire"] = settings.PUSHOVER_EMERGENCY_EXPIRATION
 
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
         self.post(self.URL, data=payload)
 
 
@@ -830,8 +816,6 @@ class RocketChat(HttpTransport):
             raise TransportError("Rocket.Chat notifications are not enabled.")
 
         prepared_payload = self.payload(flip)
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
         self.post(self.channel.value, json=prepared_payload)
 
 
@@ -1617,9 +1601,6 @@ class Gotify(HttpTransport):
             },
         }
 
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
-
         self.post(url, json=payload)
 
 
@@ -1685,8 +1666,6 @@ class Ntfy(HttpTransport):
         elif url == "https://ntfy.sh" and settings.NTFY_SH_TOKEN:
             headers = {"Authorization": f"Bearer {settings.NTFY_SH_TOKEN}"}
 
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
         self.post(url, headers=headers, json=payload)
 
 
@@ -1716,9 +1695,6 @@ class GitHub(HttpTransport):
             "body": tmpl("github_body.html", **ctx),
             "labels": self.channel.github.labels,
         }
-
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
 
         inst_id = self.channel.github.installation_id
         token = github.get_installation_access_token(inst_id)
@@ -1796,8 +1772,5 @@ class GoogleChat(HttpTransport):
                 }
             ]
         }
-
-        # Give up database connection before potentially long network IO:
-        close_old_connections()
 
         self.post(self.channel.value, json=payload)

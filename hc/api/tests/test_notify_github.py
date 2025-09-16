@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -14,7 +13,6 @@ MOCK_GITHUB = Mock()
 MOCK_GITHUB.get_installation_access_token.return_value = "test-token"
 
 
-@patch("hc.api.transports.close_old_connections", Mock())
 @patch("hc.api.transports.github", MOCK_GITHUB)
 @override_settings(GITHUB_PRIVATE_KEY="test-private-key")
 class NotifyGitHubTestCase(BaseTestCase):

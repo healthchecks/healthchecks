@@ -5,12 +5,10 @@ from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
-
 from hc.api.models import Channel, Notification
 from hc.test import BaseTestCase
 
 
-@patch("hc.api.transports.close_old_connections", Mock())
 class SendTestNotificationTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
