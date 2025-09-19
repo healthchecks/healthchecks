@@ -16,7 +16,6 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import format_html
 from django_stubs_ext import WithAnnotations
-
 from hc.accounts.models import Credential, Profile, Project
 
 Lookups = Iterable[tuple[str, str]]
@@ -245,7 +244,7 @@ class ProjectAdmin(ModelAdmin[Project]):
     readonly_fields = ("code", "owner")
     list_select_related = ("owner",)
     list_display = ("id", "name_", "users", "usage", "switch")
-    search_fields = ["id", "name", "owner__email"]
+    search_fields = ["id", "name", "owner__email", "code"]
 
     class Media:
         css = {"all": ("css/admin/projects.css",)}
