@@ -12,7 +12,7 @@ jobs:
         strategy:
             matrix:
                 db: [sqlite, postgres, mysql, mariadb]
-                python-version: ["3.10", "3.11", "3.12", "3.13"]
+                python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
                 include:
                     - db: postgres
                       db_user: runner
@@ -25,11 +25,12 @@ jobs:
                       db_password: ""
 
         steps:
-            - uses: actions/checkout@v3
+            - uses: actions/checkout@v5
             - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v4
+              uses: actions/setup-python@v5
               with:
                   python-version: ${{ matrix.python-version }}
+                  allow-prereleases: true
             - name: Start MySQL
               if: matrix.db == 'mysql'
               run: sudo systemctl start mysql.service
