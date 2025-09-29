@@ -44,27 +44,10 @@ def linemode(parser: Parser, token: Token) -> LineModeNode:
     return LineModeNode(nodelist)
 
 
-class LineNode(Node):
-    def __init__(self, nodelist: NodeList) -> None:
-        self.nodelist = nodelist
+@register.simple_block_tag(takes_context=True)
+def line(context: Context, content: str) -> str:
+    if "__lines__" not in context:
+        raise TemplateSyntaxError("The line tag used without outer linemode tags")
 
-    def render(self, context: Context) -> str:
-        if "__lines__" not in context:
-            raise TemplateSyntaxError("The line tag used without outer linemode tags")
-
-        context["__lines__"].append(self.nodelist.render(context))
-        return ""
-
-
-@register.tag
-def line(parser: Parser, token: Token) -> LineNode:
-    """For use with {% linemode %}.
-
-    Renders the enclosed content and appends it to context["__lines__"]
-    instead of returning it.
-
-    """
-
-    nodelist = parser.parse(("endline",))
-    parser.delete_first_token()
-    return LineNode(nodelist)
+    context["__lines__"].append(content)
+    return ""

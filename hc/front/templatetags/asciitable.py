@@ -6,61 +6,82 @@ from tabulate import tabulate
 register = template.Library()
 
 
+class Table:
+    def __init__(self) -> None:
+        self.rows: list[list[str]] = []
+        self.current_row: list[str] = []
+
+    def add_cell(self, v: str) -> None:
+        self.current_row.append(v)
+
+    def add_row(self) -> None:
+        self.rows.append(self.current_row)
+        self.current_row = []
+
+    def render(self) -> str:
+        return tabulate(self.rows[1:], self.rows[0], tablefmt="grid")
+
+
 class TableNode(Node):
     def __init__(self, nodelist: NodeList) -> None:
         self.nodelist = nodelist
 
     def render(self, context: Context) -> str:
-        context["__rows__"] = []
+        t = context["__table__"] = Table()
         self.nodelist.render(context)
 
-        header = context["__rows__"][0]
-        rows = context["__rows__"][1:]
-        return tabulate(rows, header, tablefmt="grid")
-
-
-class RowNode(Node):
-    def __init__(self, nodelist: NodeList) -> None:
-        self.nodelist = nodelist
-
-    def render(self, context: Context) -> str:
-        if "__rows__" not in context:
-            raise TemplateSyntaxError("The row tag used without outer table tag")
-
-        context["__cells__"] = []
-        self.nodelist.render(context)
-        context["__rows__"].append(context["__cells__"])
-        return ""
-
-
-class CellNode(Node):
-    def __init__(self, nodelist: NodeList) -> None:
-        self.nodelist = nodelist
-
-    def render(self, context: Context) -> str:
-        if "__cells__" not in context:
+        # At this point, if the current row is not empty it means there
+        # have been some cell blocks without outer row blocks
+        if t.current_row:
             raise TemplateSyntaxError("The cell tag used without outer row tag")
 
-        context["__cells__"].append(self.nodelist.render(context))
-        return ""
+        return t.render()
 
 
 @register.tag
 def table(parser: Parser, token: Token) -> TableNode:
+    """Format tabular data as ASCII table.
+
+    Example usage:
+
+        {% table %}
+            {% row %}
+                {% cell %}Header 1{% endcell%}
+                {% cell %}Header 2{% endcell%}
+            {% endrow %}
+            {% row %}
+                {% cell %}Value 1{% endcell%}
+                {% cell %}Value 2{% endcell%}
+            {% endrow %}
+        {% endtable %}
+
+    This example returns this text:
+
+        +------------+------------+
+        | Header 1   | Header 2   |
+        +============+============+
+        | Value 1    | Value 2    |
+        +------------+------------+
+
+    """
     nodelist = parser.parse(("endtable",))
     parser.delete_first_token()
     return TableNode(nodelist)
 
 
-@register.tag
-def row(parser: Parser, token: Token) -> RowNode:
-    nodelist = parser.parse(("endrow",))
-    parser.delete_first_token()
-    return RowNode(nodelist)
+@register.simple_block_tag(takes_context=True)
+def row(context: Context, content: str) -> str:
+    if "__table__" not in context:
+        raise TemplateSyntaxError("The row tag used without outer table tag")
+
+    context["__table__"].add_row()
+    return ""
 
 
-@register.tag
-def cell(parser: Parser, token: Token) -> CellNode:
-    nodelist = parser.parse(("endcell",))
-    parser.delete_first_token()
-    return CellNode(nodelist)
+@register.simple_block_tag(takes_context=True)
+def cell(context: Context, content: str) -> str:
+    if "__table__" not in context:
+        raise TemplateSyntaxError("The cell tag used without outer table tag")
+
+    context["__table__"].add_cell(content)
+    return ""
