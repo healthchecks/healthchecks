@@ -253,7 +253,7 @@ class Profile(models.Model):
                 # downtimes_by_boundary returns records in descending order,
                 # but the template will need them in ascending order:
                 downtimes.reverse()
-                setattr(check, "past_downtimes", downtimes[:-1])
+                check.past_downtimes = downtimes[:-1]
 
             # boundaries are in descending order, but the template
             # will need them in ascending order:

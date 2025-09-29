@@ -207,6 +207,9 @@ class Check(models.Model):
     alert_after = models.DateTimeField(null=True, blank=True, editable=False)
     status = models.CharField(max_length=6, choices=STATUSES, default="new")
 
+    # Used to pass downtime data to report templates. Not persisted to db.
+    past_downtimes: list[DowntimeRecord] | None = None
+
     class Meta:
         indexes = [
             # Index for the alert_after field. Exclude rows with status=down.

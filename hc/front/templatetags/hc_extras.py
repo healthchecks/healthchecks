@@ -143,6 +143,20 @@ def sortchecks(checks: list[Check], key: str) -> list[Check]:
     return checks
 
 
+def downtime_key(check: Check) -> timedelta:
+    assert check.past_downtimes
+    return check.past_downtimes[-1].duration
+
+
+@register.filter
+def sortbydowntime(checks: list[Check]) -> list[Check]:
+    """Sort the list of checks in-place by downtime (descending), then by name."""
+
+    checks.sort(key=natural_name_key)
+    checks.sort(key=downtime_key, reverse=True)
+    return checks
+
+
 @register.filter
 def num_down_title(num_down: int) -> str:
     if num_down:
