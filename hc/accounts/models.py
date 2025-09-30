@@ -236,7 +236,6 @@ class Profile(models.Model):
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
         ctx: dict[str, Any] = {
-            "sort": self.sort,
             "unsub_link": unsub_url,
             "notifications_url": self.notifications_url(),
             "tz": self.tz,
