@@ -12,5 +12,4 @@ PyJWT[crypto]==2.10.1
 pyotp==2.9.0
 segno==1.6.6
 statsd==4.0.1
-tabulate==0.9.0
 whitenoise==6.11.0

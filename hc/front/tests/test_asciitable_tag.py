@@ -18,11 +18,11 @@ class AsciiTableTestCase(BaseTestCase):
         )
 
         expected = """
-+----------+
-| Header   |
-+==========+
-| Value    |
-+----------+
++--------+
+| Header |
++========+
+| Value  |
++--------+
 """.strip()
 
         self.assertEqual(t.render(Context()), expected)
