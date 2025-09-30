@@ -314,3 +314,8 @@ def pct(v: float) -> str:
 @register.filter
 def decode(v: bytes) -> str:
     return bytes(v).decode(errors="replace")
+
+
+@register.filter
+def uppercase_if_down(s: str) -> str:
+    return "DOWN" if s == "down" else s

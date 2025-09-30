@@ -18,13 +18,7 @@ Project "{{ group.grouper|safe }}"
     {% endrow %}
     {% for check in group.list|sortbydowntime %}
         {% row %}
-            {% with check.get_status as status %}
-                {% if status == "down" %}
-                    {% cell %}DOWN{% endcell %}
-                {% else %}
-                    {% cell %}{{ status }}{% endcell %}
-                {% endif %}
-            {% endwith %}
+            {% cell %}{{ check.get_status|uppercase_if_down }}{% endcell %}
             {% cell %}{{ check.name|safe }}{% endcell %}
             {% for d in check.past_downtimes %}
                 {% if d.count %}
