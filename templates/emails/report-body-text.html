@@ -1,8 +1,49 @@
-{% load hc_extras %}Hello,
+{% load asciitable hc_extras tz %}{% timezone tz %}Hello,
 
 This is a {{ monthly_or_weekly }} report sent by {% site_name %}.
-{% include 'emails/report-summary-text.html' %}
+{% regroup checks by project as groups %}{% for group in groups %}
+
+Project "{{ group.grouper|safe }}"
+{% table %}
+    {% row %}
+        {% cell %}Status{% endcell %}
+        {% cell %}Name{% endcell %}
+        {% for dt in boundaries %}
+            {% if monthly_or_weekly == "weekly" %}
+                {% cell %}{{ dt|date:"M j"}} - {{ dt|add6days|date:"M j"}}{% endcell %}
+            {% else %}
+                {% cell %}{{ dt|date:"N Y"}}{% endcell %}
+            {% endif %}
+        {% endfor %}
+    {% endrow %}
+    {% for check in group.list|sortbydowntime %}
+        {% row %}
+            {% with check.get_status as status %}
+                {% if status == "down" %}
+                    {% cell %}DOWN{% endcell %}
+                {% else %}
+                    {% cell %}{{ status }}{% endcell %}
+                {% endif %}
+            {% endwith %}
+            {% cell %}{{ check.name|safe }}{% endcell %}
+            {% for d in check.past_downtimes %}
+                {% if d.count %}
+                    {% cell %}{{ d.count }} downtime{{ d.count|pluralize }},
+{{ d.duration|hc_approx_duration }} total{% endcell%}
+                {% else %}
+                    {% if d.no_data %}
+                        {% comment %} The check didn't exist yet {% endcomment %}
+                    {% else %}
+                        {% cell %}All good!{% endcell %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endrow %}
+    {% endfor %}
+{% endtable %}
+{% endfor %}
 
 --
 Cheers,
 {% site_name %}
+{% endtimezone %}
