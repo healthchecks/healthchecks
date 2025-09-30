@@ -223,7 +223,9 @@ class Profile(models.Model):
             return False
 
         # Sort checks by project. Need this because will group by project in template.
-        q = q.select_related("project").order_by("project_id")
+        # Sort primarily by project name, but projects can have duplicate names
+        # so sort by project id also.
+        q = q.select_related("project").order_by("project__name", "project_id")
         # list() executes the query, to avoid DB access while rendering the template.
         checks = list(q)
 

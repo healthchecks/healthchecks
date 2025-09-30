@@ -24,12 +24,12 @@ This is a hourly reminder sent by Mychecks.
 One check is currently DOWN:
 
 
-Alices Project
-==============
-
-Status Name                                     Last Ping
------- ---------------------------------------- ----------------------
-DOWN   Foo                                      now
+Project "Alices Project"
++--------+------+-----------+
+| Status | Name | Last Ping |
++========+======+===========+
+| DOWN   | Foo  | now       |
++--------+------+-----------+
 
 
 --
@@ -91,11 +91,15 @@ class SendReportsTestCase(BaseTestCase):
         self.assertEmailContains("Dec. 2019")
 
     def test_text_report_does_not_escape(self) -> None:
+        self.project.name = "Alice & Friends"
+        self.project.save()
+
         self.check.name = "Foo & Bar"
         self.check.save()
 
         cmd = Command(stdout=Mock())
         cmd.handle_one_report()
+        self.assertEmailContainsText("Alice & Friends")
         self.assertEmailContainsText("Foo & Bar")
 
     def test_it_sends_weekly_report(self) -> None:

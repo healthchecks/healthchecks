@@ -19,7 +19,7 @@ Project "{{ group.grouper|safe }}"
     {% for check in group.list|sortbydowntime %}
         {% row %}
             {% cell %}{{ check.get_status|uppercase_if_down }}{% endcell %}
-            {% cell %}{{ check.name|safe }}{% endcell %}
+            {% cell %}{{ check.name_then_code|safe }}{% endcell %}
             {% for d in check.past_downtimes %}
                 {% if d.count %}
                     {% cell %}{{ d.count }} downtime{{ d.count|pluralize }},
