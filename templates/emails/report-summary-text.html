@@ -23,7 +23,7 @@ Project "{{ group.grouper|safe }}"
                     {% cell %}{{ status }}{% endcell %}
                 {% endif %}
             {% endwith %}
-            {% cell %}{{ check.name }}{% endcell %}
+            {% cell %}{{ check.name|safe }}{% endcell %}
             {% for d in check.past_downtimes %}
                 {% if d.count %}
                     {% cell %}{{ d.count }} downtime{{ d.count|pluralize }},
