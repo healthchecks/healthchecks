@@ -75,11 +75,11 @@ def table(parser: Parser, token: Token) -> TableNode:
 
     This example returns this text:
 
-        +------------+------------+
-        | Header 1   | Header 2   |
-        +============+============+
-        | Value 1    | Value 2    |
-        +------------+------------+
+        +----------+----------+
+        | Header 1 | Header 2 |
+        +==========+==========+
+        | Value 1  | Value 2  |
+        +----------+----------+
 
     """
     nodelist = parser.parse(("endtable",))
