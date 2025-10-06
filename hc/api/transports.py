@@ -1193,67 +1193,6 @@ class Apprise(HttpTransport):
             raise TransportError("Failed")
 
 
-class MsTeams(HttpTransport):
-    @classmethod
-    def raise_for_response(cls, response: curl.Response) -> NoReturn:
-        permanent = response.status_code == 403
-        raise TransportError(
-            f"Received status code {response.status_code}", permanent=permanent
-        )
-
-    def payload(self, flip: Flip) -> JSONDict:
-        check = flip.owner
-        name = check.name_then_code()
-        facts: JSONList = []
-        sections: JSONList = [{"text": check.desc, "facts": facts}]
-        result: JSONDict = {
-            "@type": "MessageCard",
-            "@context": "https://schema.org/extensions",
-            "title": f"“{escape(name)}” is {flip.new_status.upper()}.",
-            "summary": f"“{name}” is {flip.new_status.upper()}.",
-            "themeColor": "5cb85c" if flip.new_status == "up" else "d9534f",
-            "sections": sections,
-            "potentialAction": [
-                {
-                    "@type": "OpenUri",
-                    "name": f"View in {settings.SITE_NAME}",
-                    "targets": [{"os": "default", "uri": check.cloaked_url()}],
-                }
-            ],
-        }
-
-        if tags := check.tags_list():
-            formatted_tags = " ".join(f"`{tag}`" for tag in tags)
-            facts.append({"name": "Tags:", "value": formatted_tags})
-
-        if check.kind == "simple":
-            facts.append({"name": "Period:", "value": format_duration(check.timeout)})
-
-        if check.kind in ("cron", "oncalendar"):
-            facts.append({"name": "Schedule:", "value": fix_asterisks(check.schedule)})
-            facts.append({"name": "Time Zone:", "value": check.tz})
-
-        if ping := self.last_ping(flip):
-            facts.append({"name": "Total Pings:", "value": str(ping.n)})
-            facts.append({"name": "Last Ping:", "value": ping.formatted_kind_created()})
-        else:
-            facts.append({"name": "Total Pings:", "value": "0"})
-            facts.append({"name": "Last Ping:", "value": "Never"})
-
-        body = get_ping_body(ping, maxlen=1000)
-        if body and "```" not in body:
-            section_text = f"**Last Ping Body**:\n```\n{ body }\n```"
-            sections.append({"text": section_text})
-
-        return result
-
-    def notify(self, flip: Flip, notification: Notification) -> None:
-        if not settings.MSTEAMS_ENABLED:
-            raise TransportError("MS Teams notifications are not enabled.")
-
-        self.post(self.channel.value, json=self.payload(flip))
-
-
 class MsTeamsWorkflow(HttpTransport):
     def payload(self, flip: Flip) -> JSONDict:
         check = flip.owner

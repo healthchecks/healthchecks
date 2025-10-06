@@ -53,7 +53,7 @@
                     <span class="label label-danger">Disabled</span>
                 {% elif ch.kind == "email" and not ch.email_verified %}
                     <span class="label label-default">Unconfirmed</span>
-                {% elif ch.kind == "linenotify" %}
+                {% elif ch.kind == "linenotify" or ch.kind == "msteams" %}
                     Retired
                 {% else %}
                     Ready to deliver

@@ -2,7 +2,8 @@
     margin-top: 36px;
 }
 
-.channel-row.kind-linenotify {
+.channel-row.kind-linenotify,
+.channel-row.kind-msteams {
     filter: grayscale(100%);
     opacity: 0.5;
 }
