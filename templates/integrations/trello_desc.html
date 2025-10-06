@@ -6,7 +6,7 @@
 {% endif %}
 
 {% if check.kind == "cron" or check.kind == "oncalendar" %}
-**Schedule:** `{{ check.schedule|fix_asterisks }}`
+**Schedule:** `{{ check.schedule }}`
 
 **Time Zone:** {{ check.tz }}
 {% endif %}

@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -79,8 +78,7 @@ class NotifyTrelloTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         params = mock_post.call_args.kwargs["params"]
-        a = "\u034f*"
-        self.assertIn(f"**Schedule:** `{a} {a} {a} {a} {a}`", params["desc"])
+        self.assertIn("**Schedule:** `* * * * *`", params["desc"])
         self.assertIn("**Time Zone:** Europe/Riga", params["desc"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
