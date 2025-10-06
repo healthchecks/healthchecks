@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Add rate limiting and a default ntfy.sh token support for ntfy notifications
 - Sort checks in daily/weekly/monthly reports by downtime duration, then by name (#1095)
 
+### Bug Fixes
+- Fix cron schedule formatting in Discord notifications
+
 ## v3.11.2 - 2025-09-02
 
 ### Bug Fixes

@@ -54,6 +54,20 @@ class NotifyDiscordTestCase(BaseTestCase):
         self.assertEqual(fields["Total Pings"], "112233")
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
+        self._setup_data("https://example.org")
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Riga"
+        self.check.save()
+        mock_post.return_value.status_code = 200
+
+        self.channel.notify(self.flip)
+        attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
+        fields = {f["title"]: f["value"] for f in attachment["fields"]}
+        self.assertEqual(fields["Schedule"], r"\* \* \* \* \*")
+        self.assertEqual(fields["Time Zone"], "Europe/Riga")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_rewrites_discordapp_com(self, mock_post: Mock) -> None:
         self._setup_data("https://discordapp.com/foo")
         mock_post.return_value.status_code = 200

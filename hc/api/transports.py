@@ -458,7 +458,7 @@ class Slackalike(HttpTransport):
             fields.add("Period", format_duration(check.timeout))
 
         if check.kind in ("cron", "oncalendar"):
-            fields.add("Schedule", fix_asterisks(check.schedule))
+            fields.add("Schedule", self.fix_asterisks(check.schedule))
             fields.add("Time Zone", check.tz)
 
         if ping := self.last_ping(flip):
@@ -473,6 +473,14 @@ class Slackalike(HttpTransport):
             fields.add("Last Ping Body", f"```\n{body}\n```", short=False)
 
         return result
+
+    def fix_asterisks(self, s: str) -> str:
+        """Escape asterisks so that they are not recognized as Markdown syntax."""
+
+        # The base implementation prepends asterisks with "Combining Grapheme Joiner"
+        # characters but subclasses can override this function and escape
+        # asterisks differently
+        return s.replace("*", "\u034f*")
 
     def notify(self, flip: Flip, notification: Notification) -> None:
         self.post(self.channel.slack_webhook_url, json=self.payload(flip))
@@ -529,6 +537,10 @@ class Discord(Slackalike):
 
         prepared_payload = self.payload(flip)
         self.post(url, json=prepared_payload)
+
+    def fix_asterisks(self, s: str) -> str:
+        # In Discord notifications asterisks should be escaped with a backslash
+        return s.replace("*", r"\*")
 
 
 class Opsgenie(HttpTransport):
