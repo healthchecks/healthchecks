@@ -16,11 +16,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 from django.utils.html import escape
 from hc.accounts.models import Profile
-from hc.front.templatetags.hc_extras import (
-    absolute_site_logo_url,
-    fix_asterisks,
-    sortchecks,
-)
+from hc.front.templatetags.hc_extras import absolute_site_logo_url, sortchecks
 from hc.lib import curl, emails, github
 from hc.lib.date import format_duration
 from hc.lib.html import extract_signal_styles
@@ -1198,6 +1194,13 @@ class Apprise(HttpTransport):
 
 
 class MsTeamsWorkflow(HttpTransport):
+    def fix_asterisks(self, s: str) -> str:
+        """Escape asterisks so that they are not recognized as Markdown syntax."""
+
+        # FIXME check if this can be removed. IIRC this was carried over
+        # from Slack integration, perhaps MS Teams does not need it.
+        return s.replace("*", "\u034f*")
+
     def payload(self, flip: Flip) -> JSONDict:
         check = flip.owner
         name = check.name_then_code()
@@ -1262,7 +1265,7 @@ class MsTeamsWorkflow(HttpTransport):
             fields.add("Period:", format_duration(check.timeout))
 
         if check.kind in ("cron", "oncalendar"):
-            fields.add("Schedule:", fix_asterisks(check.schedule))
+            fields.add("Schedule:", self.fix_asterisks(check.schedule))
             fields.add("Time Zone:", check.tz)
 
         if ping := self.last_ping(flip):
