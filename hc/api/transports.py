@@ -781,6 +781,10 @@ class Pushover(HttpTransport):
 
 
 class RocketChat(HttpTransport):
+    def fix_asterisks(self, s: str) -> str:
+        # In Rocket.Chat notifications asterisks should be escaped with a backslash
+        return s.replace("*", r"\*")
+
     def payload(self, flip: Flip) -> JSONDict:
         check = flip.owner
         url = check.cloaked_url()
@@ -806,7 +810,7 @@ class RocketChat(HttpTransport):
             fields.add("Period", format_duration(check.timeout))
 
         if check.kind in ("cron", "oncalendar"):
-            fields.add("Schedule", fix_asterisks(check.schedule))
+            fields.add("Schedule", self.fix_asterisks(check.schedule))
             fields.add("Time Zone", check.tz)
 
         if ping := self.last_ping(flip):

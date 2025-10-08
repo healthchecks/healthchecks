@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix cron schedule formatting in Discord notifications
+- Fix cron schedule formatting in Rocket.Chat notifications (in mobile app)
 
 ## v3.11.2 - 2025-09-02
 

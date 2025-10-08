@@ -104,7 +104,7 @@ class NotifyRocketChatTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         attachment = mock_post.call_args.kwargs["json"]["attachments"][0]
         fields = {f["title"]: f["value"] for f in attachment["fields"]}
-        self.assertEqual(fields["Schedule"], "\u034f* \u034f* \u034f* \u034f* \u034f*")
+        self.assertEqual(fields["Schedule"], r"\* \* \* \* \*")
         self.assertEqual(fields["Time Zone"], "Europe/Riga")
 
     @patch("hc.api.transports.curl.request", autospec=True)
