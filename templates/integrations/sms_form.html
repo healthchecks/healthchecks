@@ -14,6 +14,12 @@ SMS Settings - {% site_name %}
 <div class="col-sm-12">
     <h1>SMS</h1>
     <p>Get a SMS message to the specified phone number when a check goes down.</p>
+    <p>
+        {{ site_name }} uses a third-party service, Twilio, to send SMS messages.
+        Messages will be delivered from a single, fixed phone number:
+        <strong>{{ twilio_from }}</strong>
+        <a href="{% url 'hc-contact-vcf' %}">(add to address book).</a>
+    </p>
 
     {% if show_pricing and profile.sms_limit == 0 %}
     <p class="alert alert-info">

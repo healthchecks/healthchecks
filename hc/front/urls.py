@@ -128,4 +128,5 @@ urlpatterns = [
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
     path("signal_captcha/", views.signal_captcha, name="hc-signal-captcha"),
     path("signal_verify/", views.verify_signal_number, name="hc-signal-verify"),
+    path("contact.vcf", views.contact_vcf, name="hc-contact-vcf"),
 ]

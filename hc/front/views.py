@@ -2188,6 +2188,7 @@ def sms_form(request: HttpRequest, channel: Channel) -> HttpResponse:
     ctx = {
         "page": "channels",
         "project": channel.project,
+        "twilio_from": settings.TWILIO_FROM,
         "form": form,
         "profile": channel.project.owner_profile,
         "is_new": adding,
@@ -2223,6 +2224,7 @@ def add_call(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     ctx = {
         "page": "channels",
         "project": project,
+        "twilio_from": settings.TWILIO_FROM,
         "form": form,
         "profile": project.owner_profile,
     }
@@ -2892,6 +2894,16 @@ def add_googlechat(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "integrations/add_googlechat.html", ctx)
+
+
+def contact_vcf(request: HttpRequest) -> HttpResponse:
+    ctx = {
+        "email": settings.DEFAULT_FROM_EMAIL,
+        "site_name": settings.SITE_NAME,
+        "tel": settings.TWILIO_FROM,
+        "site_root": settings.SITE_ROOT,
+    }
+    return render(request, "contact.vcf", ctx, content_type="text/vcard")
 
 
 # Forks: add custom views after this line

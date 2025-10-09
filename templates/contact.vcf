@@ -1,0 +1,10 @@
+BEGIN:VCARD
+VERSION:4.0
+EMAIL:{{ email }}
+FN:{{ site_name }}
+KIND:org
+N:{{ site_name }};;;;
+NOTE:{{ site_name }} delivers voice and SMS notifications using this number. Replies are not monitored.
+{% if tel %}TEL:{{ tel }}{% endif %}
+URL:{{ site_root }}
+END:VCARD

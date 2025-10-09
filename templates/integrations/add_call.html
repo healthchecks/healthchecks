@@ -11,6 +11,12 @@
         Get a phone call when a check goes down. When you pick up the call,
         a text-to-speech engine will read out a message and then hang up.
     </p>
+    <p>
+        {{ site_name }} uses a third-party service, Twilio, to make phone calls.
+        {{ site_name }} will call you from a single, fixed phone number:
+        <strong>{{ twilio_from }}</strong>
+        <a href="{% url 'hc-contact-vcf' %}">(add to address book).</a>
+    </p>
 
     {% if show_pricing and profile.call_limit == 0 %}
     <p class="alert alert-info">
