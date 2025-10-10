@@ -49,7 +49,6 @@ channel_urls = [
 project_urls = [
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
-    path("add_webhook/", views.add_webhook, name="hc-add-webhook"),
     path("badges/", views.badges, name="hc-badges"),
     path("checks/", views.checks, name="hc-checks"),
     path("checks/add/", views.add_check, name="hc-add-check"),
