@@ -32,8 +32,6 @@ check_urls = [
 channel_urls = [
     path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("pagerduty/", views.pd_help, name="hc-pagerduty-help"),
-    path("add_slack/", views.slack_help, name="hc-slack-help"),
-    path("add_slack_btn/", views.add_slack_complete),
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
     path("<uuid:code>/name/", views.update_channel_name, name="hc-channel-name"),
     path("<uuid:code>/edit/", views.edit_channel, name="hc-edit-channel"),
@@ -56,8 +54,6 @@ project_urls = [
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
     path("add_shell/", views.add_shell, name="hc-add-shell"),
-    path("add_slack/", views.add_slack, name="hc-add-slack"),
-    path("add_slack_btn/", views.add_slack_btn, name="hc-add-slack-btn"),
     path("add_webhook/", views.add_webhook, name="hc-add-webhook"),
     path("badges/", views.badges, name="hc-badges"),
     path("checks/", views.checks, name="hc-checks"),

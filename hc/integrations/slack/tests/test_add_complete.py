@@ -4,14 +4,13 @@ import json
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
 @override_settings(SLACK_CLIENT_ID="fake-client-id")
 class AddSlackCompleteTestCase(BaseTestCase):
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.slack.views.curl.post", autospec=True)
     def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
@@ -54,7 +53,7 @@ class AddSlackCompleteTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.slack.views.curl.post", autospec=True)
     def test_it_handles_oauth_error(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_slack"] = ("foo", str(self.project.code))
@@ -72,8 +71,8 @@ class AddSlackCompleteTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Received an unexpected response from Slack")
 
-    @patch("hc.front.views.logger")
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.slack.views.logger")
+    @patch("hc.integrations.slack.views.curl.post", autospec=True)
     def test_it_handles_unexpected_oauth_response(
         self, mock_post: Mock, logger: Mock
     ) -> None:
