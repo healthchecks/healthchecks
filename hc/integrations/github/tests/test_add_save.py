@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import Channel
 from hc.lib.github import BadCredentials
 from hc.test import BaseTestCase
@@ -20,7 +19,7 @@ class AddGitHubSaveTestCase(BaseTestCase):
         session["add_github_token"] = "CAFEBABE"
         session.save()
 
-    @patch("hc.front.views.github", autospec=True)
+    @patch("hc.integrations.github.views.github", autospec=True)
     def test_it_works(self, github: Mock) -> None:
         github.get_repos.return_value = {"alice/foo": 123}
 
@@ -64,14 +63,17 @@ class AddGitHubSaveTestCase(BaseTestCase):
         r = self.client.post(self.url, {})
         self.assertEqual(r.status_code, 400)
 
-    @patch("hc.front.views.github", autospec=True)
+    @patch("hc.integrations.github.views.github", autospec=True)
     def test_it_handles_unexpected_repo_name(self, github: Mock) -> None:
         github.get_repos.return_value = {"alice/foo": 123}
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"repo_name": "alice/bar"})
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.front.views.github.get_repos", Mock(side_effect=BadCredentials))
+    @patch(
+        "hc.integrations.github.views.github.get_repos",
+        Mock(side_effect=BadCredentials),
+    )
     def test_it_handles_bad_credentials(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"repo_name": "alice/bar"}, follow=True)

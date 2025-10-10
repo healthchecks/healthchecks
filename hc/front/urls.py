@@ -32,7 +32,6 @@ check_urls = [
 channel_urls = [
     path("add_pushbullet/", views.add_pushbullet_complete),
     path("add_discord/", views.add_discord_complete),
-    path("add_github/", views.add_github_select),
     path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("add_pushover/", views.pushover_help, name="hc-pushover-help"),
     path("telegram/", views.telegram_help, name="hc-telegram-help"),
@@ -65,8 +64,6 @@ project_urls = [
     path("add_call/", views.add_call, name="hc-add-call"),
     path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
-    path("add_github/", views.add_github, name="hc-add-github"),
-    path("add_github/save/", views.add_github_save, name="hc-add-github-save"),
     path("add_gotify/", views.add_gotify, name="hc-add-gotify"),
     path("add_group/", views.add_group, name="hc-add-group"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),
