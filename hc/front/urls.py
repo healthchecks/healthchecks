@@ -59,7 +59,6 @@ channel_urls = [
 
 # /projects/<code>/
 project_urls = [
-    path("add_call/", views.add_call, name="hc-add-call"),
     path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),

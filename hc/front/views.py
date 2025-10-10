@@ -6,7 +6,6 @@ import logging
 import os
 import re
 import sqlite3
-import uuid
 from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
@@ -53,9 +52,8 @@ from hc.api.models import (
     Flip,
     Notification,
     Ping,
-    TokenBucket,
 )
-from hc.api.transports import Signal, SignalRateLimitFailure, Telegram, TransportError
+from hc.api.transports import Telegram, TransportError
 from hc.front import forms
 from hc.front.decorators import require_setting
 from hc.front.templatetags.hc_extras import (
@@ -69,7 +67,7 @@ from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
 from oncalendar import OnCalendar, OnCalendarError
-from pydantic import BaseModel, TypeAdapter, ValidationError
+from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -2210,33 +2208,6 @@ def add_sms(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
     channel = Channel(project=project, kind="sms")
     return sms_form(request, channel)
-
-
-@require_setting("TWILIO_AUTH")
-@login_required
-def add_call(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    if request.method == "POST":
-        form = forms.PhoneNumberForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="call")
-            channel.name = form.cleaned_data["label"]
-            channel.value = form.get_json()
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.PhoneNumberForm()
-
-    ctx = {
-        "page": "channels",
-        "project": project,
-        "twilio_from": settings.TWILIO_FROM,
-        "form": form,
-        "profile": project.owner_profile,
-    }
-    return render(request, "add_call.html", ctx)
 
 
 @require_setting("PROMETHEUS_ENABLED")
