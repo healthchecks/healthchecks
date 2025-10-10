@@ -31,6 +31,7 @@ urlpatterns = [
     path(prefix, include("hc.integrations.ntfy.urls")),
     path(prefix, include("hc.integrations.opsgenie.urls")),
     path(prefix, include("hc.integrations.po.urls")),
+    path(prefix, include("hc.integrations.pushbullet.urls")),
     path(prefix, include("hc.integrations.signal.urls")),
     path(prefix, include("hc.integrations.sms.urls")),
     path(prefix, include("hc.integrations.spike.urls")),

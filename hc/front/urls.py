@@ -30,7 +30,6 @@ check_urls = [
 
 # /integrations/
 channel_urls = [
-    path("add_pushbullet/", views.add_pushbullet_complete),
     path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("pagerduty/", views.pd_help, name="hc-pagerduty-help"),
     path("mattermost/", views.mattermost_help, name="hc-mattermost-help"),
@@ -59,7 +58,6 @@ project_urls = [
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
-    path("add_pushbullet/", views.add_pushbullet, name="hc-add-pushbullet"),
     path("add_rocketchat/", views.add_rocketchat, name="hc-add-rocketchat"),
     path("add_shell/", views.add_shell, name="hc-add-shell"),
     path("add_slack/", views.add_slack, name="hc-add-slack"),

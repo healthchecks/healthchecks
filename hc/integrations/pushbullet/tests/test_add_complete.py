@@ -4,7 +4,6 @@ import json
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -13,7 +12,7 @@ from hc.test import BaseTestCase
 class AddPushbulletTestCase(BaseTestCase):
     url = "/integrations/add_pushbullet/"
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.pushbullet.views.curl.post", autospec=True)
     def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
@@ -37,7 +36,7 @@ class AddPushbulletTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_pushbullet" in self.client.session)
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.pushbullet.views.curl.post", autospec=True)
     def test_it_handles_bad_oauth_response(self, mock_post: Mock) -> None:
         url = self.url + "?code=12345678&state=foo"
         for sample in (None, b"surprise", b"{}"):
@@ -47,7 +46,7 @@ class AddPushbulletTestCase(BaseTestCase):
 
             self.client.login(username="alice@example.org", password="password")
             mock_post.return_value.content = sample
-            with patch("hc.front.views.logger") as logger:
+            with patch("hc.integrations.pushbullet.views.logger") as logger:
                 r = self.client.get(url, follow=True)
                 self.assertContains(
                     r, "Received an unexpected response from Pushbullet."
@@ -65,7 +64,7 @@ class AddPushbulletTestCase(BaseTestCase):
         r = self.client.get(url)
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.pushbullet.views.curl.post", autospec=True)
     def test_it_handles_denial(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_pushbullet"] = ("foo", str(self.project.code))
