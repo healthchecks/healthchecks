@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from urllib.parse import urlparse
+
 from django.conf import settings
 from django.contrib import admin
 from django.urls import include, path
@@ -18,4 +19,5 @@ urlpatterns = [
     path(prefix, include("hc.api.urls")),
     path(prefix, include("hc.front.urls")),
     path(prefix, include("hc.payments.urls")),
+    path(prefix, include("hc.integrations.googlechat.urls")),
 ]

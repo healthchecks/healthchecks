@@ -2871,31 +2871,6 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
     return redirect("hc-channels", project.code)
 
 
-def googlechat_help(request: HttpRequest) -> HttpResponse:
-    return render(request, "add_googlechat.html")
-
-
-@login_required
-def add_googlechat(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddUrlForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="googlechat")
-            channel.value = form.cleaned_data["value"]
-            channel.save()
-
-            channel.assign_all_checks()
-            messages.success(request, "The Google Chat integration has been added!")
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddUrlForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_googlechat.html", ctx)
-
-
 def contact_vcf(request: HttpRequest) -> HttpResponse:
     ctx = {
         "email": settings.DEFAULT_FROM_EMAIL,
