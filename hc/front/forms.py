@@ -14,7 +14,6 @@ from hc.front.validators import (
     TimezoneValidator,
     WebhookValidator,
 )
-from hc.lib import matrix
 
 
 def _is_latin1(s: str) -> bool:
@@ -333,23 +332,6 @@ class SignalForm(SignalRecipientForm):
 
 class ChannelNameForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
-
-
-class AddMatrixForm(forms.Form):
-    error_css_class = "has-error"
-    alias = forms.CharField(max_length=100)
-
-    def clean_alias(self) -> str:
-        v = self.cleaned_data["alias"]
-        assert isinstance(v, str)
-
-        # validate it by trying to join
-        try:
-            self.cleaned_data["room_id"] = matrix.join(v)
-        except matrix.JoinError as e:
-            raise forms.ValidationError(e.message)
-
-        return v
 
 
 class AddPdForm(forms.Form):

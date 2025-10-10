@@ -2320,38 +2320,6 @@ def add_signal(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return signal_form(request, channel)
 
 
-@require_setting("MATRIX_ACCESS_TOKEN")
-@login_required
-def add_matrix(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    if request.method == "POST":
-        form = forms.AddMatrixForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="matrix")
-            channel.value = form.cleaned_data["room_id"]
-
-            # If user supplied room alias instead of ID, use it as channel name
-            alias = form.cleaned_data["alias"]
-            if not alias.startswith("!"):
-                channel.name = alias
-
-            channel.save()
-
-            channel.assign_all_checks()
-            messages.success(request, "The Matrix integration has been added!")
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddMatrixForm()
-
-    ctx = {
-        "page": "channels",
-        "project": project,
-        "form": form,
-        "matrix_user_id": settings.MATRIX_USER_ID,
-    }
-    return render(request, "add_matrix.html", ctx)
-
-
 @require_setting("PROMETHEUS_ENABLED")
 @login_required
 def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
