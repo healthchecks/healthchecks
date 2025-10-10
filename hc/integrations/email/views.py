@@ -10,8 +10,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
-from hc.front import forms
 from hc.front.views import _get_rw_project_for_user
+from hc.integrations.email import forms
 
 
 def email_form(request: AuthenticatedHttpRequest, channel: Channel) -> HttpResponse:

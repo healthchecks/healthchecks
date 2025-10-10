@@ -17,9 +17,9 @@ from django.http import (
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 from hc.api.models import Channel
-from hc.front import forms
 from hc.front.decorators import require_setting
 from hc.front.views import _get_rw_project_for_user
+from hc.integrations.github import forms
 from hc.lib import github
 
 
