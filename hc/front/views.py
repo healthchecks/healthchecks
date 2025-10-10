@@ -1459,6 +1459,8 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     elif channel.kind == "whatsapp":
         return whatsapp_form(request, channel)
     elif channel.kind == "ntfy":
+        from hc.integrations.ntfy.views import ntfy_form
+
         return ntfy_form(request, channel)
     elif channel.kind == "group":
         return group_form(request, channel)
@@ -2624,41 +2626,6 @@ def add_group(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
     channel = Channel(project=project, kind="group")
     return group_form(request, channel)
-
-
-def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:
-    adding = channel._state.adding
-    if request.method == "POST":
-        form = forms.NtfyForm(request.POST)
-        if form.is_valid():
-            channel.value = form.get_value()
-            channel.save()
-
-            if adding:
-                channel.assign_all_checks()
-            return redirect("hc-channels", channel.project.code)
-    elif adding:
-        form = forms.NtfyForm()
-    else:
-        form = forms.NtfyForm(
-            {
-                "topic": channel.ntfy.topic,
-                "url": channel.ntfy.url,
-                "priority": channel.ntfy.priority,
-                "priority_up": channel.ntfy.priority_up,
-                "token": channel.ntfy.token,
-            }
-        )
-
-    ctx = {"page": "channels", "project": channel.project, "form": form}
-    return render(request, "ntfy_form.html", ctx)
-
-
-@login_required
-def add_ntfy(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    channel = Channel(project=project, kind="ntfy")
-    return ntfy_form(request, channel)
 
 
 @require_setting("SIGNAL_CLI_SOCKET")
