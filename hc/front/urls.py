@@ -32,7 +32,6 @@ check_urls = [
 channel_urls = [
     path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("pagerduty/", views.pd_help, name="hc-pagerduty-help"),
-    path("mattermost/", views.mattermost_help, name="hc-mattermost-help"),
     path("add_slack/", views.slack_help, name="hc-slack-help"),
     path("add_slack_btn/", views.add_slack_complete),
     path("<uuid:code>/checks/", views.channel_checks, name="hc-channel-checks"),
@@ -53,7 +52,6 @@ channel_urls = [
 # /projects/<code>/
 project_urls = [
     path("add_email/", views.add_email, name="hc-add-email"),
-    path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),

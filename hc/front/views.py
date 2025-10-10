@@ -1731,32 +1731,6 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
     return redirect("hc-channels", project.code)
 
 
-@require_setting("MATTERMOST_ENABLED")
-def mattermost_help(request: HttpRequest) -> HttpResponse:
-    return render(request, "add_mattermost.html")
-
-
-@require_setting("MATTERMOST_ENABLED")
-@login_required
-def add_mattermost(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddUrlForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="mattermost")
-            channel.value = form.cleaned_data["value"]
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddUrlForm()
-
-    ctx = {"page": "channels", "form": form, "project": project}
-    return render(request, "add_mattermost.html", ctx)
-
-
 @require_setting("PROMETHEUS_ENABLED")
 @login_required
 def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
