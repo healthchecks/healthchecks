@@ -31,7 +31,6 @@ check_urls = [
 # /integrations/
 channel_urls = [
     path("add_pushbullet/", views.add_pushbullet_complete),
-    path("add_discord/", views.add_discord_complete),
     path("add_pagerduty/", views.add_pd_complete, name="hc-add-pd-complete"),
     path("pagerduty/", views.pd_help, name="hc-pagerduty-help"),
     path("mattermost/", views.mattermost_help, name="hc-mattermost-help"),
@@ -55,7 +54,6 @@ channel_urls = [
 
 # /projects/<code>/
 project_urls = [
-    path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),

@@ -5,7 +5,6 @@ from typing import Any
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -14,7 +13,7 @@ from hc.test import BaseTestCase
 class AddDiscordCompleteTestCase(BaseTestCase):
     url = "/integrations/add_discord/"
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.discord.views.curl.post", autospec=True)
     def test_it_handles_oauth_response(self, mock_post: Mock) -> None:
         session = self.client.session
         session["add_discord"] = ("foo", str(self.project.code))
@@ -42,7 +41,7 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         # Session should now be clean
         self.assertFalse("add_discord" in self.client.session)
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.discord.views.curl.post", autospec=True)
     def test_it_handles_code_30007(self, mock_post: Mock) -> None:
         oauth_response = {"code": 30007}
         mock_post.return_value.text = json.dumps(oauth_response)
@@ -57,7 +56,7 @@ class AddDiscordCompleteTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "maximum number of webhooks")
 
-    @patch("hc.front.views.curl.post", autospec=True)
+    @patch("hc.integrations.discord.views.curl.post", autospec=True)
     def test_it_handles_unexpected_oauth_response(self, mock_post: Mock) -> None:
         oauth_response: Any
         for oauth_response in ("surprise", {}, None):
@@ -72,7 +71,7 @@ class AddDiscordCompleteTestCase(BaseTestCase):
 
             self.client.login(username="alice@example.org", password="password")
 
-            with patch("hc.front.views.logger") as logger:
+            with patch("hc.integrations.discord.views.logger") as logger:
                 r = self.client.get(url, follow=True)
                 self.assertRedirects(r, self.channels_url)
                 self.assertContains(r, "Received an unexpected response from Discord.")
