@@ -1993,28 +1993,6 @@ def add_pushover(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "add_pushover.html", ctx)
 
 
-@require_setting("OPSGENIE_ENABLED")
-@login_required
-def add_opsgenie(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddOpsgenieForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="opsgenie")
-            v = {"region": form.cleaned_data["region"], "key": form.cleaned_data["key"]}
-            channel.value = json.dumps(v)
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddOpsgenieForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_opsgenie.html", ctx)
-
-
 @require_setting("PROMETHEUS_ENABLED")
 @login_required
 def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:

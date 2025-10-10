@@ -160,12 +160,6 @@ class OnCalendarForm(forms.Form):
         return td(seconds=self.cleaned_data["grace"])
 
 
-class AddOpsgenieForm(forms.Form):
-    error_css_class = "has-error"
-    region = forms.ChoiceField(initial="us", choices=(("us", "US"), ("eu", "EU")))
-    key = forms.CharField(max_length=40)
-
-
 class AddPushoverForm(forms.Form):
     error_css_class = "has-error"
     pushover_user_key = forms.CharField()

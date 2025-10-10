@@ -59,7 +59,6 @@ project_urls = [
     path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
-    path("add_opsgenie/", views.add_opsgenie, name="hc-add-opsgenie"),
     path("add_pagertree/", views.add_pagertree, name="hc-add-pagertree"),
     path("add_pd/", views.add_pd, name="hc-add-pd"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
