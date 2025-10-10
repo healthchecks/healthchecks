@@ -33,6 +33,7 @@ urlpatterns = [
     path(prefix, include("hc.integrations.spike.urls")),
     path(prefix, include("hc.integrations.telegram.urls")),
     path(prefix, include("hc.integrations.trello.urls")),
+    path(prefix, include("hc.integrations.victorops.urls")),
     path(prefix, include("hc.integrations.whatsapp.urls")),
     path(prefix, include("hc.integrations.zulip.urls")),
 ]
