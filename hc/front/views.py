@@ -1435,7 +1435,7 @@ def email_form(request: AuthenticatedHttpRequest, channel: Channel) -> HttpRespo
         "form": form,
         "is_new": adding,
     }
-    return render(request, "integrations/email_form.html", ctx)
+    return render(request, "email_form.html", ctx)
 
 
 @login_required
@@ -1499,7 +1499,7 @@ def webhook_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         "form": form,
         "is_new": adding,
     }
-    return render(request, "integrations/webhook_form.html", ctx)
+    return render(request, "webhook_form.html", ctx)
 
 
 @require_setting("WEBHOOKS_ENABLED")
@@ -1531,7 +1531,7 @@ def add_shell(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "project": project,
         "form": form,
     }
-    return render(request, "integrations/add_shell.html", ctx)
+    return render(request, "add_shell.html", ctx)
 
 
 @require_setting("PD_ENABLED")
@@ -1549,7 +1549,7 @@ def add_pd(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
         ctx = {"page": "channels", "project": project, "install_url": install_url}
         request.session["pagerduty"] = (state, str(project.code))
-        return render(request, "integrations/add_pd_simple.html", ctx)
+        return render(request, "add_pd_simple.html", ctx)
 
     if request.method == "POST":
         form = forms.AddPdForm(request.POST)
@@ -1564,7 +1564,7 @@ def add_pd(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddPdForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_pd.html", ctx)
+    return render(request, "add_pd.html", ctx)
 
 
 @require_setting("PD_ENABLED")
@@ -1599,7 +1599,7 @@ def add_pd_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
 @require_setting("PD_APP_ID")
 def pd_help(request: HttpRequest) -> HttpResponse:
     ctx = {"page": "channels"}
-    return render(request, "integrations/add_pd_simple.html", ctx)
+    return render(request, "add_pd_simple.html", ctx)
 
 
 @require_setting("PAGERTREE_ENABLED")
@@ -1620,7 +1620,7 @@ def add_pagertree(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_pagertree.html", ctx)
+    return render(request, "add_pagertree.html", ctx)
 
 
 @require_setting("SLACK_ENABLED")
@@ -1645,14 +1645,14 @@ def add_slack(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "form": form,
     }
 
-    return render(request, "integrations/add_slack.html", ctx)
+    return render(request, "add_slack.html", ctx)
 
 
 @require_setting("SLACK_ENABLED")
 @require_setting("SLACK_CLIENT_ID")
 def slack_help(request: HttpRequest) -> HttpResponse:
     ctx = {"page": "channels"}
-    return render(request, "integrations/add_slack_btn.html", ctx)
+    return render(request, "add_slack_btn.html", ctx)
 
 
 @require_setting("SLACK_ENABLED")
@@ -1677,7 +1677,7 @@ def add_slack_btn(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
     }
 
     request.session["add_slack"] = (state, str(project.code))
-    return render(request, "integrations/add_slack_btn.html", ctx)
+    return render(request, "add_slack_btn.html", ctx)
 
 
 @require_setting("SLACK_ENABLED")
@@ -1726,7 +1726,7 @@ def add_slack_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
 
 @require_setting("MATTERMOST_ENABLED")
 def mattermost_help(request: HttpRequest) -> HttpResponse:
-    return render(request, "integrations/add_mattermost.html")
+    return render(request, "add_mattermost.html")
 
 
 @require_setting("MATTERMOST_ENABLED")
@@ -1747,12 +1747,12 @@ def add_mattermost(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "form": form, "project": project}
-    return render(request, "integrations/add_mattermost.html", ctx)
+    return render(request, "add_mattermost.html", ctx)
 
 
 @require_setting("ROCKETCHAT_ENABLED")
 def rocketchat_help(request: HttpRequest) -> HttpResponse:
-    return render(request, "integrations/add_rocketchat.html")
+    return render(request, "add_rocketchat.html")
 
 
 @require_setting("ROCKETCHAT_ENABLED")
@@ -1773,7 +1773,7 @@ def add_rocketchat(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "form": form, "project": project}
-    return render(request, "integrations/add_rocketchat.html", ctx)
+    return render(request, "add_rocketchat.html", ctx)
 
 
 @require_setting("PUSHBULLET_CLIENT_ID")
@@ -1798,7 +1798,7 @@ def add_pushbullet(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     }
 
     request.session["add_pushbullet"] = (state, str(project.code))
-    return render(request, "integrations/add_pushbullet.html", ctx)
+    return render(request, "add_pushbullet.html", ctx)
 
 
 class PushbulletOAuthResponse(BaseModel):
@@ -1865,7 +1865,7 @@ def add_discord(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     ctx = {"page": "channels", "project": project, "authorize_url": auth_url}
 
     request.session["add_discord"] = (state, str(project.code))
-    return render(request, "integrations/add_discord.html", ctx)
+    return render(request, "add_discord.html", ctx)
 
 
 @require_setting("DISCORD_CLIENT_ID")
@@ -1919,7 +1919,7 @@ def add_discord_complete(request: AuthenticatedHttpRequest) -> HttpResponse:
 @require_setting("PUSHOVER_API_TOKEN")
 def pushover_help(request: HttpRequest) -> HttpResponse:
     ctx = {"page": "channels"}
-    return render(request, "integrations/add_pushover_help.html", ctx)
+    return render(request, "add_pushover_help.html", ctx)
 
 
 @require_setting("PUSHOVER_API_TOKEN")
@@ -1983,7 +1983,7 @@ def add_pushover(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "po_retry_delay": td(seconds=settings.PUSHOVER_EMERGENCY_RETRY_DELAY),
         "po_expiration": td(seconds=settings.PUSHOVER_EMERGENCY_EXPIRATION),
     }
-    return render(request, "integrations/add_pushover.html", ctx)
+    return render(request, "add_pushover.html", ctx)
 
 
 @require_setting("OPSGENIE_ENABLED")
@@ -2005,7 +2005,7 @@ def add_opsgenie(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddOpsgenieForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_opsgenie.html", ctx)
+    return render(request, "add_opsgenie.html", ctx)
 
 
 @require_setting("VICTOROPS_ENABLED")
@@ -2026,7 +2026,7 @@ def add_victorops(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_victorops.html", ctx)
+    return render(request, "add_victorops.html", ctx)
 
 
 @require_setting("ZULIP_ENABLED")
@@ -2047,7 +2047,7 @@ def add_zulip(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddZulipForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_zulip.html", ctx)
+    return render(request, "add_zulip.html", ctx)
 
 
 class TelegramChat(BaseModel):
@@ -2101,7 +2101,7 @@ def telegram_bot(request: HttpRequest) -> HttpResponse:
     }
 
     invite = render_to_string(
-        "integrations/telegram_invite.html",
+        "telegram_invite.html",
         {"qs": signing.dumps(recipient)},
     )
 
@@ -2122,7 +2122,7 @@ def telegram_help(request: HttpRequest) -> HttpResponse:
         "bot_name": settings.TELEGRAM_BOT_NAME,
     }
 
-    return render(request, "integrations/add_telegram.html", ctx)
+    return render(request, "add_telegram.html", ctx)
 
 
 @require_setting("TELEGRAM_TOKEN")
@@ -2157,7 +2157,7 @@ def add_telegram(request: AuthenticatedHttpRequest) -> HttpResponse:
         "bot_name": settings.TELEGRAM_BOT_NAME,
     }
 
-    return render(request, "integrations/add_telegram.html", ctx)
+    return render(request, "add_telegram.html", ctx)
 
 
 @require_setting("TWILIO_AUTH")
@@ -2193,7 +2193,7 @@ def sms_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         "profile": channel.project.owner_profile,
         "is_new": adding,
     }
-    return render(request, "integrations/sms_form.html", ctx)
+    return render(request, "sms_form.html", ctx)
 
 
 @require_setting("TWILIO_AUTH")
@@ -2228,7 +2228,7 @@ def add_call(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "form": form,
         "profile": project.owner_profile,
     }
-    return render(request, "integrations/add_call.html", ctx)
+    return render(request, "add_call.html", ctx)
 
 
 @require_setting("TWILIO_USE_WHATSAPP")
@@ -2263,7 +2263,7 @@ def whatsapp_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         "profile": channel.project.owner_profile,
         "is_new": adding,
     }
-    return render(request, "integrations/whatsapp_form.html", ctx)
+    return render(request, "whatsapp_form.html", ctx)
 
 
 @require_setting("TWILIO_USE_WHATSAPP")
@@ -2305,7 +2305,7 @@ def signal_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         "form": form,
         "is_new": adding,
     }
-    return render(request, "integrations/signal_form.html", ctx)
+    return render(request, "signal_form.html", ctx)
 
 
 @require_setting("SIGNAL_CLI_SOCKET")
@@ -2350,7 +2350,7 @@ def add_trello(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "authorize_url": authorize_url,
     }
 
-    return render(request, "integrations/add_trello.html", ctx)
+    return render(request, "add_trello.html", ctx)
 
 
 @require_setting("MATRIX_ACCESS_TOKEN")
@@ -2382,7 +2382,7 @@ def add_matrix(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "form": form,
         "matrix_user_id": settings.MATRIX_USER_ID,
     }
-    return render(request, "integrations/add_matrix.html", ctx)
+    return render(request, "add_matrix.html", ctx)
 
 
 @require_setting("APPRISE_ENABLED")
@@ -2404,7 +2404,7 @@ def add_apprise(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddAppriseForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_apprise.html", ctx)
+    return render(request, "add_apprise.html", ctx)
 
 
 class TrelloList(BaseModel):
@@ -2443,11 +2443,11 @@ def trello_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
         boards = TrelloBoards.validate_json(result.content)
     except ValidationError:
         logger.warning("Unexpected Trello API response: %s", result.content)
-        return render(request, "integrations/trello_settings.html", {"error": 1})
+        return render(request, "trello_settings.html", {"error": 1})
 
     num_lists = sum(len(board.lists) for board in boards)
     ctx = {"token": token, "boards": boards, "num_lists": num_lists}
-    return render(request, "integrations/trello_settings.html", ctx)
+    return render(request, "trello_settings.html", ctx)
 
 
 @require_setting("MSTEAMS_ENABLED")
@@ -2468,7 +2468,7 @@ def add_msteams(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_msteams.html", ctx)
+    return render(request, "add_msteams.html", ctx)
 
 
 @require_setting("PROMETHEUS_ENABLED")
@@ -2571,7 +2571,7 @@ def add_spike(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_spike.html", ctx)
+    return render(request, "add_spike.html", ctx)
 
 
 @login_required
@@ -2591,7 +2591,7 @@ def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         form = forms.AddGotifyForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_gotify.html", ctx)
+    return render(request, "add_gotify.html", ctx)
 
 
 def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
@@ -2616,7 +2616,7 @@ def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         )
 
     ctx = {"page": "channels", "project": channel.project, "form": form}
-    return render(request, "integrations/group_form.html", ctx)
+    return render(request, "group_form.html", ctx)
 
 
 @login_required
@@ -2651,7 +2651,7 @@ def ntfy_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         )
 
     ctx = {"page": "channels", "project": channel.project, "form": form}
-    return render(request, "integrations/ntfy_form.html", ctx)
+    return render(request, "ntfy_form.html", ctx)
 
 
 @login_required
@@ -2701,7 +2701,7 @@ def signal_captcha(request: AuthenticatedHttpRequest) -> HttpResponse:
 @require_POST
 def verify_signal_number(request: AuthenticatedHttpRequest) -> HttpResponse:
     def render_result(result: str | None) -> HttpResponse:
-        return render(request, "integrations/signal_result.html", {"result": result})
+        return render(request, "signal_result.html", {"result": result})
 
     # Enforce per-account rate limit (50 verifications per day)
     if not TokenBucket.authorize_signal_verification(request.user):
@@ -2777,7 +2777,7 @@ def add_github(request: HttpRequest, code: UUID) -> HttpResponse:
 
     request.session["add_github_state"] = state
     request.session["add_github_project"] = str(project.code)
-    return render(request, "integrations/add_github.html", ctx)
+    return render(request, "add_github.html", ctx)
 
 
 @require_setting("GITHUB_CLIENT_ID")
@@ -2825,7 +2825,7 @@ def add_github_select(request: HttpRequest) -> HttpResponse:
         "project": project,
         "install_url": install_url,
     }
-    return render(request, "integrations/add_github_form.html", ctx)
+    return render(request, "add_github_form.html", ctx)
 
 
 @require_setting("GITHUB_CLIENT_ID")
@@ -2872,7 +2872,7 @@ def add_github_save(request: HttpRequest, code: UUID) -> HttpResponse:
 
 
 def googlechat_help(request: HttpRequest) -> HttpResponse:
-    return render(request, "integrations/add_googlechat.html")
+    return render(request, "add_googlechat.html")
 
 
 @login_required
@@ -2893,7 +2893,7 @@ def add_googlechat(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         form = forms.AddUrlForm()
 
     ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "integrations/add_googlechat.html", ctx)
+    return render(request, "add_googlechat.html", ctx)
 
 
 def contact_vcf(request: HttpRequest) -> HttpResponse:
