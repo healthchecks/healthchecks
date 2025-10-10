@@ -36,6 +36,7 @@ urlpatterns = [
     path(prefix, include("hc.integrations.pagertree.urls")),
     path(prefix, include("hc.integrations.pushbullet.urls")),
     path(prefix, include("hc.integrations.rocketchat.urls")),
+    path(prefix, include("hc.integrations.shell.urls")),
     path(prefix, include("hc.integrations.signal.urls")),
     path(prefix, include("hc.integrations.slack.urls")),
     path(prefix, include("hc.integrations.sms.urls")),

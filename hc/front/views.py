@@ -12,7 +12,6 @@ from datetime import datetime
 from datetime import timedelta as td
 from email.message import EmailMessage
 from itertools import islice
-from secrets import token_urlsafe
 from typing import TypedDict, cast
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
@@ -61,12 +60,10 @@ from hc.front.templatetags.hc_extras import (
     site_hostname,
     sortchecks,
 )
-from hc.lib import curl
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
 from oncalendar import OnCalendar, OnCalendarError
-from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -1515,30 +1512,6 @@ def add_webhook(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
     channel = Channel(project=project, kind="webhook")
     return webhook_form(request, channel)
-
-
-@require_setting("SHELL_ENABLED")
-@login_required
-def add_shell(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    if request.method == "POST":
-        form = forms.AddShellForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="shell")
-            channel.value = form.get_value()
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddShellForm()
-
-    ctx = {
-        "page": "channels",
-        "project": project,
-        "form": form,
-    }
-    return render(request, "add_shell.html", ctx)
 
 
 @require_setting("PROMETHEUS_ENABLED")
