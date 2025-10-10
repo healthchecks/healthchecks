@@ -2320,43 +2320,6 @@ def add_signal(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return signal_form(request, channel)
 
 
-@require_setting("TRELLO_APP_KEY")
-@login_required
-def add_trello(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    if request.method == "POST":
-        form = forms.AddTrelloForm(request.POST)
-        if not form.is_valid():
-            return HttpResponseBadRequest()
-
-        channel = Channel(project=project, kind="trello")
-        channel.value = form.get_value()
-        channel.save()
-
-        channel.assign_all_checks()
-        return redirect("hc-channels", project.code)
-
-    return_url = absolute_reverse("hc-add-trello", args=[project.code])
-    authorize_url = "https://trello.com/1/authorize?" + urlencode(
-        {
-            "expiration": "never",
-            "name": settings.SITE_NAME,
-            "scope": "read,write",
-            "response_type": "token",
-            "key": settings.TRELLO_APP_KEY,
-            "return_url": return_url,
-        }
-    )
-
-    ctx = {
-        "page": "channels",
-        "project": project,
-        "authorize_url": authorize_url,
-    }
-
-    return render(request, "add_trello.html", ctx)
-
-
 @require_setting("MATRIX_ACCESS_TOKEN")
 @login_required
 def add_matrix(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
@@ -2409,49 +2372,6 @@ def add_apprise(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "add_apprise.html", ctx)
-
-
-class TrelloList(BaseModel):
-    id: str
-    name: str
-
-
-class TrelloBoard(BaseModel):
-    id: str
-    name: str
-    lists: list[TrelloList]
-
-
-TrelloBoards = TypeAdapter(list[TrelloBoard])
-
-
-@require_setting("TRELLO_APP_KEY")
-@login_required
-@require_POST
-def trello_settings(request: AuthenticatedHttpRequest) -> HttpResponse:
-    token = request.POST.get("token", "")
-
-    url = "https://api.trello.com/1/members/me/boards"
-    assert settings.TRELLO_APP_KEY
-    params = {
-        "key": settings.TRELLO_APP_KEY,
-        "token": token,
-        "filter": "open",
-        "fields": "id,name",
-        "lists": "open",
-        "list_fields": "id,name",
-    }
-
-    result = curl.get(url, params)
-    try:
-        boards = TrelloBoards.validate_json(result.content)
-    except ValidationError:
-        logger.warning("Unexpected Trello API response: %s", result.content)
-        return render(request, "trello_settings.html", {"error": 1})
-
-    num_lists = sum(len(board.lists) for board in boards)
-    ctx = {"token": token, "boards": boards, "num_lists": num_lists}
-    return render(request, "trello_settings.html", ctx)
 
 
 @require_setting("PROMETHEUS_ENABLED")
