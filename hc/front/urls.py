@@ -79,7 +79,6 @@ project_urls = [
     path("add_slack/", views.add_slack, name="hc-add-slack"),
     path("add_slack_btn/", views.add_slack_btn, name="hc-add-slack-btn"),
     path("add_sms/", views.add_sms, name="hc-add-sms"),
-    path("add_spike/", views.add_spike, name="hc-add-spike"),
     path("add_trello/", views.add_trello, name="hc-add-trello"),
     path("add_victorops/", views.add_victorops, name="hc-add-victorops"),
     path("add_webhook/", views.add_webhook, name="hc-add-webhook"),

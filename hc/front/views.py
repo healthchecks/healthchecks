@@ -2557,27 +2557,6 @@ def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpRes
     return HttpResponse(output(checks), content_type="text/plain")
 
 
-@require_setting("SPIKE_ENABLED")
-@login_required
-def add_spike(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddUrlForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="spike")
-            channel.value = form.cleaned_data["value"]
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddUrlForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_spike.html", ctx)
-
-
 @require_setting("SIGNAL_CLI_SOCKET")
 @login_required
 def signal_captcha(request: AuthenticatedHttpRequest) -> HttpResponse:

@@ -24,4 +24,5 @@ urlpatterns = [
     path(prefix, include("hc.integrations.gotify.urls")),
     path(prefix, include("hc.integrations.group.urls")),
     path(prefix, include("hc.integrations.ntfy.urls")),
+    path(prefix, include("hc.integrations.spike.urls")),
 ]
