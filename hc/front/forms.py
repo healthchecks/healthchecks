@@ -269,27 +269,6 @@ class ChannelNameForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
 
 
-class AddPdForm(forms.Form):
-    error_css_class = "has-error"
-    value = forms.CharField(max_length=32)
-
-
-ZULIP_TARGETS = (("stream", "Stream"), ("private", "Private"))
-
-
-class AddZulipForm(forms.Form):
-    error_css_class = "has-error"
-    bot_email = forms.EmailField(max_length=100)
-    api_key = forms.CharField(max_length=50)
-    site = LaxURLField(max_length=100, assume_scheme="https")
-    mtype = forms.ChoiceField(choices=ZULIP_TARGETS)
-    to = forms.CharField(max_length=100)
-    topic = forms.CharField(max_length=100, required=False)
-
-    def get_value(self) -> str:
-        return json.dumps(dict(self.cleaned_data), sort_keys=True)
-
-
 class SearchForm(forms.Form):
     q = forms.RegexField(regex=r"^[0-9a-zA-Z\s]{3,100}$")
 
