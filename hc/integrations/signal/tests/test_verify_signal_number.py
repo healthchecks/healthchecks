@@ -3,7 +3,6 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import TokenBucket
 from hc.api.transports import TransportError
 from hc.test import BaseTestCase
@@ -16,13 +15,13 @@ class VerifySignalNumberTestCase(BaseTestCase):
 
         self.url = "/signal_verify/"
 
-    @patch("hc.front.views.Signal")
+    @patch("hc.integrations.signal.views.Signal")
     def test_it_works(self, mock_signal: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "All good, the message was sent")
 
-    @patch("hc.front.views.Signal")
+    @patch("hc.integrations.signal.views.Signal")
     def test_it_handles_rate_limit(self, mock_signal: Mock) -> None:
         mock_signal.send.side_effect = TransportError("CAPTCHA proof required")
 
@@ -30,7 +29,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
         r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "We hit a Signal rate-limit")
 
-    @patch("hc.front.views.Signal")
+    @patch("hc.integrations.signal.views.Signal")
     def test_it_handles_recipient_not_found(self, mock_signal: Mock) -> None:
         mock_signal.send.side_effect = TransportError("Recipient not found")
 
@@ -38,7 +37,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
         r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "Recipient not found")
 
-    @patch("hc.front.views.Signal")
+    @patch("hc.integrations.signal.views.Signal")
     def test_it_handles_unhandled_error(self, mock_signal: Mock) -> None:
         mock_signal.send.side_effect = TransportError("signal-cli call failed (123)")
 
@@ -46,7 +45,7 @@ class VerifySignalNumberTestCase(BaseTestCase):
         r = self.client.post(self.url, {"recipient": "+1234567890"})
         self.assertContains(r, "signal-cli call failed")
 
-    @patch("hc.front.views.Signal")
+    @patch("hc.integrations.signal.views.Signal")
     def test_it_handles_invalid_phone_number(self, mock_signal: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, {"recipient": "+123"})

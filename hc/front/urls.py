@@ -71,7 +71,6 @@ project_urls = [
     path("add_pushover/", views.add_pushover, name="hc-add-pushover"),
     path("add_rocketchat/", views.add_rocketchat, name="hc-add-rocketchat"),
     path("add_shell/", views.add_shell, name="hc-add-shell"),
-    path("add_signal/", views.add_signal, name="hc-add-signal"),
     path("add_slack/", views.add_slack, name="hc-add-slack"),
     path("add_slack_btn/", views.add_slack_btn, name="hc-add-slack-btn"),
     path("add_sms/", views.add_sms, name="hc-add-sms"),
@@ -111,7 +110,5 @@ urlpatterns = [
     path("docs/cron/", views.docs_cron, name="hc-docs-cron"),
     path("docs/search/", views.docs_search, name="hc-docs-search"),
     path("docs/<slug:doc>/", views.serve_doc, name="hc-serve-doc"),
-    path("signal_captcha/", views.signal_captcha, name="hc-signal-captcha"),
-    path("signal_verify/", views.verify_signal_number, name="hc-signal-verify"),
     path("contact.vcf", views.contact_vcf, name="hc-contact-vcf"),
 ]
