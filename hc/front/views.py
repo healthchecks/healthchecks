@@ -2036,27 +2036,6 @@ def add_victorops(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse
     return render(request, "add_victorops.html", ctx)
 
 
-@require_setting("ZULIP_ENABLED")
-@login_required
-def add_zulip(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddZulipForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="zulip")
-            channel.value = form.get_value()
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddZulipForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_zulip.html", ctx)
-
-
 @require_setting("PROMETHEUS_ENABLED")
 @login_required
 def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
