@@ -35,19 +35,10 @@ channel_urls = [
     path("<uuid:code>/edit/", views.edit_channel, name="hc-edit-channel"),
     path("<uuid:code>/test/", views.send_test_notification, name="hc-channel-test"),
     path("<uuid:code>/remove/", views.remove_channel, name="hc-remove-channel"),
-    path(
-        "<uuid:code>/verify/<slug:token>/", views.verify_email, name="hc-verify-email"
-    ),
-    path(
-        "<uuid:code>/unsub/<str:signed_token>/",
-        views.unsubscribe_email,
-        name="hc-unsubscribe-alerts",
-    ),
 ]
 
 # /projects/<code>/
 project_urls = [
-    path("add_email/", views.add_email, name="hc-add-email"),
     path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
     path("badges/", views.badges, name="hc-badges"),
     path("checks/", views.checks, name="hc-checks"),
