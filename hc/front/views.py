@@ -1463,6 +1463,8 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
         return ntfy_form(request, channel)
     elif channel.kind == "group":
+        from hc.integrations.group.views import group_form
+
         return group_form(request, channel)
 
     return HttpResponseBadRequest()
@@ -2594,38 +2596,6 @@ def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "add_gotify.html", ctx)
-
-
-def group_form(request: HttpRequest, channel: Channel) -> HttpResponse:
-    adding = channel._state.adding
-    if request.method == "POST":
-        form = forms.GroupForm(request.POST, project=channel.project)
-        if form.is_valid():
-            channel.name = form.cleaned_data["label"]
-            channel.value = form.get_value()
-            channel.save()
-
-            if adding:
-                channel.assign_all_checks()
-            return redirect("hc-channels", channel.project.code)
-    elif adding:
-        form = forms.GroupForm(project=channel.project)
-    else:
-        # Filter out unavailable channels
-        channels = list(channel.group_channels.values_list("code", flat=True))
-        form = forms.GroupForm(
-            {"channels": channels, "label": channel.name}, project=channel.project
-        )
-
-    ctx = {"page": "channels", "project": channel.project, "form": form}
-    return render(request, "group_form.html", ctx)
-
-
-@login_required
-def add_group(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    channel = Channel(project=project, kind="group")
-    return group_form(request, channel)
 
 
 @require_setting("SIGNAL_CLI_SOCKET")

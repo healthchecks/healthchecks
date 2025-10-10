@@ -5,11 +5,9 @@ import re
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from typing import Any
 
 from django import forms
 from django.core.exceptions import ValidationError
-
 from hc.front.validators import (
     CronValidator,
     OnCalendarValidator,
@@ -394,36 +392,6 @@ class AddGotifyForm(forms.Form):
     error_css_class = "has-error"
     token = forms.CharField(max_length=50)
     url = LaxURLField(max_length=1000, assume_scheme="https")
-
-    def get_value(self) -> str:
-        return json.dumps(dict(self.cleaned_data), sort_keys=True)
-
-
-class GroupForm(forms.Form):
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        project = kwargs.pop("project")
-        super().__init__(*args, **kwargs)
-
-        assert isinstance(self.fields["channels"], forms.MultipleChoiceField)
-        self.fields["channels"].choices = (
-            (c.code, c) for c in project.channel_set.exclude(kind="group")
-        )
-
-    error_css_class = "has-error"
-    label = forms.CharField(max_length=100, required=False)
-    channels = forms.MultipleChoiceField()
-
-    def get_value(self) -> str:
-        return ",".join(self.cleaned_data["channels"])
-
-
-class NtfyForm(forms.Form):
-    error_css_class = "has-error"
-    topic = forms.CharField(max_length=64)
-    url = LaxURLField(max_length=1000, assume_scheme="https")
-    token = forms.CharField(max_length=100, required=False)
-    priority = forms.IntegerField(initial=3, min_value=0, max_value=5)
-    priority_up = forms.IntegerField(initial=3, min_value=0, max_value=5)
 
     def get_value(self) -> str:
         return json.dumps(dict(self.cleaned_data), sort_keys=True)

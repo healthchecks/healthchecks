@@ -21,5 +21,6 @@ urlpatterns = [
     path(prefix, include("hc.payments.urls")),
     path(prefix, include("hc.integrations.github.urls")),
     path(prefix, include("hc.integrations.googlechat.urls")),
+    path(prefix, include("hc.integrations.group.urls")),
     path(prefix, include("hc.integrations.ntfy.urls")),
 ]
