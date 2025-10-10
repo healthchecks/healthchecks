@@ -2352,28 +2352,6 @@ def add_matrix(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "add_matrix.html", ctx)
 
 
-@require_setting("APPRISE_ENABLED")
-@login_required
-def add_apprise(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddAppriseForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="apprise")
-            channel.value = form.cleaned_data["url"]
-            channel.save()
-
-            channel.assign_all_checks()
-            messages.success(request, "The Apprise integration has been added!")
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddAppriseForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_apprise.html", ctx)
-
-
 @require_setting("PROMETHEUS_ENABLED")
 @login_required
 def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
