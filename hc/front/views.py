@@ -1451,6 +1451,8 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     elif channel.kind == "webhook":
         return webhook_form(request, channel)
     elif channel.kind == "sms":
+        from hc.integrations.sms.views import sms_form
+
         return sms_form(request, channel)
     elif channel.kind == "signal":
         from hc.integrations.signal.views import signal_form
@@ -2164,50 +2166,6 @@ def add_telegram(request: AuthenticatedHttpRequest) -> HttpResponse:
     }
 
     return render(request, "add_telegram.html", ctx)
-
-
-@require_setting("TWILIO_AUTH")
-def sms_form(request: HttpRequest, channel: Channel) -> HttpResponse:
-    adding = channel._state.adding
-    if request.method == "POST":
-        form = forms.PhoneUpDownForm(request.POST)
-        if form.is_valid():
-            channel.name = form.cleaned_data["label"]
-            channel.value = form.get_json()
-            channel.save()
-
-            if adding:
-                channel.assign_all_checks()
-            return redirect("hc-channels", channel.project.code)
-    elif adding:
-        form = forms.PhoneUpDownForm(initial={"up": False})
-    else:
-        form = forms.PhoneUpDownForm(
-            {
-                "label": channel.name,
-                "phone": channel.phone.value,
-                "up": channel.phone.notify_up,
-                "down": channel.phone.notify_down,
-            }
-        )
-
-    ctx = {
-        "page": "channels",
-        "project": channel.project,
-        "twilio_from": settings.TWILIO_FROM,
-        "form": form,
-        "profile": channel.project.owner_profile,
-        "is_new": adding,
-    }
-    return render(request, "sms_form.html", ctx)
-
-
-@require_setting("TWILIO_AUTH")
-@login_required
-def add_sms(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-    channel = Channel(project=project, kind="sms")
-    return sms_form(request, channel)
 
 
 @require_setting("PROMETHEUS_ENABLED")
