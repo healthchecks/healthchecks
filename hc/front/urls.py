@@ -64,7 +64,6 @@ project_urls = [
     path("add_call/", views.add_call, name="hc-add-call"),
     path("add_discord/", views.add_discord, name="hc-add-discord"),
     path("add_email/", views.add_email, name="hc-add-email"),
-    path("add_gotify/", views.add_gotify, name="hc-add-gotify"),
     path("add_matrix/", views.add_matrix, name="hc-add-matrix"),
     path("add_mattermost/", views.add_mattermost, name="hc-add-mattermost"),
     path("add_msteams/", views.add_msteams, name="hc-add-msteams"),

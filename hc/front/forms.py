@@ -388,15 +388,6 @@ class AddTrelloForm(forms.Form):
         return json.dumps(dict(self.cleaned_data), sort_keys=True)
 
 
-class AddGotifyForm(forms.Form):
-    error_css_class = "has-error"
-    token = forms.CharField(max_length=50)
-    url = LaxURLField(max_length=1000, assume_scheme="https")
-
-    def get_value(self) -> str:
-        return json.dumps(dict(self.cleaned_data), sort_keys=True)
-
-
 class SearchForm(forms.Form):
     q = forms.RegexField(regex=r"^[0-9a-zA-Z\s]{3,100}$")
 

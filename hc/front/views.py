@@ -2578,26 +2578,6 @@ def add_spike(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     return render(request, "add_spike.html", ctx)
 
 
-@login_required
-def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
-    if request.method == "POST":
-        form = forms.AddGotifyForm(request.POST)
-        if form.is_valid():
-            channel = Channel(project=project, kind="gotify")
-            channel.value = form.get_value()
-            channel.save()
-
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
-    else:
-        form = forms.AddGotifyForm()
-
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_gotify.html", ctx)
-
-
 @require_setting("SIGNAL_CLI_SOCKET")
 @login_required
 def signal_captcha(request: AuthenticatedHttpRequest) -> HttpResponse:
