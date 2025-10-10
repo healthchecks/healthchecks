@@ -31,6 +31,7 @@ urlpatterns = [
     path(prefix, include("hc.integrations.signal.urls")),
     path(prefix, include("hc.integrations.sms.urls")),
     path(prefix, include("hc.integrations.spike.urls")),
+    path(prefix, include("hc.integrations.telegram.urls")),
     path(prefix, include("hc.integrations.trello.urls")),
     path(prefix, include("hc.integrations.whatsapp.urls")),
 ]

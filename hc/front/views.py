@@ -13,7 +13,7 @@ from datetime import timedelta as td
 from email.message import EmailMessage
 from itertools import islice
 from secrets import token_urlsafe
-from typing import Literal, TypedDict, cast
+from typing import TypedDict, cast
 from urllib.parse import urlencode, urlparse
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -35,7 +35,7 @@ from django.http import (
     JsonResponse,
 )
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template.loader import get_template, render_to_string
+from django.template.loader import get_template
 from django.urls import reverse
 from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
@@ -53,7 +53,6 @@ from hc.api.models import (
     Notification,
     Ping,
 )
-from hc.api.transports import Telegram, TransportError
 from hc.front import forms
 from hc.front.decorators import require_setting
 from hc.front.templatetags.hc_extras import (
@@ -2056,116 +2055,6 @@ def add_zulip(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     ctx = {"page": "channels", "project": project, "form": form}
     return render(request, "add_zulip.html", ctx)
-
-
-class TelegramChat(BaseModel):
-    id: int
-    type: Literal["group", "private", "supergroup", "channel"]
-    title: str | None = None
-    username: str | None = None
-
-
-class TelegramMessage(BaseModel):
-    chat: TelegramChat
-    text: str
-    message_thread_id: int | None = None
-
-
-class TelegramCallback(BaseModel):
-    message: TelegramMessage
-
-    @classmethod
-    def load(self, data: bytes) -> TelegramCallback:
-        doc = json.loads(data.decode())
-        if "channel_post" in doc:
-            # Telegram's "channel_post" key uses the same structure as "message".
-            # To keep the validation and view logic simple, if the payload
-            # contains "channel_post", copy it to "message", and proceed as usual.
-            doc["message"] = doc["channel_post"]
-        return TelegramCallback.model_validate(doc, strict=True)
-
-
-@csrf_exempt
-@require_POST
-def telegram_bot(request: HttpRequest) -> HttpResponse:
-    try:
-        doc = TelegramCallback.load(request.body)
-    except ValidationError:
-        # We don't recognize the message format, but don't want Telegram
-        # retrying this over and over again, so respond with 200 OK
-        return HttpResponse()
-    except ValueError:
-        return HttpResponseBadRequest()
-
-    if "/start" not in doc.message.text:
-        return HttpResponse()
-
-    chat = doc.message.chat
-    recipient = {
-        "id": chat.id,
-        "type": chat.type,
-        "name": chat.title or chat.username,
-        "thread_id": doc.message.message_thread_id,
-    }
-
-    invite = render_to_string(
-        "telegram_invite.html",
-        {"qs": signing.dumps(recipient)},
-    )
-
-    try:
-        Telegram.send(chat.id, doc.message.message_thread_id, invite)
-    except TransportError:
-        # Swallow the error and return HTTP 200 OK, otherwise Telegram will
-        # hit the webhook again and again.
-        pass
-
-    return HttpResponse()
-
-
-@require_setting("TELEGRAM_TOKEN")
-def telegram_help(request: HttpRequest) -> HttpResponse:
-    ctx = {
-        "page": "channels",
-        "bot_name": settings.TELEGRAM_BOT_NAME,
-    }
-
-    return render(request, "add_telegram.html", ctx)
-
-
-@require_setting("TELEGRAM_TOKEN")
-@login_required
-def add_telegram(request: AuthenticatedHttpRequest) -> HttpResponse:
-    recipient = None
-    if qs := request.META["QUERY_STRING"]:
-        try:
-            recipient = signing.loads(qs, max_age=600)
-            assert isinstance(recipient, dict)
-        except signing.BadSignature:
-            return render(request, "bad_link.html")
-
-    if request.method == "POST":
-        form = forms.AddTelegramForm(request.POST)
-        if not form.is_valid():
-            return HttpResponseBadRequest()
-
-        project = _get_rw_project_for_user(request, form.cleaned_data["project"])
-        channel = Channel(project=project, kind="telegram")
-        channel.value = json.dumps(recipient)
-        channel.save()
-
-        channel.assign_all_checks()
-        messages.success(request, "The Telegram integration has been added!")
-        return redirect("hc-channels", project.code)
-
-    ctx = {
-        "page": "channels",
-        "projects": request.profile.projects(),
-        "recipient": recipient,
-        "bot_name": settings.TELEGRAM_BOT_NAME,
-    }
-
-    return render(request, "add_telegram.html", ctx)
 
 
 @require_setting("PROMETHEUS_ENABLED")

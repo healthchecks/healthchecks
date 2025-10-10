@@ -344,10 +344,6 @@ class TransferForm(forms.Form):
     project = forms.UUIDField()
 
 
-class AddTelegramForm(forms.Form):
-    project = forms.UUIDField()
-
-
 class BadgeSettingsForm(forms.Form):
     target = forms.ChoiceField(choices=_choices("all,tag,check"))
     tag = forms.CharField(max_length=100, required=False)
