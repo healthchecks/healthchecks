@@ -8,6 +8,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
+from importlib import import_module
 from typing import Any, TypedDict
 from zoneinfo import ZoneInfo
 
@@ -42,13 +43,13 @@ MAX_DURATION = td(hours=72)
 REASONS = (("", "Unknown"), ("timeout", "Timeout"), ("fail", "Fail signal"))
 
 
-TRANSPORTS: dict[str, tuple[str, type[transports.Transport]]] = {
+TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "apprise": ("Apprise", transports.Apprise),
     "call": ("Phone Call", transports.Call),
     "discord": ("Discord", transports.Discord),
     "email": ("Email", transports.Email),
     "github": ("GitHub", transports.GitHub),
-    "googlechat": ("Google Chat", transports.GoogleChat),
+    "googlechat": ("Google Chat", "hc.integrations.googlechat.transport.GoogleChat"),
     "gotify": ("Gotify", transports.Gotify),
     "group": ("Group", transports.Group),
     "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
@@ -988,7 +989,13 @@ class Channel(models.Model):
         if self.kind not in TRANSPORTS:
             raise NotImplementedError(f"Unknown channel kind: {self.kind}")
 
-        _, cls = TRANSPORTS[self.kind]
+        label, cls = TRANSPORTS[self.kind]
+        # import transport classes on first use, and cache in TRANSPORTS
+        if isinstance(cls, str):
+            modulename, classname = cls.rsplit(".", maxsplit=1)
+            cls = getattr(import_module(modulename), classname)
+            TRANSPORTS[self.kind] = (label, cls)
+
         return cls(self)
 
     def notify(self, flip: Flip, is_test: bool = False) -> str:
