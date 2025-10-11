@@ -54,7 +54,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "group": ("Group", "hc.integrations.group.transport.Group"),
     "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
     "matrix": ("Matrix", "hc.integrations.matrix.transport.Matrix"),
-    "mattermost": ("Mattermost", transports.Mattermost),
+    "mattermost": ("Mattermost", "hc.integrations.mattermost.transport.Mattermost"),
     "msteams": (
         "MS Teams Connector (stops working Jan 2025)",
         transports.RemovedTransport,

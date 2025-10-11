@@ -495,12 +495,3 @@ class Slack(Slackalike):
             raise TransportError("Slack notifications are not enabled.")
 
         self.post(self.channel.slack_webhook_url, json=self.payload(flip))
-
-
-class Mattermost(Slackalike):
-    def notify(self, flip: Flip, notification: Notification) -> None:
-        if not settings.MATTERMOST_ENABLED:
-            raise TransportError("Mattermost notifications are not enabled.")
-
-        prepared_payload = self.payload(flip)
-        self.post(self.channel.slack_webhook_url, json=prepared_payload)
