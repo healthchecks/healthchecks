@@ -79,7 +79,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "trello": ("Trello", "hc.integrations.trello.transport.Trello"),
     "victorops": ("Splunk On-Call", transports.VictorOps),
     "webhook": ("Webhook", transports.Webhook),
-    "whatsapp": ("WhatsApp", transports.WhatsApp),
+    "whatsapp": ("WhatsApp", "hc.integrations.whatsapp.transport.WhatsApp"),
     "zulip": ("Zulip", "hc.integrations.zulip.transport.Zulip"),
 }
 
