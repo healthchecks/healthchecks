@@ -59,7 +59,10 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
         "MS Teams Connector (stops working Jan 2025)",
         transports.RemovedTransport,
     ),
-    "msteamsw": ("Microsoft Teams", transports.MsTeamsWorkflow),
+    "msteamsw": (
+        "Microsoft Teams",
+        "hc.integrations.msteamsw.transport.MsTeamsWorkflow",
+    ),
     "ntfy": ("ntfy", "hc.integrations.ntfy.transport.Ntfy"),
     "opsgenie": ("Opsgenie", transports.Opsgenie),
     "pagertree": ("PagerTree", transports.PagerTree),
