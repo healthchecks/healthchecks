@@ -47,7 +47,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "apprise": ("Apprise", "hc.integrations.apprise.transport.Apprise"),
     "call": ("Phone Call", "hc.integrations.call.transport.Call"),
     "discord": ("Discord", "hc.integrations.discord.transport.Discord"),
-    "email": ("Email", transports.Email),
+    "email": ("Email", "hc.integrations.email.transport.Email"),
     "github": ("GitHub", "hc.integrations.github.transport.GitHub"),
     "googlechat": ("Google Chat", "hc.integrations.googlechat.transport.GoogleChat"),
     "gotify": ("Gotify", "hc.integrations.gotify.transport.Gotify"),
