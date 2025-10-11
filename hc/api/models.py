@@ -69,7 +69,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "pd": ("PagerDuty", transports.PagerDuty),
     "po": ("Pushover", transports.Pushover),
     "pushbullet": ("Pushbullet", transports.Pushbullet),
-    "rocketchat": ("Rocket.Chat", transports.RocketChat),
+    "rocketchat": ("Rocket.Chat", "hc.integrations.rocketchat.transport.RocketChat"),
     "shell": ("Shell Command", transports.Shell),
     "signal": ("Signal", "hc.integrations.signal.transport.Signal"),
     "slack": ("Slack", transports.Slack),
