@@ -13,7 +13,7 @@ MOCK_GITHUB = Mock()
 MOCK_GITHUB.get_installation_access_token.return_value = "test-token"
 
 
-@patch("hc.api.transports.github", MOCK_GITHUB)
+@patch("hc.integrations.github.transport.github", MOCK_GITHUB)
 @override_settings(GITHUB_PRIVATE_KEY="test-private-key")
 class NotifyGitHubTestCase(BaseTestCase):
     def setUp(self) -> None:
@@ -132,7 +132,7 @@ class NotifyGitHubTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_access_token(self, mock_post: Mock) -> None:
-        with patch("hc.api.transports.github") as mock:
+        with patch("hc.integrations.github.transport.github") as mock:
             mock.get_installation_access_token.return_value = None
             self.channel.notify(self.flip)
 
