@@ -65,7 +65,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     ),
     "ntfy": ("ntfy", "hc.integrations.ntfy.transport.Ntfy"),
     "opsgenie": ("Opsgenie", transports.Opsgenie),
-    "pagertree": ("PagerTree", transports.PagerTree),
+    "pagertree": ("PagerTree", "hc.integrations.pagertree.transport.PagerTree"),
     "pd": ("PagerDuty", transports.PagerDuty),
     "po": ("Pushover", "hc.integrations.po.transport.Pushover"),
     "pushbullet": ("Pushbullet", "hc.integrations.pushbullet.transport.Pushbullet"),
