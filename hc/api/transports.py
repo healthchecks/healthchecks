@@ -656,20 +656,3 @@ class PagerTree(HttpTransport):
         }
 
         self.post(url, json=payload, headers=headers)
-
-
-class Pushbullet(HttpTransport):
-    def notify(self, flip: Flip, notification: Notification) -> None:
-        url = "https://api.pushbullet.com/v2/pushes"
-        headers = {
-            "Access-Token": self.channel.value,
-            "Content-Type": "application/json",
-        }
-        text = tmpl(
-            "pushbullet_message.html",
-            flip=flip,
-            check=flip.owner,
-            status=flip.new_status,
-        )
-        payload = {"type": "note", "title": settings.SITE_NAME, "body": text}
-        self.post(url, json=payload, headers=headers)
