@@ -77,7 +77,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "victorops": ("Splunk On-Call", transports.VictorOps),
     "webhook": ("Webhook", transports.Webhook),
     "whatsapp": ("WhatsApp", transports.WhatsApp),
-    "zulip": ("Zulip", transports.Zulip),
+    "zulip": ("Zulip", "hc.integrations.zulip.transport.Zulip"),
 }
 
 
