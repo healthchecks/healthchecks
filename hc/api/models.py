@@ -51,7 +51,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "github": ("GitHub", "hc.integrations.github.transport.GitHub"),
     "googlechat": ("Google Chat", "hc.integrations.googlechat.transport.GoogleChat"),
     "gotify": ("Gotify", transports.Gotify),
-    "group": ("Group", transports.Group),
+    "group": ("Group", "hc.integrations.group.transport.Group"),
     "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
     "matrix": ("Matrix", transports.Matrix),
     "mattermost": ("Mattermost", transports.Mattermost),
