@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import NoReturn
 
 from hc.api.models import Flip, Notification
-from hc.api.transports import Slackalike, TransportError
+from hc.api.transports import TransportError
+from hc.integrations.slack.transport import Slackalike
 from hc.lib import curl
 
 

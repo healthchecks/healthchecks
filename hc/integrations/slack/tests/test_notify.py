@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
@@ -203,7 +202,7 @@ class NotifySlackTestCase(BaseTestCase):
         # It should not log HTTP 400 "invalid_token" responses
         self.assertFalse(debug.called)
 
-    @patch("hc.api.transports.logger.debug", autospec=True)
+    @patch("hc.integrations.slack.transport.logger.debug", autospec=True)
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_logs_unexpected_400(self, mock_post: Mock, debug: Mock) -> None:
         self._setup_data("123")
