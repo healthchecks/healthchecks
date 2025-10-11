@@ -24,12 +24,6 @@ from pydantic import BaseModel, ValidationError
 if TYPE_CHECKING:
     from hc.api.models import Channel, Check, Flip, Notification, Ping
 
-try:
-    import apprise
-
-    have_apprise = True
-except ImportError:
-    have_apprise = False
 
 logger = logging.getLogger(__name__)
 
@@ -1167,23 +1161,3 @@ class Trello(HttpTransport):
         }
 
         self.post(self.URL, params=params)
-
-
-class Apprise(HttpTransport):
-    def notify(self, flip: Flip, notification: Notification) -> None:
-        if not settings.APPRISE_ENABLED or not have_apprise:
-            raise TransportError("Apprise is disabled and/or not installed")
-
-        a = apprise.Apprise()
-        check, status, ping = flip.owner, flip.new_status, self.last_ping(flip)
-        title = tmpl("apprise_title.html", check=check, status=status)
-        body = tmpl("apprise_description.html", check=check, status=status, ping=ping)
-
-        a.add(self.channel.value)
-
-        notify_type = (
-            apprise.NotifyType.SUCCESS if status == "up" else apprise.NotifyType.FAILURE
-        )
-
-        if not a.notify(body=body, title=title, notify_type=notify_type):
-            raise TransportError("Failed")

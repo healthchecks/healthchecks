@@ -44,7 +44,7 @@ REASONS = (("", "Unknown"), ("timeout", "Timeout"), ("fail", "Fail signal"))
 
 
 TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
-    "apprise": ("Apprise", transports.Apprise),
+    "apprise": ("Apprise", "hc.integrations.apprise.transport.Apprise"),
     "call": ("Phone Call", transports.Call),
     "discord": ("Discord", transports.Discord),
     "email": ("Email", transports.Email),
