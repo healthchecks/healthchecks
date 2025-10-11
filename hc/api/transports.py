@@ -504,22 +504,3 @@ class Mattermost(Slackalike):
 
         prepared_payload = self.payload(flip)
         self.post(self.channel.slack_webhook_url, json=prepared_payload)
-
-
-class Discord(Slackalike):
-    @classmethod
-    def raise_for_response(cls, response: curl.Response) -> NoReturn:
-        message = f"Received status code {response.status_code}"
-        # Consider 404 a permanent failure
-        permanent = response.status_code == 404
-        raise TransportError(message, permanent=permanent)
-
-    def notify(self, flip: Flip, notification: Notification) -> None:
-        url = self.channel.discord_webhook_url + "/slack"
-
-        prepared_payload = self.payload(flip)
-        self.post(url, json=prepared_payload)
-
-    def fix_asterisks(self, s: str) -> str:
-        # In Discord notifications asterisks should be escaped with a backslash
-        return s.replace("*", r"\*")
