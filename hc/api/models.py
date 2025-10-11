@@ -70,7 +70,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "po": ("Pushover", "hc.integrations.po.transport.Pushover"),
     "pushbullet": ("Pushbullet", "hc.integrations.pushbullet.transport.Pushbullet"),
     "rocketchat": ("Rocket.Chat", "hc.integrations.rocketchat.transport.RocketChat"),
-    "shell": ("Shell Command", transports.Shell),
+    "shell": ("Shell Command", "hc.integrations.shell.transport.Shell"),
     "signal": ("Signal", "hc.integrations.signal.transport.Signal"),
     "slack": ("Slack", "hc.integrations.slack.transport.Slack"),
     "sms": ("SMS", "hc.integrations.sms.transport.Sms"),
