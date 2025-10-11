@@ -67,7 +67,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "opsgenie": ("Opsgenie", transports.Opsgenie),
     "pagertree": ("PagerTree", transports.PagerTree),
     "pd": ("PagerDuty", transports.PagerDuty),
-    "po": ("Pushover", transports.Pushover),
+    "po": ("Pushover", "hc.integrations.po.transport.Pushover"),
     "pushbullet": ("Pushbullet", transports.Pushbullet),
     "rocketchat": ("Rocket.Chat", "hc.integrations.rocketchat.transport.RocketChat"),
     "shell": ("Shell Command", transports.Shell),
