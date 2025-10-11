@@ -53,7 +53,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "gotify": ("Gotify", "hc.integrations.gotify.transport.Gotify"),
     "group": ("Group", "hc.integrations.group.transport.Group"),
     "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
-    "matrix": ("Matrix", transports.Matrix),
+    "matrix": ("Matrix", "hc.integrations.matrix.transport.Matrix"),
     "mattermost": ("Mattermost", transports.Mattermost),
     "msteams": (
         "MS Teams Connector (stops working Jan 2025)",
