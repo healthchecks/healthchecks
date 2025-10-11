@@ -60,7 +60,7 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
         transports.RemovedTransport,
     ),
     "msteamsw": ("Microsoft Teams", transports.MsTeamsWorkflow),
-    "ntfy": ("ntfy", transports.Ntfy),
+    "ntfy": ("ntfy", "hc.integrations.ntfy.transport.Ntfy"),
     "opsgenie": ("Opsgenie", transports.Opsgenie),
     "pagertree": ("PagerTree", transports.PagerTree),
     "pd": ("PagerDuty", transports.PagerDuty),
