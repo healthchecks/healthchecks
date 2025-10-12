@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.front.templatetags.hc_extras import absolute_site_logo_url
 from hc.integrations.slack.transport import SlackFields
 from hc.lib.date import format_duration
@@ -22,7 +22,7 @@ class RocketChat(HttpTransport):
         result: JSONDict = {
             "alias": settings.SITE_NAME,
             "avatar": absolute_site_logo_url(),
-            "text": tmpl("rocketchat_message.html", flip=flip, check=check),
+            "text": self.tmpl("rocketchat_message.html", flip=flip, check=check),
             "attachments": [{"color": color, "fields": fields}],
         }
 

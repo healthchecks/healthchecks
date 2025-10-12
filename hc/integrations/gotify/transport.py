@@ -3,7 +3,7 @@ from __future__ import annotations
 from urllib.parse import urlencode, urljoin
 
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, tmpl
+from hc.api.transports import HttpTransport
 
 
 class Gotify(HttpTransport):
@@ -22,8 +22,8 @@ class Gotify(HttpTransport):
             "down_checks": self.down_checks(flip.owner),
         }
         payload = {
-            "title": tmpl("gotify_title.html", **ctx),
-            "message": tmpl("gotify_message.html", **ctx),
+            "title": self.tmpl("gotify_title.html", **ctx),
+            "message": self.tmpl("gotify_message.html", **ctx),
             "extras": {
                 "client::display": {"contentType": "text/markdown"},
             },

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 
 
 class Ntfy(HttpTransport):
@@ -31,8 +31,8 @@ class Ntfy(HttpTransport):
         payload = {
             "topic": self.channel.ntfy.topic,
             "priority": self.priority(flip.new_status),
-            "title": tmpl("ntfy_title.html", **ctx),
-            "message": tmpl("ntfy_message.html", **ctx),
+            "title": self.tmpl("ntfy_title.html", **ctx),
+            "message": self.tmpl("ntfy_message.html", **ctx),
             "tags": ["red_circle" if flip.new_status == "down" else "green_circle"],
             "actions": [
                 {

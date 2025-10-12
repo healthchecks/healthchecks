@@ -4,7 +4,7 @@ from typing import NoReturn, cast
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
 from hc.lib.date import format_duration
 from hc.lib.typealias import JSONDict, JSONValue
@@ -44,7 +44,7 @@ class Opsgenie(HttpTransport):
         if flip.new_status == "down":
             ctx = {"flip": flip, "check": check, "ping": self.last_ping(flip)}
             payload["tags"] = cast(JSONValue, check.tags_list())
-            payload["message"] = tmpl("opsgenie_message.html", **ctx)
+            payload["message"] = self.tmpl("opsgenie_message.html", **ctx)
             payload["description"] = check.desc
 
             details: JSONDict = {}

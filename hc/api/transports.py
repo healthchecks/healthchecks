@@ -15,13 +15,6 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def tmpl(template_name: str, **ctx: Any) -> str:
-    template_path = f"integrations/{template_name}"
-    # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
-    # and cost twice the money.
-    return render_to_string(template_path, ctx).strip().replace("\xa0", " ")
-
-
 def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
     """Return ping body for a given Ping object.
 
@@ -107,6 +100,11 @@ class Transport:
         q = q.filter(created__lte=flip.created)
 
         return q.last()
+
+    def tmpl(self, template_name: str, **ctx: Any) -> str:
+        # \xa0 is non-breaking space. It causes SMS messages to use UCS2 encoding
+        # and cost twice the money.
+        return render_to_string(template_name, ctx).strip().replace("\xa0", " ")
 
 
 class RemovedTransport(Transport):

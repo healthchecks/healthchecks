@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.conf import settings
 from django.utils.html import escape
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, get_ping_body, tmpl
+from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.integrations.slack.transport import SlackFields
 from hc.lib.date import format_duration
 from hc.lib.typealias import JSONDict, JSONList
@@ -26,7 +26,7 @@ class MsTeamsWorkflow(HttpTransport):
             "check": flip.owner,
             "status": flip.new_status,
         }
-        text = tmpl("msteamsw_message.html", **ctx)
+        text = self.tmpl("msteamsw_message.html", **ctx)
 
         blocks: JSONList = [
             {

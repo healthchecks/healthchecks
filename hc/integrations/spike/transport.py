@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 
 
 class Spike(HttpTransport):
@@ -20,8 +20,8 @@ class Spike(HttpTransport):
         }
         payload = {
             "check_id": str(flip.owner.unique_key),
-            "title": tmpl("spike_title.html", **ctx),
-            "message": tmpl("spike_description.html", **ctx),
+            "title": self.tmpl("spike_title.html", **ctx),
+            "message": self.tmpl("spike_description.html", **ctx),
             "status": flip.new_status,
         }
 

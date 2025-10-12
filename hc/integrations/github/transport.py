@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, get_ping_body, tmpl
+from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.integrations.github import client
 
 
@@ -28,8 +28,8 @@ class GitHub(HttpTransport):
 
         url = f"https://api.github.com/repos/{self.channel.github.repo}/issues"
         payload = {
-            "title": tmpl("github_title.html", **ctx),
-            "body": tmpl("github_body.html", **ctx),
+            "title": self.tmpl("github_title.html", **ctx),
+            "body": self.tmpl("github_body.html", **ctx),
             "labels": self.channel.github.labels,
         }
 

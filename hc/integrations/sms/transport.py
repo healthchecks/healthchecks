@@ -6,7 +6,7 @@ from typing import NoReturn
 from django.conf import settings
 from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
 from pydantic import BaseModel, ValidationError
 
@@ -50,7 +50,7 @@ class Sms(HttpTransport):
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        text = tmpl(
+        text = self.tmpl(
             "sms_message.html",
             flip=flip,
             check=flip.owner,

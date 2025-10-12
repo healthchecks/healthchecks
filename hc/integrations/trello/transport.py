@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 
 
 class Trello(HttpTransport):
@@ -22,8 +22,8 @@ class Trello(HttpTransport):
         }
         params = {
             "idList": self.channel.trello.list_id,
-            "name": tmpl("trello_name.html", **ctx),
-            "desc": tmpl("trello_desc.html", **ctx),
+            "name": self.tmpl("trello_name.html", **ctx),
+            "desc": self.tmpl("trello_desc.html", **ctx),
             "key": settings.TRELLO_APP_KEY,
             "token": self.channel.trello.token,
         }

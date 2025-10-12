@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 
 try:
     import apprise
@@ -19,8 +19,10 @@ class Apprise(HttpTransport):
 
         a = apprise.Apprise()
         check, status, ping = flip.owner, flip.new_status, self.last_ping(flip)
-        title = tmpl("apprise_title.html", check=check, status=status)
-        body = tmpl("apprise_description.html", check=check, status=status, ping=ping)
+        title = self.tmpl("apprise_title.html", check=check, status=status)
+        body = self.tmpl(
+            "apprise_description.html", check=check, status=status, ping=ping
+        )
 
         a.add(self.channel.value)
 

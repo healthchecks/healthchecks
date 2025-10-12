@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 
 
 class PagerTree(HttpTransport):
@@ -21,8 +21,8 @@ class PagerTree(HttpTransport):
         payload = {
             "incident_key": str(flip.owner.unique_key),
             "event_type": "trigger" if flip.new_status == "down" else "resolve",
-            "title": tmpl("pagertree_title.html", **ctx),
-            "description": tmpl("pagertree_description.html", **ctx),
+            "title": self.tmpl("pagertree_title.html", **ctx),
+            "description": self.tmpl("pagertree_description.html", **ctx),
             "client": settings.SITE_NAME,
             "client_url": settings.SITE_ROOT,
             "tags": " ".join(flip.owner.tags_list()),

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.lib.date import format_duration
 from hc.lib.typealias import JSONDict
 
@@ -36,7 +36,7 @@ class PagerDuty(HttpTransport):
             details["Time zone"] = check.tz
 
         ctx = {"flip": flip, "check": check, "status": flip.new_status}
-        description = tmpl("pd_description.html", **ctx)
+        description = self.tmpl("pd_description.html", **ctx)
         payload = {
             "service_key": self.channel.pd.service_key,
             "incident_key": check.unique_key,

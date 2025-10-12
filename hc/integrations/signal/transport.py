@@ -9,7 +9,7 @@ from collections.abc import Iterator
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import Transport, TransportError, tmpl
+from hc.api.transports import Transport, TransportError
 from hc.lib.html import extract_signal_styles
 from pydantic import BaseModel, ValidationError
 
@@ -171,7 +171,7 @@ class Signal(Transport):
             "ping": self.last_ping(flip),
             "down_checks": self.down_checks(flip.owner),
         }
-        text = tmpl("signal_message.html", **ctx)
+        text = self.tmpl("signal_message.html", **ctx)
         tries_left = 2
         while True:
             try:

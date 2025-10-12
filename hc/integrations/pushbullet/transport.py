@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, tmpl
+from hc.api.transports import HttpTransport
 
 
 class Pushbullet(HttpTransport):
@@ -12,7 +12,7 @@ class Pushbullet(HttpTransport):
             "Access-Token": self.channel.value,
             "Content-Type": "application/json",
         }
-        text = tmpl(
+        text = self.tmpl(
             "pushbullet_message.html",
             flip=flip,
             check=flip.owner,

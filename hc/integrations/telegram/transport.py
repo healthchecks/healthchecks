@@ -4,7 +4,7 @@ from typing import NoReturn
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, get_ping_body, tmpl
+from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.lib import curl
 from pydantic import BaseModel, ValidationError
 
@@ -79,7 +79,7 @@ class Telegram(HttpTransport):
             # consistency
             "body": get_ping_body(ping, maxlen=1000),
         }
-        text = tmpl("telegram_message.html", **ctx)
+        text = self.tmpl("telegram_message.html", **ctx)
 
         try:
             self.send(self.channel.telegram.id, self.channel.telegram.thread_id, text)

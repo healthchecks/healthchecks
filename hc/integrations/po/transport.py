@@ -5,7 +5,7 @@ from typing import NoReturn
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
 from pydantic import BaseModel, ValidationError
 
@@ -76,8 +76,8 @@ class Pushover(HttpTransport):
             "ping": self.last_ping(flip),
             "down_checks": self.down_checks(check),
         }
-        text = tmpl("pushover_message.html", **ctx)
-        title = tmpl("pushover_title.html", **ctx)
+        text = self.tmpl("pushover_message.html", **ctx)
+        title = self.tmpl("pushover_title.html", **ctx)
         prio = up_prio if flip.new_status == "up" else down_prio
 
         payload = {

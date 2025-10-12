@@ -4,7 +4,7 @@ from typing import NoReturn
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
 from pydantic import BaseModel, ValidationError
 
@@ -30,11 +30,13 @@ class Zulip(HttpTransport):
 
         topic = self.channel.zulip.topic
         if not topic:
-            topic = tmpl("zulip_topic.html", check=flip.owner, status=flip.new_status)
+            topic = self.tmpl(
+                "zulip_topic.html", check=flip.owner, status=flip.new_status
+            )
 
         url = self.channel.zulip.site + "/api/v1/messages"
         auth = (self.channel.zulip.bot_email, self.channel.zulip.api_key)
-        content = tmpl(
+        content = self.tmpl(
             "zulip_content.html",
             flip=flip,
             check=flip.owner,

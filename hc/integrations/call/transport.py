@@ -6,7 +6,7 @@ from typing import NoReturn
 from django.conf import settings
 from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, TransportError, tmpl
+from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
 from pydantic import BaseModel, ValidationError
 
@@ -54,7 +54,7 @@ class Call(HttpTransport):
         data = {
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone.value,
-            "Twiml": tmpl("call_message.html", **ctx),
+            "Twiml": self.tmpl("call_message.html", **ctx),
             "StatusCallback": notification.status_url(),
         }
 

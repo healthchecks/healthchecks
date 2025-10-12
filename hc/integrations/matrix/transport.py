@@ -4,7 +4,7 @@ from urllib.parse import quote, urlencode
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
-from hc.api.transports import HttpTransport, get_ping_body, tmpl
+from hc.api.transports import HttpTransport, get_ping_body
 
 
 class Matrix(HttpTransport):
@@ -27,8 +27,8 @@ class Matrix(HttpTransport):
             "body": get_ping_body(ping, maxlen=1000),
             "down_checks": self.down_checks(flip.owner),
         }
-        plain = tmpl("matrix_description.html", **ctx)
-        formatted = tmpl("matrix_description_formatted.html", **ctx)
+        plain = self.tmpl("matrix_description.html", **ctx)
+        formatted = self.tmpl("matrix_description_formatted.html", **ctx)
         payload = {
             "msgtype": "m.text",
             "body": plain,
