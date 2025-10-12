@@ -6,8 +6,7 @@ from argparse import ArgumentParser
 from typing import Any
 
 from django.core.management.base import BaseCommand
-
-from hc.api.transports import Signal
+from hc.integrations.signal.transport import Signal
 
 
 class Command(BaseCommand):

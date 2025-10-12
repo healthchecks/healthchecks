@@ -11,14 +11,11 @@ from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel, TokenBucket
+from hc.api.transports import TransportError
 from hc.front.decorators import require_setting
 from hc.front.views import _get_rw_project_for_user
 from hc.integrations.signal import forms
-from hc.integrations.signal.transport import (
-    Signal,
-    SignalRateLimitFailure,
-    TransportError,
-)
+from hc.integrations.signal.transport import Signal, SignalRateLimitFailure
 
 
 @require_setting("SIGNAL_CLI_SOCKET")

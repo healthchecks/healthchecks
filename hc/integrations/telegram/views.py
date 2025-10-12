@@ -14,10 +14,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
+from hc.api.transports import TransportError
 from hc.front.decorators import require_setting
 from hc.front.views import _get_rw_project_for_user
 from hc.integrations.telegram import forms
-from hc.integrations.telegram.transport import Telegram, TransportError
+from hc.integrations.telegram.transport import Telegram
 from pydantic import BaseModel, ValidationError
 
 
