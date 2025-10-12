@@ -39,20 +39,9 @@ channel_urls = [
 
 # /projects/<code>/
 project_urls = [
-    path("add_prometheus/", views.add_prometheus, name="hc-add-prometheus"),
     path("badges/", views.badges, name="hc-badges"),
     path("checks/", views.checks, name="hc-checks"),
     path("checks/add/", views.add_check, name="hc-add-check"),
-    path(
-        "checks/metrics/<slug:key>",
-        views.metrics,
-    ),
-    path(
-        "metrics/<slug:key>",
-        views.metrics,
-        name="hc-metrics",
-    ),
-    path("metrics/", views.metrics, name="hc-auth-metrics"),
     path("checks/status/", views.status, name="hc-status"),
     path("integrations/", views.channels, name="hc-channels"),
 ]

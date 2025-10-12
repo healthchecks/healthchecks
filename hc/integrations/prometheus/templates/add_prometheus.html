@@ -1,0 +1,86 @@
+{% extends "base_project.html" %}
+{% load humanize static hc_extras %}
+
+{% block title %}Prometheus Integration for {{ site_name }}{% endblock %}
+
+
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+      <h1>Prometheus</h1>
+
+      <p>
+          {{ site_name }} provides a
+          <a href="https://prometheus.io">Prometheus</a>-compatible metrics endpoint
+          for each project. The endpoints are secured using each project's
+          read-only API key.
+
+          If your team uses Prometheus, you can configure it to scrape {{ site_name }}
+          and have up-to-date check and tag status values available in Prometheus.
+      </p>
+
+      <h2>Setup Guide</h2>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+                <p>
+                    Create a read-only API key in
+                    <strong>Project Settings › API Access</strong>.
+                </p>
+                <p>
+                    Note: make sure to use a <strong>read-only</strong> API key.
+                    Prometheus does not need read-write API access.
+                </p>
+        </div>
+        <div class="col-sm-6">
+          <img
+              class="ai-guide-screenshot"
+              alt="Click create integration button"
+              src="{% static 'img/integrations/setup_prometheus_1.png' %}" />
+        </div>
+      </div>
+
+      <div class="row ai-step">
+          <div class="col-sm-12">
+              <span class="step-no"></span>
+                <p>
+                    Edit Prometheus configuration and add a new section in the
+                    <code>scrape_configs</code> section.
+                </p>
+                <pre>
+- job_name: 'healthchecks-{{ project|slugify }}'
+  scheme: {{ site_scheme }}
+  metrics_path: /projects/{{ project.code }}/metrics/<strong>YOUR-READ-ONLY-API-KEY</strong>
+  static_configs:
+  - targets: ['{% site_hostname %}']</pre>
+                <p>
+                    <strong>Note for Grafana Cloud users:</strong> Grafana Cloud
+                    requires the metrics endpoints to be authenticated using either
+                    HTTP "Basic" or "Bearer" authentication scheme. It refuses to
+                    scrape public endpoints. To fulfil this requirement,
+                    {% site_name %} provides an alternate metrics endpoint which
+                    requires "Bearer" authentication. Use the following settings
+                    with Grafana Cloud:
+                </p>
+                <ul>
+                    <li>Scrape Job URL: <code>{{ project.auth_metrics_url }}</code></li>
+                    <li>Authentication type: Bearer</li>
+                    <li>Bearer token: the read-only API key</li>
+                </ul>
+          </div>
+      </div>
+
+      <div class="row ai-step">
+        <div class="col-sm-6">
+            <span class="step-no"></span>
+              <p>
+                Reload Prometheus' configuration. You should now start seeing
+                {{ site_name }} data appear in Prometheus.
+              </p>
+        </div>
+      </div>
+
+  </div>
+</div>
+{% endblock %}

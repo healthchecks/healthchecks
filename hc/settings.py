@@ -89,6 +89,7 @@ INSTALLED_APPS = (
     "hc.integrations.pagertree",
     "hc.integrations.pd",
     "hc.integrations.po",
+    "hc.integrations.prometheus",
     "hc.integrations.pushbullet",
     "hc.integrations.rocketchat",
     "hc.integrations.shell",
