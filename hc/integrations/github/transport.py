@@ -3,7 +3,7 @@ from __future__ import annotations
 from django.conf import settings
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError, get_ping_body, tmpl
-from hc.lib import github
+from hc.integrations.github import client
 
 
 class GitHub(HttpTransport):
@@ -34,7 +34,7 @@ class GitHub(HttpTransport):
         }
 
         inst_id = self.channel.github.installation_id
-        token = github.get_installation_access_token(inst_id)
+        token = client.get_installation_access_token(inst_id)
         if token is None:
             raise TransportError(f"GitHub denied access to {self.channel.github.repo}")
 

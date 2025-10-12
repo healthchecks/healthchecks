@@ -3,7 +3,7 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-from hc.lib.github import BadCredentials
+from hc.integrations.github.client import BadCredentials
 from hc.test import BaseTestCase
 
 
@@ -14,8 +14,8 @@ class AddGitHubSelectTestCase(BaseTestCase):
         super().setUp()
         self.url = "/integrations/add_github/"
 
-    @patch("hc.integrations.github.views.github", autospec=True)
-    def test_it_works(self, github: Mock) -> None:
+    @patch("hc.integrations.github.views.client", autospec=True)
+    def test_it_works(self, client: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -23,13 +23,13 @@ class AddGitHubSelectTestCase(BaseTestCase):
         session["add_github_state"] = "test-state"
         session.save()
 
-        github.get_user_access_token.return_value = "test-token"
-        github.get_repos.return_value = {"alice/foo": 123}
+        client.get_user_access_token.return_value = "test-token"
+        client.get_repos.return_value = {"alice/foo": 123}
         r = self.client.get(self.url + "?state=test-state&code=test-code")
 
-        get_token_args, _ = github.get_user_access_token.call_args
+        get_token_args, _ = client.get_user_access_token.call_args
         self.assertEqual(get_token_args[0], "test-code")
-        get_repos_args, _ = github.get_repos.call_args
+        get_repos_args, _ = client.get_repos.call_args
         self.assertEqual(get_repos_args[0], "test-token")
 
         self.assertContains(r, "Save Integration", status_code=200)
@@ -39,8 +39,8 @@ class AddGitHubSelectTestCase(BaseTestCase):
 
         self.assertEqual(self.client.session["add_github_token"], "test-token")
 
-    @patch("hc.integrations.github.views.github", autospec=True)
-    def test_it_skips_oauth_code_exchange(self, github: Mock) -> None:
+    @patch("hc.integrations.github.views.client", autospec=True)
+    def test_it_skips_oauth_code_exchange(self, client: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -48,10 +48,10 @@ class AddGitHubSelectTestCase(BaseTestCase):
         session["add_github_token"] = "test-token"
         session.save()
 
-        github.get_repos.return_value = {"alice/foo": 123}
+        client.get_repos.return_value = {"alice/foo": 123}
         r = self.client.get(self.url + "?state=test-state&code=test-code")
 
-        self.assertFalse(github.get_user_access_token.called)
+        self.assertFalse(client.get_user_access_token.called)
         self.assertContains(r, "alice/foo")
 
     @override_settings(GITHUB_CLIENT_ID=None)
@@ -87,8 +87,8 @@ class AddGitHubSelectTestCase(BaseTestCase):
         r = self.client.get(self.url + "?state=test-state&code=test-code")
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.integrations.github.views.github", autospec=True)
-    def test_it_handles_wrong_state(self, github: Mock) -> None:
+    @patch("hc.integrations.github.views.client", autospec=True)
+    def test_it_handles_wrong_state(self, client: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -99,8 +99,8 @@ class AddGitHubSelectTestCase(BaseTestCase):
         r = self.client.get(self.url + "?state=wrong-state&code=test-code")
         self.assertEqual(r.status_code, 403)
 
-    @patch("hc.integrations.github.views.github", autospec=True)
-    def test_it_redirects_to_install_page(self, github: Mock) -> None:
+    @patch("hc.integrations.github.views.client", autospec=True)
+    def test_it_redirects_to_install_page(self, client: Mock) -> None:
         self.client.login(username="alice@example.org", password="password")
 
         session = self.client.session
@@ -108,7 +108,7 @@ class AddGitHubSelectTestCase(BaseTestCase):
         session["add_github_token"] = "test-token"
         session.save()
 
-        github.get_repos.return_value = {}
+        client.get_repos.return_value = {}
         r = self.client.get(self.url + "?state=test-state&code=test-code")
         self.assertRedirects(
             r, "http://example.org/installations/new", fetch_redirect_response=False
@@ -142,7 +142,7 @@ class AddGitHubSelectTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     @patch(
-        "hc.integrations.github.views.github.get_repos",
+        "hc.integrations.github.views.client.get_repos",
         Mock(side_effect=BadCredentials),
     )
     def test_it_handles_bad_credentials(self) -> None:

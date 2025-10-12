@@ -19,8 +19,7 @@ from django.views.decorators.http import require_POST
 from hc.api.models import Channel
 from hc.front.decorators import require_setting
 from hc.front.views import _get_rw_project_for_user
-from hc.integrations.github import forms
-from hc.lib import github
+from hc.integrations.github import client, forms
 
 
 @require_setting("GITHUB_CLIENT_ID")
@@ -64,15 +63,15 @@ def select(request: HttpRequest) -> HttpResponse:
             return HttpResponseBadRequest()
 
         code = request.GET["code"]
-        request.session["add_github_token"] = github.get_user_access_token(code)
+        request.session["add_github_token"] = client.get_user_access_token(code)
 
     if "add_github_token" not in request.session:
         return HttpResponseForbidden()
 
     install_url = f"{settings.GITHUB_PUBLIC_LINK}/installations/new"
     try:
-        repos = github.get_repos(request.session["add_github_token"])
-    except github.BadCredentials:
+        repos = client.get_repos(request.session["add_github_token"])
+    except client.BadCredentials:
         messages.warning(request, "GitHub setup failed, GitHub access was revoked.")
         request.session.pop("add_github_project")
         request.session.pop("add_github_token")
@@ -107,8 +106,8 @@ def save(request: HttpRequest, code: UUID) -> HttpResponse:
     try:
         # Fetch user's available repos from GitHub again, to make sure the user
         # still has access to the repo we are about to use in the integration.
-        repos = github.get_repos(token)
-    except github.BadCredentials:
+        repos = client.get_repos(token)
+    except client.BadCredentials:
         messages.warning(request, "GitHub setup failed, GitHub access was revoked.")
         return redirect("hc-channels", project.code)
 
