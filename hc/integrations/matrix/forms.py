@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from django import forms
-from hc.lib import matrix
+from hc.integrations.matrix import client
 
 
 class AddMatrixForm(forms.Form):
@@ -14,8 +14,8 @@ class AddMatrixForm(forms.Form):
 
         # validate it by trying to join
         try:
-            self.cleaned_data["room_id"] = matrix.join(v)
-        except matrix.JoinError as e:
+            self.cleaned_data["room_id"] = client.join(v)
+        except client.JoinError as e:
             raise forms.ValidationError(e.message)
 
         return v

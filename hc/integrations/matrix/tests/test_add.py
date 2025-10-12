@@ -3,7 +3,6 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -21,7 +20,7 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertContains(r, "Integration Settings", status_code=200)
 
-    @patch("hc.lib.matrix.curl.post")
+    @patch("hc.integrations.matrix.client.curl.post")
     def test_it_works(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         mock_post.return_value.content = b"""{"room_id": "fake-room-id"}"""
@@ -36,7 +35,7 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertEqual(c.value, "fake-room-id")
         self.assertEqual(c.project, self.project)
 
-    @patch("hc.lib.matrix.curl.post")
+    @patch("hc.integrations.matrix.client.curl.post")
     def test_it_handles_invalid_join_responses(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
         form = {"alias": "!foo:example.org"}
@@ -54,7 +53,7 @@ class AddMatrixTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 404)
 
-    @patch("hc.lib.matrix.curl.post")
+    @patch("hc.integrations.matrix.client.curl.post")
     def test_it_handles_429(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 429
 
@@ -65,7 +64,7 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertContains(r, "Matrix server returned status 429")
         self.assertFalse(Channel.objects.exists())
 
-    @patch("hc.lib.matrix.curl.post")
+    @patch("hc.integrations.matrix.client.curl.post")
     def test_it_handles_502(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 502
 
