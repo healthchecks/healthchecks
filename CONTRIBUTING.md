@@ -55,7 +55,7 @@ You will need to make changes in the following files:
   `/hc/integrations/<kind>/tests/test_notify.py`.
 * Update `TRANSPORTS` in `/hc/api/models.py`.
 * Edit the view(s) for provisioning the integration in
-  `/hc/integrations/<kind>//views.py`.
+  `/hc/integrations/<kind>/views.py`.
 * Write a HTML template for the new view in
   `/hc/integrations/<kind>/templates/</add_<kind>.py`, and prepare any supporting
   illustrations in `/hc/integrations/<kind>/static/img/`.
@@ -66,5 +66,5 @@ You will need to make changes in the following files:
   integrations, make sure an existing integration is displayed nicely.
 * Update `/templates/front/event_summary.html` to make sure notifications sent to the
   new integration are displayed nicely.
-* Add a logo in `/static/img/integrations/`.
+* Add a logo in `/hc/integrations/<kind>static/img/`.
 * Update the icon font (it's a little tricky to do, I can take care of that).

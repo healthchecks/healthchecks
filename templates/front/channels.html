@@ -126,7 +126,7 @@
     <h1 class="ai-title">Add More</h1>
     <ul class="add-integration">
         <li>
-            <img src="{% static 'img/integrations/email.png' %}"
+            <img src="{% static 'img/email.png' %}"
                 class="icon" alt="Email icon" />
 
             <h2>Email</h2>
@@ -136,7 +136,7 @@
 
         {% if enable_webhooks %}
         <li>
-            <img src="{% static 'img/integrations/webhook.png' %}"
+            <img src="{% static 'img/webhook.png' %}"
                 class="icon" alt="Webhook icon" />
 
             <h2>Webhook</h2>
@@ -147,7 +147,7 @@
 
         {% if enable_apprise %}
         <li>
-            <img src="{% static 'img/integrations/apprise.png' %}"
+            <img src="{% static 'img/apprise.png' %}"
                  class="icon" alt="Apprise icon" />
 
             <h2>Apprise</h2>
@@ -158,7 +158,7 @@
 
         {% if enable_discord %}
         <li>
-            <img src="{% static 'img/integrations/discord.png' %}"
+            <img src="{% static 'img/discord.png' %}"
                  class="icon" alt="Discord icon" />
 
             <h2>Discord</h2>
@@ -169,7 +169,7 @@
 
         {% if enable_github %}
         <li>
-            <img src="{% static 'img/integrations/github.png' %}" class="icon kind-github" alt="GitHub icon" />
+            <img src="{% static 'img/github.png' %}" class="icon kind-github" alt="GitHub icon" />
             <h2>GitHub Issues</h2>
             <p> Create a GitHub issue when a check goes down.</p>
             <a href="{% url 'hc-add-github' project.code %}" class="btn btn-primary">Add Integration</a>
@@ -177,21 +177,21 @@
         {% endif %}
 
         <li>
-            <img src="{% static 'img/integrations/googlechat.png' %}" class="icon" alt="Google Chat icon" />
+            <img src="{% static 'img/googlechat.png' %}" class="icon" alt="Google Chat icon" />
             <h2>Google Chat</h2>
             <p>Google's communication tool for teams, successor of Hangouts.</p>
             <a href="{% url 'hc-add-googlechat' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         <li>
-            <img src="{% static 'img/integrations/gotify.png' %}" class="icon" alt="Gotify icon" />
+            <img src="{% static 'img/gotify.png' %}" class="icon" alt="Gotify icon" />
             <h2>Gotify</h2>
             <p> Self-hosted push notification service.</p>
             <a href="{% url 'hc-add-gotify' project.code %}" class="btn btn-primary">Add Integration</a>
         </li>
 
         <li>
-            <img src="{% static 'img/integrations/group.png' %}" class="icon" alt="Group icon" />
+            <img src="{% static 'img/group.png' %}" class="icon" alt="Group icon" />
             <h2>Group</h2>
             <p> Deliver to multiple integrations at once.</p>
             <a href="{% url 'hc-add-group' project.code %}" class="btn btn-primary">Add Integration</a>
@@ -199,7 +199,7 @@
 
         {% if enable_matrix %}
         <li>
-            <img src="{% static 'img/integrations/matrix.png' %}"
+            <img src="{% static 'img/matrix.png' %}"
                  class="icon kind-matrix" alt="Matrix icon" />
 
             <h2>Matrix</h2>
@@ -210,7 +210,7 @@
 
         {% if enable_mattermost %}
         <li>
-            <img src="{% static 'img/integrations/mattermost.png' %}"
+            <img src="{% static 'img/mattermost.png' %}"
                 class="icon kind-mattermost" alt="Mattermost icon" />
 
             <h2>Mattermost</h2>
@@ -221,7 +221,7 @@
 
         {% if enable_msteams %}
         <li>
-            <img src="{% static 'img/integrations/msteams.png' %}"
+            <img src="{% static 'img/msteams.png' %}"
                 class="icon" alt="Microsoft Teams" />
 
             <h2>Microsoft Teams</h2>
@@ -231,7 +231,7 @@
         {% endif %}
 
         <li>
-            <img src="{% static 'img/integrations/ntfy.png' %}"
+            <img src="{% static 'img/ntfy.png' %}"
                 class="icon kind-ntfy" alt="ntfy" />
 
             <h2>ntfy</h2>
@@ -241,7 +241,7 @@
 
         {% if enable_opsgenie %}
         <li>
-            <img src="{% static 'img/integrations/opsgenie.png' %}"
+            <img src="{% static 'img/opsgenie.png' %}"
                 class="icon" alt="Opsgenie icon" />
 
             <h2>Opsgenie</h2>
@@ -252,7 +252,7 @@
 
         {% if enable_pd %}
         <li>
-            <img src="{% static 'img/integrations/pd.png' %}"
+            <img src="{% static 'img/pd.png' %}"
                 class="icon" alt="PagerDuty icon" />
 
             <h2>PagerDuty</h2>
@@ -263,7 +263,7 @@
 
         {% if enable_pagertree %}
         <li>
-            <img src="{% static 'img/integrations/pagertree.png' %}"
+            <img src="{% static 'img/pagertree.png' %}"
                 class="icon" alt="PagerTree icon" />
 
             <h2>PagerTree</h2>
@@ -274,7 +274,7 @@
 
         {% if enable_call %}
         <li>
-            <img src="{% static 'img/integrations/call.png' %}"
+            <img src="{% static 'img/call.png' %}"
                 class="icon" alt="Phone icon" />
 
             <h2>Phone Call</h2>
@@ -285,7 +285,7 @@
 
         {% if enable_prometheus %}
         <li>
-            <img src="{% static 'img/integrations/prometheus.png' %}"
+            <img src="{% static 'img/prometheus.png' %}"
                 class="icon" alt="Prometheus icon" />
 
             <h2>Prometheus</h2>
@@ -296,7 +296,7 @@
 
         {% if enable_pushbullet %}
         <li>
-            <img src="{% static 'img/integrations/pushbullet.png' %}"
+            <img src="{% static 'img/pushbullet.png' %}"
                  class="icon" alt="Pushbullet icon" />
 
             <h2>Pushbullet</h2>
@@ -307,7 +307,7 @@
 
         {% if enable_pushover %}
         <li>
-            <img src="{% static 'img/integrations/po.png' %}"
+            <img src="{% static 'img/po.png' %}"
                  class="icon" alt="Pushover icon" />
 
             <h2>Pushover</h2>
@@ -318,7 +318,7 @@
 
         {% if enable_rocketchat %}
         <li>
-            <img src="{% static 'img/integrations/rocketchat.png' %}"
+            <img src="{% static 'img/rocketchat.png' %}"
                 class="icon" alt="Rocket.Chat icon" />
 
             <h2>Rocket.Chat</h2>
@@ -329,7 +329,7 @@
 
         {% if enable_shell %}
         <li>
-            <img src="{% static 'img/integrations/shell.png' %}"
+            <img src="{% static 'img/shell.png' %}"
                 class="icon" alt="Shell icon" />
 
             <h2>Shell Command</h2>
@@ -340,7 +340,7 @@
 
         {% if enable_signal %}
         <li>
-            <img src="{% static 'img/integrations/signal.png' %}"
+            <img src="{% static 'img/signal.png' %}"
                 class="icon" alt="Signal icon" />
 
             <h2>Signal</h2>
@@ -351,7 +351,7 @@
 
         {% if enable_slack %}
         <li>
-            <img src="{% static 'img/integrations/slack.png' %}"
+            <img src="{% static 'img/slack.png' %}"
                 class="icon" alt="Slack icon" />
 
             <h2>Slack</h2>
@@ -366,7 +366,7 @@
 
         {% if enable_sms %}
         <li>
-            <img src="{% static 'img/integrations/sms.png' %}"
+            <img src="{% static 'img/sms.png' %}"
                 class="icon" alt="SMS icon" />
 
             <h2>SMS</h2>
@@ -377,7 +377,7 @@
 
         {% if enable_spike %}
         <li>
-            <img src="{% static 'img/integrations/spike.png' %}" class="icon" alt="Spike.sh icon" />
+            <img src="{% static 'img/spike.png' %}" class="icon" alt="Spike.sh icon" />
 
             <h2>Spike.sh</h2>
             <p>Incident management with unlimited alerts and on-call schedules.</p>
@@ -388,7 +388,7 @@
 
         {% if enable_telegram %}
         <li>
-            <img src="{% static 'img/integrations/telegram.png' %}"
+            <img src="{% static 'img/telegram.png' %}"
                  class="icon" alt="Telegram icon" />
 
             <h2>Telegram</h2>
@@ -399,7 +399,7 @@
 
         {% if enable_trello %}
         <li>
-            <img src="{% static 'img/integrations/trello.png' %}"
+            <img src="{% static 'img/trello.png' %}"
                  class="icon" alt="Trello icon" />
 
             <h2>Trello</h2>
@@ -410,7 +410,7 @@
 
         {% if enable_victorops %}
         <li>
-            <img src="{% static 'img/integrations/victorops.png' %}"
+            <img src="{% static 'img/victorops.png' %}"
                 class="icon" alt="Splunk On-Call icon" />
 
             <h2>Splunk On-Call (VictorOps)</h2>
@@ -421,7 +421,7 @@
 
         {% if enable_whatsapp %}
         <li>
-            <img src="{% static 'img/integrations/whatsapp.png' %}"
+            <img src="{% static 'img/whatsapp.png' %}"
                 class="icon" alt="WhatsApp icon" />
 
             <h2>WhatsApp</h2>
@@ -432,7 +432,7 @@
 
         {% if enable_zulip %}
         <li>
-            <img src="{% static 'img/integrations/zulip.png' %}"
+            <img src="{% static 'img/zulip.png' %}"
                 class="icon" alt="Zulip icon" />
 
             <h2>Zulip</h2>
@@ -442,7 +442,7 @@
         {% endif %}
 
         <li class="link-to-github">
-            <img src="{% static 'img/integrations/missing.png' %}"
+            <img src="{% static 'img/missing.png' %}"
                  class="icon" alt="Suggest New Integration" />
             <p>
                 Your favorite service or notification method not listed? <br />

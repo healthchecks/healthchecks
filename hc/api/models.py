@@ -1036,7 +1036,7 @@ class Channel(models.Model):
         return error
 
     def icon_path(self) -> str:
-        return f"img/integrations/{self.kind}.png"
+        return f"img/{self.kind}.png"
 
     @property
     def json(self) -> Any:
