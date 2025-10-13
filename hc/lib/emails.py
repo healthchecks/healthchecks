@@ -39,9 +39,9 @@ class EmailThread(Thread):
 def make_message(
     name: str, to: str | list[str], ctx: dict[str, Any], headers: dict[str, str] = {}
 ) -> Message:
-    subject = render("emails/%s-subject.html" % name, ctx).strip()
-    body = render("emails/%s-body-text.html" % name, ctx)
-    html = render("emails/%s-body-html.html" % name, ctx)
+    subject = render(f"emails/{name}-subject.html", ctx).strip()
+    body = render(f"emails/{name}-body-text.html", ctx)
+    html = render(f"emails/{name}-body-html.html", ctx)
 
     domain = settings.DEFAULT_FROM_EMAIL.split("@")[-1].strip(">")
     headers["Message-ID"] = make_msgid(domain=domain)

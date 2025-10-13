@@ -21,7 +21,7 @@ class NotificationStatusTestCase(BaseTestCase):
         self.n = Notification(owner=self.check, channel=self.channel)
         self.n.save()
 
-        self.url = "/api/v1/notifications/%s/status" % self.n.code
+        self.url = f"/api/v1/notifications/{self.n.code}/status"
 
     def test_it_handles_twilio_failed_status(self) -> None:
         r = self.csrf_client.post(self.url, {"MessageStatus": "failed"})

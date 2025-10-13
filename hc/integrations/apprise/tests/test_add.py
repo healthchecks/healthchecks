@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from django.test.utils import override_settings
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
@@ -10,7 +9,7 @@ from hc.test import BaseTestCase
 class AddAppriseTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.url = "/projects/%s/add_apprise/" % self.project.code
+        self.url = f"/projects/{self.project.code}/add_apprise/"
 
     def test_instructions_work(self) -> None:
         self.client.login(username="alice@example.org", password="password")

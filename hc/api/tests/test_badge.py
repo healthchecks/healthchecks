@@ -5,7 +5,6 @@ from datetime import timedelta as td
 from django.conf import settings
 from django.core.signing import base64_hmac
 from django.utils.timezone import now
-
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -18,13 +17,13 @@ class BadgeTestCase(BaseTestCase):
         sig = base64_hmac(str(self.project.badge_key), "foo", settings.SECRET_KEY)
         sig = sig[:8]
 
-        self.svg_url = "/badge/%s/%s-2/foo.svg" % (self.project.badge_key, sig)
-        self.json_url = "/badge/%s/%s-2/foo.json" % (self.project.badge_key, sig)
-        self.with_late_url = "/badge/%s/%s/foo.json" % (self.project.badge_key, sig)
-        self.shields_url = "/badge/%s/%s-2/foo.shields" % (self.project.badge_key, sig)
+        self.svg_url = f"/badge/{self.project.badge_key}/{sig}-2/foo.svg"
+        self.json_url = f"/badge/{self.project.badge_key}/{sig}-2/foo.json"
+        self.with_late_url = f"/badge/{self.project.badge_key}/{sig}/foo.json"
+        self.shields_url = f"/badge/{self.project.badge_key}/{sig}-2/foo.shields"
 
     def test_it_rejects_bad_signature(self) -> None:
-        r = self.client.get("/badge/%s/12345678/foo.svg" % self.project.badge_key)
+        r = self.client.get(f"/badge/{self.project.badge_key}/12345678/foo.svg")
         self.assertEqual(r.status_code, 404)
 
     def test_it_returns_svg(self) -> None:

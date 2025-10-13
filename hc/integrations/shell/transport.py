@@ -48,4 +48,4 @@ class Shell(Transport):
         code = os.system(cmd)
 
         if code != 0:
-            raise TransportError("Command returned exit code %d" % code)
+            raise TransportError(f"Command returned exit code {code}")

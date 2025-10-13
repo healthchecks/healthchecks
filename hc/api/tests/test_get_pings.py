@@ -32,7 +32,7 @@ class GetPingsTestCase(BaseTestCase):
         self.ping.ua = "foo-agent"
         self.ping.save()
 
-        self.url = "/api/v1/checks/%s/pings/" % self.a1.code
+        self.url = f"/api/v1/checks/{self.a1.code}/pings/"
 
     def get(self, api_key: str = "X" * 32) -> TestHttpResponse:
         return self.csrf_client.get(self.url, HTTP_X_API_KEY=api_key)

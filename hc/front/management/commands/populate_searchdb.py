@@ -5,7 +5,6 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
 from hc.front.views import _replace_placeholders
 from hc.lib.html import html2text
 
@@ -28,7 +27,7 @@ class Command(BaseCommand):
                 continue
 
             slug = doc_path.stem
-            print("Processing %s" % slug)
+            print(f"Processing {slug}")
 
             html = doc_path.open("r").read()
             html = _replace_placeholders(slug, html)

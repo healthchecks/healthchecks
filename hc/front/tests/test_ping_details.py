@@ -5,7 +5,6 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Check, Ping
 from hc.lib.s3 import GetObjectError
 from hc.test import BaseTestCase
@@ -133,7 +132,7 @@ class PingDetailsTestCase(BaseTestCase):
 
     def test_it_handles_missing_ping(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.get("/checks/%s/pings/123/" % self.check.code)
+        r = self.client.get(f"/checks/{self.check.code}/pings/123/")
         self.assertContains(r, "No additional information is", status_code=200)
 
     def test_it_shows_nonzero_exitstatus(self) -> None:

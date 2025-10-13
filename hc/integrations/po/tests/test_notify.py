@@ -151,7 +151,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(mock_post.call_count, 2)
 
         cancel_args, cancel_kwargs = mock_post.call_args_list[0]
-        expected = "/receipts/cancel_by_tag/%s.json" % self.check.unique_key
+        expected = f"/receipts/cancel_by_tag/{self.check.unique_key}.json"
         self.assertEqual(cancel_args[1], API + expected)
 
         up_args, up_kwargs = mock_post.call_args_list[1]

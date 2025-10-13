@@ -93,11 +93,11 @@ def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpRes
         yield "\n"
         yield "# HELP hc_checks_total The total number of checks.\n"
         yield "# TYPE hc_checks_total gauge\n"
-        yield "hc_checks_total %d\n" % len(checks)
+        yield f"hc_checks_total {len(checks)}\n"
         yield "\n"
 
         yield "# HELP hc_checks_down_total The number of checks currently down.\n"
         yield "# TYPE hc_checks_down_total gauge\n"
-        yield "hc_checks_down_total %d\n" % num_down
+        yield f"hc_checks_down_total {num_down}\n"
 
     return HttpResponse(output(checks), content_type="text/plain")

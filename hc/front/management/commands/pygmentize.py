@@ -15,12 +15,12 @@ except ImportError:
 
 
 def _process(name: str, lexer: Lexer) -> None:
-    source = open("templates/front/snippets/%s.txt" % name).read()
+    source = open(f"templates/front/snippets/{name}.txt").read()
     processed = highlight(source, lexer, HtmlFormatter())
     processed = processed.replace("PING_URL", "{{ ping_url }}")
     processed = processed.replace("SITE_ROOT", "{{ SITE_ROOT }}")
     processed = processed.replace("PING_ENDPOINT", "{{ PING_ENDPOINT }}")
-    with open("templates/front/snippets/%s.html" % name, "w") as out:
+    with open(f"templates/front/snippets/{name}.html", "w") as out:
         out.write(processed)
 
 

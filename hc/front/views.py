@@ -21,7 +21,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db.models import Case, Count, F, Q, QuerySet, When
+from django.db.models import Case, Count, F, Q, When
 from django.db.models.functions import Substr
 from django.http import (
     Http404,
@@ -51,7 +51,6 @@ from hc.api.models import (
     Ping,
 )
 from hc.front import forms
-from hc.front.decorators import require_setting
 from hc.front.templatetags.hc_extras import (
     down_title,
     num_down_title,
