@@ -131,6 +131,17 @@ class NotifyGitHubTestCase(BaseTestCase):
         self.assertEqual(n.error, "Received status code 400")
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_http_410(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 410
+
+        self.channel.notify(self.flip)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "Received status code 410")
+
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_no_access_token(self, mock_post: Mock) -> None:
         with patch("hc.integrations.github.transport.client") as mock:
             mock.get_installation_access_token.return_value = None
