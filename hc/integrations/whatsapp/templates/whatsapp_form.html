@@ -18,6 +18,9 @@ WhatsApp Settings - {% site_name %}
     <p>
         Get a WhatsApp message when a check goes up or down.
     </p>
+    <p>
+        {{ site_name }} uses a third-party service, Twilio, to send SMS messages.
+    </p>
 
     {% if show_pricing and profile.sms_limit == 0 %}
     <p class="alert alert-info">
