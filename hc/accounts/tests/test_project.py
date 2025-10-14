@@ -74,6 +74,20 @@ class ProjectTestCase(BaseTestCase):
         self.assertContains(r, "key-created-modal")
         self.assertContains(r, "hcr_" + self.project.api_key_readonly[:8])
 
+    def test_it_creates_ping_key(self) -> None:
+        self.project.ping_key = ""
+        self.project.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"create_key": "ping_key"}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 200)
+
+        self.project.refresh_from_db()
+        self.assertEqual(len(self.project.ping_key), 22)
+        self.assertEqual(self.project.ping_key, self.project.ping_key.lower())
+
     def test_it_requires_rw_access_to_create_key(self) -> None:
         self.bobs_membership.role = "r"
         self.bobs_membership.save()
@@ -188,7 +202,7 @@ class ProjectTestCase(BaseTestCase):
         self.assertEqual(q.count(), 1)
 
         # And this should not have affected the rate limit:
-        tq = TokenBucket.objects.filter(value="invite-%d" % self.alice.id)
+        tq = TokenBucket.objects.filter(value=f"invite-{self.alice.id}")
         self.assertFalse(tq.exists())
 
     def test_it_rejects_duplicate_membership(self) -> None:
@@ -228,7 +242,7 @@ class ProjectTestCase(BaseTestCase):
 
     @override_settings(SECRET_KEY="test-secret")
     def test_it_rate_limits_invites(self) -> None:
-        obj = TokenBucket(value="invite-%d" % self.alice.id)
+        obj = TokenBucket(value=f"invite-{self.alice.id}")
         obj.tokens = 0
         obj.save()
 

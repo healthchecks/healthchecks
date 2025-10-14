@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Add rate limiting and a default ntfy.sh token support for ntfy notifications
 - Sort checks in daily/weekly/monthly reports by downtime duration, then by name (#1095)
+- Generate lower-case ping keys to work around broken email providers (#1218)
 
 ### Bug Fixes
 - Fix cron schedule formatting in Discord notifications

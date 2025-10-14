@@ -553,8 +553,14 @@ class Project(models.Model):
         return key
 
     def set_ping_key(self) -> None:
+        # The ping key will be:
+        # - 22 characters long, consisting of [a-z0-9]
+        # - no "_" or "-" characters for aesthetic reasons
+        # - no uppercase characters to avoid case-sensitivity issues
+        #   in email addresses.
+        # The ping key will have ~113 bits of entropy.
         while True:
-            self.ping_key = token_urlsafe(16)  # 22 character string
+            self.ping_key = token_urlsafe(16).lower()
             if "_" not in self.ping_key and "-" not in self.ping_key:
                 break
 
