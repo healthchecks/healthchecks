@@ -1330,7 +1330,7 @@ class TokenBucket(models.Model):
 
     @staticmethod
     def authorize_invite(user: User) -> bool:
-        value = "invite-%d" % user.id
+        value = f"invite-{user.id}"
 
         # 20 invites per day
         return TokenBucket.authorize(value, 20, 3600 * 24)
@@ -1358,7 +1358,7 @@ class TokenBucket(models.Model):
 
     @staticmethod
     def authorize_signal_verification(user: User) -> bool:
-        value = "signal-verify-%d" % user.id
+        value = f"signal-verify-{user.id}"
 
         # 50 signal recipient verifications per day
         return TokenBucket.authorize(value, 50, 3600 * 24)
@@ -1381,14 +1381,14 @@ class TokenBucket(models.Model):
 
     @staticmethod
     def authorize_sudo_code(user: User) -> bool:
-        value = "sudo-%d" % user.id
+        value = f"sudo-{user.id}"
 
         # 10 sudo attempts per day
         return TokenBucket.authorize(value, 10, 3600 * 24)
 
     @staticmethod
     def authorize_totp_attempt(user: User) -> bool:
-        value = "totp-%d" % user.id
+        value = f"totp-{user.id}"
 
         # 96 attempts per user per 24 hours
         # (or, on average, one attempt per 15 minutes)
@@ -1396,7 +1396,7 @@ class TokenBucket(models.Model):
 
     @staticmethod
     def authorize_totp_code(user: User, code: str) -> bool:
-        value = "totpc-%d-%s" % (user.id, code)
+        value = f"totpc-{user.id}-{code}"
 
         # A code has a validity period of 3 * 30 = 90 seconds.
         # During that period, allow the code to only be used once,

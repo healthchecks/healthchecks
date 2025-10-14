@@ -4,7 +4,6 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-
 from hc.lib import curl
 from hc.lib.urls import absolute_reverse
 
@@ -27,6 +26,6 @@ class Command(BaseCommand):
         r = curl.post(url, json=form)
 
         if r.status_code != 200:
-            return "Fail: status=%d, %s" % (r.status_code, r.text)
+            return f"Fail: status={r.status_code}, {r.text}"
 
         return "Done, Telegram's webhook set to: %s" % form["url"]

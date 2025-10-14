@@ -7,7 +7,6 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 from django.utils.timezone import now
-
 from hc.accounts.models import Profile
 
 
@@ -32,7 +31,7 @@ class Command(BaseCommand):
 
         n, summary = q.delete()
         count = summary.get("auth.User", 0)
-        self.stdout.write("Pruned %d never-logged-in user accounts." % count)
+        self.stdout.write(f"Pruned {count} never-logged-in user accounts.")
 
         # Profiles scheduled for deletion
         pq = Profile.objects.order_by("id")

@@ -111,7 +111,7 @@ def put_object(code: UUID, n: int, data: bytes) -> None:
         except S3Error as e:
             if e.code == "InternalError" and retries > 0:
                 retries -= 1
-                print("InternalError, retrying (retries=%d)..." % retries)
+                print(f"InternalError, retrying ({retries=})...")
                 continue
 
             raise e

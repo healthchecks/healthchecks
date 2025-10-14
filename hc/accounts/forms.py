@@ -7,11 +7,10 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpRequest
-from pyotp.totp import TOTP
-
 from hc.accounts.models import REPORT_CHOICES, Member
 from hc.api.models import TokenBucket
 from hc.lib.tz import all_timezones
+from pyotp.totp import TOTP
 
 
 class LowercaseEmailField(forms.EmailField):
@@ -113,7 +112,7 @@ class ReportSettingsForm(forms.Form):
         seconds = self.cleaned_data["nag_period"]
 
         if seconds not in (0, 3600, 86400):
-            raise forms.ValidationError("Bad nag_period: %d" % seconds)
+            raise forms.ValidationError(f"Bad nag_period: {seconds}")
 
         return td(seconds=seconds)
 
