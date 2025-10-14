@@ -73,60 +73,6 @@ def settings_check(
     return items
 
 
-@register()  # W003
-def whatsapp_settings_check(
-    app_configs: Sequence[AppConfig] | None,
-    databases: Sequence[str] | None,
-    **kwargs: dict[str, Any],
-) -> list[Warning]:
-    if not settings.TWILIO_USE_WHATSAPP:
-        return []
-
-    items = []
-    for key in (
-        "TWILIO_ACCOUNT",
-        "TWILIO_AUTH",
-        "TWILIO_FROM",
-        "TWILIO_MESSAGING_SERVICE_SID",
-        "WHATSAPP_DOWN_CONTENT_SID",
-        "WHATSAPP_UP_CONTENT_SID",
-    ):
-        if not getattr(settings, key):
-            items.append(
-                Warning(
-                    f"The WhatsApp integration requires the settings.{key} to be set",
-                    hint=f"See https://healthchecks.io/docs/self_hosted_configuration/#{key}",
-                    id="hc.api.W003",
-                )
-            )
-
-    return items
-
-
-@register()  # W004
-def apprise_installed_check(
-    app_configs: Sequence[AppConfig] | None,
-    databases: Sequence[str] | None,
-    **kwargs: dict[str, Any],
-) -> list[Warning]:
-    if not settings.APPRISE_ENABLED:
-        return []
-
-    items = []
-    try:
-        import apprise  # noqa
-    except ImportError:
-        items.append(
-            Warning(
-                "settings.APPRISE_ENABLED is set to True, but apprise is not installed",
-                hint="try installing it using `pip install apprise`",
-                id="hc.api.W004",
-            )
-        )
-
-    return items
-
-
 @register()  # E001
 def mariadb_uuid_check(
     app_configs: Sequence[AppConfig] | None,
