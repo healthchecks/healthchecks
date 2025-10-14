@@ -69,7 +69,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(a1["channels"], str(self.c1.code))
         self.assertEqual(a1["desc"], "This is description")
 
-        update_url = settings.SITE_ROOT + "/api/v1/checks/%s" % self.a1.code
+        update_url = settings.SITE_ROOT + f"/api/v1/checks/{self.a1.code}"
         pause_url = update_url + "/pause"
         self.assertEqual(a1["update_url"], update_url)
         self.assertEqual(a1["pause_url"], pause_url)

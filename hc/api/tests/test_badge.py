@@ -67,7 +67,7 @@ class BadgeTestCase(BaseTestCase):
 
         sig = base64_hmac(str(self.project.badge_key), "db@dc1", settings.SECRET_KEY)
         sig = sig[:8]
-        url = "/badge/%s/%s/db%%2540dc1.svg" % (self.project.badge_key, sig)
+        url = f"/badge/{self.project.badge_key}/{sig}/db%2540dc1.svg"
 
         r = self.client.get(url)
         self.assertEqual(r.status_code, 200)

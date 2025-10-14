@@ -309,9 +309,9 @@ def _update(check: Check, spec: Spec, v: int) -> None:
 
             matches = [c for c in available if str(c.code) == s or c.name == s]
             if len(matches) == 0:
-                raise BadChannelException("invalid channel identifier: %s" % s)
+                raise BadChannelException(f"invalid channel identifier: {s}")
             elif len(matches) > 1:
-                raise BadChannelException("non-unique channel identifier: %s" % s)
+                raise BadChannelException(f"non-unique channel identifier: {s}")
 
             new_channels.add(matches[0])
 

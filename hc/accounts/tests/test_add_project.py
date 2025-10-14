@@ -10,7 +10,7 @@ class AddProjectTestCase(BaseTestCase):
         r = self.client.post("/projects/add/", {"name": "My Second Project"})
 
         p = Project.objects.get(owner=self.alice, name="My Second Project")
-        self.assertRedirects(r, "/projects/%s/checks/" % p.code)
+        self.assertRedirects(r, f"/projects/{p.code}/checks/")
         self.assertEqual(str(p.code), p.badge_key)
 
     def test_it_rejects_get(self) -> None:

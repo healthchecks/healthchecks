@@ -70,7 +70,7 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.alert_after, expected_aa)
 
     def test_it_handles_options(self) -> None:
-        r = self.client.options("/api/v1/checks/%s" % self.check.code)
+        r = self.client.options(f"/api/v1/checks/{self.check.code}")
         self.assertEqual(r.status_code, 204)
         self.assertIn("POST", r["Access-Control-Allow-Methods"])
 
@@ -168,7 +168,7 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_handles_comma_separated_channel_codes(self) -> None:
         c1 = Channel.objects.create(project=self.project)
         c2 = Channel.objects.create(project=self.project)
-        r = self.post(self.check.code, {"channels": "%s,%s" % (c1.code, c2.code)})
+        r = self.post(self.check.code, {"channels": f"{c1.code},{c2.code}"})
         self.assertEqual(r.status_code, 200)
 
         self.check.refresh_from_db()

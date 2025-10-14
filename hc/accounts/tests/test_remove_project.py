@@ -8,7 +8,7 @@ class RemoveProjectTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
 
-        self.url = "/projects/%s/remove/" % self.project.code
+        self.url = f"/projects/{self.project.code}/remove/"
 
     def test_it_works(self) -> None:
         Check.objects.create(project=self.project, tags="foo a-B_1  baz@")

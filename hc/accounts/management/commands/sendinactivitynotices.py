@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 skipped_has_pings += 1
                 continue
 
-            self.stdout.write("Sending notice to %s" % profile.user.email)
+            self.stdout.write(f"Sending notice to {profile.user.email}")
 
             profile.deletion_notice_date = now()
             profile.save()

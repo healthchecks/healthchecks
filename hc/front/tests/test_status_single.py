@@ -64,7 +64,7 @@ class StatusSingleTestCase(BaseTestCase):
         self.check.save()
 
         timestamp = str(p.created.timestamp())
-        url = self.url + "?u=%s" % timestamp
+        url = self.url + f"?u={timestamp}"
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)

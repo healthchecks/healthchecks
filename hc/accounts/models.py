@@ -231,8 +231,8 @@ class Profile(models.Model):
 
         unsub_url = self.reports_unsub_url()
         headers = {
-            "X-Bounce-ID": sign_bounce_id("r.%s" % self.user.username),
-            "List-Unsubscribe": "<%s>" % unsub_url,
+            "X-Bounce-ID": sign_bounce_id(f"r.{self.user.username}"),
+            "List-Unsubscribe": f"<{unsub_url}>",
             "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
         }
         ctx: dict[str, Any] = {
