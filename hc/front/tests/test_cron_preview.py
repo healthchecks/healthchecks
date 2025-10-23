@@ -37,7 +37,7 @@ class CronPreviewTestCase(BaseTestCase):
 
     def test_it_handles_missing_arguments(self) -> None:
         r = self.client.post(self.url, {})
-        self.assertContains(r, "Invalid timezone", status_code=200)
+        self.assertContains(r, "Invalid cron expression", status_code=200)
 
     def test_it_rejects_get(self) -> None:
         r = self.client.get(self.url, {})

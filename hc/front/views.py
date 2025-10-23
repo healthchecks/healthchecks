@@ -16,11 +16,11 @@ from urllib.parse import urlencode, urlparse
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
-from cronsim import CronSim, CronSimError
+from cronsim import CronSim
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.db.models import Case, Count, F, Q, When
 from django.db.models.functions import Substr
 from django.http import (
@@ -57,6 +57,7 @@ from hc.front.templatetags.hc_extras import (
     site_hostname,
     sortchecks,
 )
+from hc.front.validators import CronValidator, OnCalendarValidator
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
@@ -657,25 +658,18 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
 
 @require_POST
 def cron_preview(request: HttpRequest) -> HttpResponse:
-    schedule = request.POST.get("schedule", "")
-    tz = request.POST.get("tz")
-    ctx: dict[str, object] = {"tz": tz}
+    form = forms.CronPreviewForm(request.POST)
+    if not form.is_valid():
+        return render(request, "front/cron_preview.html", {"form": form})
 
-    if tz not in all_timezones:
-        ctx["bad_tz"] = True
-        return render(request, "front/cron_preview.html", ctx)
-
+    tz = form.cleaned_data["tz"]
     now_local = now().astimezone(ZoneInfo(tz))
-    try:
-        it = CronSim(schedule, now_local)
-        ctx["dates"] = list(islice(it, 0, 6))
-        ctx["desc"] = it.explain()
-    except CronSimError:
-        ctx["bad_schedule"] = True
-
-    if not ctx.get("dates"):
-        ctx["bad_schedule"] = True
-
+    it = CronSim(form.cleaned_data["schedule"], now_local)
+    ctx = {
+        "tz": tz,
+        "dates": list(islice(it, 0, 6)),
+        "desc": it.explain(),
+    }
     return render(request, "front/cron_preview.html", ctx)
 
 
@@ -706,25 +700,21 @@ def oncalendar_preview(request: HttpRequest) -> HttpResponse:
 
 def validate_schedule(request: HttpRequest) -> HttpResponse:
     kind = request.GET.get("kind", "")
-    iterator: type[CronSim] | type[OnCalendar]
+
+    validator: CronValidator | OnCalendarValidator
     if kind == "cron":
-        iterator = CronSim
+        validator = CronValidator()
     elif kind == "oncalendar":
-        iterator = OnCalendar
+        validator = OnCalendarValidator()
     else:
         return HttpResponseBadRequest()
 
     schedule = request.GET.get("schedule", "")
-    result = True
     try:
-        # Does cronsim/oncalendar accept the schedule?
-        it = iterator(schedule, now())
-        # Can it calculate the next datetime?
-        next(it)
-    except (CronSimError, OnCalendarError, StopIteration):
-        result = False
-
-    return JsonResponse({"result": result})
+        validator(schedule)
+        return JsonResponse({"result": True})
+    except ValidationError:
+        return JsonResponse({"result": False})
 
 
 @login_required

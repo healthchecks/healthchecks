@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import timedelta as td
 
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check
 from hc.lib.typealias import JSONDict
 from hc.test import BaseTestCase, TestHttpResponse
@@ -312,11 +311,12 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertTrue("timeout" not in doc)
 
     def test_it_validates_cron_expression(self) -> None:
-        r = self.post(
-            {"schedule": "bad-expression", "tz": "Europe/Riga", "grace": 60},
-            expect_fragment="schedule is not a valid cron or OnCalendar expression",
-        )
-        self.assertEqual(r.status_code, 400)
+        for expr in ["bad-expression", "* * * * * *"]:
+            r = self.post(
+                {"schedule": expr, "tz": "Europe/Riga", "grace": 60},
+                expect_fragment="schedule is not a valid cron or OnCalendar expression",
+            )
+            self.assertEqual(r.status_code, 400)
 
     def test_it_rejects_long_cron_expression(self) -> None:
         s = "1," * 100 + "1 * * * *"

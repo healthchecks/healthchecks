@@ -93,8 +93,9 @@ class AddCheckTestCase(BaseTestCase):
 
     def test_it_validates_cron_expression(self) -> None:
         self.client.login(username="alice@example.org", password="password")
-        r = self.client.post(self.url, self._payload(kind="cron", schedule="* * *"))
-        self.assertEqual(r.status_code, 400)
+        for expr in ["* * *", "* * * * * *"]:
+            r = self.client.post(self.url, self._payload(kind="cron", schedule=expr))
+            self.assertEqual(r.status_code, 400)
 
     def test_it_validates_cron_expression_with_no_matches(self) -> None:
         self.client.login(username="alice@example.org", password="password")

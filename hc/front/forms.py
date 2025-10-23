@@ -97,6 +97,11 @@ class TimeoutForm(forms.Form):
         return td(seconds=self.cleaned_data["grace"])
 
 
+class CronPreviewForm(forms.Form):
+    schedule = forms.CharField(max_length=100, validators=[CronValidator()])
+    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
+
+
 class CronForm(forms.Form):
     schedule = forms.CharField(max_length=100, validators=[CronValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
