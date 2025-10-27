@@ -48,7 +48,7 @@ Requires=network-online.target
 
 [Service]
 Type=oneshot
-ExecStartPre=-curl -sS -m 10 --retry 5 PING_URL/start
+ExecStartPre=curl -sS -m 10 --retry 5 PING_URL/start
 ExecStart=rsync -a /opt/media/ remote_user@remote_host:/opt/media/
 ExecStopPost=curl -sS -m 10 --retry 5 PING_URL/${EXIT_STATUS}
 ```
