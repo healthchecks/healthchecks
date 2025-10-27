@@ -378,7 +378,7 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
             elif request.POST["create_key"] == "api_key_readonly":
                 ctx["new_key"] = project.set_api_key_readonly()
             elif request.POST["create_key"] == "ping_key":
-                project.set_ping_key()
+                ctx["new_ping_key"] = project.set_ping_key()
             project.save()
 
             ctx["key_created"] = True

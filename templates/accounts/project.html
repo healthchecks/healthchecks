@@ -628,6 +628,30 @@
 </div>
 {% endif %}
 
+{% if new_ping_key %}
+<div id="key-created-modal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Ping Key Created!</h4>
+            </div>
+            <div class="modal-body">
+                <p>Here is the new ping key.</p>
+                <p>
+                <strong>Tip:</strong> unlike API keys, you will be able to
+                look up the ping key later too. When {% site_name %} displays the ping
+                key in a masked form, you can <strong>click on it to reveal it</strong>.
+                </p>
+                <input type="text" class="form-control" value="{{ new_ping_key }}" readonly />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">OK, I copied the key</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
 
 
 {% endwith %}

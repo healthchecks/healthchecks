@@ -552,7 +552,7 @@ class Project(models.Model):
         self.api_key_readonly = key_hash
         return key
 
-    def set_ping_key(self) -> None:
+    def set_ping_key(self) -> str:
         # The ping key will be:
         # - 22 characters long, consisting of [a-z0-9]
         # - no "_" or "-" characters for aesthetic reasons
@@ -563,6 +563,7 @@ class Project(models.Model):
             self.ping_key = token_urlsafe(16).lower()
             if "_" not in self.ping_key and "-" not in self.ping_key:
                 break
+        return self.ping_key
 
     def compare_api_key(self, key: str) -> bool:
         if key.startswith("hcr_"):

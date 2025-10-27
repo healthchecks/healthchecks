@@ -87,6 +87,8 @@ class ProjectTestCase(BaseTestCase):
         self.project.refresh_from_db()
         self.assertEqual(len(self.project.ping_key), 22)
         self.assertEqual(self.project.ping_key, self.project.ping_key.lower())
+        self.assertContains(r, "key-created-modal")
+        self.assertContains(r, "click on it to reveal it")
 
     def test_it_requires_rw_access_to_create_key(self) -> None:
         self.bobs_membership.role = "r"
