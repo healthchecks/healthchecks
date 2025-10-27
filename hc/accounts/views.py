@@ -219,7 +219,7 @@ def signup(request: HttpRequest) -> HttpResponse:
     if not settings.REGISTRATION_OPEN or request.user.is_authenticated:
         return HttpResponseForbidden()
 
-    ctx = {}
+    ctx: dict[str, object] = {}
     form = forms.SignupForm(request)
     if form.is_valid():
         email = form.cleaned_data["identity"]
