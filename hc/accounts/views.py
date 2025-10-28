@@ -268,7 +268,6 @@ def check_token(
 
     user = authenticate(username=username, token=token)
     if user is not None and user.is_active:
-        assert isinstance(user, User)
         if new_email:
             if User.objects.filter(email=new_email).exists():
                 request.session["bad_link"] = True
