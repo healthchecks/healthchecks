@@ -8,6 +8,7 @@ from uuid import UUID
 
 from django import template
 from django.conf import settings
+from django.http import HttpRequest
 from django.templatetags.static import static
 from django.utils.html import escape, format_html
 from django.utils.safestring import SafeString, mark_safe
@@ -292,10 +293,11 @@ def mask_phone(phone: str) -> str:
 
 @register.simple_tag(takes_context=True)
 def sort_url(context: dict[str, Any], sort: str) -> SafeString:
-    q = context["request"].GET.copy()
+    request = context["request"]
+    assert isinstance(request, HttpRequest)
+    q = request.GET.copy()
     q["sort"] = sort
     urlencoded = q.urlencode()
-    assert isinstance(urlencoded, str)
     return mark_safe("?" + urlencoded)
 
 
