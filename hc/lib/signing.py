@@ -20,7 +20,7 @@ class HexTimestampSigner(Signer):
 
     def sign(self, value: str) -> str:
         timestamp = hex(int(time.time()))[2:]
-        value = "%s%s%s" % (value, self.sep, timestamp)
+        value = f"{value}{self.sep}{timestamp}"
         return super().sign(value)
 
     def unsign(self, value: str, max_age: int | None = None) -> str:
