@@ -132,9 +132,9 @@ class PhoneNumberForm(forms.Form):
 
     def clean_phone(self) -> str:
         v = self.cleaned_data["phone"]
+        assert isinstance(v, str)
 
         stripped = v.encode("ascii", "ignore").decode("ascii")
-        assert isinstance(stripped, str)
         stripped = stripped.replace(" ", "").replace("-", "")
         if not re.match(r"^\+\d{5,15}$", stripped):
             raise forms.ValidationError("Invalid phone number format.")
