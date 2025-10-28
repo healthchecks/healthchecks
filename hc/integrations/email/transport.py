@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import email
-from email.message import EmailMessage
 
 from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
@@ -36,7 +35,6 @@ class Email(Transport):
         subject = None
         if ping is not None and ping.scheme == "email" and body:
             parsed = email.message_from_string(body, policy=email.policy.SMTP)
-            assert isinstance(parsed, EmailMessage)
             subject = parsed.get("subject", "")
 
         ctx = {

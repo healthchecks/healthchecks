@@ -45,12 +45,10 @@ def _to_text(message: EmailMessage, with_subject: bool, with_body: bool) -> str:
     if with_body:
         plain_mime_part = message.get_body(("plain",))
         if plain_mime_part:
-            assert isinstance(plain_mime_part, EmailMessage)
             chunks.append(plain_mime_part.get_content())
 
         html_mime_part = message.get_body(("html",))
         if html_mime_part:
-            assert isinstance(html_mime_part, EmailMessage)
             html = html_mime_part.get_content()
             chunks.append(html2text(html))
 
@@ -87,7 +85,6 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
         data_str = data.decode(errors="replace")
         # Specify policy, the default policy does not decode encoded headers:
         message = email.message_from_string(data_str, policy=email.policy.SMTP)
-        assert isinstance(message, EmailMessage)
         text = _to_text(message, check.filter_subject, check.filter_body)
 
         action = "ign"
