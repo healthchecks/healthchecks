@@ -9,7 +9,6 @@ from collections import Counter, defaultdict
 from collections.abc import Iterable
 from datetime import datetime
 from datetime import timedelta as td
-from email.message import EmailMessage
 from itertools import islice
 from typing import TypedDict, cast
 from urllib.parse import urlencode, urlparse
@@ -750,7 +749,6 @@ def ping_details(
 
     if ping.scheme == "email" and body:
         parsed = email.message_from_string(body, policy=email.policy.SMTP)
-        assert isinstance(parsed, EmailMessage)
         ctx["subject"] = parsed.get("subject", "")
 
         # The "active" tab is set to show the value that's successfully parsed last.
@@ -766,13 +764,11 @@ def ping_details(
 
         plain_mime_part = parsed.get_body(("plain",))
         if plain_mime_part:
-            assert isinstance(plain_mime_part, EmailMessage)
             ctx["plain"] = plain_mime_part.get_content()
             ctx["active"] = "plain"
 
         html_mime_part = parsed.get_body(("html",))
         if html_mime_part:
-            assert isinstance(html_mime_part, EmailMessage)
             ctx["html"] = html_mime_part.get_content()
             ctx["active"] = "html"
 
