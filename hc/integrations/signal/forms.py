@@ -13,9 +13,9 @@ class SignalRecipientForm(forms.Form):
 
     def clean_recipient(self) -> str:
         v = self.cleaned_data["recipient"]
+        assert isinstance(v, str)
 
         stripped = v.encode("ascii", "ignore").decode("ascii")
-        assert isinstance(stripped, str)
         stripped = stripped.replace(" ", "").replace("-", "")
         if "." in stripped:
             # Assume it is a username
