@@ -310,9 +310,6 @@ class HcUserAdmin(UserAdmin[User]):
     def last_active(
         self, user: WithAnnotations[User, UserAnnotations]
     ) -> datetime | None:
-        assert (
-            isinstance(user.last_active_date, datetime) or user.last_active_date is None
-        )
         return user.last_active_date
 
     def usage(self, user: WithAnnotations[User, UserAnnotations]) -> str:
