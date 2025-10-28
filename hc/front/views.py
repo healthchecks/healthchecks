@@ -208,9 +208,8 @@ def _refresh_last_active_date(request: AuthenticatedHttpRequest) -> None:
 
 
 def _get_referer_qs(request: HttpRequest) -> str:
-    parsed = urlparse(request.META.get("HTTP_REFERER", ""))
+    parsed = urlparse(request.headers.get("Referer", ""))
     if parsed.query:
-        assert isinstance(parsed.query, str)
         return "?" + parsed.query
     return ""
 
