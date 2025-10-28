@@ -551,7 +551,7 @@ in production.
     [ADMINS](https://docs.djangoproject.com/en/4.2/ref/settings/#admins) and
     [SERVER_EMAIL](https://docs.djangoproject.com/en/4.2/ref/settings/#server-email)
     settings. Consider setting up exception logging with [Sentry](https://sentry.io/for/django/).
-* Management commands that need to be run during each deployment.
+* Management commands that need to be run during each version upgrade.
   * `manage.py compress` – creates combined JS and CSS bundles and
      places them in the `static-collected` directory.
   * `manage.py collectstatic` – collects static files in the `static-collected`
