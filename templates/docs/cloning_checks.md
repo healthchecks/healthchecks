@@ -25,7 +25,7 @@ Below is an example using Python and the [requests](https://requests.readthedocs
 ```python
 import requests
 
-API_URL = "SITE_ROOT/api/v1/checks/"
+API_URL = "SITE_ROOT/api/v3/checks/"
 SOURCE_PROJECT_READONLY_KEY = "..."
 TARGET_PROJECT_KEY = "..."
 

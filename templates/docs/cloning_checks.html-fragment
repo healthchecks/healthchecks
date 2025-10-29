@@ -18,7 +18,7 @@ project relatively easily using the <a href="../api/">Management API</a> calls.
 Below is an example using Python and the <a href="https://requests.readthedocs.io/en/master/">requests</a> library:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
 
-<span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;SITE_ROOT/api/v1/checks/&quot;</span>
+<span class="n">API_URL</span> <span class="o">=</span> <span class="s2">&quot;SITE_ROOT/api/v3/checks/&quot;</span>
 <span class="n">SOURCE_PROJECT_READONLY_KEY</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>
 <span class="n">TARGET_PROJECT_KEY</span> <span class="o">=</span> <span class="s2">&quot;...&quot;</span>
 
