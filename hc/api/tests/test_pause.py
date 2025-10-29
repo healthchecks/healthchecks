@@ -3,7 +3,6 @@ from __future__ import annotations
 from datetime import timedelta as td
 
 from django.utils.timezone import now
-
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
@@ -13,8 +12,7 @@ class PauseTestCase(BaseTestCase):
         super().setUp()
 
         self.check = Check.objects.create(project=self.project, status="up")
-        self.url = f"/api/v2/checks/{self.check.code}/pause"
-        self.urlv1 = f"/api/v2/checks/{self.check.code}/pause"
+        self.url = f"/api/v3/checks/{self.check.code}/pause"
 
     def test_it_works(self) -> None:
         r = self.csrf_client.post(
