@@ -76,10 +76,8 @@ $<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser
 </li>
 <li>
 <p>From another shell, run the <code>sendalerts</code> management command, responsible for
-  sending out notifications:</p>
-<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>sendalerts
-</code></pre></div>
-
+  sending out notifications:
+        $ ./manage.py sendalerts</p>
 </li>
 </ul>
 <p>At this point, the site should now be running at <code>http://localhost:8000</code>.</p>
@@ -89,6 +87,11 @@ administrative tasks: delete user accounts, change passwords, increase limits fo
 specific users, inspect contents of database tables.</p>
 <p>To access the administration panel, if you haven't already, create a superuser account:</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser
+</code></pre></div>
+
+<p>This will trigger an interactive prompt.</p>
+<p>You can also provide credentials via parameters, bypassing the interactive prompt:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>createsuperuser<span class="w"> </span>--email<span class="w"> </span>user@example.com<span class="w"> </span>--password<span class="w"> </span>changeme123
 </code></pre></div>
 
 <p>Then, log into the site using the superuser credentials. Once logged in,

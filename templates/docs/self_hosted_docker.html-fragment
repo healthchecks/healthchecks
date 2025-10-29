@@ -36,6 +36,11 @@ $<span class="w"> </span>docker-compose<span class="w"> </span>up
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker-compose<span class="w"> </span>run<span class="w"> </span>web<span class="w"> </span>/opt/healthchecks/manage.py<span class="w"> </span>createsuperuser
 </code></pre></div>
 
+<p>This will trigger an interactive prompt.</p>
+<p>You can also provide credentials via parameters, bypassing the interactive prompt:</p>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>run<span class="w"> </span>web<span class="w"> </span>/opt/healthchecks/manage.py<span class="w"> </span>createsuperuser<span class="w"> </span>--email<span class="w"> </span>user@example.com<span class="w"> </span>--password<span class="w"> </span>changeme123
+</code></pre></div>
+
 </li>
 <li>
 <p>Open <a href="http://localhost:8000">http://localhost:8000</a> in your browser and log in with
