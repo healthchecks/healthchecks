@@ -8,7 +8,7 @@ RUN \
     apt-get install -y build-essential curl libpq-dev libmariadb-dev libffi-dev libpcre2-dev libssl-dev libcurl4-openssl-dev libpython3-dev pkg-config
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- --profile minimal -y
 ENV PATH=$PATH:/root/.cargo/bin
-RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio psycopg-c==3.2.9 -r /tmp/requirements.txt
+RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio "psycopg[c]" -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
 RUN \
@@ -26,7 +26,6 @@ RUN \
     apt-get install -y libcurl4t64 libexpat1 libpq5 libmariadb3 libxml2 && \
     rm -rf /var/apt/cache && \
     rm -rf /var/lib/apt/lists
-
 
 RUN --mount=type=bind,target=/wheels,source=/wheels,from=builder \
     pip install --upgrade pip && \
