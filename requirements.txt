@@ -7,7 +7,7 @@ fido2==2.0.0
 oncalendar==1.1
 psycopg==3.2.12
 pycurl==7.45.6
-pydantic==2.12.3
+pydantic==2.12.4
 PyJWT[crypto]==2.10.1
 pyotp==2.9.0
 segno==1.6.6
