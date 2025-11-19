@@ -1,7 +1,7 @@
 {% load humanize hc_extras  %}
 
 {% if check.last_ping %}
-    {{ check.last_ping|naturaltime }}
+    <span data-dt="{{ check.last_ping|timestamp }}">{{ check.last_ping|naturaltime }}</span>
     {% if check.has_confirmation_link %}
     <br /><span class="label label-confirmation">confirmation link</span>
     {% elif check.clamped_last_duration %}

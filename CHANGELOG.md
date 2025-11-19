@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - Sort checks in daily/weekly/monthly reports by downtime duration, then by name (#1095)
 - Generate lower-case ping keys to work around broken email providers (#1218)
 - After creating a ping key show a dialog displaying the new ping key (#1222)
+- Add a tooltip with timestamp in the checks table, "Last Ping" column (#1040)
 
 ### Bug Fixes
 - Fix cron schedule formatting in Discord notifications

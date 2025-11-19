@@ -65,8 +65,17 @@ $(function () {
     });
 
     $(".last-ping").tooltip({
-        selector: ".label-confirmation",
-        title: 'The word "confirm" was found in request body',
+        delay: 200,
+        title: function () {
+            if (this.querySelector(".label-confirmation")) {
+                return 'The word "confirm" was found in request body';
+            }
+            var dtSpan = this.querySelector("[data-dt]");
+            if (dtSpan) {
+                var dt = moment.unix(dtSpan.dataset.dt);
+                return dt.local().format("MMM D, Y, HH:mm Z");
+            }
+        },
     });
 
     $("#my-checks-tags .btn").tooltip({
