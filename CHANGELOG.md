@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - After creating a ping key show a dialog displaying the new ping key (#1222)
 - Add a tooltip with timestamp in the checks table, "Last Ping" column (#1040)
 - Update the Zulip transport to allow addressing users by User ID (#771)
+- Add hc_check_grace and hc_check_paused Prometheus metrics (#897, #915)
 
 ### Bug Fixes
 - Fix cron schedule formatting in Discord notifications

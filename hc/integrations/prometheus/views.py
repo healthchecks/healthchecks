@@ -56,34 +56,47 @@ def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpRes
         return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
 
     def output(checks: QuerySet[Check]) -> Iterable[str]:
-        help = "Whether the check is currently up (1 for yes, 0 for no)."
-        yield f"# HELP hc_check_up {help}\n"
-        yield "# TYPE hc_check_up gauge\n"
-
-        TMPL = """hc_check_up{name="%s", tags="%s", unique_key="%s"} %d\n"""
+        labels_status_started = []
         for check in checks:
-            value = 0 if check.get_status() == "down" else 1
-            yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
+            labels = f'{{name="{esc(check.name)}", tags="{esc(check.tags)}", unique_key="{check.unique_key}"}}'
+            started = 1 if check.last_start else 0
+            labels_status_started.append((labels, check.get_status(), started))
+
+        yield "# HELP hc_check_up Whether the check is currently up (1 for yes, 0 for no).\n"
+        yield "# TYPE hc_check_up gauge\n"
+        for labels, status, started in labels_status_started:
+            value = 0 if status == "down" else 1
+            yield f"hc_check_up{labels} {value}\n"
 
         yield "\n"
-        help = "Whether the check is currently started (1 for yes, 0 for no)."
-        yield f"# HELP hc_check_started {help}\n"
+        yield "# HELP hc_check_started Whether the check is currently started (1 for yes, 0 for no).\n"
         yield "# TYPE hc_check_started gauge\n"
-        TMPL = """hc_check_started{name="%s", tags="%s", unique_key="%s"} %d\n"""
-        for check in checks:
-            value = 1 if check.last_start is not None else 0
-            yield TMPL % (esc(check.name), esc(check.tags), check.unique_key, value)
+        for labels, status, started in labels_status_started:
+            yield f"hc_check_started{labels} {started}\n"
+
+        yield "\n"
+        yield "# HELP hc_check_grace Whether the check is currently in the grace period (1 for yes, 0 for no).\n"
+        yield "# TYPE hc_check_grace gauge\n"
+        for labels, status, started in labels_status_started:
+            value = 1 if status == "grace" else 0
+            yield f"hc_check_grace{labels} {value}\n"
+
+        yield "\n"
+        yield "# HELP hc_check_paused Whether the check is currently paused (1 for yes, 0 for no).\n"
+        yield "# TYPE hc_check_paused gauge\n"
+        for labels, status, started in labels_status_started:
+            value = 1 if status == "paused" else 0
+            yield f"hc_check_paused{labels} {value}\n"
 
         all_tags, down_tags, num_down = set(), set(), 0
-        for check in checks:
+        for check, (_, status, _) in zip(checks, labels_status_started):
             all_tags.update(check.tags_list())
-            if check.get_status() == "down":
+            if status == "down":
                 num_down += 1
                 down_tags.update(check.tags_list())
 
         yield "\n"
-        help = "Whether all checks with this tag are up (1 for yes, 0 for no)."
-        yield f"# HELP hc_tag_up {help}\n"
+        yield "# HELP hc_tag_up Whether all checks with this tag are up (1 for yes, 0 for no).\n"
         yield "# TYPE hc_tag_up gauge\n"
         TMPL = """hc_tag_up{tag="%s"} %d\n"""
         for tag in sorted(all_tags):

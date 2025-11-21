@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import timedelta as td
+
 from django.test.utils import override_settings
 from django.utils.timezone import now
 from hc.api.models import Check
@@ -29,6 +31,8 @@ class MetricsTestCase(BaseTestCase):
 
         self.assertContains(r, f"hc_check_up{alice_spec} 1")
         self.assertContains(r, f"hc_check_started{alice_spec} 0")
+        self.assertContains(r, f"hc_check_paused{alice_spec} 0")
+        self.assertContains(r, f"hc_check_grace{alice_spec} 0")
         self.assertContains(r, 'hc_tag_up{tag="foo"} 1')
         self.assertContains(r, "hc_checks_total 1")
 
@@ -90,3 +94,32 @@ class MetricsTestCase(BaseTestCase):
 
         self.assertContains(r, f"hc_check_up{alice_spec} 1")
         self.assertContains(r, f"hc_check_started{alice_spec} 1")
+
+    def test_it_reports_hc_check_paused(self) -> None:
+        self.check.status = "paused"
+        self.check.save()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+
+        alice_spec = '{name="Alice Was Here", tags="foo", unique_key="%s"}'
+        alice_spec = alice_spec % self.check.unique_key
+
+        self.assertContains(r, f"hc_check_up{alice_spec} 1")
+        self.assertContains(r, f"hc_check_paused{alice_spec} 1")
+
+    def test_it_reports_hc_check_grace(self) -> None:
+        self.check.timeout = td(minutes=10)
+        self.check.grace = td(minutes=10)
+        self.check.status = "up"
+        self.check.last_ping = now() - td(minutes=15)
+        self.check.save()
+
+        r = self.client.get(self.url)
+        self.assertEqual(r.status_code, 200)
+
+        alice_spec = '{name="Alice Was Here", tags="foo", unique_key="%s"}'
+        alice_spec = alice_spec % self.check.unique_key
+
+        self.assertContains(r, f"hc_check_up{alice_spec} 1")
+        self.assertContains(r, f"hc_check_grace{alice_spec} 1")
