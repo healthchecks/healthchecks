@@ -37,7 +37,7 @@ from hc.api.forms import FlipsFiltersForm
 from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
-from hc.lib.string import is_valid_uuid_string
+from hc.lib.string import is_valid_uuid_string, match_keywords
 from hc.lib.tz import all_timezones, legacy_timezones
 from oncalendar import OnCalendar, OnCalendarError
 from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
@@ -212,6 +212,19 @@ def ping(
 
     if check.methods == "POST" and method != "POST":
         action = "ign"
+
+    if action != "ign" and check.filter_http_body:
+        body_text = body.decode()
+        if check.failure_kw and match_keywords(body_text, check.failure_kw):
+            action = "fail"
+        elif check.success_kw and match_keywords(body_text, check.success_kw):
+            action = "success"
+        elif check.start_kw and match_keywords(body_text, check.start_kw):
+            action = "start"
+        elif check.filter_default_fail:
+            action = "fail"
+        else:
+            action = "ign"
 
     rid, rid_str = None, request.GET.get("rid")
     if rid_str is not None:

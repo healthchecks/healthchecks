@@ -16,6 +16,7 @@ from django.core.management.base import BaseCommand
 from django.db import connection
 from hc.api.models import Check
 from hc.lib.html import html2text
+from hc.lib.string import match_keywords
 
 RE_UUID = re.compile(
     r"^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
@@ -27,15 +28,6 @@ RE_PING_KEY_SLUG = re.compile(r"^[a-zA-Z0-9_-]{22}\+[a-z0-9-_]+$")
 class LogSink(Protocol):
     def write(self, msg: str) -> None:
         ...
-
-
-def _match(subject: str, keywords: str) -> bool:
-    for s in keywords.split(","):
-        s = s.strip()
-        if s and s in subject:
-            return True
-
-    return False
 
 
 def _to_text(message: EmailMessage, with_subject: bool, with_body: bool) -> str:
@@ -87,16 +79,26 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
         message = email.message_from_string(data_str, policy=email.policy.SMTP)
         text = _to_text(message, check.filter_subject, check.filter_body)
 
-        action = "ign"
-        if check.failure_kw and _match(text, check.failure_kw):
+        if check.failure_kw and match_keywords(text, check.failure_kw):
             action = "fail"
-        elif check.success_kw and _match(text, check.success_kw):
+        elif check.success_kw and match_keywords(text, check.success_kw):
             action = "success"
-        elif check.start_kw and _match(text, check.start_kw):
+        elif check.start_kw and match_keywords(text, check.start_kw):
             action = "start"
+        elif check.filter_default_fail:
+            action = "fail"
+        else:
+            action = "ign"
 
-    ua = f"Email from {mailfrom}"
-    check.ping(remote_addr, "email", "", ua, data, action, None)
+    check.ping(
+        remote_addr=remote_addr,
+        scheme="email",
+        method="",
+        ua=f"Email from {mailfrom}",
+        body=data,
+        action=action,
+        rid=None,
+    )
 
     return f"Processed ping for {mailto}"
 

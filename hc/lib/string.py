@@ -49,3 +49,12 @@ def replace(template: str, ctx: dict[str, str]) -> str:
 
 def is_valid_uuid_string(value: str) -> bool:
     return bool(uuid_match_regex.match(value))
+
+
+def match_keywords(haystack: str, keywords: str) -> bool:
+    for s in keywords.split(","):
+        s = s.strip()
+        if s and s in haystack:
+            return True
+
+    return False
