@@ -51,6 +51,16 @@
     background-color: #0091EA;
 }
 
+.radio-container input:disabled ~ .radiomark {
+    border-color: var(--input-border);
+    background-color: var(--input-bg-disabled);
+    cursor: not-allowed;
+}
+
+.radio-container input:disabled ~ .radiomark:after {
+  opacity: 0.5;
+}
+
 /* Create the indicator (the dot/circle - hidden when not checked) */
 .radiomark:after {
   content: "";

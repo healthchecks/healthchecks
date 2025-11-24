@@ -9,8 +9,8 @@
             {% csrf_token %}
             <div class="modal-content">
                 <div class="modal-body">
-                    <h2>HTTP Requests</h2>
-                    <p>Allowed request methods for HTTP requests:</p>
+                    <h2>Allowed HTTP Request Methods</h2>
+                    <p>Accept and process HTTP ping requests if the request method is</p>
                     <label class="radio-container">
                         <input
                             type="radio"
@@ -29,8 +29,8 @@
                         <span class="radiomark"></span>
                         Only POST
                         <span class="help-block">
-                            If set, {{ site_name }} will ignore HTTP requests
-                            using any other request method.
+                            May help if bots (email content scanners, link preview
+                            loaders) make GET requests to the ping URL.
                         </span>
                     </label>
                 </div>
@@ -38,11 +38,19 @@
                 <hr>
 
                 <div class="modal-body">
-                    <h2>Inbound Emails</h2>
-                    <p>
-                        Keyword matching is case-sensitive.
-                        <a href="{% url 'hc-serve-doc' 'email' %}#keyword-filtering">Learn more</a>.
-                    </p>
+                    <h2>Content Filtering</h2>
+                    <p>Classify pings as start, success, or failure signals by
+                       matching keywords (case-sensitive) in</p>
+                    <label class="checkbox-container">
+                        <input
+                            type="checkbox"
+                            class="filter-toggle"
+                            name="filter_http_body"
+                            {% if check.filter_http_body %}checked{% endif %} />
+                        <span class="checkmark"></span>
+                        Request body of HTTP requests
+                    </label>
+
                     <label class="checkbox-container">
                         <input
                             type="checkbox"
@@ -50,7 +58,7 @@
                             name="filter_subject"
                             {% if check.filter_subject %}checked{% endif %} />
                         <span class="checkmark"></span>
-                        Filter by keywords in the Subject line
+                        Subject line of email messages
                     </label>
 
                     <label class="checkbox-container">
@@ -60,12 +68,12 @@
                             name="filter_body"
                             {% if check.filter_body %}checked{% endif %} />
                         <span class="checkmark"></span>
-                        Filter by keywords in the message body
+                        Message body of email messages
                     </label>
 
                     <div class="form-group">
                         <label for="start_kw" class="col-sm-4 control-label">
-                            Start Keywords
+                            Start keywords
                         </label>
                         <div class="col-sm-7">
                             <input
@@ -76,15 +84,11 @@
                                 value="{{ check.start_kw }}"
                                 {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
                                 class="form-control filter-kw" />
-                            <span class="help-block">
-                                Comma-separated list of keywords. If subject or body
-                                contains any of the keywords, classify the email as "start".
-                            </span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="success_kw" class="col-sm-4 control-label">
-                            Success Keywords
+                            Success keywords
                         </label>
                         <div class="col-sm-7">
                             <input
@@ -95,15 +99,11 @@
                                 value="{{ check.success_kw }}"
                                 {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
                                 class="form-control filter-kw" />
-                            <span class="help-block">
-                                Comma-separated list of keywords. If subject or body
-                                contains any of the keywords, classify the email as "success".
-                            </span>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="failure_kw" class="col-sm-4 control-label">
-                            Failure Keywords
+                            Failure keywords
                         </label>
                         <div class="col-sm-7">
                             <input
@@ -115,9 +115,38 @@
                                 {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
                                 class="form-control filter-kw" />
                             <span class="help-block">
-                                Comma-separated list of keywords. If subject or body
-                                contains any of the keywords, classify the email as "failure".
+                                Comma-separated list of keywords. If
+                                any keyword is found, classify the ping as a
+                                start / success / failure signal. <a href="{% url 'hc-serve-doc' 'email' %}#keyword-filtering">(Docs)</a>
                             </span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">
+                            If no keywords match
+                        </label>
+                        <div class="col-sm-7">
+                            <label class="radio-container">
+                                <input
+                                    type="radio"
+                                    name="filter_default_fail"
+                                    class="filter-kw"
+                                    value=""
+                                    {% if not check.filter_default_fail %}checked{% endif %}>
+                                <span class="radiomark"></span>
+                                Ignore the ping
+                            </label>
+                            <label class="radio-container">
+                                <input
+                                    type="radio"
+                                    name="filter_default_fail"
+                                    class="filter-kw"
+                                    value="1"
+                                    {% if check.filter_default_fail %}checked{% endif %}>
+                                <span class="radiomark"></span>
+                                Classify the ping as failure
+                            </label>
                         </div>
                     </div>
                 </div>
