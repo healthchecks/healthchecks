@@ -198,6 +198,8 @@ class Check(models.Model):
     tz = models.CharField(max_length=36, default="UTC")
     filter_subject = models.BooleanField(default=False)
     filter_body = models.BooleanField(default=False)
+    filter_http_body = models.BooleanField(default=False)
+    filter_default_fail = models.BooleanField(default=False)
     start_kw = models.CharField(max_length=200, blank=True)
     success_kw = models.CharField(max_length=200, blank=True)
     failure_kw = models.CharField(max_length=200, blank=True)
@@ -406,6 +408,9 @@ class Check(models.Model):
     def unique_key(self) -> str:
         code_half = self.code.hex[:16]
         return hashlib.sha1(code_half.encode()).hexdigest()
+
+    def filter_any(self) -> bool:
+        return self.filter_subject or self.filter_body or self.filter_http_body
 
     def to_dict(self, *, readonly: bool = False, v: int = 3) -> CheckDict:
         with_started = v == 1

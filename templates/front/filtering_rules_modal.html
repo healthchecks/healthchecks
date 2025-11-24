@@ -82,7 +82,7 @@
                                 type="text"
                                 maxlength="200"
                                 value="{{ check.start_kw }}"
-                                {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
+                                {% if not check.filter_any %}disabled{% endif %}
                                 class="form-control filter-kw" />
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                                 type="text"
                                 maxlength="200"
                                 value="{{ check.success_kw }}"
-                                {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
+                                {% if not check.filter_any %}disabled{% endif %}
                                 class="form-control filter-kw" />
                         </div>
                     </div>
@@ -112,7 +112,7 @@
                                 type="text"
                                 maxlength="200"
                                 value="{{ check.failure_kw }}"
-                                {% if not check.filter_subject and not check.filter_body %}disabled{% endif %}
+                                {% if not check.filter_any %}disabled{% endif %}
                                 class="form-control filter-kw" />
                             <span class="help-block">
                                 Comma-separated list of keywords. If
@@ -133,6 +133,7 @@
                                     name="filter_default_fail"
                                     class="filter-kw"
                                     value=""
+                                    {% if not check.filter_any %}disabled{% endif %}
                                     {% if not check.filter_default_fail %}checked{% endif %}>
                                 <span class="radiomark"></span>
                                 Ignore the ping
@@ -143,6 +144,7 @@
                                     name="filter_default_fail"
                                     class="filter-kw"
                                     value="1"
+                                    {% if not check.filter_any %}disabled{% endif %}
                                     {% if check.filter_default_fail %}checked{% endif %}>
                                 <span class="radiomark"></span>
                                 Classify the ping as failure

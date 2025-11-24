@@ -582,6 +582,8 @@ def filtering_rules(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespon
     if form.is_valid():
         check.filter_subject = form.cleaned_data["filter_subject"]
         check.filter_body = form.cleaned_data["filter_body"]
+        check.filter_http_body = form.cleaned_data["filter_http_body"]
+        check.filter_default_fail = form.cleaned_data["filter_default_fail"]
         check.start_kw = form.cleaned_data["start_kw"]
         check.success_kw = form.cleaned_data["success_kw"]
         check.failure_kw = form.cleaned_data["failure_kw"]
