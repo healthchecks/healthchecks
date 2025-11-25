@@ -116,7 +116,7 @@ h2.rule {
 
 .page-docs dl {
     display: grid;
-    grid-template-columns: 150px auto;
+    grid-template-columns: 180px auto;
 }
 
 .page-docs .docs-http_api dl {

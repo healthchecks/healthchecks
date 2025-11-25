@@ -189,6 +189,8 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/1b9d0386-d07e-44b0-8995-4a9a372de43c.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT31365bce-8da9-4729-8ff3-aaa71d56b712&quot;</span><span class="p">,</span>
@@ -216,6 +218,8 @@ specified value.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
@@ -258,6 +262,8 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/1b9d0386-d07e-44b0-8995-4a9a372de43c.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;a6c7b0a8a66bed0df66abfdab3c77736861703ee&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
@@ -280,6 +286,8 @@ and <a href="#list-flips">List check's status changes</a> API calls.</p>
 <span class="w">      </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span>
 <span class="w">      </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
@@ -329,6 +337,8 @@ using the read-only API key) as an identifier.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT803f680d-e89b-492b-82ef-2be7b774a92d&quot;</span><span class="p">,</span>
@@ -367,6 +377,8 @@ easily construct these URLs themselves <em>if</em> they know the check's unique 
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/7d3ab93d-836e-4505-bbda-fcbd5e07adf9.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;unique_key&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;124f983e0e3dcaeba921cfcef46efd084576e783&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;schedule&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;15 5 * * *&quot;</span><span class="p">,</span>
@@ -508,86 +520,84 @@ Otherwise, a new check will be created and returned.</p>
 <dt>start_kw</dt>
 <dd>
 <p>string, optional, default value: "".</p>
-<p>Specifies the keywords for classifying inbound email messages as "Start" signals.
-Separate multiple keywords using commas.</p>
-<p>Use this field in combination with the <code>filter_subject</code> and <code>filter_body</code> fields.
-Setting <code>filter_subject</code> to <code>true</code> enables filtering on the email subject line,
-<code>filter_body</code> enables filtering on the entire email body. SITE_NAME supports both
-plain text and HTML email messages.</p>
+<p>Specifies the keywords for classifying inbound email messages and HTTP pings as
+start signals. Separate multiple keywords using commas. Keywords are
+case-sensitive.</p>
+<p>Use this field in combination with the <code>filter_subject</code>, <code>filter_body</code>,
+and <code>filter_http_body</code> fields.</p>
 <p>Example:</p>
 <p><pre>{"filter_subject": true, "start_kw": "STARTED"}</pre></p>
-<p>In this example, SITE_NAME classifies the email as a start signal if the Subject
-line contains the word "STARTED".</p>
+<p>In this example, SITE_NAME classifies an inbound email as a start signal if the
+Subject line contains the word "STARTED".</p>
 </dd>
 <dt>success_kw</dt>
 <dd>
 <p>string, optional, default value: "".</p>
-<p>Specifies the keywords for classifying inbound email messages as "Success" signals.
-Separate multiple keywords using commas.</p>
-<p>Use this field in combination with the <code>filter_subject</code> and <code>filter_body</code> fields.
-Setting <code>filter_subject</code> to <code>true</code> enables filtering on the email subject line,
-<code>filter_body</code> enables filtering on the entire email body. SITE_NAME supports both
-plain text and HTML email messages.</p>
+<p>Specifies the keywords for classifying inbound email messages and HTTP pings as
+success signals. Separate multiple keywords using commas. Keywords are
+case-sensitive.</p>
+<p>Use this field in combination with the <code>filter_subject</code>, <code>filter_body</code>,
+and <code>filter_http_body</code> fields.</p>
 <p>Example:</p>
 <p><pre>{"filter_subject": true, "success_kw": "SUCCESS,COMPLETED"}</pre></p>
-<p>In this example, the email counts as success if the Subject line contains either
-the word "SUCCESS" or the word "COMPLETED".</p>
+<p>In this example, an inbound email message counts as success if the Subject line
+contains either the word "SUCCESS" or the word "COMPLETED".</p>
 </dd>
 <dt>failure_kw</dt>
 <dd>
 <p>string, optional, default value: "".</p>
-<p>Specifies the keywords for classifying inbound email messages as "Failure" signals.
-Separate multiple keywords using commas.</p>
-<p>Use this field in combination with the <code>filter_subject</code> and <code>filter_body</code> fields.
-Setting <code>filter_subject</code> to <code>true</code> enables filtering on the email subject line,
-<code>filter_body</code> enables filtering on the entire email body. SITE_NAME supports both
-plain text and HTML email messages.</p>
+<p>Specifies the keywords for classifying inbound email messages and HTTP pings as
+failure signals. Separate multiple keywords using commas. Keywords are
+case-sensitive.</p>
+<p>Use this field in combination with the <code>filter_subject</code>, <code>filter_body</code>,
+and <code>filter_http_body</code> fields.</p>
 <p>Example:</p>
-<p><pre>{"filter_subject": true, "failure_kw": "FAILED, ERROR"}</pre></p>
-<p>In this example, the email counts as failure if the Subject line contains either
-the word "FAILED" or the word "ERROR".</p>
+<p><pre>{"filter_subject": true, "failure_kw": "FAILED,ERROR"}</pre></p>
+<p>In this example, an inbound email message counts as failure if the Subject line
+contains either the word "FAILED" or the word "ERROR".</p>
 </dd>
 <dt>filter_subject</dt>
 <dd>
 <p>boolean, optional, default value: false.</p>
 <p>Enables filtering of inbound email messages by looking for keywords in their
-subject lines. See also the <code>success_kw</code> and <code>failure_kw</code> fields.</p>
+subject lines. See also the <code>start_kw</code>, <code>success_kw</code>, and <code>failure_kw</code> fields.</p>
 </dd>
 <dt>filter_body</dt>
 <dd>
 <p>boolean, optional, default value: false.</p>
-<p>Enables filtering of inbound email messages by looking for keywords in their
-message body. See also the <code>success_kw</code> and <code>failure_kw</code> fields.</p>
+<p>Enables filtering of inbound email messages by looking for keywords in the
+message body. See also the <code>start_kw</code>, <code>success_kw</code>, and <code>failure_kw</code> fields.</p>
+<p>SITE_NAME supports both plain text and HTML email messages, and looks for
+keywords both in the plain text and the HTML message contents.</p>
 </dd>
-<dt>subject</dt>
+<dt>filter_http_body</dt>
 <dd>
-<p>string, optional, default value: "".</p>
-<p><strong>Deprecated</strong>. Use the <code>success_kw</code>, <code>filter_subject</code> and <code>filter_body</code> fields
-instead.</p>
-<p>Specifies the keywords for classifying inbound email messages as "Success" signals.
-Separate multiple keywords using commas. If any of the keywords is found in
-an email message's Subject line, the email message will count as "Success".</p>
-<p>Set this field to "" (an empty string) to consider all inbound email messages as
-"Success" (unless they match any keywords listed in <code>subject_fail</code> and are thus
-classified as "Failure").</p>
-<p>Example:</p>
-<p><pre>SUCCESS,COMPLETED</pre></p>
-<p>In this example, the email counts as success if the Subject line contains either
-the word "SUCCESS" or the word "COMPLETED".</p>
+<p>boolean, optional, default value: false.</p>
+<p>Enables filtering of HTTP pings by looking for keywords in the first
+PING_BODY_LIMIT_FORMATTED of the HTTP request body. See also the
+<code>start_kw</code>, <code>success_kw</code>, and <code>failure_kw</code> fields.</p>
 </dd>
-<dt>subject_fail</dt>
+<dt>filter_default_fail</dt>
 <dd>
-<p>string, optional, default value: "".</p>
-<p><strong>Deprecated</strong>. Use the <code>failure_kw</code>, <code>filter_subject</code> and <code>filter_body</code> fields
-instead.</p>
-<p>Specifies the keywords for classifying inbound email messages as "Failure" signals.
-Separate multiple keywords using commas. If any of the keywords is found in
-an email message's Subject line, the email message will count as "Failure".</p>
-<p>Set this field to "" (an empty string) to perform no "Failure" classification.</p>
+<p>boolean, optional, default value: false.</p>
+<p>Determines the handling of email and HTTP pings when keyword filtering is enabled,
+but no keywords match.</p>
+<p>Keyword filtering is enabled for inbound email messages if either <code>filter_subject</code>
+or <code>filter_body</code> (or both) is set to <code>true</code>. Keyword filtering is enabled for HTTP
+pings if <code>filter_http_body</code> is set to <code>true</code>.</p>
+<p>If <code>filter_default_fail=false</code>, and no keywords match, the ping will be ignored.</p>
+<p>If <code>filter_default_fail=true</code>, and no keywords match, the ping will be
+classified as a failure signal.</p>
 <p>Example:</p>
-<p><pre>FAILED,ERROR</pre></p>
-<p>In this example, the email counts as failure if the Subject line contains either
-the word "FAILED" or the word "ERROR".</p>
+<p><pre>{
+    "filter_http_body": true,
+    "filter_default_fail": true,
+    "success_kw": "Backup successful"
+}</pre></p>
+<p>In this example, an HTTP ping will be classified as a success signal if and only if
+the request body contains the string "Backup successful". In all other cases,
+including HTTP GET requests with an empty request body, the ping will be classified
+as a failure signal.</p>
 </dd>
 </dl>
 <h3>Response Codes</h3>
@@ -637,6 +647,8 @@ the limit is 20 checks per account.</dd>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -761,86 +773,84 @@ must match exactly, whitespace is significant.</p>
 <dt>start_kw</dt>
 <dd>
 <p>string, optional, default value: "".</p>
-<p>Specifies the keywords for classifying inbound email messages as "Start" signals.
-Separate multiple keywords using commas.</p>
-<p>Use this field in combination with the <code>filter_subject</code> and <code>filter_body</code> fields.
-Setting <code>filter_subject</code> to <code>true</code> enables filtering on the email subject line,
-<code>filter_body</code> enables filtering on the entire email body. SITE_NAME supports both
-plain text and HTML email messages.</p>
+<p>Specifies the keywords for classifying inbound email messages and HTTP pings as
+start signals. Separate multiple keywords using commas. Keywords are
+case-sensitive.</p>
+<p>Use this field in combination with the <code>filter_subject</code>, <code>filter_body</code>,
+and <code>filter_http_body</code> fields.</p>
 <p>Example:</p>
 <p><pre>{"filter_subject": true, "start_kw": "STARTED"}</pre></p>
-<p>In this example, SITE_NAME classifies the email as a start signal if the Subject
-line contains the word "STARTED".</p>
+<p>In this example, SITE_NAME classifies an inbound email as a start signal if the
+Subject line contains the word "STARTED".</p>
 </dd>
 <dt>success_kw</dt>
 <dd>
 <p>string, optional, default value: "".</p>
-<p>Specifies the keywords for classifying inbound email messages as "Success" signals.
-Separate multiple keywords using commas.</p>
-<p>Use this field in combination with the <code>filter_subject</code> and <code>filter_body</code> fields.
-Setting <code>filter_subject</code> to <code>true</code> enables filtering on the email subject line,
-<code>filter_body</code> enables filtering on the entire email body. SITE_NAME supports both
-plain text and HTML email messages.</p>
+<p>Specifies the keywords for classifying inbound email messages and HTTP pings as
+success signals. Separate multiple keywords using commas. Keywords are
+case-sensitive.</p>
+<p>Use this field in combination with the <code>filter_subject</code>, <code>filter_body</code>,
+and <code>filter_http_body</code> fields.</p>
 <p>Example:</p>
 <p><pre>{"filter_subject": true, "success_kw": "SUCCESS,COMPLETED"}</pre></p>
-<p>In this example, the email counts as success if the Subject line contains either
-the word "SUCCESS" or the word "COMPLETED".</p>
+<p>In this example, an inbound email message counts as success if the Subject line
+contains either the word "SUCCESS" or the word "COMPLETED".</p>
 </dd>
 <dt>failure_kw</dt>
 <dd>
 <p>string, optional, default value: "".</p>
-<p>Specifies the keywords for classifying inbound email messages as "Failure" signals.
-Separate multiple keywords using commas.</p>
-<p>Use this field in combination with the <code>filter_subject</code> and <code>filter_body</code> fields.
-Setting <code>filter_subject</code> to <code>true</code> enables filtering on the email subject line,
-<code>filter_body</code> enables filtering on the entire email body. SITE_NAME supports both
-plain text and HTML email messages.</p>
+<p>Specifies the keywords for classifying inbound email messages and HTTP pings as
+failure signals. Separate multiple keywords using commas. Keywords are
+case-sensitive.</p>
+<p>Use this field in combination with the <code>filter_subject</code>, <code>filter_body</code>,
+and <code>filter_http_body</code> fields.</p>
 <p>Example:</p>
-<p><pre>{"filter_subject": true, "failure_kw": "FAILED, ERROR"}</pre></p>
-<p>In this example, the email counts as failure if the Subject line contains either
-the word "FAILED" or the word "ERROR".</p>
+<p><pre>{"filter_subject": true, "failure_kw": "FAILED,ERROR"}</pre></p>
+<p>In this example, an inbound email message counts as failure if the Subject line
+contains either the word "FAILED" or the word "ERROR".</p>
 </dd>
 <dt>filter_subject</dt>
 <dd>
 <p>boolean, optional, default value: false.</p>
 <p>Enables filtering of inbound email messages by looking for keywords in their
-subject lines. See also the <code>success_kw</code> and <code>failure_kw</code> fields.</p>
+subject lines. See also the <code>start_kw</code>, <code>success_kw</code>, and <code>failure_kw</code> fields.</p>
 </dd>
 <dt>filter_body</dt>
 <dd>
 <p>boolean, optional, default value: false.</p>
-<p>Enables filtering of inbound email messages by looking for keywords in their
-message body. See also the <code>success_kw</code> and <code>failure_kw</code> fields.</p>
+<p>Enables filtering of inbound email messages by looking for keywords in the
+message body. See also the <code>start_kw</code>, <code>success_kw</code>, and <code>failure_kw</code> fields.</p>
+<p>SITE_NAME supports both plain text and HTML email messages, and looks for
+keywords both in the plain text and the HTML message contents.</p>
 </dd>
-<dt>subject</dt>
+<dt>filter_http_body</dt>
 <dd>
-<p>string, optional, default value: "".</p>
-<p><strong>Deprecated</strong>. Use the <code>success_kw</code>, <code>filter_subject</code> and <code>filter_body</code> fields
-instead.</p>
-<p>Specifies the keywords for classifying inbound email messages as "Success" signals.
-Separate multiple keywords using commas. If any of the keywords is found in
-an email message's Subject line, the email message will count as "Success".</p>
-<p>Set this field to "" (an empty string) to consider all inbound email messages as
-"Success" (unless they match any keywords listed in <code>subject_fail</code> and are thus
-classified as "Failure").</p>
-<p>Example:</p>
-<p><pre>SUCCESS,COMPLETED</pre></p>
-<p>In this example, the email counts as success if the Subject line contains either
-the word "SUCCESS" or the word "COMPLETED".</p>
+<p>boolean, optional, default value: false.</p>
+<p>Enables filtering of HTTP pings by looking for keywords in the first
+PING_BODY_LIMIT_FORMATTED of the HTTP request body. See also the
+<code>start_kw</code>, <code>success_kw</code>, and <code>failure_kw</code> fields.</p>
 </dd>
-<dt>subject_fail</dt>
+<dt>filter_default_fail</dt>
 <dd>
-<p>string, optional, default value: "".</p>
-<p><strong>Deprecated</strong>. Use the <code>failure_kw</code>, <code>filter_subject</code> and <code>filter_body</code> fields
-instead.</p>
-<p>Specifies the keywords for classifying inbound email messages as "Failure" signals.
-Separate multiple keywords using commas. If any of the keywords is found in
-an email message's Subject line, the email message will count as "Failure".</p>
-<p>Set this field to "" (an empty string) to perform no "Failure" classification.</p>
+<p>boolean, optional, default value: false.</p>
+<p>Determines the handling of email and HTTP pings when keyword filtering is enabled,
+but no keywords match.</p>
+<p>Keyword filtering is enabled for inbound email messages if either <code>filter_subject</code>
+or <code>filter_body</code> (or both) is set to <code>true</code>. Keyword filtering is enabled for HTTP
+pings if <code>filter_http_body</code> is set to <code>true</code>.</p>
+<p>If <code>filter_default_fail=false</code>, and no keywords match, the ping will be ignored.</p>
+<p>If <code>filter_default_fail=true</code>, and no keywords match, the ping will be
+classified as a failure signal.</p>
 <p>Example:</p>
-<p><pre>FAILED,ERROR</pre></p>
-<p>In this example, the email counts as failure if the Subject line contains either
-the word "FAILED" or the word "ERROR".</p>
+<p><pre>{
+    "filter_http_body": true,
+    "filter_default_fail": true,
+    "success_kw": "Backup successful"
+}</pre></p>
+<p>In this example, an HTTP ping will be classified as a success signal if and only if
+the request body contains the string "Backup successful". In all other cases,
+including HTTP GET requests with an empty request body, the ping will be classified
+as a failure signal.</p>
 </dd>
 </dl>
 <h3>Response Codes</h3>
@@ -889,6 +899,8 @@ field values.</dd>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -946,6 +958,8 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -1005,6 +1019,8 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
@@ -1058,6 +1074,8 @@ check that was just deleted.</p>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>

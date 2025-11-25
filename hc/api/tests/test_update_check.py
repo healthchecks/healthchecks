@@ -4,7 +4,6 @@ import uuid
 from datetime import timedelta as td
 
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check
 from hc.lib.typealias import JSONDict
 from hc.test import BaseTestCase, TestHttpResponse
@@ -40,6 +39,8 @@ class UpdateCheckTestCase(BaseTestCase):
                 "desc": "My description",
                 "timeout": 3600,
                 "grace": 60,
+                "filter_http_body": True,
+                "filter_default_fail": True,
             },
         )
 
@@ -64,6 +65,8 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.tags, "bar,baz")
         self.assertEqual(self.check.timeout.total_seconds(), 3600)
         self.assertEqual(self.check.grace.total_seconds(), 60)
+        self.assertTrue(self.check.filter_http_body)
+        self.assertTrue(self.check.filter_default_fail)
 
         # alert_after should be updated too
         expected_aa = self.check.last_ping + td(seconds=3600 + 60)

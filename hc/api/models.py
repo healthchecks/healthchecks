@@ -131,6 +131,8 @@ class CheckDict(TypedDict, total=False):
     failure_kw: str
     filter_subject: bool
     filter_body: bool
+    filter_http_body: bool
+    filter_default_fail: bool
     badge_url: str
     last_duration: int
     unique_key: str
@@ -434,6 +436,8 @@ class Check(models.Model):
             "failure_kw": self.failure_kw,
             "filter_subject": self.filter_subject,
             "filter_body": self.filter_body,
+            "filter_http_body": self.filter_http_body,
+            "filter_default_fail": self.filter_default_fail,
             # Optimization: construct badge URLs manually instead of using reverse().
             # This is significantly quicker when returning hundreds of checks.
             "badge_url": f"{settings.SITE_ROOT}/b/2/{self.badge_key}.svg",

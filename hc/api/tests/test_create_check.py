@@ -41,6 +41,8 @@ class CreateCheckTestCase(BaseTestCase):
                 "failure_kw": "FAILURE",
                 "filter_subject": True,
                 "filter_body": True,
+                "filter_http_body": True,
+                "filter_default_fail": True,
             }
         )
         self.assertEqual(r.status_code, 201)
@@ -60,6 +62,8 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(doc["failure_kw"], "FAILURE")
         self.assertTrue(doc["filter_subject"])
         self.assertTrue(doc["filter_body"])
+        self.assertTrue(doc["filter_http_body"])
+        self.assertTrue(doc["filter_default_fail"])
 
         self.assertTrue("schedule" not in doc)
         self.assertTrue("tz" not in doc)

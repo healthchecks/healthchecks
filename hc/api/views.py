@@ -61,8 +61,10 @@ class Spec(BaseModel):
     channels: str | None = None
     desc: str | None = None
     failure_kw: str | None = Field(None, max_length=200)
-    filter_body: bool | None = None
     filter_subject: bool | None = None
+    filter_body: bool | None = None
+    filter_http_body: bool | None = None
+    filter_default_fail: bool | None = None
     grace: td | None = Field(None, ge=60, le=31536000)
     manual_resume: bool | None = None
     methods: Literal["", "POST"] | None = None
@@ -377,6 +379,8 @@ def _update(check: Check, spec: Spec, v: int) -> None:
         "failure_kw",
         "filter_subject",
         "filter_body",
+        "filter_http_body",
+        "filter_default_fail",
         "grace",
     ):
         v = getattr(spec, key)
