@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Add a tooltip with timestamp in the checks table, "Last Ping" column (#1040)
 - Update the Zulip transport to allow addressing users by User ID (#771)
 - Add hc_check_grace and hc_check_paused Prometheus metrics (#897, #915)
+- Update Docker base image to python:3.13.9-slim-trixie (#1233)
 
 ### Bug Fixes
 - Fix cron schedule formatting in Discord notifications
