@@ -71,27 +71,58 @@ for complete OnCalendar syntax reference.</p>
 how SITE_NAME handles incoming pings for a particular check.</p>
 <p><img alt="Setting filtering rules" src="IMG_URL/filtering_rules.png" /></p>
 <ul>
-<li><strong>Allowed request methods for HTTP requests</strong>. You can require the ping
+<li><strong>Allowed HTTP Request Methods</strong>. You can require the ping
 requests to use HTTP POST. Use the "Only POST" option if you run into issues of
 preview bots hitting the ping URLs when you send them in email or post them in chat.</li>
-<li><strong>Filter by keywords in the Subject line</strong>. When pinging <a href="../email/">via email</a>,
-you can instruct SITE_NAME to look for specific keywords in the subject line. If the
-subject line contains any of the keywords listed in <strong>Start Keywords</strong>,
-<strong>Success Keywords</strong>, or <strong>Failure Keywords</strong>, SITE_NAME will classify the email as
-a start, a success, or a failure signal, respectively. Keyword matching is case-sensitive.
-SITE_NAME will first checks for the presence of <strong>Failure</strong> keywords, then <strong>Success</strong>
-keywords, and then <strong>Start</strong> keywords. If filtering is enabled but no keywords
-match, SITE_NAME will <strong>ignore</strong> the email message. The email will show in the event log
-with an "Ignored" badge.<br>The keyword filtering feature is useful if, for example,
-your backup  software sends an email after each backup run, but with a different subject
-line depending on success or failure.</li>
-<li><strong>Filter by keywords in the message body</strong>. Same as the previous option, but
-looks for the keywords in the email message body. SITE_NAME checks for keywords both in
-the plain text and the HTML parts of email messages.</li>
+<li><strong>Content Filtering</strong>. You can instruct SITE_NAME to look for specific keywords
+in the subject line or the message body of email pings, and in the HTTP request body
+of HTTP pings.</li>
 <li><strong>Pinging a Paused Check</strong>. Normally, when you ping a paused check, it leaves the
 paused state and goes into the "up" state (or the "down" state
 in case of <a href="../signaling_failures/">a failure signal</a>).
 You can change this behavior by selecting the "Ignore the ping, stay in
 the paused state" option. With this option selected, the paused state becomes "sticky":
 SITE_NAME will ignore all incoming pings until you explicitly <em>resume</em> the check.</li>
+</ul>
+<h3>Content Filtering</h3>
+<p>If the <strong>Request body of HTTP requests</strong> option is checked, SITE_NAME will classify
+the HTTP pings as start, success, or failure signals by looking for keywords in
+the first PING_BODY_LIMIT_FORMATTED of the request body.</p>
+<p>If either the <strong>Subject line of email messages</strong> or the <strong>Message body of email
+messages</strong> option is checked, SITE_NAME will classify email pings as start, success, or
+failure signals by looking for keywords in the subject line and/or message body.
+SITE_NAME supports HTML emails: when looking for keywords in message body, it checks
+both plain text and HTML versions of the email.</p>
+<p>You can specify multiple keywords in each of the <strong>Start Keywords</strong>,
+<strong>Success Keywords</strong>, and <strong>Failure Keywords</strong> fields by separating them with commas.
+The keyword matching is case-sensitive (for example, "error" and "ERROR" are different
+keywords).</p>
+<p>SITE_NAME looks for keywords in a specific order:</p>
+<ul>
+<li>It first looks for <strong>failure keywords</strong>. If any are found, it classifies the ping
+  as a failure signal and does not look further.</li>
+<li>It then looks for <strong>success keywords</strong>. If any are found, it classifies the ping
+  as a success signal and does not look further.</li>
+<li>It then looks for <strong>start keywords</strong>. If any are found, it classifies the ping
+  as a start signal.</li>
+<li>Finally, if no matching keywords are found, SITE_NAME either ignores the ping or
+  classifies it as a failure signal, depending on the <strong>If no keywords match</strong>
+  configuration option. Ignored pings show up in the event log with an "Ignored" label,
+  but they do not affect check's status as they are neither "success" nor "failure"
+  nor "start" signals.</li>
+</ul>
+<p>Example use case: consider a backup cron job that sends an HTTP POST request every
+time it completes. If the job completes successfully, the HTTP request will contain
+text "Backup successful". If the job fails, the request body will contain an
+error message. The error messages can vary, and the complete list of all possible error
+messages is not known. To handle this scenario, you can use content filtering as
+follows:</p>
+<ul>
+<li>Enable the <strong>Request body of HTTP requests</strong> – enables content filtering for
+  HTTP pings.</li>
+<li>In the <strong>Success keywords</strong> field enter "Backup successful" – if this string is found
+  in the request body of a HTTP ping, SITE_NAME will classify the ping as a success
+  signal.</li>
+<li>Select the <strong>If no keywords match: Classify the ping as failure</strong> option – SITE_NAME
+  will classify all other HTTP requests as failure signals.</li>
 </ul>
