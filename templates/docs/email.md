@@ -18,8 +18,9 @@ different keywords), and matches them in a specific order:
 * SITE_NAME first checks the message for presence of any **failure** keyword.
 * It then checks for any **success** keyword.
 * It then checks for any **start** keyword.
-* If filtering is enabled but none of the keywords match, SITE_NAME **ignores**
-  the email message. The email will show in the event log with an "Ignored" badge.
+* If filtering is enabled but none of the keywords match, SITE_NAME either **ignores**
+  the email message or **classifies it as a failure signal**, depending on the
+  selected "If no keywords match" option.
 
 You can set up keywords in the **Filtering Rules** dialog:
 

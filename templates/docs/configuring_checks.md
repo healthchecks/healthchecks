@@ -82,7 +82,7 @@ for complete OnCalendar syntax reference.
 
 ![Editing cron schedule](IMG_URL/edit_oncalendar_schedule.png)
 
-## Filtering Rules
+## Filtering Rules {: #filtering-rules }
 
 In the "Filtering Rules" dialog, you can control several advanced aspects of
 how SITE_NAME handles incoming pings for a particular check.
@@ -129,7 +129,7 @@ SITE_NAME looks for keywords in a specific order:
   as a start signal.
 * Finally, if no matching keywords are found, SITE_NAME either ignores the ping or
   classifies it as a failure signal, depending on the **If no keywords match**
-  configuration option. Ignored pings show up in the event log with an "Ignored" label,
+  configuration option. Ignored pings are shown in the event log with an "Ignored" label,
   but they do not affect check's status as they are neither "success" nor "failure"
   nor "start" signals.
 
@@ -148,4 +148,7 @@ follows:
 * Select the **If no keywords match: Classify the ping as failure** option – SITE_NAME
   will classify all other HTTP requests as failure signals.
 
-
+With these settings, SITE_NAME will classify a HTTP ping as a success signal
+if and only if the request body contains text "Backup successful". If the request
+body does not contain this string (or the request body is absent altogether),
+it will classify the ping as a failure signal.

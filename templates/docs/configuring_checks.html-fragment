@@ -66,7 +66,7 @@ whenever any schedule matches.</p>
 <p>See <a href="https://www.man7.org/linux/man-pages/man7/systemd.time.7.html#CALENDAR_EVENTS">systemd.time(7) man page</a>
 for complete OnCalendar syntax reference.</p>
 <p><img alt="Editing cron schedule" src="IMG_URL/edit_oncalendar_schedule.png" /></p>
-<h2>Filtering Rules</h2>
+<h2 id="filtering-rules">Filtering Rules</h2>
 <p>In the "Filtering Rules" dialog, you can control several advanced aspects of
 how SITE_NAME handles incoming pings for a particular check.</p>
 <p><img alt="Setting filtering rules" src="IMG_URL/filtering_rules.png" /></p>
@@ -107,7 +107,7 @@ keywords).</p>
   as a start signal.</li>
 <li>Finally, if no matching keywords are found, SITE_NAME either ignores the ping or
   classifies it as a failure signal, depending on the <strong>If no keywords match</strong>
-  configuration option. Ignored pings show up in the event log with an "Ignored" label,
+  configuration option. Ignored pings are shown in the event log with an "Ignored" label,
   but they do not affect check's status as they are neither "success" nor "failure"
   nor "start" signals.</li>
 </ul>
@@ -126,3 +126,7 @@ follows:</p>
 <li>Select the <strong>If no keywords match: Classify the ping as failure</strong> option – SITE_NAME
   will classify all other HTTP requests as failure signals.</li>
 </ul>
+<p>With these settings, SITE_NAME will classify a HTTP ping as a success signal
+if and only if the request body contains text "Backup successful". If the request
+body does not contain this string (or the request body is absent altogether),
+it will classify the ping as a failure signal.</p>
