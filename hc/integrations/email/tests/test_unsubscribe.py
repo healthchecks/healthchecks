@@ -4,12 +4,11 @@ import time
 from unittest.mock import patch
 
 from django.core.signing import TimestampSigner
-
 from hc.api.models import Channel
 from hc.test import BaseTestCase
 
 
-class UnsubscribeEmailTestCase(BaseTestCase):
+class UnsubscribeTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.channel = Channel(project=self.project, kind="email")
@@ -29,8 +28,8 @@ class UnsubscribeEmailTestCase(BaseTestCase):
         r = self.client.post(self.url)
         self.assertContains(r, "has been unsubscribed", status_code=200)
 
-        q = Channel.objects.filter(code=self.channel.code)
-        self.assertEqual(q.count(), 0)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled)
 
     def test_fresh_signature_does_not_autosubmit(self) -> None:
         r = self.client.get(self.url)

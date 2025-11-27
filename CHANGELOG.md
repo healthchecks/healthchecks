@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Add new content filtering options in the "Filtering Rules" dialog (#1130, #954)
+- Fix the email integration's unsub view to disable (not delete) the channel
 
 ## v3.12 - 2025-11-26
 

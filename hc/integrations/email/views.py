@@ -110,5 +110,5 @@ def unsubscribe(request: HttpRequest, code: UUID, signed_token: str) -> HttpResp
     if request.method != "POST":
         return render(request, "accounts/unsubscribe_submit.html", ctx)
 
-    channel.delete()
+    Channel.objects.filter(id=channel.id).update(disabled=True)
     return render(request, "front/unsubscribe_success.html")
