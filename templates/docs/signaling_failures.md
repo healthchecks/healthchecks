@@ -19,6 +19,10 @@ curl --retry 3 PING_URL/1
 By actively signaling failures to SITE_NAME, you can minimize the delay from your
 monitored service encountering a problem to you getting notified about it.
 
+Alternatively, if using different URLs for success and failure signals is
+not feasible, you can configure SITE_NAME to classify HTTP pings as success or failure
+signals [by looking for specific keywords in the HTTP request body](../configuring_checks/#filtering-rules).
+
 ## Shell Scripts
 
 The below shell script appends `$?` (a special variable that contains the

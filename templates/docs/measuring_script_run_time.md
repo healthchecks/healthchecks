@@ -6,6 +6,10 @@
  calculates the job execution times as the time gaps between adjacent "start" and
  "success" events.
 
+Note: if appending `/start` to the ping URL on the client side is not feasible, you can
+alternatively configure SITE_NAME to classify HTTP pings as start, success, or failure
+signals [by looking for specific keywords in the HTTP request body](../configuring_checks/#filtering-rules).
+
 ## Alerting Logic
 
 SITE_NAME applies an additional alerting rule for jobs that use the `/start` signal.

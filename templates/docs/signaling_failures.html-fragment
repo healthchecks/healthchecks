@@ -13,6 +13,9 @@ curl<span class="w"> </span>--retry<span class="w"> </span><span class="m">3</sp
 
 <p>By actively signaling failures to SITE_NAME, you can minimize the delay from your
 monitored service encountering a problem to you getting notified about it.</p>
+<p>Alternatively, if using different URLs for success and failure signals is
+not feasible, you can configure SITE_NAME to classify HTTP pings as success or failure
+signals <a href="../configuring_checks/#filtering-rules">by looking for specific keywords in the HTTP request body</a>.</p>
 <h2>Shell Scripts</h2>
 <p>The below shell script appends <code>$?</code> (a special variable that contains the
 exit status of the last executed command) to the ping URL:</p>

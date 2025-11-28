@@ -4,6 +4,9 @@
  It will store the "start" events and display the job execution times. SITE_NAME
  calculates the job execution times as the time gaps between adjacent "start" and
  "success" events.</p>
+<p>Note: if appending <code>/start</code> to the ping URL on the client side is not feasible, you can
+alternatively configure SITE_NAME to classify HTTP pings as start, success, or failure
+signals <a href="../configuring_checks/#filtering-rules">by looking for specific keywords in the HTTP request body</a>.</p>
 <h2>Alerting Logic</h2>
 <p>SITE_NAME applies an additional alerting rule for jobs that use the <code>/start</code> signal.</p>
 <p>If a job sends a "start" signal but does not send a "success"
