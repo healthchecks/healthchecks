@@ -10,7 +10,7 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any
+from typing import Any, overload
 from urllib.parse import urlparse
 
 import django_stubs_ext
@@ -36,7 +36,17 @@ def envint(s: str, default: str) -> int | None:
     return int(v)
 
 
-def envsecret(s: str, default: str | None = None) -> str:
+@overload
+def envsecret(s: str) -> str | None:
+    ...
+
+
+@overload
+def envsecret(s: str, default: str) -> str:
+    ...
+
+
+def envsecret(s: str, default: str | None = None) -> str | None:
     """Load a secret from an environment variable or from the filesystem.
 
     This function either reads the secret from a file (if s + "_FILE" environment
