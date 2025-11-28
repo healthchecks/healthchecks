@@ -12,6 +12,7 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#DB_HOST">DB_HOST</a></li>
 <li><a href="#DB_NAME">DB_NAME</a></li>
 <li><a href="#DB_PASSWORD">DB_PASSWORD</a></li>
+<li><a href="#DB_PASSWORD_FILE">DB_PASSWORD_FILE</a></li>
 <li><a href="#DB_PORT">DB_PORT</a></li>
 <li><a href="#DB_SSLMODE">DB_SSLMODE</a></li>
 <li><a href="#DB_TARGET_SESSION_ATTRS">DB_TARGET_SESSION_ATTRS</a></li>
@@ -20,8 +21,10 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#DEFAULT_FROM_EMAIL">DEFAULT_FROM_EMAIL</a></li>
 <li><a href="#DISCORD_CLIENT_ID">DISCORD_CLIENT_ID</a></li>
 <li><a href="#DISCORD_CLIENT_SECRET">DISCORD_CLIENT_SECRET</a></li>
+<li><a href="#DISCORD_CLIENT_SECRET_FILE">DISCORD_CLIENT_SECRET_FILE</a></li>
 <li><a href="#EMAIL_HOST">EMAIL_HOST</a></li>
 <li><a href="#EMAIL_HOST_PASSWORD">EMAIL_HOST_PASSWORD</a></li>
+<li><a href="#EMAIL_HOST_PASSWORD_FILE">EMAIL_HOST_PASSWORD_FILE</a></li>
 <li><a href="#EMAIL_HOST_USER">EMAIL_HOST_USER</a></li>
 <li><a href="#EMAIL_PORT">EMAIL_PORT</a></li>
 <li><a href="#EMAIL_USE_TLS">EMAIL_USE_TLS</a></li>
@@ -31,11 +34,13 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#INTEGRATIONS_ALLOW_PRIVATE_IPS">INTEGRATIONS_ALLOW_PRIVATE_IPS</a></li>
 <li><a href="#MASTER_BADGE_URL">MASTER_BADGE_LABEL</a></li>
 <li><a href="#MATRIX_ACCESS_TOKEN">MATRIX_ACCESS_TOKEN</a></li>
+<li><a href="#MATRIX_ACCESS_TOKEN_FILE">MATRIX_ACCESS_TOKEN_FILE</a></li>
 <li><a href="#MATRIX_HOMESERVER">MATRIX_HOMESERVER</a></li>
 <li><a href="#MATRIX_USER_ID">MATRIX_USER_ID</a></li>
 <li><a href="#MATTERMOST_ENABLED">MATTERMOST_ENABLED</a></li>
 <li><a href="#MSTEAMS_ENABLED">MSTEAMS_ENABLED</a></li>
 <li><a href="#NTFY_SH_TOKEN">NTFY_SH_TOKEN</a></li>
+<li><a href="#NTFY_SH_TOKEN_FILE">NTFY_SH_TOKEN_FILE</a></li>
 <li><a href="#OPSGENIE_ENABLED">OPSGENIE_ENABLED</a></li>
 <li><a href="#PAGERTREE_ENABLED">PAGERTREE_ENABLED</a></li>
 <li><a href="#PD_APP_ID">PD_APP_ID</a></li>
@@ -46,7 +51,9 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#PROMETHEUS_ENABLED">PROMETHEUS_ENABLED</a></li>
 <li><a href="#PUSHBULLET_CLIENT_ID">PUSHBULLET_CLIENT_ID</a></li>
 <li><a href="#PUSHBULLET_CLIENT_SECRET">PUSHBULLET_CLIENT_SECRET</a></li>
+<li><a href="#PUSHBULLET_CLIENT_SECRET_FILE">PUSHBULLET_CLIENT_SECRET_FILE</a></li>
 <li><a href="#PUSHOVER_API_TOKEN">PUSHOVER_API_TOKEN</a></li>
+<li><a href="#PUSHOVER_API_TOKEN_FILE">PUSHOVER_API_TOKEN_FILE</a></li>
 <li><a href="#PUSHOVER_EMERGENCY_EXPIRATION">PUSHOVER_EMERGENCY_EXPIRATION</a></li>
 <li><a href="#PUSHOVER_EMERGENCY_RETRY_DELAY">PUSHOVER_EMERGENCY_RETRY_DELAY</a></li>
 <li><a href="#PUSHOVER_SUBSCRIPTION_URL">PUSHOVER_SUBSCRIPTION_URL</a></li>
@@ -59,9 +66,11 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#S3_ENDPOINT">S3_ENDPOINT</a></li>
 <li><a href="#S3_REGION">S3_REGION</a></li>
 <li><a href="#S3_SECRET_KEY">S3_SECRET_KEY</a></li>
+<li><a href="#S3_SECRET_KEY_FILE">S3_SECRET_KEY_FILE</a></li>
 <li><a href="#S3_TIMEOUT">S3_TIMEOUT</a></li>
 <li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
+<li><a href="#SECRET_KEY_FILE">SECRET_KEY_FILE</a></li>
 <li><a href="#SECURE_PROXY_SSL_HEADER">SECURE_PROXY_SSL_HEADER</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
@@ -70,13 +79,17 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#SITE_ROOT">SITE_ROOT</a></li>
 <li><a href="#SLACK_CLIENT_ID">SLACK_CLIENT_ID</a></li>
 <li><a href="#SLACK_CLIENT_SECRET">SLACK_CLIENT_SECRET</a></li>
+<li><a href="#SLACK_CLIENT_SECRET_FILE">SLACK_CLIENT_SECRET_FILE</a></li>
 <li><a href="#SLACK_ENABLED">SLACK_ENABLED</a></li>
 <li><a href="#SPIKE_ENABLED">SPIKE_ENABLED</a></li>
 <li><a href="#TELEGRAM_BOT_NAME">TELEGRAM_BOT_NAME</a></li>
 <li><a href="#TELEGRAM_TOKEN">TELEGRAM_TOKEN</a></li>
+<li><a href="#TELEGRAM_TOKEN_FILE">TELEGRAM_TOKEN_FILE</a></li>
 <li><a href="#TRELLO_APP_KEY">TRELLO_APP_KEY</a></li>
+<li><a href="#TRELLO_APP_KEY_FILE">TRELLO_APP_KEY_FILE</a></li>
 <li><a href="#TWILIO_ACCOUNT">TWILIO_ACCOUNT</a></li>
 <li><a href="#TWILIO_AUTH">TWILIO_AUTH</a></li>
+<li><a href="#TWILIO_AUTH_FILE">TWILIO_AUTH_FILE</a></li>
 <li><a href="#TWILIO_FROM">TWILIO_FROM</a></li>
 <li><a href="#TWILIO_MESSAGING_SERVICE_SID">TWILIO_MESSAGING_SERVICE_SID</a></li>
 <li><a href="#TWILIO_USE_WHATSAPP">TWILIO_USE_WHATSAPP</a></li>
@@ -169,6 +182,15 @@ Default: `""` (empty string)
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#password).
 
+## `DB_PASSWORD_FILE` {: #DB_PASSWORD_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [DB_PASSWORD](#DB_PASSWORD) setting.
+If `DB_PASSWORD` and `DB_PASSWORD_FILE` are both set, `DB_PASSWORD_FILE` takes
+precedence.
+
 ## `DB_PORT` {: #DB_PORT }
 
 Default: `""` (empty string)
@@ -238,6 +260,15 @@ Default: `None`
 The Discord Client Secret, required by the Discord integration. Look it up at
 [https://discordapp.com/developers/applications/me](https://discordapp.com/developers/applications/me).
 
+## `DISCORD_CLIENT_SECRET_FILE` {: #DISCORD_CLIENT_SECRET_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [DISCORD_CLIENT_SECRET](#DISCORD_CLIENT_SECRET)
+setting. If `DISCORD_CLIENT_SECRET` and `DISCORD_CLIENT_SECRET_FILE` are both set,
+`DISCORD_CLIENT_SECRET_FILE` takes precedence.
+
 ## `EMAIL_HOST` {: #EMAIL_HOST }
 
 Default: `""` (empty string)
@@ -251,6 +282,15 @@ Default: `""` (empty string)
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password).
+
+## `EMAIL_HOST_PASSWORD_FILE` {: #EMAIL_HOST_PASSWORD_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [EMAIL_HOST_PASSWORD](#EMAIL_HOST_PASSWORD)
+setting. If `EMAIL_HOST_PASSWORD` and `EMAIL_HOST_PASSWORD_FILE`
+are both set, `EMAIL_HOST_PASSWORD_FILE` takes precedence.
 
 ## `EMAIL_HOST_USER` {: #EMAIL_HOST_USER }
 
@@ -365,6 +405,15 @@ MATRIX_HOMESERVER=https://matrix.org
 MATRIX_USER_ID=@mychecks:matrix.org
 ```
 
+## `MATRIX_ACCESS_TOKEN_FILE` {: #MATRIX_ACCESS_TOKEN_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [MATRIX_ACCESS_TOKEN](#MATRIX_ACCESS_TOKEN)
+setting. If `MATRIX_ACCESS_TOKEN` and `MATRIX_ACCESS_TOKEN_FILE` are both set,
+`MATRIX_ACCESS_TOKEN_FILE` takes precedence.
+
 ## `MATRIX_HOMESERVER` {: #MATRIX_HOMESERVER }
 
 Default: `None`
@@ -402,6 +451,15 @@ Use this setting if your Healthchecks instance is hitting ntfy.sh free plan's
 [daily sending limit](https://docs.ntfy.sh/publish/#limitations) and you want to ensure
 reliable notification delivery for ntfy integrations that do not bring their own
 access token.
+
+## `NTFY_SH_TOKEN_FILE` {: #NTFY_SH_TOKEN_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [NTFY_SH_TOKEN](#NTFY_SH_TOKEN) setting.
+If `NTFY_SH_TOKEN` and `NTFY_SH_TOKEN_FILE` are both set, `NTFY_SH_TOKEN_FILE` takes
+precedence.
 
 ## `OPSGENIE_ENABLED` {: #OPSGENIE_ENABLED }
 
@@ -534,6 +592,16 @@ Default: `None`
 The Pushbullet Client Secret, required by the Pushbullet integration. Look it up at
 [https://www.pushbullet.com/#settings/clients](https://www.pushbullet.com/#settings/clients).
 
+## `PUSHBULLET_CLIENT_SECRET_FILE` {: #PUSHBULLET_CLIENT_SECRET_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the
+[PUSHBULLET_CLIENT_SECRET](#PUSHBULLET_CLIENT_SECRET) setting. If
+`PUSHBULLET_CLIENT_SECRET` and `PUSHBULLET_CLIENT_SECRET_FILE` are both set,
+`PUSHBULLET_CLIENT_SECRET_FILE` takes precedence.
+
 ## `PUSHOVER_API_TOKEN` {: #PUSHOVER_API_TOKEN }
 
 Default: `None`
@@ -552,6 +620,15 @@ To enable the Pushover integration:
   `PUSHOVER_API_TOKEN` and `PUSHOVER_SUBSCRIPTION_URL` environment
   variables. The Pushover subscription URL should look similar to
   `https://pushover.net/subscribe/yourAppName-randomAlphaNumericData`.
+
+## `PUSHOVER_API_TOKEN_FILE` {: #PUSHOVER_API_TOKEN_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [PUSHOVER_API_TOKEN](#PUSHOVER_API_TOKEN)
+setting. If `PUSHOVER_API_TOKEN` and `PUSHOVER_API_TOKEN_FILE` are both set,
+`PUSHOVER_API_TOKEN_FILE` takes precedence.
 
 ## `PUSHOVER_EMERGENCY_EXPIRATION` {: #PUSHOVER_EMERGENCY_EXPIRATION }
 
@@ -694,6 +771,15 @@ Default: `None`
 
 The secret key of an account in S3 service.
 
+## `S3_SECRET_KEY_FILE` {: #S3_SECRET_KEY_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [S3_SECRET_KEY](#S3_SECRET_KEY) setting.
+If `S3_SECRET_KEY` and `S3_SECRET_KEY_FILE` are both set, `S3_SECRET_KEY_FILE` takes
+precedence.
+
 ## `S3_TIMEOUT` {: #S3_TIMEOUT }
 
 Default: `60`
@@ -716,6 +802,15 @@ unpredictable value.
 
 This is a standard Django setting, read more in
 [Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key).
+
+## `SECRET_KEY_FILE` {: #SECRET_KEY_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [SECRET_KEY](#SECRET_KEY) setting.
+If `SECRET_KEY` and `SECRET_KEY_FILE` are both set, `SECRET_KEY_FILE` takes
+precedence.
 
 ## `SECURE_PROXY_SSL_HEADER` {: #SECURE_PROXY_SSL_HEADER }
 
@@ -907,6 +1002,15 @@ Default: `None`
 The Slack Client Secret. Required if `SLACK_CLIENT_ID` is set.
 Look it up at [https://api.slack.com/apps/](https://api.slack.com/apps/).
 
+## `SLACK_CLIENT_SECRET_FILE` {: #SLACK_CLIENT_SECRET_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [SLACK_CLIENT_SECRET](#SLACK_CLIENT_SECRET)
+setting. If `SLACK_CLIENT_SECRET` and `SLACK_CLIENT_SECRET_FILE` are both set,
+`SLACK_CLIENT_SECRET_FILE` takes precedence.
+
 ## `SLACK_ENABLED` {: #SLACK_ENABLED }
 
 Default: `True`
@@ -950,6 +1054,15 @@ Default: `None`
 
 The Telegram bot user's authentication token, required by the Telegram integration.
 
+## `TELEGRAM_TOKEN_FILE` {: #TELEGRAM_TOKEN_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [TELEGRAM_TOKEN](#TELEGRAM_TOKEN) setting.
+If `TELEGRAM_TOKEN` and `TELEGRAM_TOKEN_FILE` are both set, `TELEGRAM_TOKEN_FILE` takes
+precedence.
+
 ## `TRELLO_APP_KEY` {: #TRELLO_APP_KEY }
 
 Default: `None`
@@ -959,6 +1072,15 @@ The [Trello](https://trello.com/) app key, required by the Trello integration.
 To set up the Trello integration, get a developer API key from
 [https://trello.com/app-key](https://trello.com/app-key) and put it in the
 `TRELLO_APP_KEY` environment variable.
+
+## `TRELLO_APP_KEY_FILE` {: #TRELLO_APP_KEY_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [TRELLO_APP_KEY](#TRELLO_APP_KEY) setting.
+If `TRELLO_APP_KEY` and `TRELLO_APP_KEY_FILE` are both set, `TRELLO_APP_KEY_FILE` takes
+precedence.
 
 ## `TWILIO_ACCOUNT` {: #TWILIO_ACCOUNT }
 
@@ -971,6 +1093,15 @@ Twilio Account SID, required by the SMS, Call, and WhatsApp integrations.
 Default: `None`
 
 Twilio Auth token, required by the SMS, Call, and WhatsApp integrations.
+
+## `TWILIO_AUTH_FILE` {: #TWILIO_AUTH_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [TWILIO_AUTH](#TWILIO_AUTH) setting.
+If `TWILIO_AUTH` and `TWILIO_AUTH_FILE` are both set, `TWILIO_AUTH_FILE` takes
+precedence.
 
 ## `TWILIO_FROM` {: #TWILIO_FROM }
 

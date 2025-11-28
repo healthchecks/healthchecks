@@ -10,6 +10,7 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#DB_HOST">DB_HOST</a></li>
 <li><a href="#DB_NAME">DB_NAME</a></li>
 <li><a href="#DB_PASSWORD">DB_PASSWORD</a></li>
+<li><a href="#DB_PASSWORD_FILE">DB_PASSWORD_FILE</a></li>
 <li><a href="#DB_PORT">DB_PORT</a></li>
 <li><a href="#DB_SSLMODE">DB_SSLMODE</a></li>
 <li><a href="#DB_TARGET_SESSION_ATTRS">DB_TARGET_SESSION_ATTRS</a></li>
@@ -18,8 +19,10 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#DEFAULT_FROM_EMAIL">DEFAULT_FROM_EMAIL</a></li>
 <li><a href="#DISCORD_CLIENT_ID">DISCORD_CLIENT_ID</a></li>
 <li><a href="#DISCORD_CLIENT_SECRET">DISCORD_CLIENT_SECRET</a></li>
+<li><a href="#DISCORD_CLIENT_SECRET_FILE">DISCORD_CLIENT_SECRET_FILE</a></li>
 <li><a href="#EMAIL_HOST">EMAIL_HOST</a></li>
 <li><a href="#EMAIL_HOST_PASSWORD">EMAIL_HOST_PASSWORD</a></li>
+<li><a href="#EMAIL_HOST_PASSWORD_FILE">EMAIL_HOST_PASSWORD_FILE</a></li>
 <li><a href="#EMAIL_HOST_USER">EMAIL_HOST_USER</a></li>
 <li><a href="#EMAIL_PORT">EMAIL_PORT</a></li>
 <li><a href="#EMAIL_USE_TLS">EMAIL_USE_TLS</a></li>
@@ -27,15 +30,15 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#EMAIL_USE_VERIFICATION">EMAIL_USE_VERIFICATION</a></li>
 <li><a href="#http_proxy">http_proxy and https_proxy</a></li>
 <li><a href="#INTEGRATIONS_ALLOW_PRIVATE_IPS">INTEGRATIONS_ALLOW_PRIVATE_IPS</a></li>
-<li><a href="#LINENOTIFY_CLIENT_ID">LINENOTIFY_CLIENT_ID</a></li>
-<li><a href="#LINENOTIFY_CLIENT_SECRET">LINENOTIFY_CLIENT_SECRET</a></li>
 <li><a href="#MASTER_BADGE_URL">MASTER_BADGE_LABEL</a></li>
 <li><a href="#MATRIX_ACCESS_TOKEN">MATRIX_ACCESS_TOKEN</a></li>
+<li><a href="#MATRIX_ACCESS_TOKEN_FILE">MATRIX_ACCESS_TOKEN_FILE</a></li>
 <li><a href="#MATRIX_HOMESERVER">MATRIX_HOMESERVER</a></li>
 <li><a href="#MATRIX_USER_ID">MATRIX_USER_ID</a></li>
 <li><a href="#MATTERMOST_ENABLED">MATTERMOST_ENABLED</a></li>
 <li><a href="#MSTEAMS_ENABLED">MSTEAMS_ENABLED</a></li>
 <li><a href="#NTFY_SH_TOKEN">NTFY_SH_TOKEN</a></li>
+<li><a href="#NTFY_SH_TOKEN_FILE">NTFY_SH_TOKEN_FILE</a></li>
 <li><a href="#OPSGENIE_ENABLED">OPSGENIE_ENABLED</a></li>
 <li><a href="#PAGERTREE_ENABLED">PAGERTREE_ENABLED</a></li>
 <li><a href="#PD_APP_ID">PD_APP_ID</a></li>
@@ -46,7 +49,9 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#PROMETHEUS_ENABLED">PROMETHEUS_ENABLED</a></li>
 <li><a href="#PUSHBULLET_CLIENT_ID">PUSHBULLET_CLIENT_ID</a></li>
 <li><a href="#PUSHBULLET_CLIENT_SECRET">PUSHBULLET_CLIENT_SECRET</a></li>
+<li><a href="#PUSHBULLET_CLIENT_SECRET_FILE">PUSHBULLET_CLIENT_SECRET_FILE</a></li>
 <li><a href="#PUSHOVER_API_TOKEN">PUSHOVER_API_TOKEN</a></li>
+<li><a href="#PUSHOVER_API_TOKEN_FILE">PUSHOVER_API_TOKEN_FILE</a></li>
 <li><a href="#PUSHOVER_EMERGENCY_EXPIRATION">PUSHOVER_EMERGENCY_EXPIRATION</a></li>
 <li><a href="#PUSHOVER_EMERGENCY_RETRY_DELAY">PUSHOVER_EMERGENCY_RETRY_DELAY</a></li>
 <li><a href="#PUSHOVER_SUBSCRIPTION_URL">PUSHOVER_SUBSCRIPTION_URL</a></li>
@@ -59,9 +64,11 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#S3_ENDPOINT">S3_ENDPOINT</a></li>
 <li><a href="#S3_REGION">S3_REGION</a></li>
 <li><a href="#S3_SECRET_KEY">S3_SECRET_KEY</a></li>
+<li><a href="#S3_SECRET_KEY_FILE">S3_SECRET_KEY_FILE</a></li>
 <li><a href="#S3_TIMEOUT">S3_TIMEOUT</a></li>
 <li><a href="#S3_SECURE">S3_SECURE</a></li>
 <li><a href="#SECRET_KEY">SECRET_KEY</a></li>
+<li><a href="#SECRET_KEY_FILE">SECRET_KEY_FILE</a></li>
 <li><a href="#SECURE_PROXY_SSL_HEADER">SECURE_PROXY_SSL_HEADER</a></li>
 <li><a href="#SHELL_ENABLED">SHELL_ENABLED</a></li>
 <li><a href="#SIGNAL_CLI_SOCKET">SIGNAL_CLI_SOCKET</a></li>
@@ -70,13 +77,17 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#SITE_ROOT">SITE_ROOT</a></li>
 <li><a href="#SLACK_CLIENT_ID">SLACK_CLIENT_ID</a></li>
 <li><a href="#SLACK_CLIENT_SECRET">SLACK_CLIENT_SECRET</a></li>
+<li><a href="#SLACK_CLIENT_SECRET_FILE">SLACK_CLIENT_SECRET_FILE</a></li>
 <li><a href="#SLACK_ENABLED">SLACK_ENABLED</a></li>
 <li><a href="#SPIKE_ENABLED">SPIKE_ENABLED</a></li>
 <li><a href="#TELEGRAM_BOT_NAME">TELEGRAM_BOT_NAME</a></li>
 <li><a href="#TELEGRAM_TOKEN">TELEGRAM_TOKEN</a></li>
+<li><a href="#TELEGRAM_TOKEN_FILE">TELEGRAM_TOKEN_FILE</a></li>
 <li><a href="#TRELLO_APP_KEY">TRELLO_APP_KEY</a></li>
+<li><a href="#TRELLO_APP_KEY_FILE">TRELLO_APP_KEY_FILE</a></li>
 <li><a href="#TWILIO_ACCOUNT">TWILIO_ACCOUNT</a></li>
 <li><a href="#TWILIO_AUTH">TWILIO_AUTH</a></li>
+<li><a href="#TWILIO_AUTH_FILE">TWILIO_AUTH_FILE</a></li>
 <li><a href="#TWILIO_FROM">TWILIO_FROM</a></li>
 <li><a href="#TWILIO_MESSAGING_SERVICE_SID">TWILIO_MESSAGING_SERVICE_SID</a></li>
 <li><a href="#TWILIO_USE_WHATSAPP">TWILIO_USE_WHATSAPP</a></li>
@@ -138,6 +149,12 @@ integration.</p>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#password">Django documentation</a>.</p>
+<h2 id="DB_PASSWORD_FILE"><code>DB_PASSWORD_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#DB_PASSWORD">DB_PASSWORD</a> setting.
+If <code>DB_PASSWORD</code> and <code>DB_PASSWORD_FILE</code> are both set, <code>DB_PASSWORD_FILE</code> takes
+precedence.</p>
 <h2 id="DB_PORT"><code>DB_PORT</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
@@ -181,6 +198,12 @@ integration.</p>
 <p>Default: <code>None</code></p>
 <p>The Discord Client Secret, required by the Discord integration. Look it up at
 <a href="https://discordapp.com/developers/applications/me">https://discordapp.com/developers/applications/me</a>.</p>
+<h2 id="DISCORD_CLIENT_SECRET_FILE"><code>DISCORD_CLIENT_SECRET_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#DISCORD_CLIENT_SECRET">DISCORD_CLIENT_SECRET</a>
+setting. If <code>DISCORD_CLIENT_SECRET</code> and <code>DISCORD_CLIENT_SECRET_FILE</code> are both set,
+<code>DISCORD_CLIENT_SECRET_FILE</code> takes precedence.</p>
 <h2 id="EMAIL_HOST"><code>EMAIL_HOST</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
@@ -189,6 +212,12 @@ integration.</p>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password">Django documentation</a>.</p>
+<h2 id="EMAIL_HOST_PASSWORD_FILE"><code>EMAIL_HOST_PASSWORD_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#EMAIL_HOST_PASSWORD">EMAIL_HOST_PASSWORD</a>
+setting. If <code>EMAIL_HOST_PASSWORD</code> and <code>EMAIL_HOST_PASSWORD_FILE</code>
+are both set, <code>EMAIL_HOST_PASSWORD_FILE</code> takes precedence.</p>
 <h2 id="EMAIL_HOST_USER"><code>EMAIL_HOST_USER</code></h2>
 <p>Default: <code>""</code> (empty string)</p>
 <p>This is a standard Django setting, read more in
@@ -245,10 +274,6 @@ while setting up new integrations (e.g. during the OAuth2 authorization flow).</
 <p>This setting also affects connections to the proxy server when the <code>http_proxy</code> or
 <code>https_proxy</code> environment variables are set. If your proxy server has a private
 IP address, you will need to enable <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> to use it.</p>
-<h2 id="LINENOTIFY_CLIENT_ID"><code>LINENOTIFY_CLIENT_ID</code></h2>
-<p>Default: <code>None</code></p>
-<h2 id="LINENOTIFY_CLIENT_SECRET"><code>LINENOTIFY_CLIENT_SECRET</code></h2>
-<p>Default: <code>None</code></p>
 <h2 id="MASTER_BADGE_URL"><code>MASTER_BADGE_LABEL</code></h2>
 <p>Default: same as <code>SITE_NAME</code></p>
 <p>The label for the "Overall Status" status badge.</p>
@@ -269,6 +294,12 @@ integration.</p>
 <span class="na">MATRIX_USER_ID</span><span class="o">=</span><span class="s">@mychecks:matrix.org</span>
 </code></pre></div>
 
+<h2 id="MATRIX_ACCESS_TOKEN_FILE"><code>MATRIX_ACCESS_TOKEN_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#MATRIX_ACCESS_TOKEN">MATRIX_ACCESS_TOKEN</a>
+setting. If <code>MATRIX_ACCESS_TOKEN</code> and <code>MATRIX_ACCESS_TOKEN_FILE</code> are both set,
+<code>MATRIX_ACCESS_TOKEN_FILE</code> takes precedence.</p>
 <h2 id="MATRIX_HOMESERVER"><code>MATRIX_HOMESERVER</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Matrix bot's homeserver address, required by the Matrix integration.</p>
@@ -291,6 +322,12 @@ when setting up the ntfy integration.</p>
 <a href="https://docs.ntfy.sh/publish/#limitations">daily sending limit</a> and you want to ensure
 reliable notification delivery for ntfy integrations that do not bring their own
 access token.</p>
+<h2 id="NTFY_SH_TOKEN_FILE"><code>NTFY_SH_TOKEN_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#NTFY_SH_TOKEN">NTFY_SH_TOKEN</a> setting.
+If <code>NTFY_SH_TOKEN</code> and <code>NTFY_SH_TOKEN_FILE</code> are both set, <code>NTFY_SH_TOKEN_FILE</code> takes
+precedence.</p>
 <h2 id="OPSGENIE_ENABLED"><code>OPSGENIE_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Opsgenie integration. Enabled by default.</p>
@@ -385,6 +422,13 @@ https://ping.my-hc.example.org/1fj9XWM6Ns8vLGTmnPGk9g/dummy-slug
 <p>Default: <code>None</code></p>
 <p>The Pushbullet Client Secret, required by the Pushbullet integration. Look it up at
 <a href="https://www.pushbullet.com/#settings/clients">https://www.pushbullet.com/#settings/clients</a>.</p>
+<h2 id="PUSHBULLET_CLIENT_SECRET_FILE"><code>PUSHBULLET_CLIENT_SECRET_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the
+<a href="#PUSHBULLET_CLIENT_SECRET">PUSHBULLET_CLIENT_SECRET</a> setting. If
+<code>PUSHBULLET_CLIENT_SECRET</code> and <code>PUSHBULLET_CLIENT_SECRET_FILE</code> are both set,
+<code>PUSHBULLET_CLIENT_SECRET_FILE</code> takes precedence.</p>
 <h2 id="PUSHOVER_API_TOKEN"><code>PUSHOVER_API_TOKEN</code></h2>
 <p>Default: <code>None</code></p>
 <p>The <a href="https://pushover.net/">Pushover</a> API token, required by the Pushover integration.</p>
@@ -401,6 +445,12 @@ https://ping.my-hc.example.org/1fj9XWM6Ns8vLGTmnPGk9g/dummy-slug
   variables. The Pushover subscription URL should look similar to
   <code>https://pushover.net/subscribe/yourAppName-randomAlphaNumericData</code>.</li>
 </ul>
+<h2 id="PUSHOVER_API_TOKEN_FILE"><code>PUSHOVER_API_TOKEN_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#PUSHOVER_API_TOKEN">PUSHOVER_API_TOKEN</a>
+setting. If <code>PUSHOVER_API_TOKEN</code> and <code>PUSHOVER_API_TOKEN_FILE</code> are both set,
+<code>PUSHOVER_API_TOKEN_FILE</code> takes precedence.</p>
 <h2 id="PUSHOVER_EMERGENCY_EXPIRATION"><code>PUSHOVER_EMERGENCY_EXPIRATION</code></h2>
 <p>Default: <code>86400</code> (24 hours)</p>
 <p>Specifies how many seconds an emergency Pushover notification
@@ -497,6 +547,12 @@ credentials to an S3-compatible service by setting the following environment var
 <h2 id="S3_SECRET_KEY"><code>S3_SECRET_KEY</code></h2>
 <p>Default: <code>None</code></p>
 <p>The secret key of an account in S3 service.</p>
+<h2 id="S3_SECRET_KEY_FILE"><code>S3_SECRET_KEY_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#S3_SECRET_KEY">S3_SECRET_KEY</a> setting.
+If <code>S3_SECRET_KEY</code> and <code>S3_SECRET_KEY_FILE</code> are both set, <code>S3_SECRET_KEY_FILE</code> takes
+precedence.</p>
 <h2 id="S3_TIMEOUT"><code>S3_TIMEOUT</code></h2>
 <p>Default: <code>60</code></p>
 <p>Timeout for individual S3 operations, in seconds.</p>
@@ -510,6 +566,12 @@ use unencrypted HTTP requests, set this value to <code>False</code>.</p>
 unpredictable value.</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key">Django documentation</a>.</p>
+<h2 id="SECRET_KEY_FILE"><code>SECRET_KEY_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#SECRET_KEY">SECRET_KEY</a> setting.
+If <code>SECRET_KEY</code> and <code>SECRET_KEY_FILE</code> are both set, <code>SECRET_KEY_FILE</code> takes
+precedence.</p>
 <h2 id="SECURE_PROXY_SSL_HEADER"><code>SECURE_PROXY_SSL_HEADER</code></h2>
 <p>Default: <code>None</code></p>
 <p>Comma-separated HTTP header name and value that signifies a request is secure
@@ -650,6 +712,12 @@ and create a <em>Slack app</em>. When setting up the Slack app, make sure to:</p
 <p>Default: <code>None</code></p>
 <p>The Slack Client Secret. Required if <code>SLACK_CLIENT_ID</code> is set.
 Look it up at <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>.</p>
+<h2 id="SLACK_CLIENT_SECRET_FILE"><code>SLACK_CLIENT_SECRET_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#SLACK_CLIENT_SECRET">SLACK_CLIENT_SECRET</a>
+setting. If <code>SLACK_CLIENT_SECRET</code> and <code>SLACK_CLIENT_SECRET_FILE</code> are both set,
+<code>SLACK_CLIENT_SECRET_FILE</code> takes precedence.</p>
 <h2 id="SLACK_ENABLED"><code>SLACK_ENABLED</code></h2>
 <p>Default: <code>True</code></p>
 <p>A boolean that turns on/off the Healthchecks integration for Slack. Enabled by default.</p>
@@ -679,18 +747,36 @@ scheme.</p>
 <h2 id="TELEGRAM_TOKEN"><code>TELEGRAM_TOKEN</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Telegram bot user's authentication token, required by the Telegram integration.</p>
+<h2 id="TELEGRAM_TOKEN_FILE"><code>TELEGRAM_TOKEN_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#TELEGRAM_TOKEN">TELEGRAM_TOKEN</a> setting.
+If <code>TELEGRAM_TOKEN</code> and <code>TELEGRAM_TOKEN_FILE</code> are both set, <code>TELEGRAM_TOKEN_FILE</code> takes
+precedence.</p>
 <h2 id="TRELLO_APP_KEY"><code>TRELLO_APP_KEY</code></h2>
 <p>Default: <code>None</code></p>
 <p>The <a href="https://trello.com/">Trello</a> app key, required by the Trello integration.</p>
 <p>To set up the Trello integration, get a developer API key from
 <a href="https://trello.com/app-key">https://trello.com/app-key</a> and put it in the
 <code>TRELLO_APP_KEY</code> environment variable.</p>
+<h2 id="TRELLO_APP_KEY_FILE"><code>TRELLO_APP_KEY_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#TRELLO_APP_KEY">TRELLO_APP_KEY</a> setting.
+If <code>TRELLO_APP_KEY</code> and <code>TRELLO_APP_KEY_FILE</code> are both set, <code>TRELLO_APP_KEY_FILE</code> takes
+precedence.</p>
 <h2 id="TWILIO_ACCOUNT"><code>TWILIO_ACCOUNT</code></h2>
 <p>Default: <code>None</code></p>
 <p>Twilio Account SID, required by the SMS, Call, and WhatsApp integrations.</p>
 <h2 id="TWILIO_AUTH"><code>TWILIO_AUTH</code></h2>
 <p>Default: <code>None</code></p>
 <p>Twilio Auth token, required by the SMS, Call, and WhatsApp integrations.</p>
+<h2 id="TWILIO_AUTH_FILE"><code>TWILIO_AUTH_FILE</code></h2>
+<p>Default: None</p>
+<p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the <a href="#TWILIO_AUTH">TWILIO_AUTH</a> setting.
+If <code>TWILIO_AUTH</code> and <code>TWILIO_AUTH_FILE</code> are both set, <code>TWILIO_AUTH_FILE</code> takes
+precedence.</p>
 <h2 id="TWILIO_FROM"><code>TWILIO_FROM</code></h2>
 <p>Default: <code>None</code></p>
 <p>The Twilio phone number to use as the sender for SMS and WhatsApp notifications,
