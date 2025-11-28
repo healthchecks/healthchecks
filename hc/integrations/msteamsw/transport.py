@@ -12,9 +12,6 @@ from hc.lib.typealias import JSONDict, JSONList
 class MsTeamsWorkflow(HttpTransport):
     def fix_asterisks(self, s: str) -> str:
         """Escape asterisks so that they are not recognized as Markdown syntax."""
-
-        # FIXME check if this can be removed. IIRC this was carried over
-        # from Slack integration, perhaps MS Teams does not need it.
         return s.replace("*", "\u034f*")
 
     def payload(self, flip: Flip) -> JSONDict:
