@@ -25,10 +25,10 @@ curl<span class="w"> </span>--retry<span class="w"> </span><span class="m">3</sp
 <h2>Python</h2>
 <p>Below is a skeleton code example in Python which signals a failure when the
 work function returns an unexpected value or throws an exception:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
 <span class="n">URL</span> <span class="o">=</span> <span class="s2">&quot;PING_URL&quot;</span>
 
-<span class="k">def</span> <span class="nf">do_work</span><span class="p">():</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">do_work</span><span class="p">():</span>
     <span class="c1"># Do your number crunching, backup dumping, newsletter sending work here.</span>
     <span class="c1"># Return a truthy value on success.</span>
     <span class="c1"># Return a falsy value or throw an exception on failure.</span>
