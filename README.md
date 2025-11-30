@@ -300,10 +300,6 @@ setting to a non-null value. Set its value to your site's domain without scheme
 and without port. For example, if your site runs on `https://my-hc.example.org`,
 set `RP_ID` to `my-hc.example.org`.
 
-Note that WebAuthn requires HTTPS, even if running on localhost. To test WebAuthn
-locally with a self-signed certificate, you can use the `runsslserver` command
-from the `django-sslserver` package.
-
 ## External Authentication
 
 Healthchecks supports external authentication by means of HTTP headers set by
