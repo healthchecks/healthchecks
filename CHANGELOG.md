@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.13-dev - Unreleased
+## v3.13 - 2025-11-30
 
 ### Improvements
 - Add new content filtering options in the "Filtering Rules" dialog (#1130, #954)
