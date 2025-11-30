@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
 - Fix the email integration's unsub view to disable (not delete) the channel
 - Add support for _FILE environment variables (#1184)
 
+### Bug Fixes
+- Pin minio in Dockerfile to a known good version (#1235)
+
 ## v3.12 - 2025-11-26
 
 ### Improvements
