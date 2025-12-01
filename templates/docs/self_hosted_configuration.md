@@ -30,6 +30,12 @@ from environment variables. Below is a list of environment variables it reads an
 <li><a href="#EMAIL_USE_TLS">EMAIL_USE_TLS</a></li>
 <li><a href="#EMAIL_USE_SSL">EMAIL_USE_SSL</a></li>
 <li><a href="#EMAIL_USE_VERIFICATION">EMAIL_USE_VERIFICATION</a></li>
+<li><a href="#GITHUB_CLIENT_ID">GITHUB_CLIENT_ID</a></li>
+<li><a href="#GITHUB_CLIENT_SECRET">GITHUB_CLIENT_SECRET</a></li>
+<li><a href="#GITHUB_CLIENT_SECRET_FILE">GITHUB_CLIENT_SECRET_FILE</a></li>
+<li><a href="#GITHUB_PRIVATE_KEY">GITHUB_PRIVATE_KEY</a></li>
+<li><a href="#GITHUB_PRIVATE_KEY_FILE">GITHUB_PRIVATE_KEY_FILE</a></li>
+<li><a href="#GITHUB_PUBLIC_LINK">GITHUB_PUBLIC_LINK</a></li>
 <li><a href="#http_proxy">http_proxy and https_proxy</a></li>
 <li><a href="#INTEGRATIONS_ALLOW_PRIVATE_IPS">INTEGRATIONS_ALLOW_PRIVATE_IPS</a></li>
 <li><a href="#MASTER_BADGE_URL">MASTER_BADGE_LABEL</a></li>
@@ -333,6 +339,68 @@ after the user clicks the verification link.
 If you are setting up a private healthchecks instance where
 you trust your users, you can opt to disable the verification step. In that case,
 set `EMAIL_USE_VERIFICATION` to `False`.
+
+## `GITHUB_CLIENT_ID` {: #GITHUB_CLIENT_ID }
+
+Default: `None`
+
+The GitHub Client ID, required by the GitHub Issues integration.
+
+To set up the GitHub Issues integration:
+
+* [Register a new GitHub App](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app)
+  (not OAuth app).
+* In GitHub App settings, under **General › About**, look up the **Client ID** and **Public link** values and put
+  them in the Healthchecks `GITHUB_CLIENT_ID` and `GITHUB_PUBLIC_LINK` environment
+  variables respectively.
+* Under **General › Client secrets**, generate a client secret, and put it in the
+  Healthchecks `GITHUB_CLIENT_SECRET` environment variable.
+* Under **General › Identifying and authorizing users**, set the **Callback URL**.
+  The URL format is `SITE_ROOT/integrations/add_github/`.
+  For example, if `your SITE_ROOT` is `https://my-hc.example.org` then the
+  Callback URL would be `https://my-hc.example.org/integrations/add_github/`.
+* Under **General › Post installation**, set **Setup URL** to the same value.
+* Under **General › Private keys**, generate a private key and put it in the
+  Healthchecks `GITHUB_PRIVATE_KEY` environment variable.
+* Under **Permissions & events › Repository permissions**, set access for permission
+  "Issues" to "Read and write".
+
+## `GITHUB_CLIENT_SECRET` {: #GITHUB_CLIENT_SECRET }
+
+Default: `None`
+
+The GitHub App's Client Secret, required by the GitHub Issues integration.
+
+## `GITHUB_CLIENT_SECRET_FILE` {: #GITHUB_CLIENT_SECRET_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [GITHUB_CLIENT_SECRET](#GITHUB_CLIENT_SECRET)
+setting. If `GITHUB_CLIENT_SECRET` and `GITHUB_CLIENT_SECRET_FILE` are both set,
+`GITHUB_CLIENT_SECRET_FILE` takes precedence.
+
+## `GITHUB_PRIVATE_KEY` {: #GITHUB_PRIVATE_KEY }
+
+Default: `None`
+
+The GitHub App's private key, required by the GitHub Issues integration.
+
+## `GITHUB_PRIVATE_KEY_FILE` {: #GITHUB_PRIVATE_KEY_FILE }
+
+Default: None
+
+If set, must contain a filesystem path pointing to a readable file. Healthchecks will
+read the contents of the file into the [GITHUB_PRIVATE_KEY](#GITHUB_PRIVATE_KEY)
+setting. If `GITHUB_PRIVATE_KEY` and `GITHUB_PRIVATE_KEY_FILE` are both set,
+`GITHUB_PRIVATE_KEY_FILE` takes precedence.
+
+## `GITHUB_PUBLIC_LINK` {: #GITHUB_PUBLIC_LINK }
+
+Default: `None`
+
+A URL pointing to the  GitHub App's public page on the GitHub website, required by
+the GitHub Issues integration.
 
 ## `http_proxy` and `https_proxy` {: #http_proxy}
 
