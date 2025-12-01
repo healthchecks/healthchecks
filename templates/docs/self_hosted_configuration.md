@@ -190,7 +190,7 @@ This is a standard Django setting, read more in
 
 ## `DB_PASSWORD_FILE` {: #DB_PASSWORD_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [DB_PASSWORD](#DB_PASSWORD) setting.
@@ -268,7 +268,7 @@ The Discord Client Secret, required by the Discord integration. Look it up at
 
 ## `DISCORD_CLIENT_SECRET_FILE` {: #DISCORD_CLIENT_SECRET_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [DISCORD_CLIENT_SECRET](#DISCORD_CLIENT_SECRET)
@@ -291,7 +291,7 @@ This is a standard Django setting, read more in
 
 ## `EMAIL_HOST_PASSWORD_FILE` {: #EMAIL_HOST_PASSWORD_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [EMAIL_HOST_PASSWORD](#EMAIL_HOST_PASSWORD)
@@ -373,7 +373,7 @@ The GitHub App's Client Secret, required by the GitHub Issues integration.
 
 ## `GITHUB_CLIENT_SECRET_FILE` {: #GITHUB_CLIENT_SECRET_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [GITHUB_CLIENT_SECRET](#GITHUB_CLIENT_SECRET)
@@ -388,7 +388,7 @@ The GitHub App's private key, required by the GitHub Issues integration.
 
 ## `GITHUB_PRIVATE_KEY_FILE` {: #GITHUB_PRIVATE_KEY_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [GITHUB_PRIVATE_KEY](#GITHUB_PRIVATE_KEY)
@@ -475,7 +475,7 @@ MATRIX_USER_ID=@mychecks:matrix.org
 
 ## `MATRIX_ACCESS_TOKEN_FILE` {: #MATRIX_ACCESS_TOKEN_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [MATRIX_ACCESS_TOKEN](#MATRIX_ACCESS_TOKEN)
@@ -522,7 +522,7 @@ access token.
 
 ## `NTFY_SH_TOKEN_FILE` {: #NTFY_SH_TOKEN_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [NTFY_SH_TOKEN](#NTFY_SH_TOKEN) setting.
@@ -662,7 +662,7 @@ The Pushbullet Client Secret, required by the Pushbullet integration. Look it up
 
 ## `PUSHBULLET_CLIENT_SECRET_FILE` {: #PUSHBULLET_CLIENT_SECRET_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the
@@ -691,7 +691,7 @@ To enable the Pushover integration:
 
 ## `PUSHOVER_API_TOKEN_FILE` {: #PUSHOVER_API_TOKEN_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [PUSHOVER_API_TOKEN](#PUSHOVER_API_TOKEN)
@@ -841,7 +841,7 @@ The secret key of an account in S3 service.
 
 ## `S3_SECRET_KEY_FILE` {: #S3_SECRET_KEY_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [S3_SECRET_KEY](#S3_SECRET_KEY) setting.
@@ -873,7 +873,7 @@ This is a standard Django setting, read more in
 
 ## `SECRET_KEY_FILE` {: #SECRET_KEY_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [SECRET_KEY](#SECRET_KEY) setting.
@@ -1072,7 +1072,7 @@ Look it up at [https://api.slack.com/apps/](https://api.slack.com/apps/).
 
 ## `SLACK_CLIENT_SECRET_FILE` {: #SLACK_CLIENT_SECRET_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [SLACK_CLIENT_SECRET](#SLACK_CLIENT_SECRET)
@@ -1124,7 +1124,7 @@ The Telegram bot user's authentication token, required by the Telegram integrati
 
 ## `TELEGRAM_TOKEN_FILE` {: #TELEGRAM_TOKEN_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [TELEGRAM_TOKEN](#TELEGRAM_TOKEN) setting.
@@ -1143,7 +1143,7 @@ To set up the Trello integration, get a developer API key from
 
 ## `TRELLO_APP_KEY_FILE` {: #TRELLO_APP_KEY_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [TRELLO_APP_KEY](#TRELLO_APP_KEY) setting.
@@ -1164,7 +1164,7 @@ Twilio Auth token, required by the SMS, Call, and WhatsApp integrations.
 
 ## `TWILIO_AUTH_FILE` {: #TWILIO_AUTH_FILE }
 
-Default: None
+Default: `None`
 
 If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the [TWILIO_AUTH](#TWILIO_AUTH) setting.

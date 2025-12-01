@@ -156,7 +156,7 @@ integration.</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#password">Django documentation</a>.</p>
 <h2 id="DB_PASSWORD_FILE"><code>DB_PASSWORD_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#DB_PASSWORD">DB_PASSWORD</a> setting.
 If <code>DB_PASSWORD</code> and <code>DB_PASSWORD_FILE</code> are both set, <code>DB_PASSWORD_FILE</code> takes
@@ -205,7 +205,7 @@ precedence.</p>
 <p>The Discord Client Secret, required by the Discord integration. Look it up at
 <a href="https://discordapp.com/developers/applications/me">https://discordapp.com/developers/applications/me</a>.</p>
 <h2 id="DISCORD_CLIENT_SECRET_FILE"><code>DISCORD_CLIENT_SECRET_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#DISCORD_CLIENT_SECRET">DISCORD_CLIENT_SECRET</a>
 setting. If <code>DISCORD_CLIENT_SECRET</code> and <code>DISCORD_CLIENT_SECRET_FILE</code> are both set,
@@ -219,7 +219,7 @@ setting. If <code>DISCORD_CLIENT_SECRET</code> and <code>DISCORD_CLIENT_SECRET_F
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password">Django documentation</a>.</p>
 <h2 id="EMAIL_HOST_PASSWORD_FILE"><code>EMAIL_HOST_PASSWORD_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#EMAIL_HOST_PASSWORD">EMAIL_HOST_PASSWORD</a>
 setting. If <code>EMAIL_HOST_PASSWORD</code> and <code>EMAIL_HOST_PASSWORD_FILE</code>
@@ -275,7 +275,7 @@ set <code>EMAIL_USE_VERIFICATION</code> to <code>False</code>.</p>
 <p>Default: <code>None</code></p>
 <p>The GitHub App's Client Secret, required by the GitHub Issues integration.</p>
 <h2 id="GITHUB_CLIENT_SECRET_FILE"><code>GITHUB_CLIENT_SECRET_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#GITHUB_CLIENT_SECRET">GITHUB_CLIENT_SECRET</a>
 setting. If <code>GITHUB_CLIENT_SECRET</code> and <code>GITHUB_CLIENT_SECRET_FILE</code> are both set,
@@ -284,7 +284,7 @@ setting. If <code>GITHUB_CLIENT_SECRET</code> and <code>GITHUB_CLIENT_SECRET_FIL
 <p>Default: <code>None</code></p>
 <p>The GitHub App's private key, required by the GitHub Issues integration.</p>
 <h2 id="GITHUB_PRIVATE_KEY_FILE"><code>GITHUB_PRIVATE_KEY_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#GITHUB_PRIVATE_KEY">GITHUB_PRIVATE_KEY</a>
 setting. If <code>GITHUB_PRIVATE_KEY</code> and <code>GITHUB_PRIVATE_KEY_FILE</code> are both set,
@@ -345,7 +345,7 @@ integration.</p>
 </code></pre></div>
 
 <h2 id="MATRIX_ACCESS_TOKEN_FILE"><code>MATRIX_ACCESS_TOKEN_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#MATRIX_ACCESS_TOKEN">MATRIX_ACCESS_TOKEN</a>
 setting. If <code>MATRIX_ACCESS_TOKEN</code> and <code>MATRIX_ACCESS_TOKEN_FILE</code> are both set,
@@ -373,7 +373,7 @@ when setting up the ntfy integration.</p>
 reliable notification delivery for ntfy integrations that do not bring their own
 access token.</p>
 <h2 id="NTFY_SH_TOKEN_FILE"><code>NTFY_SH_TOKEN_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#NTFY_SH_TOKEN">NTFY_SH_TOKEN</a> setting.
 If <code>NTFY_SH_TOKEN</code> and <code>NTFY_SH_TOKEN_FILE</code> are both set, <code>NTFY_SH_TOKEN_FILE</code> takes
@@ -473,7 +473,7 @@ https://ping.my-hc.example.org/1fj9XWM6Ns8vLGTmnPGk9g/dummy-slug
 <p>The Pushbullet Client Secret, required by the Pushbullet integration. Look it up at
 <a href="https://www.pushbullet.com/#settings/clients">https://www.pushbullet.com/#settings/clients</a>.</p>
 <h2 id="PUSHBULLET_CLIENT_SECRET_FILE"><code>PUSHBULLET_CLIENT_SECRET_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the
 <a href="#PUSHBULLET_CLIENT_SECRET">PUSHBULLET_CLIENT_SECRET</a> setting. If
@@ -496,7 +496,7 @@ read the contents of the file into the
   <code>https://pushover.net/subscribe/yourAppName-randomAlphaNumericData</code>.</li>
 </ul>
 <h2 id="PUSHOVER_API_TOKEN_FILE"><code>PUSHOVER_API_TOKEN_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#PUSHOVER_API_TOKEN">PUSHOVER_API_TOKEN</a>
 setting. If <code>PUSHOVER_API_TOKEN</code> and <code>PUSHOVER_API_TOKEN_FILE</code> are both set,
@@ -598,7 +598,7 @@ credentials to an S3-compatible service by setting the following environment var
 <p>Default: <code>None</code></p>
 <p>The secret key of an account in S3 service.</p>
 <h2 id="S3_SECRET_KEY_FILE"><code>S3_SECRET_KEY_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#S3_SECRET_KEY">S3_SECRET_KEY</a> setting.
 If <code>S3_SECRET_KEY</code> and <code>S3_SECRET_KEY_FILE</code> are both set, <code>S3_SECRET_KEY_FILE</code> takes
@@ -617,7 +617,7 @@ unpredictable value.</p>
 <p>This is a standard Django setting, read more in
 <a href="https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key">Django documentation</a>.</p>
 <h2 id="SECRET_KEY_FILE"><code>SECRET_KEY_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#SECRET_KEY">SECRET_KEY</a> setting.
 If <code>SECRET_KEY</code> and <code>SECRET_KEY_FILE</code> are both set, <code>SECRET_KEY_FILE</code> takes
@@ -763,7 +763,7 @@ and create a <em>Slack app</em>. When setting up the Slack app, make sure to:</p
 <p>The Slack Client Secret. Required if <code>SLACK_CLIENT_ID</code> is set.
 Look it up at <a href="https://api.slack.com/apps/">https://api.slack.com/apps/</a>.</p>
 <h2 id="SLACK_CLIENT_SECRET_FILE"><code>SLACK_CLIENT_SECRET_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#SLACK_CLIENT_SECRET">SLACK_CLIENT_SECRET</a>
 setting. If <code>SLACK_CLIENT_SECRET</code> and <code>SLACK_CLIENT_SECRET_FILE</code> are both set,
@@ -798,7 +798,7 @@ scheme.</p>
 <p>Default: <code>None</code></p>
 <p>The Telegram bot user's authentication token, required by the Telegram integration.</p>
 <h2 id="TELEGRAM_TOKEN_FILE"><code>TELEGRAM_TOKEN_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#TELEGRAM_TOKEN">TELEGRAM_TOKEN</a> setting.
 If <code>TELEGRAM_TOKEN</code> and <code>TELEGRAM_TOKEN_FILE</code> are both set, <code>TELEGRAM_TOKEN_FILE</code> takes
@@ -810,7 +810,7 @@ precedence.</p>
 <a href="https://trello.com/app-key">https://trello.com/app-key</a> and put it in the
 <code>TRELLO_APP_KEY</code> environment variable.</p>
 <h2 id="TRELLO_APP_KEY_FILE"><code>TRELLO_APP_KEY_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#TRELLO_APP_KEY">TRELLO_APP_KEY</a> setting.
 If <code>TRELLO_APP_KEY</code> and <code>TRELLO_APP_KEY_FILE</code> are both set, <code>TRELLO_APP_KEY_FILE</code> takes
@@ -822,7 +822,7 @@ precedence.</p>
 <p>Default: <code>None</code></p>
 <p>Twilio Auth token, required by the SMS, Call, and WhatsApp integrations.</p>
 <h2 id="TWILIO_AUTH_FILE"><code>TWILIO_AUTH_FILE</code></h2>
-<p>Default: None</p>
+<p>Default: <code>None</code></p>
 <p>If set, must contain a filesystem path pointing to a readable file. Healthchecks will
 read the contents of the file into the <a href="#TWILIO_AUTH">TWILIO_AUTH</a> setting.
 If <code>TWILIO_AUTH</code> and <code>TWILIO_AUTH_FILE</code> are both set, <code>TWILIO_AUTH_FILE</code> takes
