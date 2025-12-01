@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v3.14-dev - Unreleased
+
+### Bug Fixes
+- Fix the text version of email report for recently created checks (#1236, @adelton)
+
 ## v3.13 - 2025-11-30
 
 ### Improvements
