@@ -26,7 +26,7 @@ Project "{{ group.grouper|safe }}"
 {{ d.duration|hc_approx_duration }} total{% endcell%}
                 {% else %}
                     {% if d.no_data %}
-                        {% comment %} The check didn't exist yet {% endcomment %}
+                        {% cell %}{% comment %} The check didn't exist yet {% endcomment %}{% endcell %}
                     {% else %}
                         {% cell %}All good!{% endcell %}
                     {% endif %}
