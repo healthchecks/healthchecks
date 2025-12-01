@@ -10,7 +10,7 @@ from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
 from hc.api.management.commands.sendreports import Command
-from hc.api.models import Check
+from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=timezone.utc)
@@ -36,6 +36,14 @@ Project "Alices Project"
 Cheers,
 Mychecks
 """
+
+EMPTY_TABLE = """
++--------+------+-----------+-----------+
+| Status | Name | Nov. 2019 | Dec. 2019 |
++========+======+===========+===========+
+| new    | Foo  |           |           |
++--------+------+-----------+-----------+
+""".strip()
 
 
 @override_settings(SITE_NAME="Mychecks")
@@ -63,9 +71,16 @@ class SendReportsTestCase(BaseTestCase):
 
         # And it needs at least one check that has been pinged.
         self.check = Check(project=self.project, last_ping=now())
+        self.check.created = datetime(2019, 10, 1, tzinfo=timezone.utc)
         self.check.name = "Foo"
         self.check.status = "down"
         self.check.save()
+
+        self.flip = Flip(owner=self.check)
+        self.flip.created = datetime(2019, 12, 31, 23, tzinfo=timezone.utc)
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+        self.flip.save()
 
     def test_it_sends_monthly_report(self) -> None:
         cmd = Command(stdout=Mock())
@@ -87,8 +102,33 @@ class SendReportsTestCase(BaseTestCase):
         # Note, assertEmailContains tests if the fragment appears in
         # *both* text and HTML versions.
         self.assertEmailContains("This is a monthly report")
+
+        # There were no downtimes in November 2019:
         self.assertEmailContains("Nov. 2019")
+        self.assertEmailContains("All good!")
+
+        # There was one hour downtime in December 2019 (the last hour before midnight)
         self.assertEmailContains("Dec. 2019")
+        self.assertEmailContains("1 h 0 min total")
+
+    def test_it_handles_no_data(self) -> None:
+        self.check.status = "new"
+        self.check.created = datetime(2020, 1, 5, tzinfo=timezone.utc)
+        self.check.save()
+
+        self.flip.delete()
+
+        cmd = Command(stdout=Mock())
+        found = cmd.handle_one_report()
+        self.assertTrue(found)
+
+        # The check did not exist in November 2019, so the email should not
+        # contain strings "All good!" or "total"
+        self.assertEmailNotContains("All good!")
+        self.assertEmailNotContains("total")
+
+        # Make sure the text version contains empty cells for months with no data
+        self.assertEmailContainsText(EMPTY_TABLE)
 
     def test_text_report_does_not_escape(self) -> None:
         self.project.name = "Alice & Friends"
