@@ -597,7 +597,8 @@ def pings(request: ApiRequest, code: UUID) -> HttpResponse:
     # There might be more pings in the database (depends on how pruning is handled)
     # but we will not return more than the limit allows.
     profile = Profile.objects.get(user__project=request.project)
-    limit = profile.ping_log_limit
+    # Cap the number of returned pings to 1000.
+    limit = min(profile.ping_log_limit, 1000)
 
     # Query in descending order so we're sure to get the most recent
     # pings, regardless of the limit restriction
