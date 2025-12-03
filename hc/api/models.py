@@ -707,7 +707,9 @@ class Ping(models.Model):
 
         duration = self.duration
         if duration is not None:
-            result["duration"] = duration.total_seconds()
+            # HTTP request timing is imprecise, so millisecond precision is not
+            # useful here, and just wastes bandwidth
+            result["duration"] = round(duration.total_seconds(), 2)
 
         return result
 
