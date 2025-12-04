@@ -28,12 +28,14 @@ class PingTestCase(BaseTestCase):
         self.assertEqual(r.headers["Ping-Body-Limit"], "10000")
 
         self.check.refresh_from_db()
+        self.assertEqual(self.check.n_pings, 1)
         self.assertEqual(self.check.status, "up")
         assert self.check.last_ping
         expected_aa = self.check.last_ping + td(days=1, hours=1)
         self.assertEqual(self.check.alert_after, expected_aa)
 
         ping = Ping.objects.get()
+        self.assertEqual(ping.n, 1)
         self.assertEqual(ping.scheme, "http")
         self.assertEqual(ping.kind, None)
         self.assertEqual(ping.created, self.check.last_ping)

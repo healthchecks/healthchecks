@@ -525,7 +525,6 @@ class Check(models.Model):
             body_lowercase = body.decode(errors="replace").lower()
             self.has_confirmation_link = "confirm" in body_lowercase
             self.save()
-            self.refresh_from_db()
 
             ping = Ping(owner=self)
             ping.n = self.n_pings
