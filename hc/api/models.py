@@ -685,10 +685,14 @@ class Ping(models.Model):
     class GetBodyError(Exception):
         pass
 
-    def to_dict(self) -> PingDict:
+    def to_dict(self, owner_code: uuid.UUID, v: int) -> PingDict:
         if self.has_body():
-            args = [self.owner.code, self.n]
-            body_url = absolute_reverse("hc-api-ping-body", args=args)
+            # Optimization: construct API URLs manually instead of using reverse().
+            # This is significantly quicker when returning hundreds of pings.
+            body_url = (
+                f"{settings.SITE_ROOT}/api/v{v}/checks/{owner_code}/pings/{self.n}/body"
+            )
+
         else:
             body_url = None
 

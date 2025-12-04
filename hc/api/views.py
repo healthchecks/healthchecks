@@ -628,7 +628,10 @@ def pings(request: ApiRequest, code: UUID) -> HttpResponse:
         for ping in pings:
             ping.duration = None
 
-    return JsonResponse({"pings": [p.to_dict() for p in pings]})
+    # Pass check's code to Ping.to_dict(), so it does not need to look it up
+    # (which would result in a database query)
+    ping_dicts = [p.to_dict(owner_code=check.code, v=request.v) for p in pings]
+    return JsonResponse({"pings": ping_dicts})
 
 
 @cors("GET")
