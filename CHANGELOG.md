@@ -1,7 +1,10 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v3.14-dev - Unreleased
+## v4.0-dev - Unreleased
+
+This release drops support of Python 3.11 and below. The minimum required Python
+version is 3.12.
 
 ### Bug Fixes
 - Fix the text version of email report for recently created checks (#1236, @adelton)
