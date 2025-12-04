@@ -74,7 +74,7 @@ SUPPORT_EMAIL = os.getenv("SUPPORT_EMAIL")
 USE_PAYMENTS = envbool("USE_PAYMENTS", "False")
 REGISTRATION_OPEN = envbool("REGISTRATION_OPEN", "True")
 if admins := os.getenv("ADMINS"):
-    ADMINS = [(email, email) for email in admins.split(",")]
+    ADMINS = admins.split(",")
 
 if v := os.getenv("SECURE_PROXY_SSL_HEADER"):
     SECURE_PROXY_SSL_HEADER = tuple(v.split(",", maxsplit=1))

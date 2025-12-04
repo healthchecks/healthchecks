@@ -452,7 +452,7 @@ class NotifySignalTestCase(BaseTestCase):
         # outbox should be empty now
         self.assertEqual(socketobj.outbox, b"")
 
-    @override_settings(ADMINS=[("Admin", "admin@example.org")])
+    @override_settings(ADMINS=["admin@example.org"])
     def test_it_handles_rate_limit_failure(self, socket: Mock) -> None:
         msg = {
             "error": {
