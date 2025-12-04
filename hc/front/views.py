@@ -565,7 +565,7 @@ def update_name(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.desc = form.cleaned_data["desc"]
         check.save()
 
-    if "/details/" in request.META.get("HTTP_REFERER", ""):
+    if "/details/" in request.headers.get("Referer", ""):
         return redirect("hc-details", code)
 
     url = reverse("hc-checks", args=[check.project.code])
@@ -648,7 +648,7 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
 
     check.save()
 
-    if "/details/" in request.META.get("HTTP_REFERER", ""):
+    if "/details/" in request.headers.get("Referer", ""):
         return redirect("hc-details", code)
 
     url = reverse("hc-checks", args=[check.project.code])
@@ -814,7 +814,7 @@ def pause(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check.project.update_next_nag_dates()
 
     # Don't redirect after an AJAX request:
-    if request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest":
+    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return HttpResponse()
 
     return redirect("hc-details", code)

@@ -867,7 +867,7 @@ def metrics(request: HttpRequest) -> HttpResponse:
     if not settings.METRICS_KEY:
         return HttpResponseForbidden()
 
-    key = request.META.get("HTTP_X_METRICS_KEY")
+    key = request.headers.get("X-Metrics-Key")
     if key != settings.METRICS_KEY:
         return HttpResponseForbidden()
 

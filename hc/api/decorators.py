@@ -44,8 +44,8 @@ def authorize(f: ViewFunc) -> ViewFunc:
         else:
             request.json = {}
 
-        if "HTTP_X_API_KEY" in request.META:
-            api_key = request.META["HTTP_X_API_KEY"]
+        if "X-Api-Key" in request.headers:
+            api_key = request.headers["X-Api-Key"]
         elif "api_key" in request.json:
             api_key = str(request.json["api_key"])
         else:
@@ -69,8 +69,8 @@ def authorize(f: ViewFunc) -> ViewFunc:
 def authorize_read(f: ViewFunc) -> ViewFunc:
     @wraps(f)
     def wrapper(request: ApiRequest, *args: Any, **kwds: Any) -> HttpResponse:
-        if "HTTP_X_API_KEY" in request.META:
-            api_key = request.META["HTTP_X_API_KEY"]
+        if "X-Api-Key" in request.headers:
+            api_key = request.headers["X-Api-Key"]
         else:
             api_key = ""
 

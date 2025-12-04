@@ -37,7 +37,7 @@ def add_prometheus(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
 def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpResponse:
     if key is None:
         # If key was not in the URL, expect it in the Authorization request header
-        key = request.META.get("HTTP_AUTHORIZATION", "")
+        key = request.headers.get("Authorization", "")
         if not key.startswith("Bearer "):
             return HttpResponse(status=401)
 
