@@ -9,11 +9,10 @@ Healthchecks instance yourself.
 The building blocks are:
 
 * Python 3.10+
-* Django 5.1
+* Django 6.0
 * PostgreSQL or MySQL
 
 ## Setting Up for Development
-
 
 You can set up a development environment in a Python
 [virtual environment](https://docs.python.org/3/tutorial/venv.html)
