@@ -28,6 +28,7 @@ class Email(Transport):
             profile = Profile.objects.get(user__email=self.channel.email.value)
             projects = list(profile.projects())
         except Profile.DoesNotExist:
+            profile = None
             projects = None
 
         ping = self.last_ping(flip)
@@ -44,6 +45,7 @@ class Email(Transport):
             "body": body,
             "subject": subject,
             "projects": projects,
+            "profile": profile,
             "unsub_link": unsub_link,
         }
 

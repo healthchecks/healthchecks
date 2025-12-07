@@ -1,4 +1,4 @@
-{% load hc_extras humanize linemode %}{% linemode %}
+{% load hc_extras humanize linemode tz %}{% linemode %}
 
 {% line %}The check "{{ check.name_then_code|safe }}" has gone {{ flip.new_status }}.{% endline %}
 {% if flip.reason %}
@@ -37,10 +37,10 @@
     {% line %}Time zone: {{ check.tz }}{% endline %}
 {% endif %}
 
-{% line %}Total pings: {% if ping %}{{ ping.n }}{% else %}0{% endif %} {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}{% endline %}
+{% line %}Total pings: {% if ping %}{{ ping.n }}{% else %}0{% endif %} {% if check.created %}{% if profile %}(since {{ check.created|timezone:profile.tz|date:'M j, Y' }}){% else %}(since {{ check.created|date:'M j, Y' }}){% endif %}{% endif %}{% endline %}
 
 {% if ping %}
-    {% line %}Last ping: {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}{% endline %}
+    {% line %}Last ping: {% if profile %}{{ ping.created|timezone:profile.tz|naturaltime }}{% else %}{{ ping.created|naturaltime }}{% endif %}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}{% endline %}
 
     {% line %}Last ping type: {{ ping.get_kind_display }}{% endline %}
     {% if subject %}
@@ -48,7 +48,7 @@
     {% endif %}
 {% endif %}
 
-{% line %}Status changed to {{ flip.new_status }} at: {{ flip.created|date:"Y-m-d H:i:s T" }}{% endline %}
+{% line %}Status changed to {{ flip.new_status }} at: {% if profile %}{{ flip.created|timezone:profile.tz|date:"Y-m-d H:i:s T" }}{% else %}{{ flip.created|date:"Y-m-d H:i:s T" }}{% endif %}{% endline %}
 
 {% if ping and ping.has_body %}
     {% line %}{% endline %}

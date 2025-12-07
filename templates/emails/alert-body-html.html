@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load hc_extras humanize %}
+{% load hc_extras humanize tz %}
 
 <p>
     {% if flip.new_status == "down" %}
@@ -63,15 +63,26 @@
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Total Pings</b><br>
             {% if ping %}{{ ping.n }}{% else %}0{% endif %}
-            {% if check.created %}(since {{ check.created|date:'M j, Y' }}){% endif %}
+            {% if check.created %}
+                {% if profile %}
+                    (since {{ check.created|timezone:profile.tz|date:'M j, Y' }})
+                {% else %}
+                    (since {{ check.created|date:'M j, Y' }})
+                {% endif %}
+            {% endif %}
         </td>
     </tr>
 
     {% if ping %}
     <tr>
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
-            <b>Last Ping</b><br>
-            {{ ping.created|naturaltime }}{% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}
+            <b>Last Ping: </b><br>
+            {% if profile %}
+                {{ ping.created|timezone:profile.tz|naturaltime }}
+            {% else %}
+                {{ ping.created|naturaltime }}
+            {% endif %}
+            {% if ping.remote_addr %}, from {{ ping.remote_addr }}{% endif %}
         </td>
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Last Ping Type</b><br>
@@ -111,7 +122,11 @@
     <tr>
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Status Changed to {{ flip.new_status|title }} at</b><br>
-            {{ flip.created|date:"Y-m-d H:i:s T" }}
+            {% if profile %}
+                {{ flip.created|timezone:profile.tz|date:"Y-m-d H:i:s T" }}
+            {% else %}
+                {{ flip.created|date:"Y-m-d H:i:s T" }}
+            {% endif %}
         </td>
     </tr>
 </table>
