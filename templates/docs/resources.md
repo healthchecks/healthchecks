@@ -59,3 +59,4 @@ Please submit additions and corrections
 
 * [healthchecks/dashboard](https://github.com/healthchecks/dashboard) – A standalone HTML page showing the status of the checks in your account.
 * [nicoandrade/healthchecks-front](https://github.com/nicoandrade/healthchecks-front) – Beautiful & free web dashboard, works great on desktop and mobile.
+* [KumaBar](https://apps.apple.com/ca/app/kumabar/id6746335356?mt=12) – MacOS menu bar app, supports Uptime Kuma and Healthchecks.io.
