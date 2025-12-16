@@ -48,6 +48,13 @@ to a slug with no corresponding check, SITE_NAME will create the check automatic
 Auto-provisioning is off by default. To enable it, add a `create=1` query parameter
 to the ping URL.
 
+## Rate Limits
+
+Please be nice to our servers. Do not ping a check more frequently than is necessary.
+If you ping a check more than 5 times per minute, some of the requests may get rate
+limited and not recorded to the database. In extreme cases we will block the client's
+IP address.
+
 ## Endpoints
 
 Endpoint Name                                               | Endpoint Address

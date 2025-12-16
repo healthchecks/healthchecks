@@ -36,6 +36,11 @@ and ignore the request.</p>
 to a slug with no corresponding check, SITE_NAME will create the check automatically.
 Auto-provisioning is off by default. To enable it, add a <code>create=1</code> query parameter
 to the ping URL.</p>
+<h2>Rate Limits</h2>
+<p>Please be nice to our servers. Do not ping a check more frequently than is necessary.
+If you ping a check more than 5 times per minute, some of the requests may get rate
+limited and not recorded to the database. In extreme cases we will block the client's
+IP address.</p>
 <h2>Endpoints</h2>
 <table>
 <thead>

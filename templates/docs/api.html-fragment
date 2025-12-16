@@ -134,6 +134,9 @@ a JSON document (<em>not</em> a <code>multipart/form-data</code> encoded form da
 In general, 2xx class indicates success, 4xx indicates a client error,
 and 5xx indicates a server error.</p>
 <p>The response may contain a JSON document with additional data.</p>
+<h2>Rate Limits</h2>
+<p>Avoid making more than 100 API requests per minute. If you exceed this limit, you will
+eventually see HTTP 429 errors.</p>
 <h2 class="rule" id="list-checks">List Existing Checks</h2>
 <p><code>GET SITE_ROOT/api/v3/checks/</code></p>
 <p>Returns a list of checks belonging to the user, optionally filtered by

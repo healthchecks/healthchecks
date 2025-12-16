@@ -82,6 +82,11 @@ and 5xx indicates a server error.
 
 The response may contain a JSON document with additional data.
 
+## Rate Limits
+
+Avoid making more than 100 API requests per minute. If you exceed this limit, you will
+eventually see HTTP 429 errors.
+
 ## List Existing Checks {: #list-checks .rule }
 
 `GET SITE_ROOT/api/v3/checks/`
