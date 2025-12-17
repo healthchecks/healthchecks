@@ -203,3 +203,27 @@ class HttpTransport(Transport):
             headers=headers,
             auth=auth,
         )
+
+    # Convenience wrapper around self.request for making "PUT" requests
+    @classmethod
+    def put(
+        cls,
+        url: str,
+        retry: bool = True,
+        *,
+        params: curl.Params = None,
+        data: curl.Data = None,
+        json: Any = None,
+        headers: curl.Headers = None,
+        auth: curl.Auth = None,
+    ) -> None:
+        cls.request(
+            "put",
+            url,
+            retry=retry,
+            params=params,
+            data=data,
+            json=json,
+            headers=headers,
+            auth=auth,
+        )

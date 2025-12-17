@@ -6,7 +6,6 @@ from urllib.parse import quote
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
-
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -53,7 +52,9 @@ class NotifyMatrixTestCase(BaseTestCase):
         method, url = mock_post.call_args.args
         self.assertIn("https://example.net", url)
         self.assertIn(quote("!foo:example.org"), url)
-        self.assertIn("test-token", url)
+
+        headers = mock_post.call_args.kwargs["headers"]
+        self.assertEqual(headers["Authorization"], "Bearer test-token")
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("Foo is DOWN", payload["body"])

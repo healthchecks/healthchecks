@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from urllib.parse import quote, urlencode
+from urllib.parse import quote
+from uuid import uuid4
 
 from django.conf import settings
 from hc.api.models import Flip, Notification
@@ -13,8 +14,7 @@ class Matrix(HttpTransport):
 
         assert isinstance(settings.MATRIX_HOMESERVER, str)
         url = settings.MATRIX_HOMESERVER
-        url += f"/_matrix/client/r0/rooms/{room_id}/send/m.room.message?"
-        url += urlencode({"access_token": settings.MATRIX_ACCESS_TOKEN})
+        url += f"/_matrix/client/v3/rooms/{room_id}/send/m.room.message/{uuid4()}"
         return url
 
     def notify(self, flip: Flip, notification: Notification) -> None:
@@ -35,5 +35,5 @@ class Matrix(HttpTransport):
             "format": "org.matrix.custom.html",
             "formatted_body": formatted,
         }
-
-        self.post(self.get_url(), json=payload)
+        headers = {"Authorization": f"Bearer {settings.MATRIX_ACCESS_TOKEN}"}
+        self.put(self.get_url(), json=payload, headers=headers)

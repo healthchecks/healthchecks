@@ -8,6 +8,7 @@ version is 3.12.
 
 ## Improvements
 - Upgrade to Django 6.0
+- Update the Matrix integration to use Matrix v3 API (#1224)
 
 ### Bug Fixes
 - Fix the text version of email report for recently created checks (#1236, @adelton)
