@@ -7,6 +7,7 @@ from hc.lib import curl
 from pydantic import BaseModel, Field, ValidationError
 
 JOIN_ERRORS = {
+    403: f"Matrix server returned status 403 (Forbidden).\nDid you invite {settings.MATRIX_USER_ID} to the room?",
     429: "Matrix server returned status 429 (Too Many Requests), please try later.",
     502: "Matrix server returned status 502 (Bad Gateway), please try later.",
 }

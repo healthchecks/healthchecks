@@ -54,6 +54,17 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 404)
 
     @patch("hc.integrations.matrix.client.curl.post")
+    def test_it_handles_403(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 403
+
+        form = {"alias": "!foo:example.org"}
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, form)
+
+        self.assertContains(r, "Matrix server returned status 403")
+        self.assertFalse(Channel.objects.exists())
+
+    @patch("hc.integrations.matrix.client.curl.post")
     def test_it_handles_429(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 429
 

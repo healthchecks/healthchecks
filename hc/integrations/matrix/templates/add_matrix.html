@@ -112,7 +112,7 @@
 
                 {% if form.alias.errors %}
                 <div class="help-block">
-                    {{ form.alias.errors|join:"" }}
+                    {{ form.alias.errors|join:""|linebreaks }}
                 </div>
                 {% endif %}
             </div>
