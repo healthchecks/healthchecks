@@ -897,7 +897,7 @@ def _get_events(
     pq = pq.defer("body_raw")
     pq = pq.annotate(body_raw_preview=Substr("body_raw", 1, 151))
     pings = list(pq[:page_limit])
-    prepare_durations(cast(list[Ping], pings))
+    prepare_durations(pings)
 
     alerts: list[Notification] = []
     if kinds and "notification" in kinds:

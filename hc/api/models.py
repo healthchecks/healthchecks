@@ -4,6 +4,7 @@ import hashlib
 import json
 import socket
 import uuid
+from collections.abc import Sequence
 from dataclasses import dataclass
 from datetime import datetime
 from datetime import timedelta as td
@@ -807,7 +808,7 @@ class Ping(models.Model):
         return f"{self.get_kind_display()}, {created_str}"
 
 
-def prepare_durations(pings: list[Ping]) -> None:
+def prepare_durations(pings: Sequence[Ping]) -> None:
     """Given a list of Ping objects, calculate the duration value for each.
 
     The list *must* be already sorted in a descending order (latest pings first).
