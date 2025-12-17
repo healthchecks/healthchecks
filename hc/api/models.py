@@ -795,7 +795,7 @@ class Ping(models.Model):
         for ping in pings.order_by("-id").only("created", "kind", "rid"):
             if ping.kind == "start" and ping.rid == self.rid:
                 return self.created - ping.created
-            elif ping.kind in (None, "", "fail") and ping.rid == self.rid:
+            elif ping.kind in (None, "fail") and ping.rid == self.rid:
                 return None
 
         return None

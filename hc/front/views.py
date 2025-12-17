@@ -907,7 +907,7 @@ def _get_events(
     for ping in reversed(pings):
         if ping.kind == "start":
             starts[ping.rid] = ping.created
-        elif ping.kind in (None, "", "fail"):
+        elif ping.kind in (None, "fail"):
             if ping.rid not in starts:
                 # We haven't seen a start, success or fail event for this rid.
                 # Will need to fall back to Ping.duration().
