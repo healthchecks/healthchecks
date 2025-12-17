@@ -774,6 +774,10 @@ class Ping(models.Model):
         if self.kind == "log":
             return "Log"
 
+        # If it's not ign, fail, start, or log, the only remaining option
+        # is None (success). This assert makes sure we are not reporting invalid,
+        # unexpected values as success by accident.
+        assert self.kind is None
         return "Success"
 
     @cached_property

@@ -62,7 +62,7 @@ class PingDetailsTestCase(BaseTestCase):
         start_time = end_time - expected_duration
 
         Ping.objects.create(owner=self.check, created=start_time, n=1, kind="start")
-        Ping.objects.create(owner=self.check, created=end_time, n=2, kind="")
+        Ping.objects.create(owner=self.check, created=end_time, n=2, kind=None)
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
