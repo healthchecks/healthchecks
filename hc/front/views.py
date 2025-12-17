@@ -42,12 +42,12 @@ from hc.accounts.models import Member, Profile, Project
 from hc.api.models import (
     DEFAULT_GRACE,
     DEFAULT_TIMEOUT,
-    MAX_DURATION,
     Channel,
     Check,
     Flip,
     Notification,
     Ping,
+    prepare_durations,
 )
 from hc.front import forms
 from hc.front.templatetags.hc_extras import (
@@ -897,35 +897,7 @@ def _get_events(
     pq = pq.defer("body_raw")
     pq = pq.annotate(body_raw_preview=Substr("body_raw", 1, 151))
     pings = list(pq[:page_limit])
-
-    # Optimization: the template will access Ping.duration, which would generate a
-    # SQL query per displayed ping. Since we've already fetched a list of pings,
-    # for some of them we can calculate durations more efficiently, without causing
-    # additional SQL queries:
-    starts: dict[UUID | None, datetime | None] = {}
-    num_misses = 0
-    for ping in reversed(pings):
-        if ping.kind == "start":
-            starts[ping.rid] = ping.created
-        elif ping.kind in (None, "fail"):
-            if ping.rid not in starts:
-                # We haven't seen a start, success or fail event for this rid.
-                # Will need to fall back to Ping.duration().
-                num_misses += 1
-            else:
-                ping.duration = None
-                matching_start = starts[ping.rid]
-                if matching_start is not None:
-                    if ping.created - matching_start < MAX_DURATION:
-                        ping.duration = ping.created - matching_start
-
-            starts[ping.rid] = None
-
-    # If we will need to fall back to Ping.duration() more than 10 times
-    # then disable duration display altogether:
-    if num_misses > 10:
-        for ping in pings:
-            ping.duration = None
+    prepare_durations(pings)
 
     alerts: list[Notification] = []
     if kinds and "notification" in kinds:

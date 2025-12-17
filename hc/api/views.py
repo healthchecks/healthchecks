@@ -34,7 +34,7 @@ from django.views.decorators.http import require_POST
 from hc.accounts.models import Profile, Project
 from hc.api.decorators import ApiRequest, authorize, authorize_read, cors
 from hc.api.forms import FlipsFiltersForm
-from hc.api.models import MAX_DURATION, Channel, Check, Flip, Notification, Ping
+from hc.api.models import Channel, Check, Flip, Notification, Ping, prepare_durations
 from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string, match_keywords
@@ -603,30 +603,7 @@ def pings(request: ApiRequest, code: UUID) -> HttpResponse:
     # Query in descending order so we're sure to get the most recent
     # pings, regardless of the limit restriction
     pings = list(Ping.objects.filter(owner=check).order_by("-id")[:limit])
-
-    starts: dict[UUID | None, datetime | None] = {}
-    num_misses = 0
-    for ping in reversed(pings):
-        if ping.kind == "start":
-            starts[ping.rid] = ping.created
-        elif ping.kind in (None, "fail"):
-            if ping.rid not in starts:
-                # We haven't seen a start, success or fail event for this rid.
-                # Will need to fall back to Ping.duration().
-                num_misses += 1
-            else:
-                ping.duration = None
-                start = starts[ping.rid]
-                if start and (ping.created - start) < MAX_DURATION:
-                    ping.duration = ping.created - start
-
-            starts[ping.rid] = None
-
-    # If we will need to fall back to Ping.duration() more than 10 times
-    # then disable duration display altogether:
-    if num_misses > 10:
-        for ping in pings:
-            ping.duration = None
+    prepare_durations(pings)
 
     # Pass check's code to Ping.to_dict(), so it does not need to look it up
     # (which would result in a database query)

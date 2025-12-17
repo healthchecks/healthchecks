@@ -784,7 +784,7 @@ class Ping(models.Model):
     def duration(self) -> td | None:
         # Return early if this is not a success or failure ping,
         # or if this is the very first ping:
-        if self.kind not in (None, "", "fail") or self.n == 1:
+        if self.kind not in (None, "fail") or self.n == 1:
             return None
 
         pings = Ping.objects.filter(owner=self.owner_id)
@@ -805,6 +805,56 @@ class Ping(models.Model):
         # xa0 is non-breaking spaces, we want regular spaces
         created_str = naturaltime(self.created).replace("\xa0", " ")
         return f"{self.get_kind_display()}, {created_str}"
+
+
+def prepare_durations(pings: list[Ping]) -> None:
+    """Given a list of Ping objects, calculate the duration value for each.
+
+    The list *must* be already sorted in a descending order (latest pings first).
+    This function is an optimization: calling Ping.duration() on many Ping objects
+    would be expensive. Since we've already fetched a list of pings, for some of them
+    we can calculate durations more efficiently, without causing additional
+    SQL queries.
+
+    This function is used both in hc.front.views and in hc.api.views.
+    """
+
+    if not pings:
+        return
+
+    starts: dict[uuid.UUID | None, datetime | None] = {}
+    num_misses = 0
+    earliest = pings[-1]
+    for ping in reversed(pings):
+        # Make sure we are iterating pings in ascending time order
+        assert ping.created >= earliest.created
+
+        if ping.kind == "start":
+            starts[ping.rid] = ping.created
+        elif ping.kind in (None, "fail"):
+            if ping.rid not in starts:
+                # We haven't seen a start, success or fail event for this rid.
+                if ping.created - earliest.created >= MAX_DURATION:
+                    # But the earliest event we *have* seen is more than MAX_DURATION
+                    # away so there's no point looking further in the past.
+                    ping.duration = None
+                else:
+                    # It is possible there is a start event further in the past.
+                    # Will need to fall back to Ping.duration().
+                    num_misses += 1
+            else:
+                ping.duration = None
+                start = starts[ping.rid]
+                if start and (ping.created - start) < MAX_DURATION:
+                    ping.duration = ping.created - start
+
+            starts[ping.rid] = None
+
+    # If we will need to fall back to Ping.duration() more than 10 times
+    # then disable duration display altogether:
+    if num_misses > 10:
+        for ping in pings:
+            ping.duration = None
 
 
 class WebhookSpec(BaseModel):
