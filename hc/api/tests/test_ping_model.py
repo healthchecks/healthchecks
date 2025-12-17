@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from datetime import timedelta as td
 from datetime import timezone
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from uuid import uuid4
 
 from hc.api.models import MAX_DURATION, Check, Ping, prepare_durations
@@ -42,7 +42,7 @@ class PrepareDurationsTestCase(BaseTestCase):
         p1 = Ping(created=EPOCH, kind="start")
         p2 = Ping(created=EPOCH + td(seconds=1))
         prepare_durations([p2, p1])
-        self.assertEqual(p2.duration.total_seconds(), 1)
+        self.assertEqual(p2.duration, td(seconds=1))
 
     def test_it_matches_start_event_by_rid(self) -> None:
         A = "63832bb7-ddd5-4f2d-bf0a-cac885212963"
@@ -51,21 +51,21 @@ class PrepareDurationsTestCase(BaseTestCase):
         p2 = Ping(created=EPOCH + td(seconds=1), kind="start", rid=B)
         p3 = Ping(created=EPOCH + td(seconds=2), rid=A)
         prepare_durations([p3, p2, p1])
-        self.assertEqual(p3.duration.total_seconds(), 2)
+        self.assertEqual(p3.duration, td(seconds=2))
 
     def test_it_ignores_ign_event(self) -> None:
         p1 = Ping(created=EPOCH, kind="start")
         p2 = Ping(created=EPOCH + td(seconds=1), kind="ign")
         p3 = Ping(created=EPOCH + td(seconds=2))
         prepare_durations([p3, p2, p1])
-        self.assertEqual(p3.duration.total_seconds(), 2)
+        self.assertEqual(p3.duration, td(seconds=2))
 
     def test_it_handles_consecutive_success_signals(self) -> None:
         p1 = Ping(created=EPOCH, kind="start")
         p2 = Ping(created=EPOCH + td(seconds=1))
         p3 = Ping(created=EPOCH + td(seconds=2))
         prepare_durations([p3, p2, p1])
-        self.assertEqual(p2.duration.total_seconds(), 1)
+        self.assertEqual(p2.duration, td(seconds=1))
         self.assertIsNone(p3.duration)
 
     def test_it_caps_misses(self) -> None:
@@ -91,7 +91,7 @@ class PrepareDurationsTestCase(BaseTestCase):
         self.assertIsNone(p2.duration)
 
     @patch("hc.api.models.Ping.duration")
-    def test_it_defers_to_duration_property(self, mock_duration) -> None:
+    def test_it_defers_to_duration_property(self, mock_duration: Mock) -> None:
         p1 = Ping(created=EPOCH)
         prepare_durations([p1])
         self.assertEqual(p1.duration, mock_duration)
