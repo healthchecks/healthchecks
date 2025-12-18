@@ -20,8 +20,8 @@ jobs:
                   sudo apt-get update -qq
                   sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
                   python -m pip install --upgrade pip
-                  pip install -r requirements.txt
-                  pip install apprise coverage coveralls minio==7.2.18 time-machine==3.2.0
+                  pip install -r requirements.txt -r requirements-dev.txt
+                  pip install coverage coveralls
             - name: Run Tests
               env:
                   SECRET_KEY: dummy-key

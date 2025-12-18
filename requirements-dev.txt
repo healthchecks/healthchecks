@@ -1,0 +1,11 @@
+apprise==1.9.4
+django-stubs==5.2.8
+Markdown==3.7
+minio==7.2.20
+mypy==1.19.0
+mysqlclient==2.2.7
+Pygments==2.19.2
+time-machine==3.2.0
+types-Markdown
+types-pycurl
+types-pygments

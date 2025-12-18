@@ -47,8 +47,7 @@ jobs:
                   sudo apt-get update -qq
                   sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
                   python -m pip install --upgrade pip
-                  pip install -r requirements.txt
-                  pip install apprise minio==7.2.20 mysqlclient time-machine==3.2.0
+                  pip install -r requirements.txt -r requirements-dev.txt
             - name: Run Tests
               env:
                   DB: ${{ matrix.db }}

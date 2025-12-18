@@ -20,9 +20,7 @@ jobs:
                   sudo apt-get update -qq
                   sudo apt-get install -y libcurl4-openssl-dev libpython3-dev libssl-dev
                   python -m pip install --upgrade pip
-                  pip install -r requirements.txt
-                  pip install apprise==1.9.4 minio==7.2.20 time-machine==3.2.0
-                  pip install mypy==1.19.0 django-stubs==5.2.8 types-pycurl types-Markdown types-pygments
+                  pip install -r requirements.txt -r requirements-dev.txt
                   touch hc/local_settings.py
             - name: Run Mypy
               run: mypy --strict --show-traceback hc
