@@ -32,9 +32,9 @@ def format_duration(duration: timedelta) -> str:
 
         v, remaining_seconds = divmod(remaining_seconds, unit.nsecs)
         if v == 1:
-            result.append("1 %s" % unit.name)
+            result.append(f"1 {unit.name}")
         elif v > 1:
-            result.append("%d %s" % (v, unit.plural))
+            result.append(f"{v} {unit.plural}")
 
     return " ".join(result)
 
@@ -42,7 +42,7 @@ def format_duration(duration: timedelta) -> str:
 def format_hms(duration: timedelta) -> str:
     total_seconds = duration.total_seconds()
     if 0.01 <= total_seconds < 1:
-        return "%.2f sec" % total_seconds
+        return f"{total_seconds:.2f} sec"
 
     total_seconds = int(total_seconds)
     result = []
@@ -51,12 +51,12 @@ def format_hms(duration: timedelta) -> str:
     h, mins = divmod(mins, 60)
 
     if h:
-        result.append("%d h" % h)
+        result.append(f"{h} h")
 
     if h or mins:
-        result.append("%d min" % mins)
+        result.append(f"{mins} min")
 
-    result.append("%s sec" % secs)
+    result.append(f"{secs} sec")
 
     return " ".join(result)
 
