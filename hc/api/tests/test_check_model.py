@@ -49,13 +49,13 @@ class CheckModelTestCase(BaseTestCase):
         check.status = "up"
         check.last_ping = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
-        with time_machine.travel("2000-01-01T23:59"):
+        with time_machine.travel("2000-01-01 23:59+00:00"):
             self.assertEqual(check.get_status(), "up")
 
-        with time_machine.travel("2000-01-02T00:00"):
+        with time_machine.travel("2000-01-02 00:00+00:00"):
             self.assertEqual(check.get_status(), "grace")
 
-        with time_machine.travel("2000-01-02T01:00"):
+        with time_machine.travel("2000-01-02 01:00+00:00"):
             self.assertEqual(check.get_status(), "down")
 
     def test_status_works_with_oncalendar_syntax(self) -> None:
@@ -66,13 +66,13 @@ class CheckModelTestCase(BaseTestCase):
         check.status = "up"
         check.last_ping = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
-        with time_machine.travel("2000-01-01T23:59"):
+        with time_machine.travel("2000-01-01 23:59+00:00"):
             self.assertEqual(check.get_status(), "up")
 
-        with time_machine.travel("2000-01-02T00:00"):
+        with time_machine.travel("2000-01-02 00:00+00:00"):
             self.assertEqual(check.get_status(), "grace")
 
-        with time_machine.travel("2000-01-02T01:00"):
+        with time_machine.travel("2000-01-02 01:00+00:00"):
             self.assertEqual(check.get_status(), "down")
 
     def test_status_handles_stopiteration(self) -> None:
@@ -95,15 +95,15 @@ class CheckModelTestCase(BaseTestCase):
         check.last_ping = datetime(2000, 1, 1, tzinfo=timezone.utc)
         check.tz = "Australia/Brisbane"  # UTC+10
 
-        with time_machine.travel("2000-01-01T23:59"):
+        with time_machine.travel("2000-01-01 23:59+00:00"):
             # 09:59am
             self.assertEqual(check.get_status(), "up")
 
-        with time_machine.travel("2000-01-02T00:00"):
+        with time_machine.travel("2000-01-02 00:00+00:00"):
             # 10:00am
             self.assertEqual(check.get_status(), "grace")
 
-        with time_machine.travel("2000-01-02T01:00"):
+        with time_machine.travel("2000-01-02 01:00+00:00"):
             # 11:00am
             self.assertEqual(check.get_status(), "down")
 

@@ -5,7 +5,7 @@ import time_machine
 from hc.test import BaseTestCase
 
 
-@time_machine.travel("2020-01-01")
+@time_machine.travel("2020-01-01 00:00+00:00")
 class OnCalendarPreviewTestCase(BaseTestCase):
     url = "/checks/oncalendar_preview/"
 

@@ -45,7 +45,7 @@ class CronPreviewTestCase(BaseTestCase):
         r = self.client.get(self.url, {})
         self.assertEqual(r.status_code, 405)
 
-    @time_machine.travel("2018-10-26")
+    @time_machine.travel("2018-10-26 00:00+00:00")
     def test_it_handles_dst_transition(self) -> None:
         # Consider year 2018, Riga, Latvia:
         # The daylight-saving-time ends at 4AM on October 28.

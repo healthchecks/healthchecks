@@ -122,7 +122,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "* * * * * /your/command.sh")
         self.assertContains(r, 'FIXME: replace "* * * * *"')
 
-    @time_machine.travel("2020-02-01")
+    @time_machine.travel("2020-02-01 00:00+00:00")
     def test_it_calculates_downtime_summary(self) -> None:
         self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         self.check.save()
@@ -151,7 +151,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 1 h 0 min total")
         self.assertContains(r, "99.86% uptime")
 
-    @time_machine.travel("2020-02-01")
+    @time_machine.travel("2020-02-01 00:00+00:00")
     def test_it_downtime_summary_handles_plural(self) -> None:
         self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         self.check.save()
@@ -176,7 +176,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 2 h 0 min total")
         self.assertContains(r, "99.73% uptime")
 
-    @time_machine.travel("2020-02-01")
+    @time_machine.travel("2020-02-01 00:00+00:00")
     def test_downtime_summary_handles_positive_utc_offset(self) -> None:
         self.profile.tz = "America/New_York"
         self.profile.save()
@@ -192,7 +192,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Dec. 2019")
         self.assertContains(r, "Nov. 2019")
 
-    @time_machine.travel("2020-01-31T23:00:00")
+    @time_machine.travel("2020-01-31 23:00:00+00:00")
     def test_downtime_summary_handles_negative_utc_offset(self) -> None:
         self.profile.tz = "Europe/Riga"
         self.profile.save()
@@ -207,7 +207,7 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Jan. 2020")
         self.assertContains(r, "Dec. 2019")
 
-    @time_machine.travel("2020-02-01")
+    @time_machine.travel("2020-02-01 00:00+00:00")
     def test_it_handles_months_when_check_did_not_exist(self) -> None:
         self.check.created = datetime(2020, 1, 10, 0, 0, 0, tzinfo=timezone.utc)
         self.check.save()
