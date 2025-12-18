@@ -1,15 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch
+import time_machine
 
 from hc.test import BaseTestCase
 
-CURRENT_TIME = datetime(2020, 1, 1, tzinfo=timezone.utc)
-MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
-
-@patch("hc.front.views.now", MOCK_NOW)
+@time_machine.travel("2020-01-01")
 class OnCalendarPreviewTestCase(BaseTestCase):
     url = "/checks/oncalendar_preview/"
 

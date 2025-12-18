@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from unittest.mock import Mock, patch
 
+import time_machine
 from django.test.utils import override_settings
 from django.utils.timezone import now
 
@@ -12,7 +12,6 @@ from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
 CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
-MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class CheckModelTestCase(BaseTestCase):
@@ -43,47 +42,37 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(check.get_status(), "paused")
 
     def test_status_works_with_cron_syntax(self) -> None:
-        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every midnight, default grace is 1 hour
         check = Check()
         check.kind = "cron"
         check.schedule = "0 0 * * *"
         check.status = "up"
-        check.last_ping = dt
+        check.last_ping = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
-        with patch("hc.api.models.now") as mock_now:
-            # 23:59pm
-            mock_now.return_value = dt + td(hours=23, minutes=59)
+        with time_machine.travel("2000-01-01T23:59"):
             self.assertEqual(check.get_status(), "up")
 
-            # 00:00am
-            mock_now.return_value = dt + td(days=1)
+        with time_machine.travel("2000-01-02T00:00"):
             self.assertEqual(check.get_status(), "grace")
 
-            # 1:30am
-            mock_now.return_value = dt + td(days=1, minutes=60)
+        with time_machine.travel("2000-01-02T01:00"):
             self.assertEqual(check.get_status(), "down")
 
     def test_status_works_with_oncalendar_syntax(self) -> None:
-        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every midnight, default grace is 1 hour
         check = Check()
         check.kind = "oncalendar"
         check.schedule = "00:00"
         check.status = "up"
-        check.last_ping = dt
+        check.last_ping = datetime(2000, 1, 1, tzinfo=timezone.utc)
 
-        with patch("hc.api.models.now") as mock_now:
-            # 23:59pm
-            mock_now.return_value = dt + td(hours=23, minutes=59)
+        with time_machine.travel("2000-01-01T23:59"):
             self.assertEqual(check.get_status(), "up")
 
-            # 00:00am
-            mock_now.return_value = dt + td(days=1)
+        with time_machine.travel("2000-01-02T00:00"):
             self.assertEqual(check.get_status(), "grace")
 
-            # 1:30am
-            mock_now.return_value = dt + td(days=1, minutes=60)
+        with time_machine.travel("2000-01-02T01:00"):
             self.assertEqual(check.get_status(), "down")
 
     def test_status_handles_stopiteration(self) -> None:
@@ -94,33 +83,28 @@ class CheckModelTestCase(BaseTestCase):
         check.status = "up"
         check.last_ping = datetime(2020, 1, 1, tzinfo=timezone.utc)
 
-        with patch("hc.api.models.now") as mock_now:
-            mock_now.return_value = check.last_ping + td(hours=1)
+        with time_machine.travel(check.last_ping + td(hours=1)):
             self.assertEqual(check.get_status(), "up")
 
     def test_status_works_with_timezone(self) -> None:
-        dt = datetime(2000, 1, 1, tzinfo=timezone.utc)
         # Expect ping every day at 10am, default grace is 1 hour
         check = Check()
         check.kind = "cron"
         check.schedule = "0 10 * * *"
         check.status = "up"
-        check.last_ping = dt
+        check.last_ping = datetime(2000, 1, 1, tzinfo=timezone.utc)
         check.tz = "Australia/Brisbane"  # UTC+10
 
-        with patch("hc.api.models.now") as mock_now:
-            # 10:30am
-            mock_now.return_value = dt + td(hours=23, minutes=59)
+        with time_machine.travel("2000-01-01T23:59"):
+            # 09:59am
             self.assertEqual(check.get_status(), "up")
 
-        with patch("hc.api.models.now") as mock_now:
-            # 10:30am
-            mock_now.return_value = dt + td(days=1)
+        with time_machine.travel("2000-01-02T00:00"):
+            # 10:00am
             self.assertEqual(check.get_status(), "grace")
 
-        with patch("hc.api.models.now") as mock_now:
-            # 11:30am
-            mock_now.return_value = dt + td(days=1, minutes=60)
+        with time_machine.travel("2000-01-02T01:00"):
+            # 11:00am
             self.assertEqual(check.get_status(), "down")
 
     def test_get_status_handles_past_grace(self) -> None:
@@ -206,8 +190,7 @@ class CheckModelTestCase(BaseTestCase):
         d = check.to_dict()
         self.assertEqual(d["next_ping"], "2000-01-01T01:00:00+00:00")
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME)
     def test_downtimes_handles_no_flips(self) -> None:
         check = Check(project=self.project)
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -236,8 +219,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(nov.duration, td())
         self.assertEqual(nov.count, 0)
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME, tick=False)
     def test_downtimes_handles_currently_down_check(self) -> None:
         check = Check(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -253,8 +235,7 @@ class CheckModelTestCase(BaseTestCase):
             self.assertEqual(r.count, 1)
             self.assertEqual(r.monthly_uptime(), 0.0)
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME)
     def test_monthly_uptime_pct_handles_dst(self) -> None:
         check = Check(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -267,8 +248,7 @@ class CheckModelTestCase(BaseTestCase):
             self.assertEqual(r.count, 1)
             self.assertEqual(r.monthly_uptime(), 0.0)
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME, tick=False)
     def test_downtimes_handles_flip_one_day_ago(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -290,8 +270,7 @@ class CheckModelTestCase(BaseTestCase):
                 self.assertEqual(r.duration.total_seconds(), 0)
                 self.assertEqual(r.count, 0)
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME, tick=False)
     def test_downtimes_handles_flip_two_months_ago(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -324,8 +303,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(nov.monthly_uptime(), 14 / 30)
         self.assertEqual(nov.count, 1)
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME, tick=False)
     def test_downtimes_handles_non_utc_timezone(self) -> None:
         check = Check.objects.create(project=self.project, status="down")
         check.created = datetime(2019, 1, 1, tzinfo=timezone.utc)
@@ -356,8 +334,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(dec.duration, td())
         self.assertEqual(dec.count, 0)
 
-    @patch("hc.api.models.now", MOCK_NOW)
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME)
     def test_downtimes_handles_months_when_check_did_not_exist(self) -> None:
         check = Check(project=self.project)
         check.created = datetime(2020, 1, 1, 9, tzinfo=timezone.utc)
@@ -402,7 +379,7 @@ class CheckModelTestCase(BaseTestCase):
         self.assertEqual(Flip.objects.count(), 0)
 
     @override_settings(S3_BUCKET=None)
-    @patch("hc.api.models.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME)
     def test_it_does_not_prune_flips_less_than_93_days_old(self) -> None:
         check = Check.objects.create(project=self.project, n_pings=101)
         Ping.objects.create(owner=check, n=101)
@@ -459,6 +436,7 @@ class CheckModelTestCase(BaseTestCase):
         assert gs
         self.assertEqual(gs.tzinfo, timezone.utc)
 
+    @time_machine.travel("2023-10-29T01:05:00")
     def test_get_status_handles_autumn_dst_transition(self) -> None:
         check = Check(project=self.project)
         check.kind = "cron"
@@ -468,11 +446,9 @@ class CheckModelTestCase(BaseTestCase):
         check.last_ping = datetime(2023, 10, 29, 0, 55, tzinfo=timezone.utc)
         check.status = "up"
 
-        with patch("hc.api.models.now") as mock_now:
-            mock_now.return_value = datetime(2023, 10, 29, 1, 5, tzinfo=timezone.utc)
-            # The next expected run time is at 2023-10-29 01:15 UTC, so the check
-            # should still be up for 10 minutes:
-            self.assertEqual(check.get_status(), "up")
+        # The next expected run time is at 2023-10-29 01:15 UTC, so the check
+        # should still be up for 10 minutes:
+        self.assertEqual(check.get_status(), "up")
 
     def test_lock_and_delete_handles_already_deleted_checks(self) -> None:
         check = Check.objects.create(project=self.project)

@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from unittest.mock import Mock, patch
 
+import time_machine
+
 from hc.test import BaseTestCase
 
 
@@ -43,14 +45,13 @@ class CronPreviewTestCase(BaseTestCase):
         r = self.client.get(self.url, {})
         self.assertEqual(r.status_code, 405)
 
-    @patch("hc.front.views.now")
-    def test_it_handles_dst_transition(self, mock_now: Mock) -> None:
+    @time_machine.travel("2018-10-26")
+    def test_it_handles_dst_transition(self) -> None:
         # Consider year 2018, Riga, Latvia:
         # The daylight-saving-time ends at 4AM on October 28.
         # At that time, the clock is turned back one hour.
         # So, on that date,  3AM happens *twice* and saying
         # "3AM on October 28" is ambiguous.
-        mock_now.return_value = datetime(2018, 10, 26, tzinfo=timezone.utc)
 
         # This schedule will hit the ambiguous date. Cron preview must
         # be able to handle this:

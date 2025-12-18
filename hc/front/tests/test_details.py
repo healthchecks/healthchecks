@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
-from unittest.mock import Mock, patch
 
+import time_machine
 from django.test.utils import override_settings
+
 from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase
 
@@ -122,10 +122,8 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "* * * * * /your/command.sh")
         self.assertContains(r, 'FIXME: replace "* * * * *"')
 
-    @patch("hc.lib.date.now")
-    def test_it_calculates_downtime_summary(self, mock_now: Mock) -> None:
-        mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
-
+    @time_machine.travel("2020-02-01")
+    def test_it_calculates_downtime_summary(self) -> None:
         self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         self.check.save()
 
@@ -153,10 +151,8 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 1 h 0 min total")
         self.assertContains(r, "99.86% uptime")
 
-    @patch("hc.lib.date.now")
-    def test_it_downtime_summary_handles_plural(self, mock_now: Mock) -> None:
-        mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
-
+    @time_machine.travel("2020-02-01")
+    def test_it_downtime_summary_handles_plural(self) -> None:
         self.check.created = datetime(2019, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
         self.check.save()
 
@@ -180,10 +176,8 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "1 downtime, 2 h 0 min total")
         self.assertContains(r, "99.73% uptime")
 
-    @patch("hc.lib.date.now")
-    def test_downtime_summary_handles_positive_utc_offset(self, mock_now: Mock) -> None:
-        mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
-
+    @time_machine.travel("2020-02-01")
+    def test_downtime_summary_handles_positive_utc_offset(self) -> None:
         self.profile.tz = "America/New_York"
         self.profile.save()
 
@@ -198,10 +192,8 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Dec. 2019")
         self.assertContains(r, "Nov. 2019")
 
-    @patch("hc.lib.date.now")
-    def test_downtime_summary_handles_negative_utc_offset(self, mock_now: Mock) -> None:
-        mock_now.return_value = datetime(2020, 1, 31, 23, tzinfo=timezone.utc)
-
+    @time_machine.travel("2020-01-31T23:00:00")
+    def test_downtime_summary_handles_negative_utc_offset(self) -> None:
         self.profile.tz = "Europe/Riga"
         self.profile.save()
 
@@ -215,10 +207,8 @@ class DetailsTestCase(BaseTestCase):
         self.assertContains(r, "Jan. 2020")
         self.assertContains(r, "Dec. 2019")
 
-    @patch("hc.lib.date.now")
-    def test_it_handles_months_when_check_did_not_exist(self, mock_now: Mock) -> None:
-        mock_now.return_value = datetime(2020, 2, 1, tzinfo=timezone.utc)
-
+    @time_machine.travel("2020-02-01")
+    def test_it_handles_months_when_check_did_not_exist(self) -> None:
         self.check.created = datetime(2020, 1, 10, 0, 0, 0, tzinfo=timezone.utc)
         self.check.save()
 

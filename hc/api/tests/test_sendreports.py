@@ -1,20 +1,20 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from unittest.mock import Mock, patch
 
+import time_machine
 from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.management.commands.sendreports import Command
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=timezone.utc)
-MOCK_NOW = Mock(return_value=CURRENT_TIME)
 MOCK_SLEEP = Mock()
 
 
@@ -47,9 +47,7 @@ EMPTY_TABLE = """
 
 
 @override_settings(SITE_NAME="Mychecks")
-@patch("hc.lib.date.now", MOCK_NOW)
-@patch("hc.accounts.models.now", MOCK_NOW)
-@patch("hc.api.management.commands.sendreports.now", MOCK_NOW)
+@time_machine.travel(CURRENT_TIME)
 @patch("hc.api.management.commands.sendreports.time.sleep", MOCK_SLEEP)
 class SendReportsTestCase(BaseTestCase):
     def setUp(self) -> None:

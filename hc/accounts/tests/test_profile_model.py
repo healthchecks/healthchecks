@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
-from unittest.mock import Mock, patch
 
+import time_machine
 from django.core import mail
 from django.utils.timezone import now
 
@@ -12,11 +11,10 @@ from hc.api.models import Check
 from hc.test import BaseTestCase
 
 CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
-MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class ProfileModelTestCase(BaseTestCase):
-    @patch("hc.lib.date.now", MOCK_NOW)
+    @time_machine.travel(CURRENT_TIME)
     def test_it_sends_report(self) -> None:
         check = Check(project=self.project, name="Test Check")
         check.last_ping = now()

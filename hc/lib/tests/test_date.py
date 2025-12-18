@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from unittest import TestCase
-from unittest.mock import Mock, patch
+
+import time_machine
 
 from hc.lib.date import (
     format_approx_duration,
@@ -15,7 +15,6 @@ from hc.lib.date import (
 )
 
 CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
-MOCK_NOW = Mock(return_value=CURRENT_TIME)
 
 
 class DateFormattingTestCase(TestCase):
@@ -62,7 +61,7 @@ class ApproxFormattingTestCase(TestCase):
         self.assertEqual(s, "12 min 24 sec")
 
 
-@patch("hc.lib.date.now", MOCK_NOW)
+@time_machine.travel(CURRENT_TIME)
 class MonthBoundaryTestCase(TestCase):
     def test_utc_works(self) -> None:
         result = month_boundaries(3, "UTC")
@@ -77,7 +76,7 @@ class MonthBoundaryTestCase(TestCase):
         self.assertEqual(result[2].isoformat(), "2019-11-01T00:00:00+02:00")
 
 
-@patch("hc.lib.date.now", MOCK_NOW)
+@time_machine.travel(CURRENT_TIME)
 class WeekBoundaryTestCase(TestCase):
     def test_utc_works(self) -> None:
         result = week_boundaries(3, "UTC")
