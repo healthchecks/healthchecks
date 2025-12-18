@@ -146,3 +146,20 @@ class ProfileTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get("/accounts/profile/")
         self.assertNotContains(r, "or register a Security Key to be used")
+
+    def test_it_saves_tz(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.post("/accounts/profile/", {"tz": "Europe/Riga"})
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.tz, "Europe/Riga")
+        self.assertContains(r, "Time zone updated!")
+
+    def test_it_ignores_bad_tz(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        self.client.post("/accounts/profile/", {"tz": "Foo/Bar"})
+
+        self.profile.refresh_from_db()
+        self.assertEqual(self.profile.tz, "UTC")

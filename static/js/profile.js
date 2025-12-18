@@ -1,4 +1,5 @@
 $(function() {
+    $("select[name=tz]").selectize();
 
     $(".leave-project").click(function() {
         $("#leave-project-name").text(this.dataset.name);

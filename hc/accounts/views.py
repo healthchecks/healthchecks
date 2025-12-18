@@ -10,10 +10,9 @@ import pyotp
 import segno
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, update_session_auth_hash
 from django.contrib.auth import login as auth_login
 from django.contrib.auth import logout as auth_logout
-from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.signing import BadSignature, SignatureExpired, TimestampSigner
@@ -32,6 +31,7 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.http import require_POST
+
 from hc.accounts import forms
 from hc.accounts.decorators import require_sudo_mode
 from hc.accounts.http import AuthenticatedHttpRequest
@@ -294,12 +294,14 @@ def profile(request: AuthenticatedHttpRequest) -> HttpResponse:
         "profile": profile,
         "my_projects_status": "default",
         "2fa_status": "default",
+        "tz_status": "default",
         "added_credential_name": request.session.pop("added_credential_name", ""),
         "removed_credential_name": request.session.pop("removed_credential_name", ""),
         "enabled_totp": request.session.pop("enabled_totp", False),
         "disabled_totp": request.session.pop("disabled_totp", False),
         "credentials": list(request.user.credentials.order_by("id")),
         "use_webauthn": settings.RP_ID,
+        "timezones": all_timezones,
     }
 
     if ctx["added_credential_name"] or ctx["enabled_totp"]:
@@ -323,6 +325,14 @@ def profile(request: AuthenticatedHttpRequest) -> HttpResponse:
 
         ctx["left_project"] = project
         ctx["my_projects_status"] = "info"
+
+    if request.method == "POST" and "tz" in request.POST:
+        form = forms.TzForm(request.POST)
+        if form.is_valid():
+            profile.tz = form.cleaned_data["tz"]
+            profile.save()
+            ctx["tz_status"] = "info"
+            ctx["tz_updated"] = True
 
     ctx["ownerships"] = request.user.project_set.order_by(Lower("name"))
     ctx["memberships"] = request.user.memberships.order_by(Lower("project__name"))
@@ -547,8 +557,6 @@ def notifications(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         form = forms.ReportSettingsForm(request.POST)
         if form.is_valid():
-            if form.cleaned_data["tz"]:
-                profile.tz = form.cleaned_data["tz"]
             profile.reports = form.cleaned_data["reports"]
             profile.next_report_date = profile.choose_next_report_date()
 

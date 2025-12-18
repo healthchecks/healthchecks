@@ -86,6 +86,10 @@ code.totp-secret {
     font-size: 18px;
 }
 
-#email-reports .selectize-control {
+#tz-settings .selectize-control {
     max-width: 300px;
+}
+
+#tz-settings ul {
+    padding-left: 15px;
 }

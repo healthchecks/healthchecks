@@ -275,14 +275,44 @@
             {% endif %}
         </div>
 
+        <div class="panel panel-{{ tz_status }}">
+            <div id="tz-settings" class="panel-body settings-block">
+                <form method="post">
+                    {% csrf_token %}
+                    <h2>Preferred Time Zone</h2>
+                    <select id="tz" name="tz" class="form-control" value="{{ profile.tz }}">
+                        <option{% if profile.tz == "UTC" %} selected{% endif %}>UTC</option>
+                        {% for tz in timezones %}
+                        {% if tz != "UTC" %}
+                        <option{% if profile.tz == tz %} selected{% endif %}>{{ tz }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+
+                    <br />
+                    <p>{% site_name %} will use your preferred time zone to:</p>
+                    <ul>
+                        <li>Format dates and times in monitoring alerts.</li>
+                        <li>Deliver email reports (if enabled) between 9:00 and 11:00 local time.</li>
+                    </ul>
+                    <br />
+                    <button type="submit" class="btn btn-default pull-right">Save Changes</button>
+                </form>
+            </div>
+            {% if tz_updated %}
+            <div class="panel-footer">
+                Time zone updated!
+            </div>
+            {% endif %}
+        </div>
+
         <div class="panel panel-default">
             <div class="panel-body settings-block">
-                    {% csrf_token %}
-                    <h2>Close Account</h2>
-                    <p>This will permanently remove your {{ site_name }} account.</p>
-                    <div class="text-right">
-                        <a href="{% url 'hc-close' %}" class="btn btn-remove">Close Account</a>
-                    </div>
+                <h2>Close Account</h2>
+                <p>This will permanently remove your {{ site_name }} account.</p>
+                <div class="text-right">
+                    <a href="{% url 'hc-close' %}" class="btn btn-remove">Close Account</a>
+                </div>
             </div>
         </div>
     </div>
@@ -326,6 +356,7 @@
 
 {% block scripts %}
 {% compress js %}
+<script src="{% static 'js/selectize.min.js' %}"></script>
 <script src="{% static 'js/add_project_modal.js' %}"></script>
 <script src="{% static 'js/profile.js' %}"></script>
 {% endcompress %}
