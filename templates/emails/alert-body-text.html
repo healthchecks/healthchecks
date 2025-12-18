@@ -1,4 +1,5 @@
-{% load hc_extras humanize linemode %}{% linemode %}
+{% load hc_extras humanize linemode tz %}{% linemode %}
+{% timezone tz %}
 
 {% line %}The check "{{ check.name_then_code|safe }}" has gone {{ flip.new_status }}.{% endline %}
 {% if flip.reason %}
@@ -48,7 +49,7 @@
     {% endif %}
 {% endif %}
 
-{% line %}Status changed to {{ flip.new_status }} at: {{ flip.created|date:"Y-m-d H:i:s T" }}{% endline %}
+{% line %}Status changed to {{ flip.new_status }} at: {{ flip.created|date:"r" }}{% endline %}
 
 {% if ping and ping.has_body %}
     {% line %}{% endline %}
@@ -86,4 +87,6 @@
 {% line %}--{% endline %}
 {% line %}Unsubscribe: {{ unsub_link }}{% endline %}
 {% line %}Regards, {% site_name %}{% endline %}
+
+{% endtimezone %}
 {% endlinemode %}

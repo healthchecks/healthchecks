@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-{% load hc_extras humanize %}
+{% load hc_extras humanize tz %}
+{% timezone tz %}
 
 <p>
     {% if flip.new_status == "down" %}
@@ -111,7 +112,7 @@
     <tr>
         <td style="padding-right: 32px; padding-bottom: 8px; vertical-align: top;">
             <b>Status Changed to {{ flip.new_status|title }} at</b><br>
-            {{ flip.created|date:"Y-m-d H:i:s T" }}
+            {{ flip.created|date:"r" }}
         </td>
     </tr>
 </table>
@@ -162,3 +163,4 @@ notifications{% if check.project.name %} for project "{{ check.project.name }}"{
 Don't want to receive these notifications?
 <a href="{{ unsub_link }}" target="_blank" style="color: #666666; text-decoration: underline;">Unsubscribe</a>.
 </p>
+{% endtimezone %}

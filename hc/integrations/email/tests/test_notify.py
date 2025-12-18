@@ -1,16 +1,19 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
+import time_machine
 from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
-from django.utils.timezone import now
 
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
+
+EPOCH = datetime(2020, 1, 1, tzinfo=timezone.utc)
 
 
 class NotifyEmailTestCase(BaseTestCase):
@@ -24,11 +27,11 @@ class NotifyEmailTestCase(BaseTestCase):
         # Transport classes should use flip.new_status,
         # so the status "paused" should not appear anywhere
         self.check.status = "paused"
-        self.check.last_ping = now()
+        self.check.last_ping = EPOCH
         self.check.save()
 
         self.ping = Ping(owner=self.check)
-        self.ping.created = now() - td(minutes=61)
+        self.ping.created = EPOCH
         self.ping.n = 112233
         self.ping.remote_addr = "1.2.3.4"
         self.ping.body_raw = b"Body Line 1\nBody Line 2"
@@ -42,12 +45,13 @@ class NotifyEmailTestCase(BaseTestCase):
         self.channel.checks.add(self.check)
 
         self.flip = Flip(owner=self.check)
-        self.flip.created = now()
+        self.flip.created = EPOCH + td(hours=1)
         self.flip.old_status = "new"
         self.flip.new_status = "down"
         self.flip.reason = "timeout"
 
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
+    @time_machine.travel(EPOCH + td(hours=1))
     def test_it_works(self) -> None:
         self.channel.notify(self.flip)
 
@@ -98,8 +102,19 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEmailContainsText("Body Line 1\nBody Line 2")
         self.assertEmailContainsHtml("Body Line 1<br>Body Line 2")
 
+        # Status change time
+        self.assertEmailContains("Wed, 01 Jan 2020 01:00:00 +0000")
+
         # Check's code must not be in the plain text or html
         self.assertEmailNotContains(str(self.check.code))
+
+    @time_machine.travel(EPOCH + td(hours=1))
+    def test_it_uses_users_preferred_timezone(self) -> None:
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+        self.channel.notify(self.flip)
+
+        self.assertEmailContains("Wed, 01 Jan 2020 03:00:00 +0200")
 
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_handles_reason_failure(self) -> None:

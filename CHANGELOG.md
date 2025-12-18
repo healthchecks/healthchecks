@@ -9,6 +9,7 @@ version is 3.12.
 ## Improvements
 - Upgrade to Django 6.0
 - Update the Matrix integration to use Matrix v3 API (#1244)
+- Update email alert template to use user's preferred time zone (#1230)
 
 ### Bug Fixes
 - Fix the text version of email report for recently created checks (#1236, @adelton)

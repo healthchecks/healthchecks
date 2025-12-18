@@ -26,9 +26,11 @@ class Email(Transport):
         # a summary of projects the account has access to
         try:
             profile = Profile.objects.get(user__email=self.channel.email.value)
+            tz = profile.tz
             projects = list(profile.projects())
         except Profile.DoesNotExist:
             projects = None
+            tz = "UTC"
 
         ping = self.last_ping(flip)
         body = get_ping_body(ping)
@@ -45,6 +47,7 @@ class Email(Transport):
             "subject": subject,
             "projects": projects,
             "unsub_link": unsub_link,
+            "tz": tz,
         }
 
         emails.alert(self.channel.email.value, ctx, headers)
