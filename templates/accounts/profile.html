@@ -290,10 +290,18 @@
                     </select>
 
                     <br />
+                    <p id="browser-tz-hint" class="hide">
+                        Tip: your browser's time zone is <b>FIXME</b>.
+                        <a href="#">Use it instead?</a>
+                    </p>
+
                     <p>{% site_name %} will use your preferred time zone to:</p>
                     <ul>
                         <li>Format dates and times in monitoring alerts.</li>
-                        <li>Deliver email reports (if enabled) between 9:00 and 11:00 local time.</li>
+                        <li>
+                            Deliver <a href="{% url 'hc-profile' %}">email reports</a>
+                            (if enabled) between 9:00 and 11:00 local time.
+                        </li>
                     </ul>
                     <br />
                     <button type="submit" class="btn btn-default pull-right">Save Changes</button>

@@ -8,4 +8,18 @@ $(function() {
         return false;
     });
 
+    var browserTz = null;
+    try {
+        var browserTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch(err) {};
+
+    if (browserTz && $("#tz").val() != browserTz) {
+        $("#browser-tz-hint b").text(browserTz);
+        $("#browser-tz-hint").removeClass("hide");
+    }
+    $("#browser-tz-hint a").click(function() {
+        $("#tz")[0].selectize.setValue(browserTz, true);
+        return false;
+    });
+
 });
