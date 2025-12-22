@@ -16,7 +16,18 @@ class DateFormatter {
         this.dateFmt = new Intl.DateTimeFormat("en-US", {month: "short", day: "numeric", timeZone: tz});
         this.dateYearFmt = new Intl.DateTimeFormat("en-US", {month: "short", day: "numeric", year: "numeric", timeZone: tz});
         this.timeFmt = new Intl.DateTimeFormat("en-GB", {hour: "numeric", minute: "numeric", timeZone: tz});
-        this.timestampFmt = new Intl.DateTimeFormat("en-GB", {hour: "numeric", minute: "numeric", weekday: "short", year: "numeric", month: "short", day: "numeric", timeZone: tz, timeZoneName: "short"});
+
+        var tsOptions = {
+            weekday: "short",
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            timeZoneName: "short",
+            timeZone: tz
+        }
+        this.timestampFmt = new Intl.DateTimeFormat("en-GB", tsOptions);
         // Don't use getFullYear() because we want the year *in the specified timezone*
         this.currentYear = this.yearFmt.format();
     }
