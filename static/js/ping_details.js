@@ -9,7 +9,7 @@ function loadPingDetails(url) {
             var created = moment.unix($("#ping-details-body .times").data("dt"));
             $("#ping-details-body .times span").each(function(i, el) {
                 var format = el.dataset.format;
-                var createdNaive = format == "local" ? created.local() : created.tz(format);
+                var createdNaive = created.tz(format);
                 el.innerText = createdNaive.format("MMM D, HH:mm");
             });
 

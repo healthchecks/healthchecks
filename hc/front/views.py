@@ -37,6 +37,8 @@ from django.utils.timezone import now
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django_stubs_ext import WithAnnotations
+from oncalendar import OnCalendar, OnCalendarError
+
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Member, Profile, Project
 from hc.api.models import (
@@ -60,7 +62,6 @@ from hc.front.validators import CronValidator, OnCalendarValidator
 from hc.lib.badges import get_badge_url
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
-from oncalendar import OnCalendar, OnCalendarError
 
 logger = logging.getLogger(__name__)
 
@@ -307,6 +308,7 @@ def checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "num_visible": len(checks) - len(hidden_checks),
         "ambiguous": ambiguous,
         "show_last_duration": show_last_duration,
+        "profile_tz": request.profile.tz,
     }
 
     return render(request, "front/checks.html", ctx)
@@ -747,6 +749,7 @@ def ping_details(
         "plain": None,
         "html": None,
         "active": None,
+        "tz_switches": _tz_switches(request.profile, check),
     }
 
     if ping.scheme == "email" and body:
@@ -938,6 +941,7 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "max": smax,
         "events": events,
         "oldest_ping": oldest_ping,
+        "tz_switches": _tz_switches(request.profile, check),
     }
 
     if events:
@@ -947,6 +951,15 @@ def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         ctx["last_event_timestamp"] = events[0].created.timestamp()
 
     return render(request, "front/log.html", ctx)
+
+
+def _tz_switches(profile: Profile, check: Check) -> list[str]:
+    switches = ["UTC"]
+    if profile.tz not in switches:
+        switches.append(profile.tz)
+    if check.kind in ("cron", "oncalendar") and check.tz not in switches:
+        switches.append(check.tz)
+    return switches
 
 
 @login_required
@@ -983,6 +996,7 @@ def details(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "timezones": all_timezones,
         "downtimes": check.downtimes(3, request.profile.tz),
         "tz": request.profile.tz,
+        "tz_switches": _tz_switches(request.profile, check),
         "is_copied": "copied" in request.GET,
         "all_tags": " ".join(sorted(all_tags)),
     }

@@ -146,8 +146,7 @@ $(function () {
         var currentYear = moment().year();
 
         document.querySelectorAll("#log tr").forEach(function(row) {
-            var dt = moment.unix(row.dataset.dt).utc();
-            format == "local" ? dt.local() : dt.tz(format);
+            var dt = moment.unix(row.dataset.dt).tz(format);
             var dateFormat = "MMM D";
             if (dt.year() != currentYear) {
                 dateFormat = "MMM D, YYYY";

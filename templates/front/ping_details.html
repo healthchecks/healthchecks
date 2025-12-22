@@ -23,24 +23,13 @@
                 <strong>Time Received</strong>
                 <code>{{ ping.created.isoformat }}</code>
                 <div class="times" data-dt="{{ ping.created|timestamp }}">
-                    {% if check.kind == "simple" or check.tz != "UTC" %}
-                    <div>
-                        UTC<br>
-                        <span data-format="UTC"></span>
+                    {% for tz in tz_switches %}
+                    <div data-format="{{ tz }}">
+                        {{ tz }}<br>
+                        <span data-format="{{ tz }}"></span>
                     </div>
-                    {% endif %}
-                    {% if check.kind == "cron" or check.kind == "oncalendar" %}
-                    <div data-format="{{ check.tz }}">
-                        {{ check.tz }}<br>
-                        <span data-format="{{ check.tz }}"></span>
-                    </div>
-                    {% endif %}
-                    <div>
-                        Browser's time zone<br>
-                        <span data-format="local"></span>
-                    </div>
+                    {% endfor %}
                 </div>
-
             </p>
         </div>
 

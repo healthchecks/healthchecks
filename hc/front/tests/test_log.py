@@ -13,8 +13,13 @@ from hc.test import BaseTestCase
 class LogTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+
         self.check = Check(project=self.project)
         self.check.created = "2000-01-01T00:00:00+00:00"
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Berlin"
         self.check.save()
 
         self.ping = Ping.objects.create(owner=self.check, n=1)
@@ -30,8 +35,11 @@ class LogTestCase(BaseTestCase):
     def test_it_works(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
-        self.assertContains(r, "Browser's time zone", status_code=200)
         self.assertContains(r, "hello world")
+        # It should offer both the profile's tz and the check's tz
+        # in the timezone switcher:
+        self.assertContains(r, "Europe/Riga")
+        self.assertContains(r, "Europe/Berlin")
 
     @patch("hc.api.models.get_object")
     def test_it_does_not_load_body_from_object_storage(self, get_object: Mock) -> None:

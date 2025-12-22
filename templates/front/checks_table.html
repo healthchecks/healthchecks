@@ -3,7 +3,8 @@
     id="checks-table"
     class="table {% if rw %}rw{% endif%}"
     {% if num_visible == 0 %}style="display: none"{% endif %}
-    data-status-url="{% url 'hc-status' project.code %}">
+    data-status-url="{% url 'hc-status' project.code %}"
+    data-profile-tz="{{ profile_tz }}">
     <tr>
         <th></th>
         <th class="th-name">

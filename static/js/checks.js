@@ -64,6 +64,7 @@ $(function () {
         return false;
     });
 
+    var profileTz = $("#checks-table").data("profile-tz");
     $(".last-ping").tooltip({
         delay: 200,
         title: function () {
@@ -72,8 +73,8 @@ $(function () {
             }
             var dtSpan = this.querySelector("[data-dt]");
             if (dtSpan) {
-                var dt = moment.unix(dtSpan.dataset.dt);
-                return dt.local().format("MMM D, Y, HH:mm Z");
+                var dt = moment.unix(dtSpan.dataset.dt).tz(profileTz);
+                return dt.format("ddd, D MMM Y, HH:mm ZZ");
             }
         },
     });

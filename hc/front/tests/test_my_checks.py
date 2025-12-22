@@ -19,14 +19,19 @@ class MyChecksTestCase(BaseTestCase):
         self.url = f"/projects/{self.project.code}/checks/"
 
     def test_it_works(self) -> None:
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+
         for email in ("alice@example.org", "bob@example.org"):
             self.client.login(username=email, password="password")
             r = self.client.get(self.url)
-            self.assertContains(r, "favicon.svg")
-            self.assertContains(r, "Alice Was Here", status_code=200)
-            self.assertContains(r, str(self.check.code), status_code=200)
+            self.assertContains(r, "favicon.svg", status_code=200)
+            self.assertContains(r, "Alice Was Here")
+            self.assertContains(r, str(self.check.code))
             # The pause button:
-            self.assertContains(r, "btn pause", status_code=200)
+            self.assertContains(r, "btn pause")
+            if email == "alice@example.org":
+                self.assertContains(r, 'data-profile-tz="Europe/Riga"')
 
         # last_active_date should have been set
         self.profile.refresh_from_db()

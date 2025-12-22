@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Check, Ping
 from hc.lib.s3 import GetObjectError
 from hc.test import BaseTestCase
@@ -50,11 +51,23 @@ class PingDetailsTestCase(BaseTestCase):
         self.url = f"/checks/{self.check.code}/last_ping/"
 
     def test_it_works(self) -> None:
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+
+        self.check.tz = "Europe/Berlin"
+        self.check.kind = "cron"
+        self.check.save()
+
         Ping.objects.create(owner=self.check, n=1, body_raw=b"this is body")
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "this is body", status_code=200)
+
+        # It should offer both the profile's tz and the check's tz
+        # in the "Time received" field
+        self.assertContains(r, "Europe/Riga")
+        self.assertContains(r, "Europe/Berlin")
 
     def test_it_displays_duration(self) -> None:
         expected_duration = td(minutes=5)

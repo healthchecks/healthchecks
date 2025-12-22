@@ -13,6 +13,10 @@ from hc.test import BaseTestCase
 class DetailsTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
+
+        self.profile.tz = "Europe/Riga"
+        self.profile.save()
+
         self.check = Check.objects.create(project=self.project, name="Foo")
 
         ping = Ping.objects.create(owner=self.check)
@@ -26,6 +30,10 @@ class DetailsTestCase(BaseTestCase):
 
     @override_settings(SITE_NAME="Mychecks")
     def test_it_works(self) -> None:
+        self.check.kind = "cron"
+        self.check.tz = "Europe/Berlin"
+        self.check.save()
+
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertContains(r, "How To Ping", status_code=200)
@@ -33,8 +41,13 @@ class DetailsTestCase(BaseTestCase):
         # The page should contain timezone strings
         self.assertContains(r, "Europe/Riga")
 
-        self.assertContains(r, "Foo – Mychecks", status_code=200)
+        self.assertContains(r, "Foo – Mychecks")
         self.assertContains(r, "favicon.svg")
+
+        # It should offer both the profile's tz and the check's tz
+        # in the timezone switcher:
+        self.assertContains(r, "Europe/Riga")
+        self.assertContains(r, "Europe/Berlin")
 
     def test_it_suggests_tags_from_other_checks(self) -> None:
         self.check.tags = "foo bar"
