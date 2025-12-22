@@ -80,7 +80,7 @@ $(function () {
 
     var statusUrl = document.getElementById("events").dataset.statusUrl;
     // Look up the active tz switch to determine the initial display timezone:
-    var initialTz = $(".active", "#format-switcher").data("format");
+    var initialTz = $(".active", "#tz-switcher").data("tz");
     var dateFormatter = new DateFormatter(initialTz);
     var lastStatusText = "";
     var lastUpdated = "";
@@ -155,8 +155,8 @@ $(function () {
     }
 
 
-    $("#format-switcher").click(function(ev) {
-        dateFormatter.setTimezone(ev.target.dataset.format);
+    $("#tz-switcher").click(function(ev) {
+        dateFormatter.setTimezone(ev.target.dataset.tz);
         formatPingDates();
     });
 

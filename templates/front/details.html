@@ -307,10 +307,10 @@
         <h2>
             Events
             <small class="hidden-xs">Click on individual items for details</small>
-            <div id="format-switcher" class="btn-group pull-right" data-toggle="buttons">
+            <div id="tz-switcher" class="btn-group pull-right" data-toggle="buttons">
                 {% for tz in tz_switches %}
-                <label class="btn btn-default btn-xs {% if forloop.last %}active{% endif %}" data-format="{{ tz }}">
-                    <input type="radio" name="date-format"> {{ tz }}
+                <label class="btn btn-default btn-xs {% if forloop.last %}active{% endif %}" data-tz="{{ tz }}">
+                    <input type="radio" name="tz-switcher-value"> {{ tz }}
                 </label>
                 {% endfor %}
             </div>

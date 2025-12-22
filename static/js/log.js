@@ -3,7 +3,7 @@ $(function () {
     var slider = document.getElementById("end");
 
     // Look up the active tz switch to determine the initial display timezone:
-    var initialTz = $(".active", "#format-switcher").data("format");
+    var initialTz = $(".active", "#tz-switcher").data("tz");
     var dateFormatter = new DateFormatter(initialTz);
 
     function updateSliderPreview() {
@@ -71,8 +71,8 @@ $(function () {
         })
     }
 
-    $("#format-switcher").click(function(ev) {
-        dateFormatter.setTimezone(ev.target.dataset.format);
+    $("#tz-switcher").click(function(ev) {
+        dateFormatter.setTimezone(ev.target.dataset.tz);
         updateSliderPreview();
         formatDateSpans();
         formatPingDates(document.querySelectorAll("#log tr"));

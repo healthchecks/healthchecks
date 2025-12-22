@@ -13,11 +13,11 @@
             </li>
             <li class="active">Events</li>
 
-            <li id="format-switcher-container" class="pull-right hidden-xs">
-                <div id="format-switcher" class="btn-group" data-toggle="buttons">
+            <li id="tz-switcher-container" class="pull-right hidden-xs">
+                <div id="tz-switcher" class="btn-group" data-toggle="buttons">
                     {% for tz in tz_switches %}
-                    <label class="btn btn-default btn-xs {% if forloop.last %}active{% endif %}" data-format="{{ tz }}">
-                        <input type="radio" name="date-format"> {{ tz }}
+                    <label class="btn btn-default btn-xs {% if forloop.last %}active{% endif %}" data-tz="{{ tz }}">
+                        <input type="radio" name="tz-switcher-value"> {{ tz }}
                     </label>
                     {% endfor %}
                 </div>
