@@ -12,11 +12,16 @@ class DateFormatter {
     }
 
     setTimezone(tz) {
+        // 2025
         this.yearFmt = new Intl.DateTimeFormat("en-US", {year: "numeric", timeZone: tz});
+        // Jan 15
         this.dateFmt = new Intl.DateTimeFormat("en-US", {month: "short", day: "numeric", timeZone: tz});
-        this.dateYearFmt = new Intl.DateTimeFormat("en-US", {month: "short", day: "numeric", year: "numeric", timeZone: tz});
-        this.timeFmt = new Intl.DateTimeFormat("en-GB", {hour: "numeric", minute: "numeric", timeZone: tz});
+        // Jan 15, 2025
+        this.dateYearFmt = new Intl.DateTimeFormat("en-US", {dateStyle: "medium", timeZone: tz});
+        // 12:34
+        this.timeFmt = new Intl.DateTimeFormat("en-GB", {timeStyle: "short", timeZone: tz});
 
+        // Wed, 15 Jan 2025, 12:34 EET
         var tsOptions = {
             weekday: "short",
             day: "numeric",
