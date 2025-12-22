@@ -65,6 +65,7 @@ $(function () {
     });
 
     var profileTz = $("#checks-table").data("profile-tz");
+    var dateFormatter = new DateFormatter(profileTz);
     $(".last-ping").tooltip({
         delay: 200,
         title: function () {
@@ -73,8 +74,8 @@ $(function () {
             }
             var dtSpan = this.querySelector("[data-dt]");
             if (dtSpan) {
-                var dt = moment.unix(dtSpan.dataset.dt).tz(profileTz);
-                return dt.format("ddd, D MMM Y, HH:mm ZZ");
+                var dt = new Date(dtSpan.dataset.dt * 1000);
+                return dateFormatter.formatTimestamp(dt);
             }
         },
     });

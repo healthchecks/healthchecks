@@ -6,11 +6,12 @@ function loadPingDetails(url) {
     $.get(url, function(data) {
             $("#ping-details-body").html(data);
 
-            var created = moment.unix($("#ping-details-body .times").data("dt"));
+            var dateFormatter = new DateFormatter("UTC");
+            var createdUnix = $("#ping-details-body .times").data("dt");
+            var created = new Date(createdUnix * 1000);
             $("#ping-details-body .times span").each(function(i, el) {
-                var format = el.dataset.format;
-                var createdNaive = created.tz(format);
-                el.innerText = createdNaive.format("MMM D, HH:mm");
+                dateFormatter.setTimezone(el.dataset.format);
+                el.innerText = dateFormatter.formatDateTime(created);
             });
 
             var htmlPre = $("#email-body-html pre");

@@ -80,7 +80,8 @@ $(function () {
 
     var statusUrl = document.getElementById("events").dataset.statusUrl;
     // Look up the active tz switch to determine the initial display timezone:
-    var lastFormat = $(".active", "#format-switcher").data("format");
+    var initialTz = $(".active", "#format-switcher").data("format");
+    var dateFormatter = new DateFormatter(initialTz);
     var lastStatusText = "";
     var lastUpdated = "";
     var lastStarted = false;
@@ -106,7 +107,7 @@ $(function () {
                 if (data.events) {
                     lastUpdated = data.updated;
                     $("#log-container").html(data.events);
-                    switchDateFormat(lastFormat);
+                    formatPingDates();
                 }
 
                 if (data.downtimes) {
@@ -141,19 +142,11 @@ $(function () {
         return false;
     });
 
-    function switchDateFormat(format) {
-        lastFormat = format;
-        var currentYear = moment().year();
-
+    function formatPingDates() {
         document.querySelectorAll("#log tr").forEach(function(row) {
-            var dt = moment.unix(row.dataset.dt).tz(format);
-            var dateFormat = "MMM D";
-            if (dt.year() != currentYear) {
-                dateFormat = "MMM D, YYYY";
-            }
-
-            row.children[1].textContent = dt.format(dateFormat);
-            row.children[2].textContent = dt.format("HH:mm");
+            var dt = new Date(row.dataset.dt * 1000);
+            row.children[1].textContent = dateFormatter.formatDate(dt);
+            row.children[2].textContent = dateFormatter.formatTime(dt);
         })
 
         // The table is initially hidden to avoid flickering as we convert dates.
@@ -163,8 +156,8 @@ $(function () {
 
 
     $("#format-switcher").click(function(ev) {
-        var format = ev.target.dataset.format;
-        switchDateFormat(format);
+        dateFormatter.setTimezone(ev.target.dataset.format);
+        formatPingDates();
     });
 
     var transferFormLoadStarted = false;

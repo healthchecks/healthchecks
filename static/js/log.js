@@ -3,24 +3,22 @@ $(function () {
     var slider = document.getElementById("end");
 
     // Look up the active tz switch to determine the initial display timezone:
-    var dateFormat = $(".active", "#format-switcher").data("format");
-    function fromUnix(timestamp) {
-        var dt = moment.unix(timestamp);
-        dateFormat == "local" ? dt.local() : dt.tz(dateFormat);
-        return dt;
-    }
+    var initialTz = $(".active", "#format-switcher").data("format");
+    var dateFormatter = new DateFormatter(initialTz);
 
     function updateSliderPreview() {
         var toFormatted = "now, live updates";
         if (slider.value != slider.max) {
-            toFormatted = fromUnix(slider.value).format("MMM D, HH:mm");
+            var dt = new Date(slider.value * 1000);
+            toFormatted = dateFormatter.formatDateTime(dt);
         }
         $("#end-formatted").html(toFormatted);
     }
 
     function formatDateSpans() {
         $("span[data-dt]").each(function(i, el) {
-            el.innerText = fromUnix(el.dataset.dt).format(el.dataset.fmt);
+            var dt = new Date(el.dataset.dt * 1000);
+            el.innerText = dateFormatter.formatDate(dt, true);
         });
     }
 
@@ -47,7 +45,7 @@ $(function () {
                 lastUpdated = xhr.getResponseHeader("X-Last-Event-Timestamp");
                 var tbody = document.createElement("tbody");
                 tbody.innerHTML = data;
-                switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                formatPingDates(tbody.querySelectorAll("tr"));
                 $("#log").empty().append(tbody);
                 updateNumHits();
             }
@@ -65,31 +63,24 @@ $(function () {
         return false;
     });
 
-    function switchDateFormat(format, rows) {
-        dateFormat = format;
-        var currentYear = moment().year();
-        updateSliderPreview();
-
+    function formatPingDates(rows) {
         rows.forEach(function(row) {
-            var dt = fromUnix(row.dataset.dt);
-            var dtFormat = "MMM D";
-            if (dt.year() != currentYear) {
-                dtFormat = "MMM D, YYYY";
-            }
-            
-            row.children[1].textContent = dt.format(dtFormat);
-            row.children[2].textContent = dt.format("HH:mm");
+            var dt = new Date(row.dataset.dt * 1000);
+            row.children[1].textContent = dateFormatter.formatDate(dt);
+            row.children[2].textContent = dateFormatter.formatTime(dt);
         })
     }
 
     $("#format-switcher").click(function(ev) {
-        var format = ev.target.dataset.format;
-        switchDateFormat(format, document.querySelectorAll("#log tr"));
+        dateFormatter.setTimezone(ev.target.dataset.format);
+        updateSliderPreview();
         formatDateSpans();
+        formatPingDates(document.querySelectorAll("#log tr"));
     });
 
-    switchDateFormat(dateFormat, document.querySelectorAll("#log tr"));
+    updateSliderPreview();
     formatDateSpans();
+    formatPingDates(document.querySelectorAll("#log tr"));
     // The table is initially hidden to avoid flickering as we convert dates.
     // Once it's ready, set it to visible:
     $("#log").css("visibility", "visible");
@@ -121,7 +112,7 @@ $(function () {
                 var tbody = document.createElement("tbody");
                 tbody.setAttribute("class", "new");
                 tbody.innerHTML = data;
-                switchDateFormat(dateFormat, tbody.querySelectorAll("tr"));
+                formatPingDates(dateFormat, tbody.querySelectorAll("tr"));
                 document.getElementById("log").prepend(tbody);
                 updateNumHits();
             },

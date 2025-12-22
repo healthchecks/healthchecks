@@ -40,7 +40,7 @@
             Showing <span id="num-hits">{{ events|length }}</span> matching events.
             <br >
             The oldest stored ping is ping #{{ oldest_ping.n }} from
-            <span data-dt="{{ oldest_ping.created|timestamp }}" data-fmt="MMM D, YYYY"></span>.
+            <span data-dt="{{ oldest_ping.created|timestamp }}"></span>.
         </div>
         {% endif %}
     </div>
@@ -61,7 +61,7 @@
 
         <p id="end-help" class="text-muted">
             ⬆<br>
-            <span data-dt="{{ min|timestamp }}" data-fmt="MMM D, YYYY"></span>.
+            <span data-dt="{{ min|timestamp }}"></span>.
         </p>
 
         <br>
@@ -108,8 +108,7 @@
 {% block scripts %}
 <script id="last-event-timestamp" type="data">{{ last_event_timestamp }}</script>
 {% compress js %}
-<script src="{% static 'js/moment.min.js' %}"></script>
-<script src="{% static 'js/moment-timezone-with-data-10-year-range.min.js' %}"></script>
+<script src="{% static 'js/dates.js' %}"></script>
 <script src="{% static 'js/purify.min.js' %}"></script>
 <script src="{% static 'js/ping_details.js' %}"></script>
 <script src="{% static 'js/log.js' %}"></script>
