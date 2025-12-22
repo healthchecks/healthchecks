@@ -24,9 +24,9 @@
                 <code>{{ ping.created.isoformat }}</code>
                 <div class="times" data-dt="{{ ping.created|timestamp }}">
                     {% for tz in tz_switches %}
-                    <div data-format="{{ tz }}">
+                    <div>
                         {{ tz }}<br>
-                        <span data-format="{{ tz }}"></span>
+                        <span data-tz="{{ tz }}"></span>
                     </div>
                     {% endfor %}
                 </div>

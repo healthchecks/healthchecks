@@ -10,7 +10,7 @@ function loadPingDetails(url) {
             var createdUnix = $("#ping-details-body .times").data("dt");
             var created = new Date(createdUnix * 1000);
             $("#ping-details-body .times span").each(function(i, el) {
-                dateFormatter.setTimezone(el.dataset.format);
+                dateFormatter.setTimezone(el.dataset.tz);
                 el.innerText = dateFormatter.formatDateTime(created);
             });
 
