@@ -13,16 +13,32 @@ class DateFormatter {
 
     setTimezone(tz) {
         // 2025
-        this.yearFmt = new Intl.DateTimeFormat("en-US", {year: "numeric", timeZone: tz});
+        this.yearFmt = new Intl.DateTimeFormat("en-US", {
+            year: "numeric",
+            timeZone: tz
+        });
+
         // Jan 15
-        this.dateFmt = new Intl.DateTimeFormat("en-US", {month: "short", day: "numeric", timeZone: tz});
+        this.dateFmt = new Intl.DateTimeFormat("en-US", {
+            month: "short",
+            day: "numeric",
+            timeZone: tz
+        });
+
         // Jan 15, 2025
-        this.dateYearFmt = new Intl.DateTimeFormat("en-US", {dateStyle: "medium", timeZone: tz});
+        this.dateYearFmt = new Intl.DateTimeFormat("en-US", {
+            dateStyle: "medium",
+            timeZone: tz
+        });
+
         // 12:34
-        this.timeFmt = new Intl.DateTimeFormat("en-GB", {timeStyle: "short", timeZone: tz});
+        this.timeFmt = new Intl.DateTimeFormat("en-GB", {
+            timeStyle: "short",
+            timeZone: tz
+        });
 
         // Wed, 15 Jan 2025, 12:34 EET
-        var tsOptions = {
+        this.timestampFmt = new Intl.DateTimeFormat("en-GB", {
             weekday: "short",
             day: "numeric",
             month: "short",
@@ -31,8 +47,8 @@ class DateFormatter {
             minute: "numeric",
             timeZoneName: "short",
             timeZone: tz
-        }
-        this.timestampFmt = new Intl.DateTimeFormat("en-GB", tsOptions);
+        });
+
         // Don't use getFullYear() because we want the year *in the specified timezone*
         this.currentYear = this.yearFmt.format();
     }
