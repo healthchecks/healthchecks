@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from unittest.mock import Mock, patch
 from uuid import uuid4
 
@@ -39,41 +38,40 @@ class PingModelTestCase(BaseTestCase):
 
 class PrepareDurationsTestCase(BaseTestCase):
     def test_it_works(self) -> None:
-        p1 = Ping(created=EPOCH, kind="start")
-        p2 = Ping(created=EPOCH + td(seconds=1))
+        p1 = Ping(id=1, created=EPOCH, kind="start")
+        p2 = Ping(id=2, created=EPOCH + td(seconds=1))
         prepare_durations([p2, p1])
         self.assertEqual(p2.duration, td(seconds=1))
 
     def test_it_matches_start_event_by_rid(self) -> None:
         A = "63832bb7-ddd5-4f2d-bf0a-cac885212963"
         B = "beecf8af-7bff-4cbe-b179-49693c15413b"
-        p1 = Ping(created=EPOCH, kind="start", rid=A)
-        p2 = Ping(created=EPOCH + td(seconds=1), kind="start", rid=B)
-        p3 = Ping(created=EPOCH + td(seconds=2), rid=A)
+        p1 = Ping(id=1, created=EPOCH, kind="start", rid=A)
+        p2 = Ping(id=2, created=EPOCH + td(seconds=1), kind="start", rid=B)
+        p3 = Ping(id=3, created=EPOCH + td(seconds=2), rid=A)
         prepare_durations([p3, p2, p1])
         self.assertEqual(p3.duration, td(seconds=2))
 
     def test_it_ignores_ign_event(self) -> None:
-        p1 = Ping(created=EPOCH, kind="start")
-        p2 = Ping(created=EPOCH + td(seconds=1), kind="ign")
-        p3 = Ping(created=EPOCH + td(seconds=2))
+        p1 = Ping(id=1, created=EPOCH, kind="start")
+        p2 = Ping(id=2, created=EPOCH + td(seconds=1), kind="ign")
+        p3 = Ping(id=3, created=EPOCH + td(seconds=2))
         prepare_durations([p3, p2, p1])
         self.assertEqual(p3.duration, td(seconds=2))
 
     def test_it_handles_consecutive_success_signals(self) -> None:
-        p1 = Ping(created=EPOCH, kind="start")
-        p2 = Ping(created=EPOCH + td(seconds=1))
-        p3 = Ping(created=EPOCH + td(seconds=2))
+        p1 = Ping(id=1, created=EPOCH, kind="start")
+        p2 = Ping(id=2, created=EPOCH + td(seconds=1))
+        p3 = Ping(id=3, created=EPOCH + td(seconds=2))
         prepare_durations([p3, p2, p1])
         self.assertEqual(p2.duration, td(seconds=1))
         self.assertIsNone(p3.duration)
 
     def test_it_caps_misses(self) -> None:
         l = []
-        i = 15
-        while i > 0:
-            l.append(Ping(created=EPOCH + td(seconds=i), rid=uuid4()))
-            i -= 1
+        for i in range(0, 15):
+            l.insert(0, Ping(id=i, created=EPOCH + td(seconds=i), rid=uuid4()))
+
         prepare_durations(l)
 
         # All pings have unique rid values, and there are no matching start events.
@@ -83,8 +81,8 @@ class PrepareDurationsTestCase(BaseTestCase):
             self.assertIsNone(ping.duration)
 
     def test_it_applies_max_duration(self) -> None:
-        p1 = Ping(created=EPOCH, kind="start")
-        p2 = Ping(created=EPOCH + MAX_DURATION + td(seconds=1))
+        p1 = Ping(id=1, created=EPOCH, kind="start")
+        p2 = Ping(id=2, created=EPOCH + MAX_DURATION + td(seconds=1))
         prepare_durations([p2, p1])
         # The time gap between p1 and p2 exceeds hc.api.models.MAX_DURATION
         # so the duration should be None
@@ -92,13 +90,13 @@ class PrepareDurationsTestCase(BaseTestCase):
 
     @patch("hc.api.models.Ping.duration")
     def test_it_defers_to_duration_property(self, mock_duration: Mock) -> None:
-        p1 = Ping(created=EPOCH)
+        p1 = Ping(id=1, created=EPOCH)
         prepare_durations([p1])
         self.assertEqual(p1.duration, mock_duration)
 
     def test_it_checks_max_duration_before_deferring(self) -> None:
-        p1 = Ping(created=EPOCH, kind="ign")
-        p2 = Ping(created=EPOCH + MAX_DURATION + td(seconds=1))
+        p1 = Ping(id=1, created=EPOCH, kind="ign")
+        p2 = Ping(id=2, created=EPOCH + MAX_DURATION + td(seconds=1))
         prepare_durations([p2, p1])
         # p1 and p2 are not related, but since the time gap between
         # p1 and p2 exceeds MAX_DURATION, we know it is not worth looking
@@ -106,8 +104,8 @@ class PrepareDurationsTestCase(BaseTestCase):
         self.assertIsNone(p2.duration)
 
     def test_it_requires_pings_in_descending_time_order(self) -> None:
-        p1 = Ping(created=EPOCH, kind="start")
-        p2 = Ping(created=EPOCH + td(seconds=1))
+        p1 = Ping(id=1, created=EPOCH, kind="start")
+        p2 = Ping(id=2, created=EPOCH + td(seconds=1))
         with self.assertRaises(AssertionError):
             prepare_durations([p1, p2])
 

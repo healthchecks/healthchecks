@@ -6,9 +6,8 @@ import socket
 import uuid
 from collections.abc import Sequence
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from importlib import import_module
 from typing import Any, NotRequired, TypedDict
 from zoneinfo import ZoneInfo
@@ -25,14 +24,15 @@ from django.http import HttpRequest
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django.utils.timezone import now
+from oncalendar import OnCalendar
+from pydantic import BaseModel, Field
+
 from hc.accounts.models import Project
 from hc.api import transports
 from hc.lib import emails
 from hc.lib.date import month_boundaries, seconds_in_month
 from hc.lib.s3 import GetObjectError, get_object, put_object, remove_objects
 from hc.lib.urls import absolute_reverse
-from oncalendar import OnCalendar
-from pydantic import BaseModel, Field
 
 STATUSES = (("up", "Up"), ("down", "Down"), ("new", "New"), ("paused", "Paused"))
 DEFAULT_TIMEOUT = td(days=1)
@@ -827,8 +827,9 @@ def prepare_durations(pings: Sequence[Ping]) -> None:
     num_misses = 0
     earliest = pings[-1]
     for ping in reversed(pings):
-        # Make sure we are iterating pings in ascending time order
-        assert ping.created >= earliest.created
+        # Make sure we are iterating pings in ascending order
+        # (i.e., we were passed pings in a most-recent-first order)
+        assert ping.id >= earliest.id
 
         if ping.kind == "start":
             starts[ping.rid] = ping.created
