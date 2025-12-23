@@ -68,7 +68,7 @@ class PrepareDurationsTestCase(BaseTestCase):
         self.assertIsNone(p3.duration)
 
     def test_it_caps_misses(self) -> None:
-        l = []
+        l: list[Ping] = []
         for i in range(0, 15):
             l.insert(0, Ping(id=i, created=EPOCH + td(seconds=i), rid=uuid4()))
 
