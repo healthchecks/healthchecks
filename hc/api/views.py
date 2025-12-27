@@ -3,9 +3,8 @@ from __future__ import annotations
 import email.policy
 import time
 from collections.abc import Iterable
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from email import message_from_bytes
 from ipaddress import ip_address
 from typing import Any, Literal
@@ -31,6 +30,10 @@ from django.utils.timezone import now
 from django.views.decorators.cache import never_cache
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
+from oncalendar import OnCalendar, OnCalendarError
+from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
+from pydantic_core import PydanticCustomError
+
 from hc.accounts.models import Profile, Project
 from hc.api.decorators import ApiRequest, authorize, authorize_read, cors
 from hc.api.forms import FlipsFiltersForm
@@ -39,9 +42,6 @@ from hc.lib.badges import check_signature, get_badge_svg, get_badge_url
 from hc.lib.signing import unsign_bounce_id
 from hc.lib.string import is_valid_uuid_string, match_keywords
 from hc.lib.tz import all_timezones, legacy_timezones
-from oncalendar import OnCalendar, OnCalendarError
-from pydantic import BaseModel, Field, ValidationError, field_validator, model_validator
-from pydantic_core import PydanticCustomError
 
 
 class BadChannelException(Exception):
@@ -547,6 +547,10 @@ def pause(request: ApiRequest, code: UUID) -> HttpResponse:
     check = get_object_or_404(Check, code=code)
     if check.project_id != request.project.id:
         return HttpResponseForbidden()
+
+    # Return early, without creating a flip object, if the check is already paused
+    if check.status == "paused":
+        return JsonResponse(check.to_dict(v=request.v))
 
     # Track the status change for correct downtime calculation in Check.downtimes()
     check.create_flip("paused", mark_as_processed=True)

@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import timedelta as td
 
 from django.utils.timezone import now
+
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
@@ -109,3 +110,18 @@ class PauseTestCase(BaseTestCase):
         self.assertEqual(
             r.json()["error"], "json validation error: value is not an object"
         )
+
+    def test_it_does_not_pause_already_paused_check(self) -> None:
+        self.check.status = "paused"
+        self.check.save()
+
+        r = self.csrf_client.post(
+            self.url, "", content_type="application/json", HTTP_X_API_KEY="X" * 32
+        )
+        self.assertEqual(r.status_code, 200)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "paused")
+
+        # It should not create a Flip object, as the check was already paused
+        self.assertFalse(Flip.objects.exists())

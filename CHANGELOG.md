@@ -15,6 +15,7 @@ version is 3.12.
 ### Bug Fixes
 - Fix the text version of email report for recently created checks (#1236, @adelton)
 - Fix prepare_durations() to assert ping ordering by id not by created date
+- Fix the "Pause" API call to not log another pause event if the check is already paused
 
 ## v3.13 - 2025-11-30
 
