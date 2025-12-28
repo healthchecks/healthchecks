@@ -804,6 +804,10 @@ def ping_body(request: AuthenticatedHttpRequest, code: UUID, n: int) -> HttpResp
 def pause(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check = _get_rw_check_for_user(request, code)
 
+    # Return early, without creating a flip object, if the check is already paused
+    if check.status == "paused":
+        return redirect("hc-details", code)
+
     # Track the status change for correct downtime calculation in Check.downtimes()
     check.create_flip("paused", mark_as_processed=True)
 

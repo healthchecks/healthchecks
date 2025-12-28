@@ -76,3 +76,16 @@ class PauseTestCase(BaseTestCase):
 
         self.profile.refresh_from_db()
         self.assertIsNone(self.profile.next_nag_date)
+
+    def test_it_does_not_pause_an_already_paused_check(self) -> None:
+        self.check.status = "paused"
+        self.check.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.client.post(self.url)
+
+        self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "paused")
+
+        # It should not create a Flip object
+        self.assertFalse(Flip.objects.exists())
