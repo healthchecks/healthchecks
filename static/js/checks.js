@@ -206,13 +206,29 @@ $(function () {
     $("#to-slug").click((e) => switchUrlFormat("slug"));
 
     $(".pause").tooltip({
-        title: "Pause this check?<br />Click again to confirm.",
+        title: function() {
+            var code = $(this).closest("tr.checks-row").attr("id");
+            var alreadyPaused = $("#" + code + " span.status").hasClass("ic-paused");
+            if (alreadyPaused) {
+                return "This check is already paused.";
+            }
+
+            return "Pause this check?<br />Click again to confirm.";
+        },
         trigger: "manual",
         html: true,
     });
 
     $(".pause").click(function () {
         var btn = $(this);
+        var code = btn.closest("tr.checks-row").attr("id");
+
+        // A click on an already paused check
+        var alreadyPaused = $("#" + code + " span.status").hasClass("ic-paused");
+        if (alreadyPaused) {
+            btn.tooltip("show");
+            return false;
+        }
 
         // First click: show a confirmation tooltip
         if (!btn.hasClass("confirm")) {
@@ -222,7 +238,6 @@ $(function () {
 
         // Second click: update UI and pause the check
         btn.removeClass("confirm").tooltip("hide");
-        var code = btn.closest("tr.checks-row").attr("id");
         $("#" + code + " span.status").attr("class", "status ic-paused");
 
         var url = base + "/checks/" + code + "/pause/";
