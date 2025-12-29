@@ -263,7 +263,7 @@ $(function () {
             if (cssClasses.indexOf("ic-new") > -1)
                 return "New. Has never received a ping.";
             if (cssClasses.indexOf("ic-paused") > -1)
-                return "Monitoring paused. Ping to resume.";
+                return "Monitoring paused.<br />Ping to resume.";
 
             if (cssClasses.indexOf("sort-name") > -1)
                 return "Sort by name<br />(but failed always first)";
