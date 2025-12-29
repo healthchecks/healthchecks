@@ -4429,7 +4429,7 @@ button.close {
   margin-left: -3px;
 }
 .tooltip.top .tooltip-arrow {
-  bottom: 0;
+  bottom: 0.5px;
   left: 50%;
   margin-left: -5px;
   border-width: 5px 5px 0;
