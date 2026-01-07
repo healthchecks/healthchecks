@@ -11,6 +11,7 @@ version is 3.12.
 - Update the Matrix integration to use Matrix v3 API (#1244)
 - Update email alert template to use user's preferred time zone (#1230)
 - Update the web UI to use user's preferred timezone instead of browser's timezone
+- Add data migration to update legacy timezones to current canonical timezones (#1250)
 
 ### Bug Fixes
 - Fix the text version of email report for recently created checks (#1236, @adelton)

@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import timedelta as td
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check
 from hc.lib.typealias import JSONDict
 from hc.test import BaseTestCase, TestHttpResponse
@@ -338,7 +339,11 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertEqual(r.status_code, 400)
 
     def test_it_converts_legacy_timezone(self) -> None:
-        for old, new in [("Europe/Kiev", "Europe/Kyiv"), ("UCT", "Etc/UTC")]:
+        for old, new in [
+            ("Europe/Kiev", "Europe/Kyiv"),
+            ("UCT", "Etc/UTC"),
+            ("CET", "Europe/Brussels"),
+        ]:
             r = self.post({"schedule": "* * * * *", "tz": old, "grace": 60})
             self.assertEqual(r.status_code, 201)
 
