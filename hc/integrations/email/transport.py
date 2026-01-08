@@ -22,15 +22,16 @@ class Email(Transport):
             "X-Bounce-ID": sign_bounce_id(f"n.{notification.code}"),
         }
 
-        # If this email address has an associated account, include
-        # a summary of projects the account has access to
+        # If this email address has an associated account,
+        # - include a summary of projects the account has access to
+        # - use their preferred time zone to format datetimes
+        # Otherwise, use the channel owner's preferred time zone.
         try:
             profile = Profile.objects.get(user__email=self.channel.email.value)
-            tz = profile.tz
             projects = list(profile.projects())
         except Profile.DoesNotExist:
+            profile = Profile.objects.for_user(self.channel.project.owner)
             projects = None
-            tz = "UTC"
 
         ping = self.last_ping(flip)
         body = get_ping_body(ping)
@@ -47,7 +48,7 @@ class Email(Transport):
             "subject": subject,
             "projects": projects,
             "unsub_link": unsub_link,
-            "tz": tz,
+            "tz": profile.tz,
         }
 
         emails.alert(self.channel.email.value, ctx, headers)

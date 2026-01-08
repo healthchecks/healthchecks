@@ -110,10 +110,27 @@ class NotifyEmailTestCase(BaseTestCase):
 
     @time_machine.travel(EPOCH + td(hours=1))
     def test_it_uses_users_preferred_timezone(self) -> None:
+        self.channel.value = "bob@example.org"
+        self.channel.save()
+
+        self.bobs_profile.tz = "Europe/Riga"
+        self.bobs_profile.save()
+        self.channel.notify(self.flip)
+
+        self.assertEmailContains("Wed, 01 Jan 2020 03:00:00 +0200")
+
+    @time_machine.travel(EPOCH + td(hours=1))
+    def test_it_falls_back_to_check_owners_timezone(self) -> None:
+        self.channel.value = "ops-notifications@example.org"
+        self.channel.save()
+
         self.profile.tz = "Europe/Riga"
         self.profile.save()
         self.channel.notify(self.flip)
 
+        # ops-notifications@example.org does not have an account, so we cannot
+        # use its preferred time zone. Instead we should use the preferred
+        # time zone of the channel's owner (Alice)
         self.assertEmailContains("Wed, 01 Jan 2020 03:00:00 +0200")
 
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
