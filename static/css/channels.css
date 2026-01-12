@@ -2,12 +2,6 @@
     margin-top: 36px;
 }
 
-.channel-row.kind-linenotify,
-.channel-row.kind-msteams {
-    filter: grayscale(100%);
-    opacity: 0.5;
-}
-
 .channels-table .channel-row > td {
     padding-top: 10px;
     padding-bottom: 10px;

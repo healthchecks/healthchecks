@@ -53,13 +53,8 @@ TRANSPORTS: dict[str, tuple[str, type[transports.Transport] | str]] = {
     "googlechat": ("Google Chat", "hc.integrations.googlechat.transport.GoogleChat"),
     "gotify": ("Gotify", "hc.integrations.gotify.transport.Gotify"),
     "group": ("Group", "hc.integrations.group.transport.Group"),
-    "linenotify": ("LINE Notify (stops working Apr 2025)", transports.RemovedTransport),
     "matrix": ("Matrix", "hc.integrations.matrix.transport.Matrix"),
     "mattermost": ("Mattermost", "hc.integrations.mattermost.transport.Mattermost"),
-    "msteams": (
-        "MS Teams Connector (stops working Jan 2025)",
-        transports.RemovedTransport,
-    ),
     "msteamsw": (
         "Microsoft Teams",
         "hc.integrations.msteamsw.transport.MsTeamsWorkflow",
@@ -1243,11 +1238,6 @@ class Channel(models.Model):
     @property
     def github(self) -> GitHubConf:
         return GitHubConf.model_validate_json(self.value)
-
-    @property
-    def linenotify_token(self) -> str:
-        assert self.kind == "linenotify"
-        return self.value
 
     @property
     def gotify(self) -> GotifyConf:

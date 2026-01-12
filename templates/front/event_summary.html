@@ -12,11 +12,6 @@
     {% endif %}
 {% elif event.channel.kind == "webhook" %}
     Called webhook {{ event.channel.down_webhook_spec.url }}
-{% elif event.channel.kind == "msteams" %}
-    Sent alert to Microsoft Teams
-    {% if event.channel.name %}
-        ({{ event.channel.name }})
-    {% endif %}
 {% elif event.channel.kind == "sms" %}
     Sent SMS to {{ event.channel.phone.value }}
     {% if event.channel.name %}
