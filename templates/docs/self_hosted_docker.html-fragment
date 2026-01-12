@@ -27,13 +27,13 @@ Example: <code>ALLOWED_HOSTS=hc.example.org</code>.</li>
 <li>
 <p>Create and start containers:</p>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>docker
-$<span class="w"> </span>docker-compose<span class="w"> </span>up
+$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>up
 </code></pre></div>
 
 </li>
 <li>
 <p>Create a superuser:</p>
-<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker-compose<span class="w"> </span>run<span class="w"> </span>web<span class="w"> </span>/opt/healthchecks/manage.py<span class="w"> </span>createsuperuser
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> </span>run<span class="w"> </span>web<span class="w"> </span>/opt/healthchecks/manage.py<span class="w"> </span>createsuperuser
 </code></pre></div>
 
 <p>This will trigger an interactive prompt.</p>
@@ -96,6 +96,30 @@ for more information.</p>
 <p>If you are using haproxy, you can do the same like so:</p>
 <div class="highlight"><pre><span></span><code>http-request set-header X-Forwarded-Proto https if { ssl_fc }
 http-request set-header X-Forwarded-Proto http unless { ssl_fc }
+</code></pre></div>
+
+<h2>Making Healthchecks Trust Your Self-signed TLS Certificate</h2>
+<p>If you configure Healthchecks to deliver notifications to a server that uses
+a self-signed TLS certificate, you may see a "TLS handshake failed" error
+when sending a notification.</p>
+<p>Healthchecks uses libcurl for making outbount HTTP(S) requests. curl and libcurl
+validates certificates and refuses to continue if a certificate cannot be validated.
+It is possible to turn off certificate validation, but doing so is
+<a href="https://curl.se/docs/sslcerts.html">strongly discouraged in curl docs</a>.</p>
+<p>To make curl accept a self-hosted certificate, add your self-signed certificate to
+the Healthchecks container's trust store.</p>
+<p>First, mount the certificate inside the container running the healthchecks
+web application. In <code>docker-compose.yml</code>, add the following in the <code>web:</code> section:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/cert.pem:/usr/local/share/ca-certificates/my-selfsigned-cert.crt:ro</span>
+</code></pre></div>
+
+<p>Note: <code>/path/to/cert.pem</code> must be <strong>an absolute path</strong> in the host system pointing
+to the certificate.</p>
+<p>Then reload configuration and run <code>update-ca-certificates</code> inside the container
+as the root user:</p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up
+docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>web<span class="w"> </span>update-ca-certificates
 </code></pre></div>
 
 <h2>Upgrading Database</h2>
