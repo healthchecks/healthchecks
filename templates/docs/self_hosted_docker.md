@@ -112,7 +112,7 @@ If you configure Healthchecks to deliver notifications to a server that uses
 a self-signed TLS certificate, you may see a "TLS handshake failed" error
 when sending a notification.
 
-Healthchecks uses libcurl for making outbount HTTP(S) requests. curl and libcurl
+Healthchecks uses libcurl for making outbound HTTP(S) requests. curl and libcurl
 validates certificates and refuses to continue if a certificate cannot be validated.
 It is possible to turn off certificate validation, but doing so is
 [strongly discouraged in curl docs](https://curl.se/docs/sslcerts.html).
