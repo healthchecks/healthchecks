@@ -1,6 +1,6 @@
 @font-face {
     font-family: "icomoon";
-    src: url("../fonts/icomoon.woff2?123d2") format("woff2");
+    src: url("../fonts/icomoon.woff2?jfejh") format("woff2");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -79,7 +79,7 @@
 .ic-grace:before {
     content: "\f01b";
 }
-.ic-missing:before {
+.ic-alert:before {
     content: "\f017";
 }
 .ic-new:before {
