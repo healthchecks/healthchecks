@@ -1,6 +1,6 @@
 @font-face {
     font-family: "icomoon";
-    src: url("../fonts/icomoon.woff2?jfejh") format("woff2");
+    src: url("../fonts/icomoon.woff2?fjsid") format("woff2");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -87,9 +87,6 @@
 }
 .ic-paused:before {
     content: "\f012";
-}
-.ic-settings:before {
-    content: "\f00d";
 }
 .ic-timer:before {
     content: "\f006";
