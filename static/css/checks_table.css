@@ -57,6 +57,7 @@
 
 #checks-table .integrations {
     white-space: nowrap;
+    user-select: none;
 }
 
 #checks-table .integrations span {
@@ -66,8 +67,7 @@
     width: 24px;
 }
 
-/* Icon palette in dark mode */
-body.dark [class^="ic-"] {
+body.dark .ic {
     font-palette: --palette1;
 }
 

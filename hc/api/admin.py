@@ -238,7 +238,7 @@ class ChannelsAdmin(ModelAdmin[Channel]):
         return reverse("hc-channels", args=[obj.project_code])
 
     def transport(self, obj: Channel) -> str:
-        tmpl = """<span class="ic-{}"></span> &nbsp; {}{}"""
+        tmpl = """<span class="ic">{}</span> &nbsp; {}{}"""
         note = ""
         if obj.kind == "email" and not obj.email_verified:
             note = " (not verified)"

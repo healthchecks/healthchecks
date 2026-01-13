@@ -90,12 +90,8 @@
         </td>
         <td class="hidden-xs">
             {% if channels|length <= 10 %}
-                <div class="integrations">
-                {% spaceless %}
-                {% for channel in channels %}
-                    <span class="ic-{{ channel.kind }}{% if channel in check.channel_set.all %}{% else %} off{% endif %}"></span>
-                {% endfor %}
-                {% endspaceless %}
+                <div class="integrations ic">
+                {% for channel in channels %}<span{% if channel not in check.channel_set.all %} class="off"{% endif %}>{{ channel.kind }}</span>{% endfor %}
                 </div>
             {% else %}
                 {{ check.channel_set.all|length }} of {{ channels|length }}

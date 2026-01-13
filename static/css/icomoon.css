@@ -1,6 +1,6 @@
 @font-face {
     font-family: "icomoon";
-    src: url("../fonts/icomoon.woff2?fjsid") format("woff2");
+    src: url("../fonts/icomoon.woff2?123tg") format("woff2");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -31,6 +31,16 @@
     line-height: 1;
     font-palette: --palette0;
     color: currentColor;
+
+    /* Enable Ligatures ================ */
+    letter-spacing: 0;
+    -webkit-font-feature-settings: "liga";
+    -moz-font-feature-settings: "liga=1";
+    -moz-font-feature-settings: "liga";
+    -ms-font-feature-settings: "liga" 1;
+    font-feature-settings: "liga";
+    -webkit-font-variant-ligatures: discretionary-ligatures;
+    font-variant-ligatures: discretionary-ligatures;
 
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
