@@ -66,12 +66,17 @@
     width: 24px;
 }
 
-#checks-table .integrations span.off:before {
-    color: var(--channel-off-inside-color);
+/* Icon palette in dark mode */
+body.dark [class^="ic-"] {
+    font-palette: --palette1;
 }
 
-#checks-table .integrations span.off:after {
-    color: var(--channel-off-color);
+#checks-table .integrations span.off {
+    font-palette: --palette2;
+}
+
+body.dark #checks-table .integrations span.off {
+    font-palette: --palette3;
 }
 
 .timeout-grace .cron-expression {

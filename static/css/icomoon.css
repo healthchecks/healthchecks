@@ -1,296 +1,186 @@
 @font-face {
     font-family: "icomoon";
-    src:
-        url("../fonts/icomoon.ttf?3uqi8v") format("truetype"),
-        url("../fonts/icomoon.woff?3uqi8v") format("woff"),
-        url("../fonts/icomoon.svg?3uqi8v#icomoon") format("svg");
+    src: url("../fonts/icomoon.woff2?123d2") format("woff2");
     font-weight: normal;
     font-style: normal;
     font-display: block;
 }
-
-[class^="ic-"],
-[class*=" ic-"] {
-    /* use !important to prevent issues with browser extensions that change fonts */
+@font-palette-values --palette0 {
+    font-family: "icomoon";
+    base-palette: 0
+}
+@font-palette-values --palette1 {
+    font-family: "icomoon";
+    base-palette: 1
+}
+@font-palette-values --palette2 {
+    font-family: "icomoon";
+    base-palette: 2
+}
+@font-palette-values --palette3 {
+    font-family: "icomoon";
+    base-palette: 3
+}
+.ic, [class^="ic-"], [class*=" ic-"] {
+    /* Use !important to prevent extensions from overriding this font. */
     font-family: "icomoon" !important;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
     text-transform: none;
     line-height: 1;
+    font-palette: --palette0;
+    color: currentColor;
 
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-
-.ic-googlechat:after {
-  content: "\e933";
-  color: #00ac47;
+@media (prefers-color-scheme: dark) {
+    .ic, [class^="ic-"], [class*=" ic-"] {
+        font-palette: --palette0;
+        color: currentColor;
+    }
 }
-.ic-github:after {
-    content: "\e902";
-    color: #24292f;
+.palette0 {
+    font-palette: --palette0;
+    color: currentColor;
 }
-body.dark .ic-github:after {
-    color: #fff;
+.palette1 {
+    font-palette: --palette1;
+    color: currentColor;
 }
-.ic-group:after {
-    content: "\e932";
-    color: #f0ad4e;
+.palette2 {
+    font-palette: --palette2;
+    color: currentColor;
 }
-.ic-rocketchat:after {
-    content: "\e930";
-    color: #f5455c;
-}
-.ic-ntfy:before {
-    content: "\e927";
-    color: rgb(255, 255, 255);
-}
-.ic-ntfy:after {
-    content: "\e928";
-    margin-left: -1em;
-    color: rgb(51, 133, 116);
-}
-
-.ic-gotify:before {
-    content: "\e925";
-    color: rgb(255, 255, 255);
-}
-.ic-gotify:after {
-    content: "\e926";
-    margin-left: -1em;
-    color: rgb(0, 181, 255);
-}
-.ic-call:before {
-    content: "\e91a";
-    color: rgb(255, 255, 255);
-}
-.ic-call:after {
-    content: "\e91d";
-    margin-left: -1em;
-    color: rgb(232, 26, 52);
-    opacity: 0.98;
-}
-.ic-victorops:before {
-    content: "\e900";
-    color: rgb(255, 255, 255);
-}
-.ic-victorops:after {
-    content: "\e91e";
-    margin-left: -1em;
-    color: rgb(44, 45, 46);
-}
-.ic-zulip:before {
-    content: "\e90f";
-    color: rgb(255, 255, 255);
-}
-.ic-zulip:after {
-    content: "\e91f";
-    margin-left: -1em;
-    color: rgb(100, 146, 254);
-}
-.ic-signal:after {
-    content: "\e91c";
-    color: #3b45fd;
-}
-.ic-linenotify:before {
-    content: "\e91b";
-    color: rgb(255, 255, 255);
-}
-.ic-linenotify:after {
-    content: "\e920";
-    margin-left: -1em;
-    color: rgb(0, 195, 0);
-}
-.ic-spike:before {
-    content: "\e919";
-    color: rgb(255, 255, 255);
-}
-.ic-spike:after {
-    content: "\e921";
-    margin-left: -1em;
-    color: rgb(0, 123, 255);
-}
-.ic-pd:before {
-    content: "\e90b";
-    color: rgb(255, 255, 255);
-}
-.ic-pd:after {
-    content: "\e922";
-    margin-left: -1em;
-    color: rgb(4, 172, 56);
-}
-.ic-shell:before {
-    content: "\e917";
-    color: rgb(255, 255, 255);
-}
-.ic-shell:after {
-    content: "\e923";
-    margin-left: -1em;
-    color: rgb(34, 34, 34);
-}
-.ic-msteams:before {
-    content: "\e916";
-    color: rgb(255, 255, 255);
-}
-.ic-msteams:after {
-    content: "\e924";
-    margin-left: -1em;
-    color: rgb(78, 86, 190);
-}
-.ic-msteamsw:before {
-    content: "\e916";
-    color: rgb(255, 255, 255);
-}
-.ic-msteamsw:after {
-    content: "\e924";
-    margin-left: -1em;
-    color: rgb(78, 86, 190);
-}
-.ic-opsgenie:after {
-    content: "\e910";
-    color: #2684ff;
-}
-.ic-mattermost:after {
-    content: "\e907";
-    color: #045acc;
-}
-.ic-apprise:after {
-    content: "\e915";
-    color: #236b6b;
-}
-.ic-matrix:after {
-    content: "\e901";
-}
-.ic-pagertree:before {
-    content: "\e90d";
-    color: rgb(255, 255, 255);
-}
-.ic-pagertree:after {
-    content: "\e929";
-    margin-left: -1em;
-    color: rgb(51, 173, 226);
-}
-.ic-po:before {
-    content: "\e90e";
-    color: rgb(255, 255, 255);
-}
-.ic-po:after {
-    content: "\e92a";
-    margin-left: -1em;
-    color: rgb(36, 157, 241);
-}
-.ic-email:before {
-    content: "\e90a";
-    color: rgb(255, 255, 255);
-}
-.ic-email:after {
-    content: "\e92b";
-    margin-left: -1em;
-    color: rgb(89, 140, 220);
-}
-.ic-webhook:after {
-    content: "\e908";
-    color: #c73a63;
-}
-.ic-sms:before {
-    content: "\e904";
-    color: rgb(255, 255, 255);
-}
-.ic-sms:after {
-    content: "\e92c";
-    margin-left: -1em;
-    color: rgb(149, 193, 68);
-}
-.ic-pushbullet:before {
-    content: "\e909";
-    color: rgb(255, 255, 255);
-}
-.ic-pushbullet:after {
-    content: "\e92d";
-    margin-left: -1em;
-    color: rgb(103, 191, 121);
-}
-.ic-discord:before {
-    content: "\e90c";
-    color: rgb(255, 255, 255);
-}
-.ic-discord:after {
-    content: "\e92e";
-    margin-left: -1em;
-    color: rgb(114, 137, 218);
-}
-.ic-slack:before {
-    content: "\e905";
-    color: rgb(255, 255, 255);
-}
-.ic-slack:after {
-    content: "\e92f";
-    margin-left: -1em;
-    color: rgb(86, 182, 139);
-}
-.ic-telegram:before {
-    content: "\e906";
-    color: rgb(255, 255, 255);
-}
-.ic-telegram:after {
-    content: "\e914";
-    margin-left: -1em;
-    color: rgb(38, 164, 227);
-}
-.ic-trello:before {
-    content: "\e911";
-    color: rgb(255, 255, 255);
-}
-.ic-trello:after {
-    content: "\e931";
-    margin-left: -1em;
-    color: rgb(0, 121, 191);
-}
-.ic-whatsapp:after {
-    content: "\e903";
-    color: #25d366;
-}
-.ic-up:before {
-    content: "\e86c";
-}
-.ic-new:before {
-    content: "\e86c";
-}
-.ic-ok:before {
-    content: "\e86c";
-}
-.ic-grace:before {
-    content: "\e000";
-}
-.ic-missing:before {
-    content: "\e001";
-}
-.ic-desc:before {
-    content: "\e313";
+.palette3 {
+    font-palette: --palette3;
+    color: currentColor;
 }
 .ic-asc:before {
-    content: "\e316";
-}
-.ic-dots:before {
-    content: "\e5d3";
-}
-.ic-down:before {
-    content: "\e7f7";
-}
-.ic-paused:before {
-    content: "\e7f6";
-}
-.ic-settings:before {
-    content: "\e913";
-}
-.ic-delete:before {
-    content: "\e918";
-}
-.ic-timer:before {
-    content: "\e425";
+    content: "\f027";
 }
 .ic-clippy:before {
-    content: "\e912";
+    content: "\f025";
+}
+.ic-delete:before {
+    content: "\f024";
+}
+.ic-desc:before {
+    content: "\f023";
+}
+.ic-dots:before {
+    content: "\f021";
+}
+.ic-down:before {
+    content: "\f020";
+}
+.ic-grace:before {
+    content: "\f01b";
+}
+.ic-missing:before {
+    content: "\f017";
+}
+.ic-new:before {
+    content: "\f029";
+}
+.ic-paused:before {
+    content: "\f012";
+}
+.ic-settings:before {
+    content: "\f00d";
+}
+.ic-timer:before {
+    content: "\f006";
+}
+.ic-up:before {
+    content: "\f004";
+}
+.ic-apprise:before {
+    content: "\f028";
+}
+.ic-call:before {
+    content: "\f026";
+}
+.ic-discord:before {
+    content: "\f022";
+}
+.ic-email:before {
+    content: "\f01f";
+}
+.ic-github:before {
+    content: "\f01e";
+}
+.ic-googlechat:before {
+    content: "\f01d";
+}
+.ic-gotify:before {
+    content: "\f01c";
+}
+.ic-group:before {
+    content: "\f01a";
+}
+.ic-matrix:before {
+    content: "\f019";
+}
+.ic-mattermost:before {
+    content: "\f018";
+}
+.ic-msteamsw:before {
+    content: "\f016";
+}
+.ic-ntfy:before {
+    content: "\f015";
+}
+.ic-opsgenie:before {
+    content: "\f014";
+}
+.ic-pagertree:before {
+    content: "\f013";
+}
+.ic-pd:before {
+    content: "\f011";
+}
+.ic-po:before {
+    content: "\f010";
+}
+.ic-pushbullet:before {
+    content: "\f00f";
+}
+.ic-rocketchat:before {
+    content: "\f00e";
+}
+.ic-shell:before {
+    content: "\f00c";
+}
+.ic-signal:before {
+    content: "\f00b";
+}
+.ic-slack:before {
+    content: "\f00a";
+}
+.ic-sms:before {
+    content: "\f009";
+}
+.ic-spike:before {
+    content: "\f008";
+}
+.ic-telegram:before {
+    content: "\f007";
+}
+.ic-trello:before {
+    content: "\f005";
+}
+.ic-victorops:before {
+    content: "\f003";
+}
+.ic-webhook:before {
+    content: "\f002";
+}
+.ic-whatsapp:before {
+    content: "\f001";
+}
+.ic-zulip:before {
+    content: "\f000";
 }
