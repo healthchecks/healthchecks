@@ -1,6 +1,6 @@
 @font-face {
     font-family: "icomoon";
-    src: url("../fonts/icomoon.woff2?123tg") format("woff2");
+    src: url("../fonts/icomoon.woff2?ije3j") format("woff2");
     font-weight: normal;
     font-style: normal;
     font-display: block;
@@ -45,12 +45,6 @@
     /* Better Font Rendering =========== */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-}
-@media (prefers-color-scheme: dark) {
-    .ic, [class^="ic-"], [class*=" ic-"] {
-        font-palette: --palette0;
-        color: currentColor;
-    }
 }
 .palette0 {
     font-palette: --palette0;
