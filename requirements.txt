@@ -3,7 +3,7 @@ cronsim==2.7
 Django==6.0.1
 django-compressor==4.6
 django-stubs-ext==5.2.9
-fido2==2.0.0
+fido2==2.1.1
 oncalendar==1.1
 psycopg==3.3.2
 pycurl==7.45.7
