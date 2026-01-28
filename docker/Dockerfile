@@ -1,4 +1,4 @@
-FROM python:3.13.9-slim-trixie AS builder
+FROM python:3.13.11-slim-trixie AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -6,8 +6,6 @@ COPY requirements.txt /tmp
 RUN \
     apt-get update && \
     apt-get install -y build-essential curl libpq-dev libmariadb-dev libffi-dev libpcre2-dev libssl-dev libcurl4-openssl-dev libpython3-dev pkg-config
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | bash -s -- --profile minimal -y
-ENV PATH=$PATH:/root/.cargo/bin
 RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio==7.2.20 "psycopg[c]" -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
@@ -15,7 +13,7 @@ RUN \
     rm -rf /opt/healthchecks/.git && \
     rm -rf /opt/healthchecks/stuff
 
-FROM python:3.13.9-slim-trixie
+FROM python:3.13.11-slim-trixie
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
