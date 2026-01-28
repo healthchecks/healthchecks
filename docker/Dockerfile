@@ -1,11 +1,17 @@
-FROM python:3.13.11-slim-trixie AS builder
+FROM python:3.14.2-slim-trixie AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 COPY requirements.txt /tmp
+# build-essential is required to build uswsi, psycopg, mysqlclient
+# libpq-dev is required to build psycopg[c]
+# libmaria-dev is required to build mysqlclient
+# libpcre2-dev is required for routing support in uwsgi
+# libcurl4-openssl-dev is required to build pycurl
+# pkg-config is required to build mysqlclient
 RUN \
     apt-get update && \
-    apt-get install -y build-essential curl libpq-dev libmariadb-dev libffi-dev libpcre2-dev libssl-dev libcurl4-openssl-dev libpython3-dev pkg-config
+    apt-get install -y build-essential libpq-dev libmariadb-dev libpcre2-dev libcurl4-openssl-dev pkg-config
 RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio==7.2.20 "psycopg[c]" -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
@@ -13,7 +19,7 @@ RUN \
     rm -rf /opt/healthchecks/.git && \
     rm -rf /opt/healthchecks/stuff
 
-FROM python:3.13.11-slim-trixie
+FROM python:3.14.2-slim-trixie
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
