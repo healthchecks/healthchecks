@@ -4,14 +4,15 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 COPY requirements.txt /tmp
 # build-essential is required to build uswsi, psycopg, mysqlclient
+# libffi-dev is required to build cffi (a dependency of minio)
 # libpq-dev is required to build psycopg[c]
 # libmaria-dev is required to build mysqlclient
 # libcurl4-openssl-dev is required to build pycurl
 # pkg-config is required to build mysqlclient
 RUN \
     apt-get update && \
-    apt-get install -y build-essential libpq-dev libmariadb-dev libcurl4-openssl-dev pkg-config
-RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio==7.2.20 "psycopg[c]" -r /tmp/requirements.txt --no-binary minio
+    apt-get install -y build-essential libffi-dev libpq-dev libmariadb-dev libcurl4-openssl-dev pkg-config
+RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio==7.2.20 "psycopg[c]" -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
 RUN \
