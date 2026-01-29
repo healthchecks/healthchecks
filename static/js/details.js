@@ -123,18 +123,6 @@ $(function () {
         });
     }, true);
 
-    // Copy to clipboard
-    $("button.copy-btn")
-        .click(function() {
-            navigator.clipboard.writeText(this.dataset.clipboardText);
-            this.textContent = "Copied!";
-        })
-        .mouseout(function(e) {
-            setTimeout(function() {
-                e.target.textContent = e.target.dataset.label;
-            }, 300);
-        });
-
     $("#events").on("click", "tr.ok", function() {
         var n = $("td", this).first().text();
         var tmpl = $("#log").data("url").slice(0, -2);
@@ -169,6 +157,17 @@ $(function () {
         $.get(this.dataset.url, function(data) {
             $("#transfer-modal" ).html(data);
         });
+    });
+
+    $(".click-to-copy").tooltip({ container: "body", title: "Click to copy" });
+    $(".click-to-copy").click(function (e) {
+        if (window.getSelection().toString()) {
+            // do nothing, selection not empty
+            return;
+        }
+
+        navigator.clipboard.writeText(this.textContent);
+        $(".tooltip-inner").text("Copied!");
     });
 
     // Enable the submit button in transfer form when user selects
