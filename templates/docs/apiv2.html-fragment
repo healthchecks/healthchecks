@@ -47,6 +47,10 @@ in your account.</p>
 <td><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/resume</code></td>
 </tr>
 <tr>
+<td><a href="#clear-check-events">Clear a check's events</a></td>
+<td><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/events/clear</code></td>
+</tr>
+<tr>
 <td><a href="#delete-check">Delete check</a></td>
 <td><code>DELETE SITE_ROOT/api/v2/checks/&lt;uuid&gt;</code></td>
 </tr>
@@ -955,6 +959,64 @@ header is sometimes required by some network proxies and web servers.</p>
 <span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/f618072a-7bde-4eee-af63-71a77c5723bc&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 class="rule" id="clear-check-events">Clear a Check's Events</h2>
+<p><code>POST SITE_ROOT/api/v2/checks/&lt;uuid&gt;/events/clear</code></p>
+<p>Clears all logged events for a check. This resets the check's state and deletes
+associated pings, notifications, and status changes.</p>
+<p>This API call has no request parameters.</p>
+<h3>Response Codes</h3>
+<dl>
+<dt>200 OK</dt>
+<dd>The events were successfully cleared.</dd>
+<dt>401 Unauthorized</dt>
+<dd>The API key is either missing or invalid.</dd>
+<dt>403 Forbidden</dt>
+<dd>Access denied, wrong API key.</dd>
+<dt>404 Not Found</dt>
+<dd>The specified check does not exist.</dd>
+</dl>
+<h3>Example Request</h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/events/clear<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--request<span class="w"> </span>POST<span class="w"> </span>--header<span class="w"> </span><span class="s2">&quot;X-Api-Key: your-api-key&quot;</span><span class="w"> </span>--data<span class="w"> </span><span class="s2">&quot;&quot;</span>
+</code></pre></div>
+
+<p>Note: the <code>--data ""</code> argument forces curl to send a <code>Content-Length</code> request header
+even though the request body is empty. For HTTP POST requests, the <code>Content-Length</code>
+header is sometimes required by some network proxies and web servers.</p>
+<h3>Example Response</h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Backups&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;slug&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;tags&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;prod www&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;desc&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;grace&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;n_pings&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;status&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;new&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;started&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;last_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;subject_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_http_body&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;filter_default_fail&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;badge_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;uuid&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;ping_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;update_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;pause_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;resume_url&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;channels&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;timeout&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3600</span>
 <span class="p">}</span>
 </code></pre></div>
 

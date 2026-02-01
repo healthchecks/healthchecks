@@ -52,6 +52,11 @@ api_urls = [
     path("checks/<uuid:code>/pause", views.pause, name="hc-api-pause"),
     path("checks/<uuid:code>/resume", views.resume, name="hc-api-resume"),
     path(
+        "checks/<uuid:code>/events/clear",
+        views.clear_events,
+        name="hc-api-clear-events",
+    ),
+    path(
         "notifications/<uuid:code>/status",
         views.notification_status,
         name="hc-api-notification-status",

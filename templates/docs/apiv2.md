@@ -23,6 +23,7 @@ Endpoint Name                                         | Endpoint Address
 [Update an existing check](#update-check)             | `POST SITE_ROOT/api/v2/checks/<uuid>`
 [Pause monitoring of a check](#pause-check)           | `POST SITE_ROOT/api/v2/checks/<uuid>/pause`
 [Resume monitoring of a check](#resume-check)         | `POST SITE_ROOT/api/v2/checks/<uuid>/resume`
+[Clear a check's events](#clear-check-events)          | `POST SITE_ROOT/api/v2/checks/<uuid>/events/clear`
 [Delete check](#delete-check)                         | `DELETE SITE_ROOT/api/v2/checks/<uuid>`
 **Pings**|
 [List check's logged pings](#list-pings)              | `GET SITE_ROOT/api/v2/checks/<uuid>/pings/`
@@ -1091,6 +1092,77 @@ header is sometimes required by some network proxies and web servers.
 ```
 
 
+## Clear a Check's Events {: #clear-check-events .rule }
+
+`POST SITE_ROOT/api/v2/checks/<uuid>/events/clear`
+
+Clears all logged events for a check. This resets the check's state and deletes
+associated pings, notifications, and status changes.
+
+This API call has no request parameters.
+
+### Response Codes
+
+200 OK
+:   The events were successfully cleared.
+
+401 Unauthorized
+:   The API key is either missing or invalid.
+
+403 Forbidden
+:   Access denied, wrong API key.
+
+404 Not Found
+:   The specified check does not exist.
+
+### Example Request
+
+```bash
+curl SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/events/clear \
+    --request POST --header "X-Api-Key: your-api-key" --data ""
+```
+
+Note: the `--data ""` argument forces curl to send a `Content-Length` request header
+even though the request body is empty. For HTTP POST requests, the `Content-Length`
+header is sometimes required by some network proxies and web servers.
+
+### Example Response
+
+```json
+{
+  "name": "Backups",
+  "slug": "",
+  "tags": "prod www",
+  "desc": "",
+  "grace": 60,
+  "n_pings": 0,
+  "status": "new",
+  "started": false,
+  "last_ping": null,
+  "next_ping": null,
+  "manual_resume": false,
+  "methods": "",
+  "subject": "",
+  "subject_fail": "",
+  "start_kw": "",
+  "success_kw": "",
+  "failure_kw": "",
+  "filter_subject": false,
+  "filter_body": false,
+  "filter_http_body": false,
+  "filter_default_fail": false,
+  "badge_url": "SITE_ROOT/b/2/d43c84db-1502-4d86-a89d-181a33e25896.svg",
+  "uuid": "7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "ping_url": "PING_ENDPOINT7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "update_url": "SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79",
+  "pause_url": "SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/pause",
+  "resume_url": "SITE_ROOT/api/v2/checks/7918b17b-a745-4db1-8575-9d2e07c97f79/resume",
+  "channels": "",
+  "timeout": 3600
+}
+```
+
+
 ## Delete Check {: #delete-check .rule }
 
 `DELETE SITE_ROOT/api/v2/checks/<uuid>`
@@ -1452,4 +1524,3 @@ curl --header "X-Api-Key: your-api-key" SITE_ROOT/api/v2/badges/
   }
 }
 ```
-

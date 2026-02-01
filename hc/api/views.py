@@ -589,6 +589,29 @@ def resume(request: ApiRequest, code: UUID) -> HttpResponse:
     return JsonResponse(check.to_dict(v=request.v))
 
 
+@cors("POST")
+@csrf_exempt
+@authorize
+def clear_events(request: ApiRequest, code: UUID) -> HttpResponse:
+    check = get_object_or_404(Check, code=code)
+    if check.project_id != request.project.id:
+        return HttpResponseForbidden()
+
+    check.status = "new"
+    check.last_ping = None
+    check.last_start = None
+    check.last_duration = None
+    check.has_confirmation_link = False
+    check.alert_after = None
+    check.save()
+
+    check.ping_set.all().delete()
+    check.notification_set.all().delete()
+    check.flip_set.all().delete()
+
+    return JsonResponse(check.to_dict(v=request.v))
+
+
 @cors("GET")
 @csrf_exempt
 @authorize
