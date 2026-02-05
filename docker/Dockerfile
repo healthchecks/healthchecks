@@ -1,4 +1,4 @@
-FROM python:3.14.2-slim-trixie AS builder
+FROM python:3.14.3-slim-trixie AS builder
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
@@ -19,7 +19,7 @@ RUN \
     rm -rf /opt/healthchecks/.git && \
     rm -rf /opt/healthchecks/stuff
 
-FROM python:3.14.2-slim-trixie
+FROM python:3.14.3-slim-trixie
 
 RUN useradd --system hc
 ENV PYTHONUNBUFFERED=1
