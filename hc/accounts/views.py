@@ -416,10 +416,6 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
                 invite_suggestions = project.invite_suggestions()
                 if not invite_suggestions.filter(email=email).exists():
-                    # We're inviting a new user. Are we within team size limit?
-                    if not project.can_invite_new_users():
-                        return HttpResponseForbidden()
-
                     # And are we not hitting a rate limit?
                     if not TokenBucket.authorize_invite(request.user):
                         return render(request, "try_later.html")
@@ -539,7 +535,6 @@ def project(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     mq = project.member_set.select_related("user").order_by("user__email")
     ctx["memberships"] = list(mq)
-    ctx["can_invite_new_users"] = project.can_invite_new_users()
     return render(request, "accounts/project.html", ctx)
 
 

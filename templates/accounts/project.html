@@ -227,24 +227,11 @@
                 <br />
 
                 {% if is_manager %}
-                {% if can_invite_new_users %}
                 <a
                     href="#"
                     class="btn btn-primary pull-right"
                     data-toggle="modal"
                     data-target="#invite-team-member-modal">Invite a Team Member</a>
-                {% else %}
-                <div class="alert alert-info">
-                    <strong>Team size limit reached.</strong>
-                    {% if is_owner %}
-                    To invite new members by email, please
-                    <a href="{% url 'hc-pricing' %}">upgrade your account!</a>
-                    {% else %}
-                    To invite new members, please ask project's owner
-                    to upgrade their account.
-                    {% endif %}
-                </div>
-                {% endif %}
                 {% endif %}
             </div>
             {% endwith %}
@@ -414,7 +401,6 @@
                     <div class="form-group">
                         <label for="itm-email" class="col-sm-3 control-label">Email</label>
                         <div class="col-sm-8">
-                            {% if can_invite_new_users %}
                             <input
                                 type="email"
                                 class="form-control"
@@ -422,10 +408,6 @@
                                 name="email"
                                 maxlength="254"
                                 placeholder="friend@example.org">
-                            {% else %}
-                            <p id="itm-email-display" class="form-control-static"></p>
-                            <input type="hidden" id="itm-email" name="email">
-                            {% endif %}
                         </div>
                     </div>
 

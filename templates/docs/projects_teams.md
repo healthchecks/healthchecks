@@ -82,7 +82,7 @@ owner, and click "Initiate Transfer". The chosen team member will receive
 an email asking to confirm the ownership change. After they confirm,
 they will become the project's owner, and you will become a Team Member.
 
-## Check Limits and Team Size Limits
+## Check Limits
 
 **Check Limit** is the total number of checks your account can have. The specific
 limit depends on the account's billing plan. When you reach the Check Limit,
@@ -96,13 +96,6 @@ For example, consider a Business account with two projects,
 However, only checks from your own projects count towards your account's
 quota. If you get invited to somebody else's project, that does not change
 the number of checks you can create in your projects.
-
-**Team Size** is the number of *unique users* you can invite to your projects.
-Same as with Check Limit, all projects share your account's Team Size limit.
-However, if you invite the same user (using the same email address) into multiple
-projects, it only takes up a single seat. In other words, SITE_NAME limits the
-number of distinct users invited into your projects, not the number of
-team memberships.
 
 ## Projects and Monthly Reports
 

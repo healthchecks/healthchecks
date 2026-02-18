@@ -90,7 +90,6 @@ class ProfileAdmin(ModelAdmin[Profile]):
         "last_active",
         "over_limit",
         "deletion",
-        "invited",
         "sms",
         "reports",
     )
@@ -123,7 +122,6 @@ class ProfileAdmin(ModelAdmin[Profile]):
     )
 
     _limits_fields = (
-        "team_limit",
         "check_limit",
         "ping_log_limit",
         "sms_limit",
@@ -190,9 +188,6 @@ class ProfileAdmin(ModelAdmin[Profile]):
         if obj.num_checks > 1:
             tmpl = "<b>{} of {}</b>"
         return format_html(tmpl, obj.num_checks, obj.check_limit)
-
-    def invited(self, obj: WithAnnotations[Profile, ProfileAnnotations]) -> str:
-        return f"{obj.num_members} of {obj.team_limit}"
 
     def sms(self, obj: Profile) -> str:
         return f"{obj.sms_sent} of {obj.sms_limit}"

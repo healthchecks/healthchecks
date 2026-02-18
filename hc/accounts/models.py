@@ -67,7 +67,6 @@ class ProfileManager(models.Manager["Profile"]):
                 profile.check_limit = 10000
                 profile.sms_limit = 10000
                 profile.call_limit = 10000
-                profile.team_limit = 10000
 
             profile.save()
             return profile
@@ -452,11 +451,6 @@ class Project(models.Model):
         q = User.objects.filter(memberships__project__owner_id=self.owner_id)
         q = q.exclude(memberships__project=self)
         return q.distinct().order_by("email")
-
-    def can_invite_new_users(self) -> bool:
-        q = User.objects.filter(memberships__project__owner_id=self.owner_id)
-        used = q.distinct().count()
-        return used < self.owner_profile.team_limit
 
     def invite(self, user: User, role: str) -> bool:
         if Member.objects.filter(user=user, project=self).exists():

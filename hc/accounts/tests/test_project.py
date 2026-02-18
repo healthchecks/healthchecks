@@ -185,28 +185,6 @@ class ProjectTestCase(BaseTestCase):
         # The new user should have role manager
         self.assertEqual(member.role, member.Role.MANAGER)
 
-    def test_it_adds_member_from_another_team(self) -> None:
-        # With team limit at zero, we should not be able to invite any new users
-        self.profile.team_limit = 0
-        self.profile.save()
-
-        # But Charlie will have an existing membership in another Alice's project
-        # so Alice *should* be able to invite Charlie:
-        p2 = Project.objects.create(owner=self.alice)
-        Member.objects.create(user=self.charlie, project=p2)
-
-        self.client.login(username="alice@example.org", password="password")
-        form = {"invite_team_member": "1", "email": "charlie@example.org", "role": "r"}
-        r = self.client.post(self.url, form)
-        self.assertEqual(r.status_code, 200)
-
-        q = Member.objects.filter(project=self.project, user=self.charlie)
-        self.assertEqual(q.count(), 1)
-
-        # And this should not have affected the rate limit:
-        tq = TokenBucket.objects.filter(value=f"invite-{self.alice.id}")
-        self.assertFalse(tq.exists())
-
     def test_it_rejects_duplicate_membership(self) -> None:
         self.client.login(username="alice@example.org", password="password")
 
@@ -273,16 +251,6 @@ class ProjectTestCase(BaseTestCase):
         self.client.login(username="bob@example.org", password="password")
 
         form = {"invite_team_member": "1", "email": "frank@example.org", "role": "w"}
-        r = self.client.post(self.url, form)
-        self.assertEqual(r.status_code, 403)
-
-    def test_it_checks_team_size(self) -> None:
-        self.profile.team_limit = 0
-        self.profile.save()
-
-        self.client.login(username="alice@example.org", password="password")
-
-        form = {"invite_team_member": "1", "email": "frank@example.org", "role": "r"}
         r = self.client.post(self.url, form)
         self.assertEqual(r.status_code, 403)
 

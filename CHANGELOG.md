@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v4.1-dev - Unreleased
+
+## Improvements
+- Remove team size limits: users on all plans can now invite many team members
+
 ## v4.0 - 2026-01-22
 
 This release drops support of Python 3.11 and below. The minimum required Python
