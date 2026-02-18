@@ -3,15 +3,18 @@ All notable changes to this project will be documented in this file.
 
 ## v4.1-dev - Unreleased
 
-## Improvements
+### Improvements
 - Remove team size limits: users on all plans can now invite many team members
+
+### Bug Fixes
+- Fix a formatting issue in Matrix notification template (#1264, @neoscaler)
 
 ## v4.0 - 2026-01-22
 
 This release drops support of Python 3.11 and below. The minimum required Python
 version is 3.12.
 
-## Improvements
+### Improvements
 - Upgrade to Django 6.0
 - Update the Matrix integration to use Matrix v3 API (#1244)
 - Update email alert template to use user's preferred time zone (#1230)
