@@ -74,6 +74,7 @@
     --text-color: #333;
     --text-muted:  #767676;
     --text-success: #3c763d;
+    --text-warning: #8a6d3b;
     --text-danger: #a94442;
     --log-new-row-bg: #d9edf7;
     --log-new-row-border: #bce8f1;
@@ -156,6 +157,7 @@ body.dark {
     --text-color: hsl(240, 3.3%, 88.2%);
     --text-muted: hsl(240, 3%, 55%);
     --text-success: #22bc66;
+    --text-warning: #cb964d;
     --text-danger: #d9534f;
     --log-new-row-bg: #123051;
     --log-new-row-border: #163c64;

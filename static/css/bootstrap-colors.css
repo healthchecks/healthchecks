@@ -51,6 +51,10 @@
     color: var(--text-success);
 }
 
+.text-warning {
+    color: var(--text-warning);
+}
+
 .text-danger {
     color: var(--text-danger);
 }
