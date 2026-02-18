@@ -90,7 +90,6 @@ class Profile(models.Model):
     call_limit = models.IntegerField(default=0)
     calls_sent = models.IntegerField(default=0)
 
-    team_limit = models.IntegerField(default=2)
     sort = models.CharField(max_length=20, default="created")
     # The date when "Inactive Account Notification" is sent
     deletion_notice_date = models.DateTimeField(null=True, blank=True)
