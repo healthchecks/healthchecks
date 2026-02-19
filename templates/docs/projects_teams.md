@@ -99,10 +99,10 @@ the number of checks you can create in your projects.
 
 ## Monthly / Weekly / Daily Email Reports
 
-SITE_NAME sends periodic email reports with a summary of checks
+SITE_NAME can optionally send periodic email reports with a summary of checks
 from **all projects you have access to** – both the projects you own and the projects
 you are a member of. For each check, the reports show the check's current status
-and its the downtime statistics.
+and its downtime statistics.
 
 You can configure the frequency of the reports (monthly, on the 1st of every month,
 or weekly, on Mondays, or daily) or turn them off altogether in

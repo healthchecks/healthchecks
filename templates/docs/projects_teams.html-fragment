@@ -75,10 +75,10 @@ For example, consider a Business account with two projects,
 quota. If you get invited to somebody else's project, that does not change
 the number of checks you can create in your projects.</p>
 <h2>Monthly / Weekly / Daily Email Reports</h2>
-<p>SITE_NAME sends periodic email reports with a summary of checks
+<p>SITE_NAME can optionally send periodic email reports with a summary of checks
 from <strong>all projects you have access to</strong> – both the projects you own and the projects
 you are a member of. For each check, the reports show the check's current status
-and its the downtime statistics.</p>
+and its downtime statistics.</p>
 <p>You can configure the frequency of the reports (monthly, on the 1st of every month,
 or weekly, on Mondays, or daily) or turn them off altogether in
 <a href="../../accounts/profile/notifications/">Account Settings › Email Reports</a>.</p>
