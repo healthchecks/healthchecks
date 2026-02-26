@@ -54,7 +54,7 @@ class LogTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url())
         self.assertContains(r, "hello world", status_code=200)
-        self.assertContains(r, "Sent email to alice@example.org")
+        self.assertContains(r, "Sent an email to alice@example.org")
         self.assertContains(r, "new ➔ down")
 
     def test_it_returns_403_for_anon_requests(self) -> None:
@@ -112,7 +112,7 @@ class LogTestCase(BaseTestCase):
 
         # The notification should not show up in the log as it is
         # older than the oldest visible ping:
-        self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
+        self.assertNotContains(r, "Sent an email to alice@example.org", status_code=200)
 
     def test_live_updates_do_not_return_too_old_notifications(self) -> None:
         # This moves ping #1 outside the 100 most recent pings:
@@ -125,19 +125,19 @@ class LogTestCase(BaseTestCase):
 
         # The notification should not show up in the log as it is
         # older than the oldest visible ping:
-        self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
+        self.assertNotContains(r, "Sent an email to alice@example.org", status_code=200)
 
     def test_it_filters_success(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url(success=False))
         self.assertNotContains(r, "hello world")
-        self.assertContains(r, "Sent email to alice@example.org", status_code=200)
+        self.assertContains(r, "Sent an email to alice@example.org", status_code=200)
 
     def test_it_filters_notification(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url(notification=False))
         self.assertContains(r, "hello world")
-        self.assertNotContains(r, "Sent email to alice@example.org", status_code=200)
+        self.assertNotContains(r, "Sent an email to alice@example.org", status_code=200)
 
     def test_it_filters_flip(self) -> None:
         self.client.login(username="alice@example.org", password="password")
@@ -154,7 +154,7 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url())
-        self.assertContains(r, "Sent email to alice@example.org", status_code=200)
+        self.assertContains(r, "Sent an email to alice@example.org", status_code=200)
 
     def test_it_shows_pushover_notification(self) -> None:
         ch = Channel.objects.create(kind="po", project=self.project)
@@ -181,4 +181,4 @@ class LogTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url())
-        self.assertContains(r, "Called webhook foo/$NAME", status_code=200)
+        self.assertContains(r, "Called a webhook foo/$NAME", status_code=200)

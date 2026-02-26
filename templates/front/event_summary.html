@@ -1,7 +1,7 @@
 {% if event.channel.kind == "email" %}
-    Sent email to {{ event.channel.email.value }}
+    Sent an email to {{ event.channel.email.value }}
 {% elif event.channel.kind == "slack" %}
-    Sent Slack alert
+    Sent a Slack alert
     {% if event.channel.slack_channel %}
         to {{ event.channel.slack_channel }}
     {% endif %}
@@ -11,19 +11,19 @@
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "webhook" %}
-    Called webhook {{ event.channel.down_webhook_spec.url }}
+    Called a webhook {{ event.channel.down_webhook_spec.url }}
 {% elif event.channel.kind == "sms" %}
-    Sent SMS to {{ event.channel.phone.value }}
+    Sent an SMS to {{ event.channel.phone.value }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "whatsapp" %}
-    Sent WhatsApp message to {{ event.channel.phone.value }}
+    Sent a WhatsApp message to {{ event.channel.phone.value }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "trello" %}
-    Added Trello card in
+    Added a Trello card in
     board "{{ event.channel.trello.board_name }}"
 {% elif event.channel.kind == "shell" %}
     Executed a shell command
@@ -36,7 +36,7 @@
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "signal" %}
-    Sent Signal message to {{ event.channel.phone.value }}
+    Sent a Signal message to {{ event.channel.phone.value }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
@@ -46,14 +46,14 @@
         ({{ event.channel.name }})
     {% endif %}
 {% elif event.channel.kind == "group" %}
-    Sent group notification
+    Sent a group notification
     {% if event.channel.name %}
         to group "{{ event.channel.name }}"
     {% endif %}
 {% elif event.channel.kind == "github" %}
-    Created GitHub issue in {{ event.channel.github.repo }}
+    Created a GitHub issue in {{ event.channel.github.repo }}
 {% else %}
-    Sent alert to {{ event.channel.get_kind_display }}
+    Sent an alert to {{ event.channel.get_kind_display }}
     {% if event.channel.name %}
         ({{ event.channel.name }})
     {% endif %}
