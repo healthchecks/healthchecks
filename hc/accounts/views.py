@@ -274,7 +274,6 @@ def check_token(
                 return redirect("hc-login")
 
             user.email = new_email
-            user.set_unusable_password()
             user.save()
 
         user.profile.token = ""

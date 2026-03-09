@@ -37,10 +37,11 @@ class ChangeEmailVerifyTestCase(BaseTestCase):
         r = self.client.post(self._url())
         self.assertRedirects(r, self.checks_url)
 
-        # Alice's email should have been updated, and password cleared
+        # Alice's email should have been updated
         self.alice.refresh_from_db()
         self.assertEqual(self.alice.email, "alice+new@example.org")
-        self.assertFalse(self.alice.has_usable_password())
+        # Alice's password should still be usable
+        self.assertTrue(self.alice.has_usable_password())
 
         # After login, token should be blank
         self.profile.refresh_from_db()
