@@ -314,13 +314,13 @@ def profile(request: AuthenticatedHttpRequest) -> HttpResponse:
         ctx["email_password_status"] = "success"
 
     if request.method == "POST" and "leave_project" in request.POST:
-        form = forms.LeaveForm(request.POST)
-        if not form.is_valid():
+        leave_form = forms.LeaveForm(request.POST)
+        if not leave_form.is_valid():
             return HttpResponseBadRequest()
 
         try:
             project = Project.objects.get(
-                code=form.cleaned_data["code"], member__user=request.user
+                code=leave_form.cleaned_data["code"], member__user=request.user
             )
         except Project.DoesNotExist:
             return HttpResponseBadRequest()
