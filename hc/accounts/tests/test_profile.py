@@ -33,6 +33,13 @@ class ProfileTestCase(BaseTestCase):
         r = self.client.post("/accounts/profile/", form)
         self.assertEqual(r.status_code, 400)
 
+    def test_leaving_handles_invalid_uuid(self) -> None:
+        self.client.login(username="bob@example.org", password="password")
+
+        form = {"code": "surprise", "leave_project": "1"}
+        r = self.client.post("/accounts/profile/", form)
+        self.assertEqual(r.status_code, 400)
+
     def test_it_shows_project_membership(self) -> None:
         self.client.login(username="bob@example.org", password="password")
 

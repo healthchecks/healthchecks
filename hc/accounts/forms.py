@@ -179,3 +179,7 @@ class TotpForm(forms.Form):
 
 class TzForm(forms.Form):
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
+
+
+class LeaveForm(forms.Form):
+    code = forms.UUIDField()
