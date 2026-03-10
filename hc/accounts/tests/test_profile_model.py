@@ -59,7 +59,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.flip.new_status = "down"
         self.flip.save()
 
-    def test_it_sends_monthly_report(self) -> None:
+    def test_send_report_sends_monthly_report(self) -> None:
         sent = self.profile.send_report()
         self.assertTrue(sent)
 
@@ -91,7 +91,7 @@ class ProfileModelTestCase(BaseTestCase):
         # Check UUIDs should not appear anywhere in the email
         self.assertEmailNotContains(str(self.check.code))
 
-    def test_it_sends_weekly_report(self) -> None:
+    def test_send_report_sends_weekly_report(self) -> None:
         self.profile.reports = "weekly"
         self.profile.save()
 
@@ -104,7 +104,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContains("Jan 6 - Jan 12")
 
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
-    def test_it_sets_custom_mail_from(self) -> None:
+    def test_send_report_sets_custom_mail_from(self) -> None:
         self.profile.send_report()
 
         email = mail.outbox[0]
@@ -115,7 +115,7 @@ class ProfileModelTestCase(BaseTestCase):
         # There should be no X-Bounce-ID header
         self.assertNotIn("X-Bounce-ID", email.extra_headers)
 
-    def test_it_handles_recently_created_check(self) -> None:
+    def test_send_report_handles_recently_created_check(self) -> None:
         self.check.status = "new"
         self.check.created = datetime(2020, 1, 5, tzinfo=timezone.utc)
         self.check.save()
@@ -132,7 +132,7 @@ class ProfileModelTestCase(BaseTestCase):
         # Make sure the text version contains empty cells for months with no data
         self.assertEmailContainsText(EMPTY_TABLE)
 
-    def test_text_report_does_not_escape(self) -> None:
+    def test_send_report_does_not_escape_html_in_text_email(self) -> None:
         self.project.name = "Alice & Friends"
         self.project.save()
 
@@ -144,7 +144,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContainsText("Alice & Friends")
         self.assertEmailContainsText("Foo & Bar")
 
-    def test_it_handles_positive_utc_offset(self) -> None:
+    def test_send_report_handles_positive_utc_offset(self) -> None:
         self.profile.reports = "weekly"
         self.profile.tz = "America/New_York"
         self.profile.save()
@@ -159,7 +159,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContains("Dec 30 - Jan 5")
         self.assertEmailNotContains("Jan 6 - Jan 12")
 
-    def test_it_handles_negative_utc_offset(self) -> None:
+    def test_send_report_handles_negative_utc_offset(self) -> None:
         self.profile.reports = "weekly"
         self.profile.tz = "Asia/Tokyo"
         self.profile.save()
@@ -172,7 +172,7 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContains("Dec 30 - Jan 5")
         self.assertEmailContains("Jan 6 - Jan 12")
 
-    def test_it_skips_report_if_no_pings(self) -> None:
+    def test_send_report_noops_if_no_pings(self) -> None:
         self.check.delete()
 
         sent = self.profile.send_report()
@@ -180,7 +180,7 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_skips_report_if_no_recent_pings(self) -> None:
+    def test_send_report_noops_if_no_recent_pings(self) -> None:
         self.check.last_ping = datetime(2019, 1, 1, tzinfo=timezone.utc)
         self.check.save()
 
@@ -189,7 +189,7 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_sends_nag(self) -> None:
+    def test_send_report_sends_nag(self) -> None:
         self.profile.nag_period = td(hours=1)
         self.profile.save()
 
