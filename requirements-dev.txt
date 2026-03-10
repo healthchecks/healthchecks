@@ -1,8 +1,8 @@
 apprise==1.9.4
 django-stubs==5.2.9
-Markdown==3.7
+Markdown==3.10.2
 minio==7.2.20
-mypy==1.19.0
+mypy==1.19.1
 mysqlclient==2.2.7
 Pygments==2.19.2
 time-machine==3.2.0
