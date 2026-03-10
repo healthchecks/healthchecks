@@ -7,19 +7,29 @@ import time_machine
 from django.core import mail
 from django.utils.timezone import now
 
-from hc.api.models import Check
+from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
 CURRENT_TIME = datetime(2020, 1, 15, tzinfo=timezone.utc)
 
 
+@time_machine.travel(CURRENT_TIME)
 class ProfileModelTestCase(BaseTestCase):
-    @time_machine.travel(CURRENT_TIME)
-    def test_it_sends_report(self) -> None:
-        check = Check(project=self.project, name="Test Check")
-        check.last_ping = now()
-        check.save()
+    def setUp(self) -> None:
+        super().setUp()
 
+        self.check = Check(project=self.project, name="Test Check")
+        self.check.last_ping = datetime(2019, 12, 31, 23, tzinfo=timezone.utc)
+        self.check.status = "down"
+        self.check.save()
+
+        self.flip = Flip(owner=self.check)
+        self.flip.created = datetime(2019, 12, 31, 23, tzinfo=timezone.utc)
+        self.flip.old_status = "new"
+        self.flip.new_status = "down"
+        self.flip.save()
+
+    def test_it_sends_report(self) -> None:
         sent = self.profile.send_report()
         self.assertTrue(sent)
 
@@ -36,8 +46,9 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailNotContains("Oct. 2020")
 
     def test_it_skips_report_if_no_pings(self) -> None:
-        check = Check(project=self.project, name="Test Check")
-        check.save()
+        self.check.status = "new"
+        self.check.last_ping = None
+        self.check.save()
 
         sent = self.profile.send_report()
         self.assertFalse(sent)
@@ -45,9 +56,8 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_skips_report_if_no_recent_pings(self) -> None:
-        check = Check(project=self.project, name="Test Check")
-        check.last_ping = now() - td(days=365)
-        check.save()
+        self.check.last_ping = datetime(2019, 1, 1, tzinfo=timezone.utc)
+        self.check.save()
 
         sent = self.profile.send_report()
         self.assertFalse(sent)
@@ -55,11 +65,6 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_sends_nag(self) -> None:
-        check = Check(project=self.project, name="Test Check")
-        check.status = "down"
-        check.last_ping = now()
-        check.save()
-
         self.profile.nag_period = td(hours=1)
         self.profile.save()
 
@@ -74,9 +79,9 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContains("Test Check")
 
     def test_it_skips_nag_if_none_down(self) -> None:
-        check = Check(project=self.project, name="Test Check")
-        check.last_ping = now()
-        check.save()
+        self.check.last_ping = None
+        self.check.status = "new"
+        self.check.save()
 
         self.profile.nag_period = td(hours=1)
         self.profile.save()
@@ -87,15 +92,12 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEqual(len(mail.outbox), 0)
 
     def test_it_sets_next_nag_date(self) -> None:
-        Check.objects.create(project=self.project, status="down")
-
         self.profile.nag_period = td(hours=1)
         self.profile.update_next_nag_date()
 
         self.assertTrue(self.profile.next_nag_date)
 
     def test_it_does_not_set_next_nag_date_if_no_nag_period(self) -> None:
-        Check.objects.create(project=self.project, status="down")
         self.profile.update_next_nag_date()
         self.assertIsNone(self.profile.next_nag_date)
 
@@ -111,6 +113,10 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEqual(self.profile.next_nag_date, original_nag_date)
 
     def test_it_clears_next_nag_date(self) -> None:
+        self.check.last_ping = None
+        self.check.status = "new"
+        self.check.save()
+
         self.profile.next_nag_date = now()
         self.profile.update_next_nag_date()
         self.assertIsNone(self.profile.next_nag_date)
