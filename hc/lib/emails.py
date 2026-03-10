@@ -40,7 +40,8 @@ def make_message(
     name: str, to: str | list[str], ctx: dict[str, Any], headers: dict[str, str] = {}
 ) -> Message:
     subject = render(f"emails/{name}-subject.html", ctx).strip()
-    body = render(f"emails/{name}-body-text.html", ctx)
+    # xa0 is a non-breaking space, in text emails we want regular spaces
+    body = render(f"emails/{name}-body-text.html", ctx).replace("\xa0", " ")
     html = render(f"emails/{name}-body-html.html", ctx)
 
     domain = settings.DEFAULT_FROM_EMAIL.split("@")[-1].strip(">")
