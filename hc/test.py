@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, ParamSpec, TypeVar
+from typing import TYPE_CHECKING
 
 from django.contrib.auth.models import User
 from django.core import mail
@@ -19,9 +19,6 @@ else:
     from django.http import HttpResponse as TestHttpResponse
 
 __all__ = ["BaseTestCase", "TestHttpResponse"]
-
-P = ParamSpec("P")
-T = TypeVar("T")
 
 
 class BaseTestCase(TestCase):
