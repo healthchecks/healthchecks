@@ -3,8 +3,8 @@
 {% line %}Hello,{% endline %}
 {% line %}{% endline %}
 
-{% if last_nchecks %}
-    {% line %}{{ when }}, {{ last_nchecks }} check{{ last_nchecks|pluralize }} had {{ last_ntimes }} downtime event{{ last_ntimes|pluralize }}.{% endline %}
+{% if summary_nchecks %}
+    {% line %}{{ when }}, {{ summary_nchecks }} check{{ summary_nchecks|pluralize }} had {{ summary_ntimes }} downtime event{{ summary_ntimes|pluralize }}.{% endline %}
 {% else %}
     {% line %}{{ when }}, no checks had downtimes. Nice!{% endline %}
 {% endif %}

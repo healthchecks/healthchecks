@@ -3,8 +3,8 @@
 
 {% block content %}
 
-{% if last_nchecks %}
-{{ when }}, <strong>{{ last_nchecks }} check{{ last_nchecks|pluralize }}</strong> had <strong>{{ last_ntimes }} downtime event{{ last_ntimes|pluralize }}</strong>.
+{% if summary_nchecks %}
+{{ when }}, <strong>{{ summary_nchecks }} check{{ summary_nchecks|pluralize }}</strong> had <strong>{{ summary_ntimes }} downtime event{{ summary_ntimes|pluralize }}</strong>.
 {% else %}
 {{ when }}, no checks had downtimes. Nice!
 {% endif %}

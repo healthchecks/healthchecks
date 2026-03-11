@@ -242,17 +242,19 @@ class Profile(models.Model):
         }
 
         if not nag:
-            # For weekly and monthly reports, calculate the downtimes,
+            # For monthly/weekly/daily reports, calculate the downtimes,
             # throw away the current period, keep two previous periods
-            if self.reports == "weekly":
+            if self.reports == "monthly":
+                boundaries = month_boundaries(3, self.tz)
+            elif self.reports == "weekly":
                 boundaries = week_boundaries(3, self.tz)
             elif self.reports == "daily":
                 boundaries = day_boundaries(3, self.tz)
             else:
-                boundaries = month_boundaries(3, self.tz)
+                assert 0, f"Unexpected Profile.reports value: {self.reports}"
 
-            ctx["last_nchecks"] = 0
-            ctx["last_ntimes"] = 0
+            ctx["summary_nchecks"] = 0
+            ctx["summary_ntimes"] = 0
             for check in checks:
                 downtimes = check.downtimes_by_boundary(boundaries, self.tz)
                 # downtimes_by_boundary returns records in descending order,
@@ -260,8 +262,8 @@ class Profile(models.Model):
                 downtimes.reverse()
                 check.past_downtimes = downtimes[:-1]
                 if count := check.past_downtimes[-1].count:
-                    ctx["last_nchecks"] += 1
-                    ctx["last_ntimes"] += count
+                    ctx["summary_nchecks"] += 1
+                    ctx["summary_ntimes"] += count
 
             # boundaries are in descending order, but the template
             # will need them in ascending order:
