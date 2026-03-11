@@ -4,9 +4,9 @@ from typing import Callable
 
 from django.conf import settings
 from django.contrib import auth
-from django.contrib.auth.models import User
 from django.core.exceptions import MiddlewareNotUsed
 from django.http import HttpRequest, HttpResponse
+
 from hc.accounts.models import Profile
 
 MiddlewareFunc = Callable[[HttpRequest], HttpResponse]
