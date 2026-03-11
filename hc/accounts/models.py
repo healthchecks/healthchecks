@@ -268,7 +268,6 @@ class Profile(models.Model):
             boundaries.reverse()
             ctx["checks"] = checks
             ctx["boundaries"] = boundaries[:-1]
-            ctx["last_boundary"] = ctx["boundaries"][-1]
             ctx["report_period"] = self.reports
 
             # Prepare the "In January" / "Last week (...)" / "Yesterday (...)" bit:
