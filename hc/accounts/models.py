@@ -19,8 +19,9 @@ from django.db.models import Q, QuerySet
 from django.db.models.functions import Lower
 from django.urls import reverse
 from django.utils.timezone import now
+
 from hc.lib import emails
-from hc.lib.date import month_boundaries, week_boundaries
+from hc.lib.date import day_boundaries, month_boundaries, week_boundaries
 from hc.lib.signing import sign_bounce_id
 from hc.lib.urls import absolute_reverse
 
@@ -244,6 +245,8 @@ class Profile(models.Model):
             # throw away the current period, keep two previous periods
             if self.reports == "weekly":
                 boundaries = week_boundaries(3, self.tz)
+            elif self.reports == "daily":
+                boundaries = day_boundaries(3, self.tz)
             else:
                 boundaries = month_boundaries(3, self.tz)
 

@@ -104,6 +104,18 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContains("Dec 30 - Jan 5")
         self.assertEmailContains("Jan 6 - Jan 12")
 
+    def test_send_report_sends_daily_report(self) -> None:
+        self.profile.reports = "daily"
+        self.profile.save()
+
+        self.profile.send_report()
+
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, "Daily Report")
+        self.assertEmailContains("This is a daily report")
+        self.assertEmailContains("January 11")
+        self.assertEmailContains("January 12")
+
     @override_settings(EMAIL_MAIL_FROM_TMPL="%s@bounces.example.org")
     def test_send_report_sets_custom_mail_from(self) -> None:
         self.profile.send_report()

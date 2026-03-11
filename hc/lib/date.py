@@ -112,6 +112,19 @@ def week_boundaries(weeks: int, tzstr: str) -> list[datetime]:
     return result
 
 
+def day_boundaries(days: int, tzstr: str) -> list[datetime]:
+    """Return day start times in descending order starting from today."""
+    tz = ZoneInfo(tzstr)
+    result: list[datetime] = []
+
+    needle = now().astimezone(tz).date()
+    for x in range(0, days):
+        result.append(datetime(needle.year, needle.month, needle.day, tzinfo=tz))
+        needle -= timedelta(days=1)
+
+    return result
+
+
 def seconds_in_month(d: date, tzstr: str) -> float:
     tz = ZoneInfo(tzstr)
     start = datetime(d.year, d.month, 1, tzinfo=tz)

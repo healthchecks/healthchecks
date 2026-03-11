@@ -7,6 +7,7 @@ from unittest import TestCase
 import time_machine
 
 from hc.lib.date import (
+    day_boundaries,
     format_approx_duration,
     format_hms,
     month_boundaries,
@@ -89,6 +90,21 @@ class WeekBoundaryTestCase(TestCase):
         self.assertEqual(result[0].isoformat(), "2020-01-13T00:00:00+02:00")
         self.assertEqual(result[1].isoformat(), "2020-01-06T00:00:00+02:00")
         self.assertEqual(result[2].isoformat(), "2019-12-30T00:00:00+02:00")
+
+
+@time_machine.travel(CURRENT_TIME)
+class DayBoundaryTestCase(TestCase):
+    def test_utc_works(self) -> None:
+        result = day_boundaries(3, "UTC")
+        self.assertEqual(result[0].isoformat(), "2020-01-15T00:00:00+00:00")
+        self.assertEqual(result[1].isoformat(), "2020-01-14T00:00:00+00:00")
+        self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+00:00")
+
+    def test_non_utc_works(self) -> None:
+        result = day_boundaries(3, "Europe/Riga")
+        self.assertEqual(result[0].isoformat(), "2020-01-15T00:00:00+02:00")
+        self.assertEqual(result[1].isoformat(), "2020-01-14T00:00:00+02:00")
+        self.assertEqual(result[2].isoformat(), "2020-01-13T00:00:00+02:00")
 
 
 class SecondsInMonthTestCase(TestCase):

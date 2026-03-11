@@ -11,6 +11,8 @@ Project "{{ group.grouper|safe }}"
         {% for dt in boundaries %}
             {% if monthly_or_weekly == "weekly" %}
                 {% cell %}{{ dt|date:"M j"}} - {{ dt|add6days|date:"M j"}}{% endcell %}
+            {% elif monthly_or_weekly == "daily" %}
+                {% cell %}{{ dt|date:"F j"}}{% endcell %}
             {% else %}
                 {% cell %}{{ dt|date:"N Y"}}{% endcell %}
             {% endif %}
