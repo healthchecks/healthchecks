@@ -6,7 +6,6 @@ from unittest.mock import Mock, patch
 
 import time_machine
 from django.core import mail
-from django.test.utils import override_settings
 from django.utils.timezone import now
 
 from hc.api.management.commands.sendreports import Command
@@ -17,7 +16,6 @@ CURRENT_TIME = datetime(2020, 1, 13, 2, tzinfo=timezone.utc)
 MOCK_SLEEP = Mock()
 
 
-@override_settings(SITE_NAME="Mychecks")
 @time_machine.travel(CURRENT_TIME)
 @patch("hc.api.management.commands.sendreports.time.sleep", MOCK_SLEEP)
 class SendReportsTestCase(BaseTestCase):

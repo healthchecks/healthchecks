@@ -42,6 +42,7 @@ Mychecks
 """
 
 
+@override_settings(SITE_NAME="Mychecks")
 @time_machine.travel(CURRENT_TIME)
 class ProfileModelTestCase(BaseTestCase):
     def setUp(self) -> None:
