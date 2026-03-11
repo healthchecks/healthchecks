@@ -72,9 +72,15 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertNotIn("X-Bounce-ID", message.extra_headers)
 
         self.assertEqual(message.subject, "Monthly Report")
+
+        # The summary line
+        self.assertEmailContainsHtml(
+            "In December, <strong>1 check</strong> had <strong>1 downtime event</strong>."
+        )
+        self.assertEmailContainsText("In December, 1 check had 1 downtime event.")
+
         # Note, assertEmailContains tests if the fragment appears in
         # *both* text and HTML versions.
-        self.assertEmailContains("This is a monthly report")
         self.assertEmailContains("Foo")
 
         # The report should cover Nov-Dec, and should not mention October or January
@@ -92,15 +98,30 @@ class ProfileModelTestCase(BaseTestCase):
         # Check UUIDs should not appear anywhere in the email
         self.assertEmailNotContains(str(self.check.code))
 
+    def test_monthly_report_handles_no_downtimes(self) -> None:
+        self.check.status = "up"
+        self.check.save()
+        self.flip.delete()
+
+        self.profile.send_report()
+        self.assertEmailContains("In December, no checks had downtimes. Nice!")
+
     def test_send_report_sends_weekly_report(self) -> None:
         self.profile.reports = "weekly"
         self.profile.save()
 
         self.profile.send_report()
 
+        # The summary line
+        self.assertEmailContainsHtml(
+            "Last week (January 6 to January 12), <strong>1 check</strong> had <strong>1 downtime event</strong>."
+        )
+        self.assertEmailContainsText(
+            "Last week (January 6 to January 12), 1 check had 1 downtime event."
+        )
+
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Weekly Report")
-        self.assertEmailContains("This is a weekly report")
         self.assertEmailContains("Dec 30 - Jan 5")
         self.assertEmailContains("Jan 6 - Jan 12")
 
@@ -110,9 +131,16 @@ class ProfileModelTestCase(BaseTestCase):
 
         self.profile.send_report()
 
+        # The summary line
+        self.assertEmailContainsHtml(
+            "Yesterday (January 12), <strong>1 check</strong> had <strong>1 downtime event</strong>."
+        )
+        self.assertEmailContainsText(
+            "Yesterday (January 12), 1 check had 1 downtime event."
+        )
+
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Daily Report")
-        self.assertEmailContains("This is a daily report")
         self.assertEmailContains("January 11")
         self.assertEmailContains("January 12")
 
@@ -172,6 +200,9 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailContains("Dec 30 - Jan 5")
         self.assertEmailNotContains("Jan 6 - Jan 12")
 
+        # Let's also verify the summary line
+        self.assertEmailContains("Last week (December 30 to January 5)")
+
     def test_send_report_handles_negative_utc_offset(self) -> None:
         self.profile.reports = "weekly"
         self.profile.tz = "Asia/Tokyo"
@@ -184,6 +215,9 @@ class ProfileModelTestCase(BaseTestCase):
         self.assertEmailNotContains("Dec 23 - Dec 29")
         self.assertEmailContains("Dec 30 - Jan 5")
         self.assertEmailContains("Jan 6 - Jan 12")
+
+        # Let's also verify the summary line
+        self.assertEmailContains("Last week (January 6 to January 12)")
 
     def test_send_report_noops_if_no_pings(self) -> None:
         self.check.delete()

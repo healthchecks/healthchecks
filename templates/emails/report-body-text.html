@@ -1,7 +1,15 @@
-{% load asciitable hc_extras tz %}{% timezone tz %}Hello,
+{% load asciitable linemode hc_extras tz %}{% timezone tz %}{% linemode %}
 
-This is a {{ report_period }} report sent by {% site_name %}.
-{% regroup checks by project as groups %}{% for group in groups %}
+{% line %}Hello,{% endline %}
+{% line %}{% endline %}
+
+{% if last_nchecks %}
+    {% line %}{{ when }}, {{ last_nchecks }} check{{ last_nchecks|pluralize }} had {{ last_ntimes }} downtime event{{ last_ntimes|pluralize }}.{% endline %}
+{% else %}
+    {% line %}{{ when }}, no checks had downtimes. Nice!{% endline %}
+{% endif %}
+
+{% endlinemode%}{% regroup checks by project as groups %}{% for group in groups %}
 
 Project "{{ group.grouper|safe }}"
 {% table %}

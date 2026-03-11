@@ -17,6 +17,7 @@ from django.core.signing import BadSignature, TimestampSigner
 from django.db import models
 from django.db.models import Q, QuerySet
 from django.db.models.functions import Lower
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.timezone import now
 
@@ -250,19 +251,34 @@ class Profile(models.Model):
             else:
                 boundaries = month_boundaries(3, self.tz)
 
+            ctx["last_nchecks"] = 0
+            ctx["last_ntimes"] = 0
             for check in checks:
                 downtimes = check.downtimes_by_boundary(boundaries, self.tz)
                 # downtimes_by_boundary returns records in descending order,
                 # but the template will need them in ascending order:
                 downtimes.reverse()
                 check.past_downtimes = downtimes[:-1]
+                if count := check.past_downtimes[-1].count:
+                    ctx["last_nchecks"] += 1
+                    ctx["last_ntimes"] += count
 
             # boundaries are in descending order, but the template
             # will need them in ascending order:
             boundaries.reverse()
             ctx["checks"] = checks
             ctx["boundaries"] = boundaries[:-1]
+            ctx["last_boundary"] = ctx["boundaries"][-1]
             ctx["report_period"] = self.reports
+
+            # Prepare the "In January" / "Last week (...)" / "Yesterday (...)" bit:
+            when_ctx = {
+                "boundary": ctx["boundaries"][-1],
+                "report_period": self.reports,
+                "tz": self.tz,
+            }
+            ctx["when"] = render_to_string("emails/report-when.html", when_ctx).strip()
+
             emails.report(self.user.email, ctx, headers)
 
         if nag:

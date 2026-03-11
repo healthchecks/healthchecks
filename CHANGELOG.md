@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Remove team size limits: users on all plans can now invite many team members
+- Add a one-line summary at the top of monthly/weekly/daily reports
 
 ### Bug Fixes
 - Fix a formatting issue in Matrix notification template (#1264, @neoscaler)

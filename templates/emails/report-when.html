@@ -1,0 +1,10 @@
+{% load hc_extras tz %}
+{% timezone tz %}
+{% if report_period == "monthly" %}
+    In {{ boundary|date:"F" }}
+{% elif report_period == "weekly" %}
+    Last week ({{ boundary|date:"F j"}} to {{ boundary|add6days|date:"F j"}})
+{% elif report_period == "daily" %}
+    Yesterday ({{ boundary|date:"F j"}})
+{% endif %}
+{% endtimezone %}

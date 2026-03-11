@@ -2,10 +2,12 @@
 {% load humanize hc_extras %}
 
 {% block content %}
-Hello,<br />
 
-This is a {{ report_period }} report sent by
-<a href="{% site_root %}">{% site_name %}</a>.<br />
+{% if last_nchecks %}
+{{ when }}, <strong>{{ last_nchecks }} check{{ last_nchecks|pluralize }}</strong> had <strong>{{ last_ntimes }} downtime event{{ last_ntimes|pluralize }}</strong>.
+{% else %}
+{{ when }}, no checks had downtimes. Nice!
+{% endif %}
 
 {% include "emails/report-summary-html.html" %}
 
