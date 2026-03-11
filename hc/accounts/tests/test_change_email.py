@@ -4,6 +4,7 @@ from django.conf import settings
 from django.core import mail
 from django.test.utils import override_settings
 
+from hc.accounts.models import Credential
 from hc.test import BaseTestCase
 
 
@@ -20,6 +21,26 @@ class ChangeEmailTestCase(BaseTestCase):
 
         r = self.client.get("/accounts/change_email/")
         self.assertContains(r, "Change Account's Email Address")
+        self.assertNotContains(r, "Two-factor authentication is active")
+
+    def test_it_shows_2fa_warning_if_webauthn_is_active(self) -> None:
+        Credential.objects.create(user=self.alice, name="Alices Key")
+
+        self.client.login(username="alice@example.org", password="password")
+        self.set_sudo_flag()
+
+        r = self.client.get("/accounts/change_email/")
+        self.assertContains(r, "Two-factor authentication is active")
+
+    def test_it_shows_2fa_warning_if_totp_is_active(self) -> None:
+        self.profile.totp = "0" * 32
+        self.profile.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        self.set_sudo_flag()
+
+        r = self.client.get("/accounts/change_email/")
+        self.assertContains(r, "Two-factor authentication is active")
 
     @override_settings(SITE_ROOT="http://testserver", SESSION_COOKIE_SECURE=False)
     def test_it_sends_link(self) -> None:

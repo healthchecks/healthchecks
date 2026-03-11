@@ -19,7 +19,7 @@
                     your {{ site_name }} account.
                 </p>
 
-                {% if request.user.credentials.exists %}
+                {% if request.user.credentials.exists or request.profile.totp %}
                 <p class="alert alert-warning">
                     <strong>Two-factor authentication is active.</strong>
                     If you are handing this account over to somebody else,
