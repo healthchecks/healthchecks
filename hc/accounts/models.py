@@ -262,7 +262,7 @@ class Profile(models.Model):
             boundaries.reverse()
             ctx["checks"] = checks
             ctx["boundaries"] = boundaries[:-1]
-            ctx["monthly_or_weekly"] = self.reports
+            ctx["report_period"] = self.reports
             emails.report(self.user.email, ctx, headers)
 
         if nag:

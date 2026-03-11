@@ -1,6 +1,6 @@
 {% load asciitable hc_extras tz %}{% timezone tz %}Hello,
 
-This is a {{ monthly_or_weekly }} report sent by {% site_name %}.
+This is a {{ report_period }} report sent by {% site_name %}.
 {% regroup checks by project as groups %}{% for group in groups %}
 
 Project "{{ group.grouper|safe }}"
@@ -9,9 +9,9 @@ Project "{{ group.grouper|safe }}"
         {% cell %}Status{% endcell %}
         {% cell %}Name{% endcell %}
         {% for dt in boundaries %}
-            {% if monthly_or_weekly == "weekly" %}
+            {% if report_period == "weekly" %}
                 {% cell %}{{ dt|date:"M j"}} - {{ dt|add6days|date:"M j"}}{% endcell %}
-            {% elif monthly_or_weekly == "daily" %}
+            {% elif report_period == "daily" %}
                 {% cell %}{{ dt|date:"F j"}}{% endcell %}
             {% else %}
                 {% cell %}{{ dt|date:"N Y"}}{% endcell %}
