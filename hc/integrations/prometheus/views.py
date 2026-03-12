@@ -14,6 +14,7 @@ from django.http import (
     HttpResponseForbidden,
 )
 from django.shortcuts import render
+
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Project
 from hc.api.models import Check
@@ -41,7 +42,7 @@ def metrics(request: HttpRequest, code: UUID, key: str | None = None) -> HttpRes
         if not key.startswith("Bearer "):
             return HttpResponse(status=401)
 
-        key = key.lstrip("Bearer ")
+        key = key.removeprefix("Bearer ")
 
     if len(key) != 32:
         return HttpResponseBadRequest()

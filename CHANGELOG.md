@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Fix emails to never use non-breaking spaces in plain text emails
 - Fix the "Change Email" form to warn the user about TOTP 2FA
 - Fix daily reports to show downtime stats for the previous 2 days (not months)
+- Fix incorrect Bearer token handling in the Prometheus metrics endpoint
 
 ## v4.0 - 2026-01-22
 

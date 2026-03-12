@@ -4,6 +4,7 @@ from datetime import timedelta as td
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Check
 from hc.test import BaseTestCase
 
@@ -54,6 +55,19 @@ class MetricsTestCase(BaseTestCase):
 
     def test_authenticated_request_accepts_bearer_token(self) -> None:
         headers = {"Authorization": "Bearer " + "R" * 32}
+        r = self.client.get(self.auth_url, headers=headers)
+        self.assertEqual(r.status_code, 200)
+
+    def test_it_does_not_mangle_bearer_token(self) -> None:
+        # This test checks if the "Bearer " prefix is removed from the Authorization
+        # header incorrectly with str.lstrip(). If that's the case, the leading "B"
+        # from the key will be removed as well, resulting in an invalid key.
+        key = "B" + "R" * 31
+
+        self.project.api_key_readonly = key
+        self.project.save()
+
+        headers = {"Authorization": "Bearer " + key}
         r = self.client.get(self.auth_url, headers=headers)
         self.assertEqual(r.status_code, 200)
 
