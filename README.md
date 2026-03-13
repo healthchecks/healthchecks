@@ -533,8 +533,8 @@ To enable PagerDuty [Simple Install Flow](https://developer.pagerduty.com/docs/a
 
 ## Running in Production
 
-Here is a non-exhaustive list of pointers and things to check before launching a Healthchecks instance
-in production.
+Here is a non-exhaustive list of pointers and things to check before launching a
+Healthchecks instance in production.
 
 * Environment variables, settings.py and local_settings.py.
   * [DEBUG](https://docs.djangoproject.com/en/4.2/ref/settings/#debug). Make sure it is
@@ -547,6 +547,13 @@ in production.
     [ADMINS](https://docs.djangoproject.com/en/4.2/ref/settings/#admins) and
     [SERVER_EMAIL](https://docs.djangoproject.com/en/4.2/ref/settings/#server-email)
     settings. Consider setting up exception logging with [Sentry](https://sentry.io/for/django/).
+* Use a reverse proxy. Do not expose the Healthchecks instance directly to the public
+  internet, put a reverse proxy such as nginx, HAProxy, or Caddy in front of it.
+
+  **Important:** configure the reverse proxy to set the `X-Forwarded-For` request
+  header. Healthchecks trusts it to determine the client's IP address. If the proxy
+  does not set the `X-Forwarded-For` header, the clients can pass their own value and
+  circumvent, among other things, the IP-based rate limiting in the login form.
 * Management commands that need to be run during each version upgrade.
   * `manage.py compress` – creates combined JS and CSS bundles and
      places them in the `static-collected` directory.
@@ -566,6 +573,10 @@ in production.
      must be restarted if it itself crashes. On modern linux systems, a good option is
      to [define a systemd service](https://github.com/healthchecks/healthchecks/issues/273#issuecomment-520560304)
      for it.
+  * `manage.py sendreports --loop` is the command that sends periodic email reports and
+     the email reminders when any checks are down. If you need this functionality, make
+     sure `manage.py sendreports --loop` is started on reboot and is always running,
+     same as `manage.py sendalerts`.
 * Static files. Healthchecks serves static files on its own, no configuration
   required. It uses the [Whitenoise library](http://whitenoise.evans.io/en/stable/index.html)
   for this.
