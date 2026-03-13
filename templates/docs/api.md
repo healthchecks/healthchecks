@@ -1358,10 +1358,10 @@ parameters. If no time filters are specified, the API returns all stored
 flips for a given check.
 
 Notes about flip retention: SITE_NAME stores historic flips for the current month
-and for two full months prior to the current month. The cleanup of older flips is
-[a manual administrative action](../self_hosted/#database-cleanup).
-Therefore, SITE_NAME may return even older flips if the server administrator does not
-perform regular database cleanups.
+and for two full months prior to the current month. SITE_NAME cleans up older flips
+periodically. At any given time, there may be a low number of flips in the database
+that are due to be removed, but have not been removed yet. This API call will
+return these flips as well.
 
 ### Query Parameters
 
