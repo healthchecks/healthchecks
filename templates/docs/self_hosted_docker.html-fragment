@@ -75,9 +75,13 @@ on the value of the <code>SMTPD_PORT</code> environment value:</p>
 <a href="https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini">uwsgi.ini</a>.</p>
 <p>See also: the <a href="../self_hosted_configuration/#PING_EMAIL_DOMAIN">PING_EMAIL_DOMAIN</a>
 environment variable for customizing the domain part of the email addresses.</p>
-<h2 id="tls-termination">TLS Termination and CSRF Protection</h2>
+<h2 id="tls-termination">Reverse Proxy, TLS Termination, and CSRF Protection</h2>
 <p>If you plan to expose your Healthchecks instance to the public internet, make sure you
-put a TLS-terminating reverse proxy or load balancer in front of it.</p>
+put a TLS-terminating reverse proxy or a load balancer in front of it.</p>
+<p><strong>Important:</strong> configure the reverse proxy to set the <code>X-Forwarded-For</code> request
+header. Healthchecks trusts it to determine the client's IP address. If the proxy
+does not set the <code>X-Forwarded-For</code> header, the clients can pass their own value and
+circumvent, among other things, the IP-based rate limiting in the login form.</p>
 <p><strong>Important:</strong> This Dockerfile uses uWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
 header to determine if a request is secure or not. Without this information you
 may run into HTTP 403 "CSRF verification failed." errors when using your Healthchecks

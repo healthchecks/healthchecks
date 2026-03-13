@@ -76,10 +76,15 @@ The conditional logic lives in uWSGI configuration file,
 See also: the [PING_EMAIL_DOMAIN](../self_hosted_configuration/#PING_EMAIL_DOMAIN)
 environment variable for customizing the domain part of the email addresses.
 
-## TLS Termination and CSRF Protection {: #tls-termination }
+## Reverse Proxy, TLS Termination, and CSRF Protection {: #tls-termination }
 
 If you plan to expose your Healthchecks instance to the public internet, make sure you
-put a TLS-terminating reverse proxy or load balancer in front of it.
+put a TLS-terminating reverse proxy or a load balancer in front of it.
+
+**Important:** configure the reverse proxy to set the `X-Forwarded-For` request
+header. Healthchecks trusts it to determine the client's IP address. If the proxy
+does not set the `X-Forwarded-For` header, the clients can pass their own value and
+circumvent, among other things, the IP-based rate limiting in the login form.
 
 **Important:** This Dockerfile uses uWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
 header to determine if a request is secure or not. Without this information you
