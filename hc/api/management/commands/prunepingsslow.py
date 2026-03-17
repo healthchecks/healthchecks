@@ -26,7 +26,7 @@ class Command(BaseCommand):
             if not Check.objects.filter(id=check.id).exists():
                 continue
 
-            print(f"Pruning: {check.code}")
+            self.stdout.write(f"Pruning: {check.code}")
             try:
                 check.prune(wait=True)
             except Exception:
