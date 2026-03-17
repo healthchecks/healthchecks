@@ -420,9 +420,8 @@ class CheckModelTestCase(BaseTestCase):
         Ping.objects.create(owner=check, n=1, object_size=1000)
 
         check.prune()
-        code, upto_n = remove_objects.call_args.args
-        self.assertEqual(code, str(check.code))
-        self.assertEqual(upto_n, 1)
+
+        remove_objects.assert_called_once_with(str(check.code), 1, wait=False)
 
     def test_get_grace_start_returns_utc(self) -> None:
         check = Check(project=self.project)
