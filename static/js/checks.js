@@ -185,6 +185,10 @@ $(function () {
         $("#no-checks").toggle(numVisible == 0);
     }
 
+    function updateSearchClear() {
+        $("#search-clear").toggle($("#search").val().length > 0);
+    }
+
     // User clicks on tags: apply filters
     $("#my-checks-tags div").click(function () {
         $(this).toggleClass("checked");
@@ -192,7 +196,16 @@ $(function () {
     });
 
     // User changes the search string: apply filters
-    $("#search").keyup(applyFilters);
+    $("#search").on("input", function () {
+        applyFilters();
+        updateSearchClear();
+    });
+
+    $("#search-clear").click(function () {
+        $("#search").val("").trigger("input").focus();
+        return false;
+    });
+    updateSearchClear();
 
     function switchUrlFormat(format) {
         var url = new URL(window.location.href);

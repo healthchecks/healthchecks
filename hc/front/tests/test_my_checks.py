@@ -113,6 +113,18 @@ class MyChecksTestCase(BaseTestCase):
         self.assertContains(r, "?tag=foo&search=bar&sort=name")
         self.assertContains(r, "?tag=foo&search=bar&sort=last_ping")
 
+    def test_it_shows_clear_search_button(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+
+        r = self.client.get(self.url)
+        html = r.content.decode()
+        self.assertRegex(html, r'id="search-clear"[^>]*style="display: none"')
+
+        r = self.client.get(self.url + "?search=alice")
+        html = r.content.decode()
+        self.assertRegex(html, r'id="search"[^>]*value="alice"')
+        self.assertNotRegex(html, r'id="search-clear"[^>]*style="display: none"')
+
     def test_it_ignores_bad_sort_value(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.client.get(self.url + "?sort=invalid")

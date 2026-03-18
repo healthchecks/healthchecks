@@ -72,6 +72,16 @@
             type="text"
             class="form-control"
             value="{{ search }}">
+        <div class="input-group-btn">
+            <button
+                id="search-clear"
+                type="button"
+                class="btn btn-default"
+                aria-label="Clear search"
+                {% if not search %}style="display: none"{% endif %}>
+                &times;
+            </button>
+        </div>
         <div id="filters" class="input-group-btn">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                 <span class="caret"></span>
