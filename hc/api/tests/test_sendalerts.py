@@ -4,6 +4,7 @@ from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
+
 from hc.api.management.commands.sendalerts import Command, notify
 from hc.api.models import Channel, Check, Flip
 from hc.test import BaseTestCase
@@ -46,8 +47,9 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(check.status, "down")
         self.assertEqual(check.alert_after, None)
 
+    @patch("hc.api.management.commands.sendalerts.statsd")
     @patch("hc.api.management.commands.sendalerts.notify")
-    def test_it_processes_flip(self, mock_notify: Mock) -> None:
+    def test_it_processes_flip(self, mock_notify: Mock, statsd: Mock) -> None:
         check = Check(project=self.project, status="up")
         check.last_ping = now()
         check.alert_after = check.last_ping + td(days=1, hours=1)
@@ -70,6 +72,9 @@ class SendAlertsTestCase(BaseTestCase):
         # It should set the processed date
         flip.refresh_from_db()
         self.assertTrue(flip.processed)
+
+        # It should increase a statsd counter
+        statsd.incr.assert_called_once()
 
     @patch("hc.api.management.commands.sendalerts.notify")
     def test_it_updates_alert_after(self, mock_notify: Mock) -> None:

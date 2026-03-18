@@ -13,6 +13,7 @@ from typing import Any
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import now
+
 from hc.api.models import Check, Flip
 from hc.lib.statsd import statsd
 
@@ -104,6 +105,7 @@ class Command(BaseCommand):
             # Nothing got updated: another sendalerts process got there first.
             return True
 
+        statsd.incr("hc.sendalerts.processFlip")
         f = self.executor.submit(notify, flip)
         f.add_done_callback(self.on_notify_done)
         return True
