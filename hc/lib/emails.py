@@ -107,6 +107,11 @@ def nag(to: str, ctx: dict[str, Any], headers: dict[str, str]) -> None:
     send(m, block=True)
 
 
+def flapping_notice(to: str, ctx: dict[str, Any]) -> None:
+    m = make_message("flapping-notice", to, ctx)
+    send(m, block=True)
+
+
 def deletion_notice(to: str, ctx: dict[str, Any]) -> None:
     m = make_message("deletion-notice", to, ctx)
     send(m, block=True)

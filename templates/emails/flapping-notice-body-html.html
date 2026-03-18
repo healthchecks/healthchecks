@@ -1,0 +1,29 @@
+{% extends "emails/base.html" %}
+{% load hc_extras %}
+
+{% block content %}
+Hello,<br /><br />
+
+The check <a href="{{ check.cloaked_url }}"><strong>{{ check.name }}</strong></a> in your {% site_name %} account is currently flapping.
+It has changed between the "up" and "down" states <strong>{{ num_flips }}</strong> times in the last 24 hours.<br /><br />
+
+Common reasons for a check changing its state frequently are:<br />
+
+&bull; The monitored system is misbehaving and changing between healthy and unhealthy
+states frequently.<br />
+&bull; The check is configured incorrectly: either its schedule is wrong, or its
+grace time is too short.<br /><br />
+
+Please look into the cause of the frequent state changes and see if anything needs to
+be fixed. If you have trouble accessing your {% site_name %} account, or have any
+questions, please reach out to us at {{ support_email }}.<br /><br />
+
+Sincerely,<br />
+The {% site_name %} Team
+{% endblock %}
+
+{% block unsub %}
+<br />
+This is a mandatory message we're sending out to notify you about an issue with
+your {% site_name %} account.
+{% endblock %}

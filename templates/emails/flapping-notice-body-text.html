@@ -1,0 +1,25 @@
+{% load hc_extras %}
+Hello,
+
+The check "{{ check.name }}" in your {% site_name %} account is currently flapping.
+It has changed between the "up" and "down" states {{ num_flips }} times
+in the last 24 hours.
+
+Common reasons for a check changing its state frequently are:
+
+* The monitored system is misbehaving and changing between healthy and
+  unhealthy states frequently.
+* The check is configured incorrectly: either its schedule is wrong, or its
+  grace time is too short.
+
+Please look into the cause of the frequent state changes and see if
+anything needs to be fixed. If you have trouble accessing your {% site_name %}
+account, or have any questions, please reach out
+to us at {{ support_email }}.
+
+This is a mandatory message we're sending out to notify you about an
+issue with your {% site_name %} account.
+
+--
+Sincerely,
+The {% site_name %} Team
