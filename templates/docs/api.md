@@ -354,7 +354,7 @@ easily construct these URLs themselves *if* they know the check's unique UUID.
   "next_ping": null,
   "manual_resume": false,
   "methods": "",
-  "start_kw": "SUCCESS",
+  "start_kw": "START",
   "success_kw": "SUCCESS",
   "failure_kw": "ERROR",
   "filter_subject": true,

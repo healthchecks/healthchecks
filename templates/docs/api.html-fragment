@@ -375,7 +375,7 @@ easily construct these URLs themselves <em>if</em> they know the check's unique 
 <span class="w">  </span><span class="nt">&quot;next_ping&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;manual_resume&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;methods&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
-<span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;start_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;START&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;success_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;SUCCESS&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;failure_kw&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ERROR&quot;</span><span class="p">,</span>
 <span class="w">  </span><span class="nt">&quot;filter_subject&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
