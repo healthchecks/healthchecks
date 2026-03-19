@@ -19,7 +19,7 @@ and check if a check with a slug <code>srv01</code> exists there.</p>
 <ul>
 <li><a href="../http_api/#success-slug">Success</a></li>
 <li><a href="../http_api/#start-slug">Start</a></li>
-<li><a href="../http_api/#failure-slug">Failure</a></li>
+<li><a href="../http_api/#fail-slug">Failure</a></li>
 <li><a href="../http_api/#log-slug">Log</a></li>
 <li><a href="../http_api/#exitcode-slug">Exit status</a></li>
 </ul>

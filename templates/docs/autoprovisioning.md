@@ -22,7 +22,7 @@ Auto provisioning works with all slug-based ping endpoints:
 
 * [Success](../http_api/#success-slug)
 * [Start](../http_api/#start-slug)
-* [Failure](../http_api/#failure-slug)
+* [Failure](../http_api/#fail-slug)
 * [Log](../http_api/#log-slug)
 * [Exit status](../http_api/#exitcode-slug)
 
