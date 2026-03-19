@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Fix daily reports to show downtime stats for the previous 2 days (not months)
 - Fix incorrect Bearer token handling in the Prometheus metrics endpoint
 - Fix the "Clone" function to copy the filter_http_body, filter_default_fail fields
+- Fix the ping handler to reject uppercase letters in slug values (#1271)
 
 ## v4.0 - 2026-01-22
 
