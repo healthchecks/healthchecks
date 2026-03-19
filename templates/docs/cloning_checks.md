@@ -10,6 +10,7 @@ over the following:
 
 * Name, tags, description
 * Schedule
+* Filtering rules
 * Assigned notification methods
 
 The newly created check has a different ping URL and an empty event log.

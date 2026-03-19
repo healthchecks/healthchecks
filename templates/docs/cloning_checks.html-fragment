@@ -7,6 +7,7 @@ over the following:</p>
 <ul>
 <li>Name, tags, description</li>
 <li>Schedule</li>
+<li>Filtering rules</li>
 <li>Assigned notification methods</li>
 </ul>
 <p>The newly created check has a different ping URL and an empty event log.</p>
