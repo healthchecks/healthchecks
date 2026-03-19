@@ -10,6 +10,8 @@ Version:
 With the Management API, you can programmatically manage checks and integrations
 in your account.
 
+<div class="alert alert-info"><strong>API v2 is deprecated</strong>. Please switch to using <a href="../api/">API v3</a>.</div>
+
 ## API Endpoints
 
 <div id="api-toc"></div>
