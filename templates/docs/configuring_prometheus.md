@@ -54,6 +54,26 @@ hc_check_started
     * `tags` – check's tags as a text string; multiple tags are delimited with spaces
     * `unique_key` – a stable, unique identifier of the check (derived from the check's code)
 
+hc_check_grace
+:   For every check, indicates whether the check is currently in the grace period
+    (1 for yes, 0 for no).
+
+    Labels:
+
+    * `name` – the name of the check
+    * `tags` – check's tags as a text string; multiple tags are delimited with spaces
+    * `unique_key` – a stable, unique identifier of the check (derived from the check's code)
+
+hc_check_paused
+:   For every check, indicates whether the check is currently paused
+    (1 for yes, 0 for no).
+
+    Labels:
+
+    * `name` – the name of the check
+    * `tags` – check's tags as a text string; multiple tags are delimited with spaces
+    * `unique_key` – a stable, unique identifier of the check (derived from the check's code)
+
 hc_tag_up
 :   For every tag, indicates whether all checks with this tag are up
     (1 for yes, 0 for no).

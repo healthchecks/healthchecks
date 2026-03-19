@@ -44,6 +44,28 @@ when viewing a list of checks for a particular project.</p>
 <li><code>unique_key</code> – a stable, unique identifier of the check (derived from the check's code)</li>
 </ul>
 </dd>
+<dt>hc_check_grace</dt>
+<dd>
+<p>For every check, indicates whether the check is currently in the grace period
+(1 for yes, 0 for no).</p>
+<p>Labels:</p>
+<ul>
+<li><code>name</code> – the name of the check</li>
+<li><code>tags</code> – check's tags as a text string; multiple tags are delimited with spaces</li>
+<li><code>unique_key</code> – a stable, unique identifier of the check (derived from the check's code)</li>
+</ul>
+</dd>
+<dt>hc_check_paused</dt>
+<dd>
+<p>For every check, indicates whether the check is currently paused
+(1 for yes, 0 for no).</p>
+<p>Labels:</p>
+<ul>
+<li><code>name</code> – the name of the check</li>
+<li><code>tags</code> – check's tags as a text string; multiple tags are delimited with spaces</li>
+<li><code>unique_key</code> – a stable, unique identifier of the check (derived from the check's code)</li>
+</ul>
+</dd>
 <dt>hc_tag_up</dt>
 <dd>
 <p>For every tag, indicates whether all checks with this tag are up
