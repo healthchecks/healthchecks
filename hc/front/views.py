@@ -1066,6 +1066,8 @@ def copy(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
     copied.filter_subject = check.filter_subject
     copied.filter_body = check.filter_body
+    copied.filter_http_body = check.filter_http_body
+    copied.filter_default_fail = check.filter_default_fail
     copied.start_kw = check.start_kw
     copied.success_kw = check.success_kw
     copied.failure_kw = check.failure_kw
