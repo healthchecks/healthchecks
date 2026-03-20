@@ -12,6 +12,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import close_old_connections, connection
 from django.utils.timezone import now
 
 from hc.api.models import Check, Flip
@@ -21,6 +22,13 @@ logger = logging.getLogger("hc")
 
 
 def notify(flip: Flip) -> str | None:
+    # This is run via ThreadPoolExecutor. The thread may already have an open
+    # db connection. If notify has not run recently then the db connection may have
+    # timed out. We call close_old_connections() to make sure we have a working db
+    # connection. The if condition makes sure this does not run during tests.
+    if not connection.in_atomic_block:
+        close_old_connections()
+
     # Set or clear dates for followup nags
     check = flip.owner
     check.project.update_next_nag_dates()

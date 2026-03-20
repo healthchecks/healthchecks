@@ -8,8 +8,10 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from django.db import close_old_connections, connection
 from django.db.models import Q
 from django.utils.timezone import now
+
 from hc.accounts.models import NO_NAG, Profile
 
 
@@ -106,6 +108,12 @@ class Command(BaseCommand):
 
         self.stdout.write("sendreports is now running")
         while not self.shutdown:
+            # The db connection may have timed out,
+            # make sure we have a working db connection.
+            # The if condition makes sure this does not run during tests.
+            if not connection.in_atomic_block:
+                close_old_connections()
+
             # Monthly reports
             while not self.shutdown and self.handle_one_report():
                 pass

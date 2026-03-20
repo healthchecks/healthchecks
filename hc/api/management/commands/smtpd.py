@@ -13,7 +13,8 @@ from aiosmtpd.smtp import SMTP, Envelope, Session
 from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import connection
+from django.db import close_old_connections, connection
+
 from hc.api.models import Check
 from hc.lib.html import html2text
 from hc.lib.string import match_keywords
@@ -26,8 +27,7 @@ RE_PING_KEY_SLUG = re.compile(r"^[a-zA-Z0-9_-]{22}\+[a-z0-9-_]+$")
 
 
 class LogSink(Protocol):
-    def write(self, msg: str) -> None:
-        ...
+    def write(self, msg: str) -> None: ...
 
 
 def _to_text(message: EmailMessage, with_subject: bool, with_body: bool) -> str:
@@ -51,7 +51,7 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
     # Get a new db connection in case the old one has timed out.
     # The if condition makes sure this does not run during tests.
     if not connection.in_atomic_block:
-        connection.close()
+        close_old_connections()
 
     to_parts = mailto.split("@")
     mbox = to_parts[0]
