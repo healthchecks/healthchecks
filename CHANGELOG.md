@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v4.1-dev - Unreleased
+## v4.1 - 2026-03-20
 
 ### Improvements
 - Remove team size limits: users on all plans can now invite many team members
