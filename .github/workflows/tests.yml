@@ -6,6 +6,8 @@ on:
     pull_request:
         branches: [master]
 
+permissions: {}
+
 jobs:
     test:
         runs-on: ubuntu-24.04
