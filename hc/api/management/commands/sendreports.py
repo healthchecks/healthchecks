@@ -97,6 +97,48 @@ class Command(BaseCommand):
         self.stdout.write(f"{desc}, finishing...\n")
         self.shutdown = True
 
+    # Lock name / ID used to ensure only one sendreports instance runs at a time.
+    # PostgreSQL uses a 64-bit integer advisory lock; MySQL uses a named string lock.
+    # hex("hc_rep") = 0x68635F726570
+    _PG_ADVISORY_LOCK_ID = 0x68635F726570
+    _MYSQL_LOCK_NAME = "hc_sendreports"
+
+    def _try_acquire_lock(self) -> bool:
+        """Try to acquire a vendor-appropriate distributed lock.
+
+        Returns True if the lock was acquired, False if another instance holds it.
+
+        PostgreSQL: uses a session-level advisory lock (pg_try_advisory_lock).
+          The lock is released automatically when the connection closes, so a
+          crashed worker releases its lock without any cleanup step.
+
+        MySQL: uses GET_LOCK() with a zero timeout (non-blocking). The lock is
+          connection-scoped and is released automatically on disconnect, giving
+          the same crash-safety guarantee as the PostgreSQL advisory lock.
+        """
+        with connection.cursor() as cursor:
+            if connection.vendor == "postgresql":
+                cursor.execute(
+                    "SELECT pg_try_advisory_lock(%s)", [self._PG_ADVISORY_LOCK_ID]
+                )
+            else:
+                # GET_LOCK returns 1=acquired, 0=timeout/not acquired, NULL=error
+                cursor.execute(
+                    "SELECT GET_LOCK(%s, 0)", [self._MYSQL_LOCK_NAME]
+                )
+            result = cursor.fetchone()[0]
+            return bool(result)
+
+    def _release_lock(self) -> None:
+        """Release the distributed lock acquired by _try_acquire_lock."""
+        with connection.cursor() as cursor:
+            if connection.vendor == "postgresql":
+                cursor.execute(
+                    "SELECT pg_advisory_unlock(%s)", [self._PG_ADVISORY_LOCK_ID]
+                )
+            else:
+                cursor.execute("SELECT RELEASE_LOCK(%s)", [self._MYSQL_LOCK_NAME])
+
     def handle(self, loop: bool, **options: Any) -> str:
         db = settings.DATABASES["default"]
         if "OPTIONS" in db and "application_name" in db["OPTIONS"]:
@@ -106,28 +148,48 @@ class Command(BaseCommand):
         signal.signal(signal.SIGTERM, self.on_signal)
         signal.signal(signal.SIGINT, self.on_signal)
 
+        # On PostgreSQL and MySQL, acquire a distributed lock so only one
+        # sendreports instance runs at a time. Additional instances exit
+        # immediately. If the primary crashes, the connection-scoped lock is
+        # released automatically, allowing a standby to take over.
+        # On SQLite the lock is skipped and the existing optimistic-lock pattern
+        # inside handle_one_report/nag applies.
+        use_distributed_lock = connection.vendor in ("postgresql", "mysql")
+        if use_distributed_lock:
+            if not self._try_acquire_lock():
+                self.stdout.write(
+                    "Another sendreports instance is already running (distributed "
+                    "lock held). Exiting — this instance will become the active "
+                    "worker automatically if the primary stops."
+                )
+                return "Done."
+
         self.stdout.write("sendreports is now running")
-        while not self.shutdown:
-            # The db connection may have timed out,
-            # make sure we have a working db connection.
-            # The if condition makes sure this does not run during tests.
-            if not connection.in_atomic_block:
-                close_old_connections()
+        try:
+            while not self.shutdown:
+                # The db connection may have timed out,
+                # make sure we have a working db connection.
+                # The if condition makes sure this does not run during tests.
+                if not connection.in_atomic_block:
+                    close_old_connections()
 
-            # Monthly reports
-            while not self.shutdown and self.handle_one_report():
-                pass
+                # Monthly reports
+                while not self.shutdown and self.handle_one_report():
+                    pass
 
-            # Daily and hourly nags
-            while not self.shutdown and self.handle_one_nag():
-                pass
+                # Daily and hourly nags
+                while not self.shutdown and self.handle_one_nag():
+                    pass
 
-            if not loop:
-                break
+                if not loop:
+                    break
 
-            # Sleep for 60 seconds before looking for more work
-            for i in range(0, 60):
-                if not self.shutdown:
-                    time.sleep(1)
+                # Sleep for 60 seconds before looking for more work
+                for i in range(0, 60):
+                    if not self.shutdown:
+                        time.sleep(1)
+        finally:
+            if use_distributed_lock:
+                self._release_lock()
 
         return "Done."

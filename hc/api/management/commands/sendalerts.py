@@ -12,7 +12,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.db import close_old_connections, connection
+from django.db import close_old_connections, connection, transaction
 from django.utils.timezone import now
 
 from hc.api.models import Check, Flip
@@ -95,23 +95,46 @@ class Command(BaseCommand):
         (because either all workers are currently busy or there are currently no
         unprocessed flips in the database).
 
+        On PostgreSQL and MySQL 8.0+, uses SELECT FOR UPDATE SKIP LOCKED so
+        multiple concurrent sendalerts workers can each claim a different Flip
+        without blocking each other. On other databases (e.g. SQLite), falls
+        back to the original optimistic-lock pattern (check then conditional
+        update).
+
         """
 
         if not self.seats.acquire(timeout=1):
             return False  # Workers busy, main thread should wait a bit
 
-        flip = Flip.objects.filter(processed=None).first()
-        if flip is None:
-            self.seats.release()
-            return False  # No work found, main thread should wait a bit
+        if connection.vendor in ("postgresql", "mysql"):
+            # Atomically claim one unprocessed flip. SKIP LOCKED means other
+            # concurrent workers will skip rows we have locked, so each flip
+            # is processed by exactly one worker.
+            with transaction.atomic():
+                flip = (
+                    Flip.objects.select_for_update(skip_locked=True)
+                    .filter(processed=None)
+                    .first()
+                )
+                if flip is None:
+                    self.seats.release()
+                    return False  # No work found, main thread should wait a bit
+                flip.processed = now()
+                flip.save(update_fields=["processed"])
+        else:
+            # Optimistic locking fallback for SQLite and other backends.
+            flip = Flip.objects.filter(processed=None).first()
+            if flip is None:
+                self.seats.release()
+                return False  # No work found, main thread should wait a bit
 
-        # Mark the flip as processed:
-        q = Flip.objects.filter(id=flip.id, processed=None)
-        num_updated = q.update(processed=now())
-        if num_updated != 1:
-            self.seats.release()
-            # Nothing got updated: another sendalerts process got there first.
-            return True
+            # Mark the flip as processed:
+            q = Flip.objects.filter(id=flip.id, processed=None)
+            num_updated = q.update(processed=now())
+            if num_updated != 1:
+                self.seats.release()
+                # Nothing got updated: another sendalerts process got there first.
+                return True
 
         statsd.incr("hc.sendalerts.processFlip")
         f = self.executor.submit(notify, flip)
@@ -126,51 +149,96 @@ class Command(BaseCommand):
         3. If calculation throws an exception, push alert_after forward and re-raise.
         4. If the current status is not "down", update alert_after and return.
         5. Update the check's status in the database to "down".
-        6. If exactly 1 row gets updated, create a Flip object.
+        6. Create a Flip object.
+
+        On PostgreSQL and MySQL 8.0+, uses SELECT FOR UPDATE SKIP LOCKED so
+        multiple concurrent workers each handle a different check without racing.
+        On other databases (e.g. SQLite), falls back to the original
+        optimistic-lock pattern.
 
         """
 
-        q = Check.objects.filter(alert_after__lt=now()).exclude(status="down")
-        # Sort by alert_after, to avoid unnecessary sorting by id:
-        check = q.order_by("alert_after").first()
-        if check is None:
-            return False
+        base_q = Check.objects.filter(alert_after__lt=now()).exclude(status="down")
 
-        old_status = check.status
-        q = Check.objects.filter(id=check.id, status=old_status)
+        if connection.vendor in ("postgresql", "mysql"):
+            with transaction.atomic():
+                # Claim one check exclusively; other workers skip locked rows.
+                check = (
+                    base_q.select_for_update(skip_locked=True)
+                    .order_by("alert_after")
+                    .first()
+                )
+                if check is None:
+                    return False
 
-        try:
-            status = check.get_status()
-        except Exception as e:
-            # Make sure we don't trip on this check again for an hour:
-            # Otherwise sendalerts may end up in a crash loop.
-            q.update(alert_after=now() + td(hours=1))
-            # Then re-raise the exception:
-            raise e
+                old_status = check.status
 
-        if status != "down":
-            # It is not down yet. Update alert_after
-            q.update(alert_after=check.going_down_after())
-            return True
+                try:
+                    status = check.get_status()
+                except Exception as e:
+                    check.alert_after = now() + td(hours=1)
+                    check.save(update_fields=["alert_after"])
+                    raise e
 
-        flip_time = check.going_down_after()
-        # In theory, going_down_after() can return None, but:
-        # get_status() just reported status "down", so "going_down_after()"
-        # must be able to calculate precisely when the check's state flipped.
-        assert flip_time
+                if status != "down":
+                    check.alert_after = check.going_down_after()
+                    check.save(update_fields=["alert_after"])
+                    return True
 
-        # Atomically update status
-        num_updated = q.update(alert_after=None, status="down")
-        if num_updated != 1:
-            # Nothing got updated: another worker process got there first.
-            return True
+                flip_time = check.going_down_after()
+                assert flip_time
 
-        flip = Flip(owner=check)
-        flip.created = flip_time
-        flip.old_status = old_status
-        flip.new_status = "down"
-        flip.reason = "timeout"
-        flip.save()
+                check.alert_after = None
+                check.status = "down"
+                check.save(update_fields=["alert_after", "status"])
+
+                flip = Flip(owner=check)
+                flip.created = flip_time
+                flip.old_status = old_status
+                flip.new_status = "down"
+                flip.reason = "timeout"
+                flip.save()
+        else:
+            # Optimistic locking fallback for SQLite and other backends.
+            check = base_q.order_by("alert_after").first()
+            if check is None:
+                return False
+
+            old_status = check.status
+            q = Check.objects.filter(id=check.id, status=old_status)
+
+            try:
+                status = check.get_status()
+            except Exception as e:
+                # Make sure we don't trip on this check again for an hour:
+                # Otherwise sendalerts may end up in a crash loop.
+                q.update(alert_after=now() + td(hours=1))
+                # Then re-raise the exception:
+                raise e
+
+            if status != "down":
+                # It is not down yet. Update alert_after
+                q.update(alert_after=check.going_down_after())
+                return True
+
+            flip_time = check.going_down_after()
+            # In theory, going_down_after() can return None, but:
+            # get_status() just reported status "down", so "going_down_after()"
+            # must be able to calculate precisely when the check's state flipped.
+            assert flip_time
+
+            # Atomically update status
+            num_updated = q.update(alert_after=None, status="down")
+            if num_updated != 1:
+                # Nothing got updated: another worker process got there first.
+                return True
+
+            flip = Flip(owner=check)
+            flip.created = flip_time
+            flip.old_status = old_status
+            flip.new_status = "down"
+            flip.reason = "timeout"
+            flip.save()
 
         return True
 

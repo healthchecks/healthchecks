@@ -248,6 +248,53 @@ Run it with the `--loop` argument to make it run continuously:
 ./manage.py sendreports --loop
 ```
 
+## High Availability (HA) Deployments
+
+When running multiple application containers behind a load balancer (for example,
+using AWS ECS or Kubernetes), you can safely run `sendalerts` and `sendreports`
+inside each container without risking duplicate notifications.
+
+**Requirements:** PostgreSQL or MySQL 8.0+ (MariaDB 10.6+) database backend.
+The HA features described below are not available with SQLite; that backend
+continues to use the original single-instance behaviour.
+
+### sendalerts – concurrent workers
+
+On PostgreSQL and MySQL 8.0+, `sendalerts` uses `SELECT ... FOR UPDATE SKIP LOCKED`
+to distribute work across multiple concurrent processes. Each worker atomically
+claims a `Flip` row; other workers skip already-claimed rows. If a worker crashes
+mid-processing, the database automatically releases its row lock when the connection
+closes, so no flip is permanently lost.
+
+You can safely run one `sendalerts` process per container:
+
+```
+# Container 1               # Container 2
+./manage.py sendalerts       ./manage.py sendalerts
+```
+
+### sendreports – active/standby failover
+
+On PostgreSQL, `sendreports` acquires a session-level advisory lock
+(`pg_try_advisory_lock`) on startup. On MySQL 8.0+, it uses `GET_LOCK()` with a
+zero timeout instead. In both cases only one instance holds the lock and processes
+reports; any additional instances detect the lock, log a message, and exit
+immediately. If the primary instance crashes, the database releases its
+connection-scoped lock automatically, and the next invocation of `sendreports`
+(e.g., by a container restart policy) will become the new active worker.
+
+```
+# Only one of these will process reports at a time:
+./manage.py sendreports --loop   # Container 1
+./manage.py sendreports --loop   # Container 2 – exits if Container 1 is running
+```
+
+### smtpd
+
+The `smtpd` command binds a network socket, so only one instance can listen on a
+given port. Place it behind a load balancer or run it on a dedicated node; no
+code changes are required.
+
 ## Database Cleanup
 
 Healthchecks deletes old entries from `api_ping`, `api_flip`, and `api_notification`
