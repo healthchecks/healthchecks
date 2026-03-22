@@ -604,3 +604,6 @@ The Docker images:
 * Do *not* handle TLS termination. In a production setup, you will want to put
   the Healthchecks container behind a reverse proxy or load balancer that handles TLS
   termination.
+
+
+<!-- fix-issue-1006: Discord Webhook integration -->
