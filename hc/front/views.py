@@ -631,6 +631,7 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
         check.grace = oncalendar_form.cleaned_data["grace"]
 
     check.alert_after = check.going_down_after()
+    check_saved = False
     if check.status == "up":
         assert check.alert_after
         if check.alert_after < now():
@@ -648,7 +649,15 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
             check.alert_after = None
             check.status = "down"
 
-    check.save()
+            # Kick off nags. This would normally happen in the sendalerts management
+            # command while processing a flip, but we have already marked the flip
+            # as processed
+            check.save()
+            check_saved = True
+            check.project.update_next_nag_dates()
+
+    if not check_saved:
+        check.save()
 
     if "/details/" in request.headers.get("Referer", ""):
         return redirect("hc-details", code)

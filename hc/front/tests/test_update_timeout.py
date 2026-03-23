@@ -58,6 +58,9 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(self.check.status, "down")
 
     def test_it_updates_status_to_down(self) -> None:
+        self.profile.nag_period = td(hours=1)
+        self.profile.save()
+
         self.check.last_ping = now() - td(hours=1)
         self.check.status = "up"
         self.check.alert_after = self.check.going_down_after()
@@ -78,6 +81,10 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertEqual(flip.old_status, "up")
         self.assertEqual(flip.new_status, "down")
         self.assertTrue(flip.processed)
+
+        # and user profile's next_nag_date should now be set
+        self.profile.refresh_from_db()
+        self.assertTrue(self.profile.next_nag_date)
 
     def test_it_saves_cron_expression(self) -> None:
         payload = {"kind": "cron", "schedule": "5 * * * *", "tz": "UTC", "grace": 60}
