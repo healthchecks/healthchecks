@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v4.2-dev - Unreleased
+## v4.1.1 - 2026-03-25
 
 ### Bug Fixes
 - Fix sendalerts to avoid crashing on a timed out db connection (#1267)
