@@ -30,7 +30,7 @@ def sms_form(request: HttpRequest, channel: Channel) -> HttpResponse:
         form = forms.PhoneUpDownForm(initial={"up": False})
     else:
         form = forms.PhoneUpDownForm(
-            {
+            initial={
                 "label": channel.name,
                 "phone": channel.phone.value,
                 "up": channel.phone.notify_up,
