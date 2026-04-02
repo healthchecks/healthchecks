@@ -3,8 +3,8 @@
     {% if results %}
         {% for slug, title, snippet in results %}
         <li>
-            <a href="{% url 'hc-serve-doc' slug %}">{{ title|safe }}</a>
-            <p>{{ snippet|safe }}</p>
+            <a href="{% url 'hc-serve-doc' slug %}">{{ title }}</a>
+            <p>{{ snippet }}</p>
         </li>
         {% endfor %}
         </ul>
