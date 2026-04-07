@@ -65,7 +65,8 @@ def get_installation_ids(user_access_token: str) -> list[int]:
         raise BadCredentials()
 
     if doc.installations is None:
-        logger.warning(f"Unexpected response from GitHub: {result.content}")
+        content_str = result.content.decode()
+        logger.warning(f"Unexpected response from GitHub: {content_str}")
 
     assert doc.installations is not None
     return [item.id for item in doc.installations]
