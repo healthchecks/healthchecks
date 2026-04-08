@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v4.1.1 - 2026-03-25
 
+### Improvements
+- Update the email alert template to cut the beginning of the last ping body (#939)
+
 ### Bug Fixes
 - Fix sendalerts to avoid crashing on a timed out db connection (#1267)
 - Fix the update_timeout view to also kick off nags

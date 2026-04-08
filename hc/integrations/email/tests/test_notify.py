@@ -188,13 +188,13 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEmailContains("Europe/Riga")
 
     def test_it_truncates_long_body(self) -> None:
-        self.ping.body_raw = b"X" * 10000 + b", and the rest gets cut off"
+        self.ping.body_raw = b"the start gets cut off" + b"X" * 10000
         self.ping.save()
 
         self.channel.notify(self.flip)
 
-        self.assertEmailContains("[truncated]")
-        self.assertEmailNotContains("the rest gets cut off")
+        self.assertEmailContains("Showing the last 10000 bytes of 10022 bytes total.")
+        self.assertEmailNotContains("the start gets cut off")
 
     def test_it_handles_missing_ping_object(self) -> None:
         self.ping.delete()
