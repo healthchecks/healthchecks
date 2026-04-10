@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Update the email alert template to cut the beginning of the last ping body (#939)
+- Update the email integration to attach email pings as .eml attachments
 
 ### Bug Fixes
 - Fix sendalerts to avoid crashing on a timed out db connection (#1267)

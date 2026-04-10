@@ -329,7 +329,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertNotIn("X-Bounce-ID", email.extra_headers)
 
     @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
-    def test_it_displays_last_ping_subject(self) -> None:
+    def test_it_displays_last_ping_subject_and_adds_attachment(self) -> None:
         self.ping.scheme = "email"
         self.ping.body_raw = b"""Subject: Foo bar baz
 
@@ -341,6 +341,12 @@ tempor incididunt ut labore et dolore magna aliqua.
 
         self.channel.notify(self.flip)
 
-        self.assertEmailContains("Lorem ipsum")
         self.assertEmailContainsText("Last ping subject: Foo bar baz")
         self.assertEmailContainsHtml("<b>Last Ping Subject</b><br>Foo bar baz")
+
+        self.assertEmailContains("See the attachment")
+        self.assertEmailNotContains("Lorem ipsum")
+
+        message = mail.outbox[0]
+        attachment = message.attachments[0]
+        self.assertIn("Lorem ipsum", attachment.content.as_string())

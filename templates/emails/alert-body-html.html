@@ -117,26 +117,28 @@
     </tr>
 </table>
 
-{% if ping and ping.has_body %}
 {% if subject %}
 <p><b>Last Ping Subject</b><br>{{ subject }}</p>
 {% endif %}
 
-<p><b>Last Ping Body</b>
-{% if body|length > 10000 %}
-    <br>
-    Showing the last 10000 bytes of {{ body|length}} bytes total.
-    <a href="{{ check.cloaked_url }}#ping-{{ ping.n }}">View full body</a>.
-{% endif %}
-</p>
-{% if body is None %}
-<p>
-    The request body data is being processed and will be available for viewing shortly.
-    Please <a href="{{ check.cloaked_url }}#ping-{{ ping.n }}">view it on the website</a>.
-</p>
-{% else %}
-<pre style="font-family: monospace; line-height: 1em;">{{ body|slice:"-10000:"|linebreaksbr }}</pre>
-{% endif %}
+{% if ping and ping.has_body %}
+    <p><b>Last Ping Body</b>
+    {% if body|length > 10000 and not ping_attached %}
+        <br>
+        Showing the last 10000 bytes of {{ body|length}} bytes total.
+        <a href="{{ check.cloaked_url }}#ping-{{ ping.n }}">View full body</a>.
+    {% endif %}
+    </p>
+    {% if body is None %}
+    <p>
+        The request body data is being processed and will be available for viewing shortly.
+        Please <a href="{{ check.cloaked_url }}#ping-{{ ping.n }}">view it on the website</a>.
+    </p>
+    {% elif ping_attached %}
+    <p>See the attachment.</p>
+    {% else %}
+    <pre style="font-family: monospace; line-height: 1em;">{{ body|slice:"-10000:"|linebreaksbr }}</pre>
+    {% endif %}
 {% endif %}
 
 {% if projects %}

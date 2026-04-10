@@ -35,10 +35,10 @@ class Email(Transport):
 
         ping = self.last_ping(flip)
         body = get_ping_body(ping)
-        subject = None
+        subject, attachment = None, None
         if ping is not None and ping.scheme == "email" and body:
-            parsed = email.message_from_string(body, policy=email.policy.SMTP)
-            subject = parsed.get("subject", "")
+            attachment = email.message_from_string(body, policy=email.policy.SMTP)
+            subject = attachment.get("subject", "")
 
         ctx = {
             "flip": flip,
@@ -49,9 +49,10 @@ class Email(Transport):
             "projects": projects,
             "unsub_link": unsub_link,
             "tz": profile.tz,
+            "ping_attached": attachment is not None,
         }
 
-        emails.alert(self.channel.email.value, ctx, headers)
+        emails.alert(self.channel.email.value, ctx, headers, attachment)
 
     def is_noop(self, status: str) -> bool:
         if status == "down":
