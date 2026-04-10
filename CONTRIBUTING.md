@@ -12,6 +12,13 @@ submit pull requests or issues produced with the help of LLMs or code generation
 assistants, they will be closed with no discussion. Do not write emails
 generated or rewritten by LLMs, they will be marked as spam.
 
+## Pull Requests
+
+Pull requests are currently disabled in this repository due to ongoing
+AI-generated spam. This project *still accepts code contributions*. Rather
+can creating a pull request, please mention the repository & branch with
+your completed feature or bugfix in an issue comment.
+
 ## Code Style
 
 * Format your Python code with [ruff](https://docs.astral.sh/ruff/).
