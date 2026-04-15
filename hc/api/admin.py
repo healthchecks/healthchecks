@@ -31,7 +31,7 @@ class ChecksAdmin(ModelAdmin[Check]):
     class Media:
         css = {"all": ("css/admin/checks.css",)}
 
-    search_fields = ["id", "name", "code", "project__owner__email"]
+    search_fields = ["id", "name", "slug", "code", "project__owner__email"]
     readonly_fields = ("code", "badge_key")
     raw_id_fields = ("project",)
     list_select_related = ("project",)
