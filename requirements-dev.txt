@@ -1,8 +1,8 @@
-apprise==1.9.4
+apprise==1.9.9
 django-stubs==6.0.1
 Markdown==3.10.2
 minio==7.2.20
-mypy==1.19.1
+mypy==1.20.1
 mysqlclient==2.2.7
 Pygments==2.20.0
 time-machine==3.2.0

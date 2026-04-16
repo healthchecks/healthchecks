@@ -3,11 +3,11 @@ cronsim==2.7
 Django==6.0.4
 django-compressor==4.6
 django-stubs-ext==6.0.1
-fido2==2.1.1
+fido2==2.2.0
 oncalendar==1.1
 psycopg==3.3.3
 pycurl==7.45.7
-pydantic==2.12.5
+pydantic==2.13.1
 PyJWT[crypto]==2.12.1
 pyotp==2.9.0
 segno==1.6.6
