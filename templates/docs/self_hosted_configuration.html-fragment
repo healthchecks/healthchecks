@@ -316,14 +316,17 @@ is set to <code>False</code> by default, because allowing users to define webhoo
 internal addresses is a security risk.</p>
 <p>Only enable this setting if you run your Healthchecks instance in a trusted
 environment, and need to integrate with services running in your internal network.</p>
-<p>This setting affects all integration types, not just webhooks. For example,
-if you run a Gotify instance on <code>localhost</code>, you will need to enable
+<p>This setting affects all integration types except Apprise, not just webhooks. For
+example, if you run a Gotify instance on <code>localhost</code>, you will need to enable
 <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> to be able to use it via the Gotify integration.</p>
 <p>This setting affects all outbound HTTP requests, including those made
 while setting up new integrations (e.g. during the OAuth2 authorization flow).</p>
 <p>This setting also affects connections to the proxy server when the <code>http_proxy</code> or
 <code>https_proxy</code> environment variables are set. If your proxy server has a private
 IP address, you will need to enable <code>INTEGRATIONS_ALLOW_PRIVATE_IPS</code> to use it.</p>
+<p>This setting <em>does not</em> have effect on the Apprise integration, as the Apprise library
+uses its own HTTP client. Apprise can make requests to private IPs regardless
+of this setting.</p>
 <h2 id="MASTER_BADGE_URL"><code>MASTER_BADGE_LABEL</code></h2>
 <p>Default: same as <code>SITE_NAME</code></p>
 <p>The label for the "Overall Status" status badge.</p>

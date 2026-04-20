@@ -435,8 +435,8 @@ internal addresses is a security risk.
 Only enable this setting if you run your Healthchecks instance in a trusted
 environment, and need to integrate with services running in your internal network.
 
-This setting affects all integration types, not just webhooks. For example,
-if you run a Gotify instance on `localhost`, you will need to enable
+This setting affects all integration types except Apprise, not just webhooks. For
+example, if you run a Gotify instance on `localhost`, you will need to enable
 `INTEGRATIONS_ALLOW_PRIVATE_IPS` to be able to use it via the Gotify integration.
 
 This setting affects all outbound HTTP requests, including those made
@@ -445,6 +445,10 @@ while setting up new integrations (e.g. during the OAuth2 authorization flow).
 This setting also affects connections to the proxy server when the `http_proxy` or
 `https_proxy` environment variables are set. If your proxy server has a private
 IP address, you will need to enable `INTEGRATIONS_ALLOW_PRIVATE_IPS` to use it.
+
+This setting *does not* have effect on the Apprise integration, as the Apprise library
+uses its own HTTP client. Apprise can make requests to private IPs regardless
+of this setting.
 
 ## `MASTER_BADGE_LABEL` {: #MASTER_BADGE_URL }
 

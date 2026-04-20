@@ -70,6 +70,15 @@ def settings_check(
             )
         )
 
+    if settings.APPRISE_ENABLED and not settings.INTEGRATIONS_ALLOW_PRIVATE_IPS:
+        items.append(
+            Warning(
+                "Apprise can access private IPs regardless of the settings.INTEGRATIONS_ALLOW_PRIVATE_IPS value",
+                hint="See https://healthchecks.io/docs/self_hosted_configuration/#INTEGRATIONS_ALLOW_PRIVATE_IPS",
+                id="hc.api.W006",
+            )
+        )
+
     return items
 
 
