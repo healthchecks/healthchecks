@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied, ValidationError
-from django.db.models import Case, Count, F, Q, When
+from django.db.models import BinaryField, Case, Count, F, Q, When
 from django.db.models.functions import Substr
 from django.http import (
     Http404,
@@ -885,7 +885,7 @@ def clear_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
 
 
 class PingAnnotations(TypedDict):
-    body_raw_preview: bytes
+    body_raw_preview: bytes | memoryview[int]
 
 
 def _get_events(
@@ -911,7 +911,9 @@ def _get_events(
     # as "body_raw_preview". This reduces both network I/O to database, and disk I/O
     # on the database host if the database contains large request bodies.
     pq = pq.defer("body_raw")
-    pq = pq.annotate(body_raw_preview=Substr("body_raw", 1, 151))
+    pq = pq.annotate(
+        body_raw_preview=Substr("body_raw", 1, 151, output_field=BinaryField())
+    )
     pings = list(pq[:page_limit])
     prepare_durations(pings)
 
