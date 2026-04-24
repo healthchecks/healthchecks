@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix sendalerts to avoid crashing on a timed out db connection (#1267)
 - Fix the update_timeout view to also kick off nags
+- Fix the email integration to handle deep attachment stacks in last ping body
 
 ## v4.1 - 2026-03-20
 

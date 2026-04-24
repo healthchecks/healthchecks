@@ -38,6 +38,13 @@ class Email(Transport):
         subject, attachment = None, None
         if ping is not None and ping.scheme == "email" and body:
             attachment = email.message_from_string(body, policy=email.policy.SMTP)
+            parts = list(attachment.iter_parts())
+            if parts:
+                # If this is a multipart message then drop message/rfc822
+                # parts to avoid recursion issues with deep
+                # attachment-within-attachment stacks.
+                parts = [p for p in parts if p.get_content_type() != "message/rfc822"]
+                attachment.set_payload(parts)
             subject = attachment.get("subject", "")
 
         ctx = {
