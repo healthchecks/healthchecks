@@ -6,7 +6,7 @@ from hc.api.apps import settings_check
 from hc.test import BaseTestCase
 
 
-@override_settings(EMAIL_HOST="localhost")
+@override_settings(EMAIL_HOST="localhost", APPRISE_ENABLED=False)
 class SystemChecksCase(BaseTestCase):
     @override_settings(SITE_ROOT="example.com")
     def test_it_validates_site_root_syntax(self) -> None:
@@ -27,3 +27,8 @@ class SystemChecksCase(BaseTestCase):
     def test_it_checks_secure_proxy_ssl_header_tupleness(self) -> None:
         ids = [item.id for item in settings_check(None, None)]
         self.assertEqual(ids, ["hc.api.W005"])
+
+    @override_settings(APPRISE_ENABLED=True, INTEGRATIONS_ALLOW_PRIVATE_IPS=False)
+    def test_it_checks_apprise_and_private_ips(self) -> None:
+        ids = [item.id for item in settings_check(None, None)]
+        self.assertEqual(ids, ["hc.api.W006"])
