@@ -350,3 +350,44 @@ tempor incididunt ut labore et dolore magna aliqua.
         message = mail.outbox[0]
         attachment = message.attachments[0]
         self.assertIn("Lorem ipsum", attachment.content.as_string())
+
+    @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
+    def test_it_removes_message_rfc822_parts_from_last_ping_body(self) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = b"""MIME-Version: 1.0
+Subject: Outer subject
+Content-Type: multipart/mixed; boundary="00000000000068ccbb0650421339"
+
+--00000000000068ccbb0650421339
+Content-Type: text/plain; charset="UTF-8"
+
+Hello 456
+
+--00000000000068ccbb0650421339
+Content-Type: message/rfc822; name="Hello.eml"
+Content-Disposition: attachment; filename="Hello.eml"
+
+MIME-Version: 1.0
+Subject: Inner subject
+Content-Type: text/plain; charset="UTF-8"
+
+Hello 123
+
+
+--00000000000068ccbb0650421339--
+"""
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        self.assertEmailContainsText("Last ping subject: Outer subject")
+        self.assertEmailContains("See the attachment")
+
+        message = mail.outbox[0]
+        attachment = message.attachments[0]
+        attachment_str = attachment.content.as_string()
+        self.assertIn("Outer subject", attachment_str)
+        self.assertIn("Hello 456", attachment_str)
+        # The message/rfc822 part should have been removed
+        self.assertNotIn("Inner subject", attachment_str)
+        self.assertNotIn("Hello 123", attachment_str)

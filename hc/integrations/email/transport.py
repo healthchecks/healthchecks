@@ -38,13 +38,18 @@ class Email(Transport):
         subject, attachment = None, None
         if ping is not None and ping.scheme == "email" and body:
             attachment = email.message_from_string(body, policy=email.policy.SMTP)
-            parts = list(attachment.iter_parts())
-            if parts:
-                # If this is a multipart message then drop message/rfc822
-                # parts to avoid recursion issues with deep
-                # attachment-within-attachment stacks.
-                parts = [p for p in parts if p.get_content_type() != "message/rfc822"]
-                attachment.set_payload(parts)
+            # If this is a multipart message then drop message/rfc822 parts to
+            # avoid recursion issues with deep attachment-within-attachment stacks.
+            if attachment.is_multipart():
+                parts = attachment.get_payload()
+                # If is_multipart=True then get_payload() returns list[Message].
+                # Mypy does not know this, hence the assert.
+                assert isinstance(parts, list)
+                # use list() here so we don't mutate the same list we're iterating
+                for part in list(parts):
+                    if part.get_content_type() == "message/rfc822":
+                        parts.remove(part)
+
             subject = attachment.get("subject", "")
 
         ctx = {
