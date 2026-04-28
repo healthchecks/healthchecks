@@ -3,7 +3,7 @@ django-stubs==6.0.3
 Markdown==3.10.2
 minio==7.2.20
 mypy==1.20.1
-mysqlclient==2.2.7
+mysqlclient==2.2.8
 Pygments==2.20.0
 time-machine==3.2.0
 types-Markdown
