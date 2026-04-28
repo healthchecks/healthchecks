@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import os
+import shlex
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import Transport, TransportError
 from hc.lib.string import replace
@@ -17,12 +19,12 @@ class Shell(Transport):
             "$CODE": str(check.code),
             "$STATUS": flip.new_status,
             "$NOW": flip.created.replace(microsecond=0).isoformat(),
-            "$NAME": check.name,
-            "$TAGS": check.tags,
+            "$NAME": shlex.quote(check.name),
+            "$TAGS": shlex.quote(check.tags),
         }
 
         for i, tag in enumerate(check.tags_list()):
-            ctx["$TAG%d" % (i + 1)] = tag
+            ctx[f"$TAG{i + 1}"] = shlex.quote(tag)
 
         return replace(template, ctx)
 
