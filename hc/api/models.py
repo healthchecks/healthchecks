@@ -1070,6 +1070,17 @@ class Channel(models.Model):
 
         emails.call_limit(self.project.team_emails(), ctx)
 
+    def send_sms_limit_notice(self, transport: str, message: str) -> None:
+        profile = self.project.owner_profile
+        ctx = {
+            "recipient": self.phone.value,
+            "owner_email": self.project.owner.email,
+            "transport": transport,
+            "limit": profile.sms_limit,
+            "message": message,
+        }
+        emails.sms_limit(self.project.team_emails(), ctx)
+
     @property
     def transport(self) -> transports.Transport:
         if self.kind not in TRANSPORTS:

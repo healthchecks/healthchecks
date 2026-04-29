@@ -131,7 +131,7 @@ def deletion_scheduled(to: list[str], ctx: dict[str, Any]) -> None:
     send(m, block=True)
 
 
-def sms_limit(to: str, ctx: dict[str, Any]) -> None:
+def sms_limit(to: list[str], ctx: dict[str, Any]) -> None:
     send(make_message("sms-limit", to, ctx))
 
 

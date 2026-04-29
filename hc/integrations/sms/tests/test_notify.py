@@ -112,7 +112,15 @@ class NotifySmsTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
+        self.assertEqual(email.to[1], "bob@example.org")
         self.assertEqual(email.subject, "Monthly SMS Limit Reached")
+
+        # Account's owner should be mentioned in the message body
+        self.assertEmailContains("alice@example.org")
+
+        # The alert content itself should be in the message body
+        self.assertEmailContainsText("""The check "Foo" is DOWN""")
+        self.assertEmailContainsHtml("""The check &quot;Foo&quot; is DOWN""")
 
     @override_settings(TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request", autospec=True)

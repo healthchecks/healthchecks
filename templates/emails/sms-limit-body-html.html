@@ -3,16 +3,20 @@
 
 {% block content %}
 Hello,<br />
+
 <p>
-We could not deliver a {{ transport }} notification because your {% site_name %}
-account has reached its monthly sending limit of
-<strong>{{ limit }} sends per month</strong>. The limit resets at the start of
-each month.
+We could not deliver a {{ transport }} notification to <strong>{{ recipient|mask_phone }}</strong>
+because {% site_name %} account <strong>{{ owner_email }}</strong> has reached its monthly sending
+limit of <strong>{{ limit }} sends per month</strong>.
+The limit resets at the start of each month.
 </p>
 
-{% if url %}
-<p>You can increase the monthly sending limit by upgrading your billing plan. <a href="{{ url }}">See Pricing</a>.</p>
-{% endif %}
+<p>Here is the message we tried to deliver:</p>
+
+<div style="background: #F2F4F6; padding: 20px;">
+    {{ message }}
+</div>
+<br />
 
 {% endblock %}
 

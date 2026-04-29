@@ -4,11 +4,11 @@ import logging
 from typing import NoReturn
 
 from django.conf import settings
-from hc.accounts.models import Profile
+from pydantic import BaseModel, ValidationError
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
-from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -43,13 +43,6 @@ class Sms(HttpTransport):
         if not settings.TWILIO_ACCOUNT or not settings.TWILIO_AUTH:
             raise TransportError("SMS notifications are not enabled")
 
-        profile = Profile.objects.for_user(self.channel.project.owner)
-        if not profile.authorize_sms():
-            profile.send_sms_limit_notice("SMS")
-            raise TransportError("Monthly SMS limit exceeded")
-
-        url = self.URL % settings.TWILIO_ACCOUNT
-        auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
         text = self.tmpl(
             "sms_message.html",
             flip=flip,
@@ -57,6 +50,14 @@ class Sms(HttpTransport):
             status=flip.new_status,
             site_name=settings.SITE_NAME,
         )
+
+        profile = self.channel.project.owner_profile
+        if not profile.authorize_sms():
+            self.channel.send_sms_limit_notice("SMS", text)
+            raise TransportError("Monthly SMS limit exceeded")
+
+        url = self.URL % settings.TWILIO_ACCOUNT
+        auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
 
         data = {
             "To": self.channel.phone.value,
