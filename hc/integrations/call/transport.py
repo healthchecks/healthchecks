@@ -4,11 +4,11 @@ import logging
 from typing import NoReturn
 
 from django.conf import settings
-from hc.accounts.models import Profile
+from pydantic import BaseModel, ValidationError
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
-from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -43,18 +43,20 @@ class Call(HttpTransport):
         ):
             raise TransportError("Call notifications are not enabled")
 
-        profile = Profile.objects.for_user(self.channel.project.owner)
+        ctx = {"check": flip.owner, "site_name": settings.SITE_NAME}
+        message = self.tmpl("call_message.html", **ctx)
+
+        profile = self.channel.project.owner_profile
         if not profile.authorize_call():
-            profile.send_call_limit_notice()
+            self.channel.send_call_limit_notice(message)
             raise TransportError("Monthly phone call limit exceeded")
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
-        ctx = {"check": flip.owner, "site_name": settings.SITE_NAME}
         data = {
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone.value,
-            "Twiml": self.tmpl("call_message.html", **ctx),
+            "Twiml": f"<Response><Say>{message}</Say></Response>",
             "StatusCallback": notification.status_url(),
         }
 

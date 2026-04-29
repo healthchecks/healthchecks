@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from hc.accounts.models import Member, Project
+from hc.accounts.models import Project
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase
 
@@ -29,3 +29,8 @@ class ProjectModelTestCase(BaseTestCase):
     def test_it_handles_no_channels(self) -> None:
         # It's an issue if the project has no channels at all:
         self.assertTrue(self.project.have_channel_issues())
+
+    def test_team_emails_work(self) -> None:
+        self.assertEqual(
+            self.project.team_emails(), ["alice@example.org", "bob@example.org"]
+        )

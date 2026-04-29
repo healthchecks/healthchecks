@@ -189,13 +189,6 @@ class Profile(models.Model):
 
         emails.sms_limit(self.user.email, ctx)
 
-    def send_call_limit_notice(self) -> None:
-        ctx: dict[str, Any] = {"limit": self.call_limit}
-        if self.call_limit != 500 and settings.USE_PAYMENTS:
-            ctx["url"] = absolute_reverse("hc-pricing")
-
-        emails.call_limit(self.user.email, ctx)
-
     def projects(self) -> QuerySet[Project]:
         """Return a queryset of all projects we have access to."""
 
@@ -593,6 +586,11 @@ class Project(models.Model):
 
         digest = hmac.digest(settings.SECRET_KEY.encode(), key.encode(), "sha256")
         return hmac.compare_digest(digest.hex(), key_hash)
+
+    def team_emails(self) -> list[str]:
+        q = User.objects.filter(memberships__project=self).order_by("email")
+        member_emails = list(q.values_list("email", flat=True))
+        return [self.owner.email] + member_emails
 
 
 class Member(models.Model):

@@ -1,8 +1,12 @@
 {% load hc_extras %}Hello,
 
-We could not deliver a phone call notification because your {% site_name %} account has reached its monthly phone call limit of {{ limit }} calls per month. The limit resets at the start of each month.
-{% if url %}You can increase the monthly phone call limit by upgrading your billing plan.
-{% endif %}
+We could not deliver a phone call notification to {{ recipient|mask_phone }} because {% site_name %} account {{ owner_email }} has reached its monthly phone call limit of {{ limit }} calls per month. The limit resets at the start of each month.
+
+Here is the voice message we tried to deliver:
+
+***
+{{ message|safe }}
+***
 
 --
 Regards,

@@ -1059,6 +1059,17 @@ class Channel(models.Model):
         }
         emails.signal_rate_limited(email, ctx)
 
+    def send_call_limit_notice(self, message: str) -> None:
+        profile = self.project.owner_profile
+        ctx: dict[str, Any] = {
+            "recipient": self.phone.value,
+            "owner_email": self.project.owner.email,
+            "limit": profile.call_limit,
+            "message": message,
+        }
+
+        emails.call_limit(self.project.team_emails(), ctx)
+
     @property
     def transport(self) -> transports.Transport:
         if self.kind not in TRANSPORTS:

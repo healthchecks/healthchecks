@@ -47,7 +47,7 @@ class NotifyCallTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["data"]
         self.assertEqual(payload["To"], "+1234567890")
-        self.assertIn("""The check "foo" is down.""", payload["Twiml"])
+        self.assertIn("""The check "foo" is down.</Say>""", payload["Twiml"])
 
         n = Notification.objects.get()
         callback_path = f"/api/v3/notifications/{n.code}/status"
@@ -78,7 +78,16 @@ class NotifyCallTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.to[0], "alice@example.org")
+        # It should send the notice to project's team members as well:
+        self.assertEqual(email.to[1], "bob@example.org")
         self.assertEqual(email.subject, "Monthly Phone Call Limit Reached")
+
+        # Account's owner should be mentioned in the message body
+        self.assertEmailContains("alice@example.org")
+
+        # The alert content itself should be in the message body
+        self.assertEmailContainsText("""The check "foo" is down.""")
+        self.assertEmailContainsHtml("""The check &quot;foo&quot; is down.""")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_call_limit_reset(self, mock_post: Mock) -> None:

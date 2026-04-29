@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v4.3-dev - Unreleased
+
+### Improvements
+- Send "Monthly Phone Call Limit Reached" notice to all team members (not just owner)
+- Include notification text in the "Monthly Phone Call Limit Reached" notice
+
 ## v4.2 - 2026-04-28
 
 ### Improvements
