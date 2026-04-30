@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import logging
 from typing import NoReturn
+from xml.sax.saxutils import escape
 
 from django.conf import settings
 from pydantic import BaseModel, ValidationError
@@ -53,10 +54,11 @@ class Call(HttpTransport):
 
         url = self.URL % settings.TWILIO_ACCOUNT
         auth = (settings.TWILIO_ACCOUNT, settings.TWILIO_AUTH)
+        escaped_message = escape(message)
         data = {
             "From": settings.TWILIO_FROM,
             "To": self.channel.phone.value,
-            "Twiml": f"<Response><Say>{message}</Say></Response>",
+            "Twiml": f"<Response><Say>{escaped_message}</Say></Response>",
             "StatusCallback": notification.status_url(),
         }
 

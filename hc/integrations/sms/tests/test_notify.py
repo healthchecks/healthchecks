@@ -122,6 +122,22 @@ class NotifySmsTestCase(BaseTestCase):
         self.assertEmailContainsText("""The check "Foo" is DOWN""")
         self.assertEmailContainsHtml("""The check &quot;Foo&quot; is DOWN""")
 
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_limit_notice_handles_escaping(self, mock_post: Mock) -> None:
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        # At limit already:
+        self.profile.last_sms_date = now()
+        self.profile.sms_sent = 50
+        self.profile.save()
+
+        self.channel.notify(self.flip)
+        mock_post.assert_not_called()
+
+        self.assertEmailContainsText("""The check "Foo & Bar" is DOWN""")
+        self.assertEmailContainsHtml("The check &quot;Foo &amp; Bar&quot; is DOWN")
+
     @override_settings(TWILIO_FROM="+000")
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_resets_limit_next_month(self, mock_post: Mock) -> None:

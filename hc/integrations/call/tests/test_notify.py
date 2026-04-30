@@ -53,6 +53,21 @@ class NotifyCallTestCase(BaseTestCase):
         callback_path = f"/api/v3/notifications/{n.code}/status"
         self.assertTrue(payload["StatusCallback"].endswith(callback_path))
 
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_escapes_check_name(self, mock_post: Mock) -> None:
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        self.profile.call_limit = 1
+        self.profile.save()
+
+        mock_post.return_value.status_code = 200
+        self.channel.notify(self.flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        # The Twiml field contains XML so & should be escaped to &amp;
+        self.assertIn("""The check "Foo &amp; Bar" is down.</Say>""", payload["Twiml"])
+
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_configuration(self) -> None:
         self.channel.notify(self.flip)
@@ -88,6 +103,23 @@ class NotifyCallTestCase(BaseTestCase):
         # The alert content itself should be in the message body
         self.assertEmailContainsText("""The check "foo" is down.""")
         self.assertEmailContainsHtml("""The check &quot;foo&quot; is down.""")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_limit_notice_handles_escaping(self, mock_post: Mock) -> None:
+        self.check.name = "Foo & Bar"
+        self.check.save()
+
+        # At limit already:
+        self.profile.call_limit = 50
+        self.profile.last_call_date = now()
+        self.profile.calls_sent = 50
+        self.profile.save()
+
+        self.channel.notify(self.flip)
+        mock_post.assert_not_called()
+
+        self.assertEmailContainsText("""The check "Foo & Bar" is down.""")
+        self.assertEmailContainsHtml("The check &quot;Foo &amp; Bar&quot; is down.")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_call_limit_reset(self, mock_post: Mock) -> None:
