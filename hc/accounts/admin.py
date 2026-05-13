@@ -277,6 +277,9 @@ class UserAnnotations(TypedDict):
     last_active_date: datetime | None
 
 
+admin.site.unregister(User)
+
+@admin.register(User)
 class HcUserAdmin(UserAdmin[User]):
     list_display = (
         "id",
@@ -326,8 +329,6 @@ class HcUserAdmin(UserAdmin[User]):
         self.message_user(request, f"{len(qs)} user(s) deactivated")
 
 
-admin.site.unregister(User)
-admin.site.register(User, HcUserAdmin)
 
 
 @admin.register(Credential)
