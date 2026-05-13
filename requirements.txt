@@ -6,8 +6,8 @@ django-stubs-ext==6.0.4
 fido2==2.2.0
 oncalendar==1.1
 psycopg==3.3.4
-pycurl==7.45.7
-pydantic==2.13.1
+pycurl==7.46.0
+pydantic==2.13.4
 PyJWT[crypto]==2.12.1
 pyotp==2.9.0
 segno==1.6.6
