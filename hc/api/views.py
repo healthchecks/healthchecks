@@ -265,6 +265,11 @@ def ping_by_slug(
             project = Project.objects.get(ping_key=ping_key)
         except Project.DoesNotExist:
             return HttpResponseNotFound("not found")
+
+        profile = project.owner_profile
+        if profile.num_checks_used() >= profile.check_limit * 2:
+            return HttpResponseNotFound("not found")
+
         check = Check(project=project, name=slug, slug=slug)
         check.save()
         check.assign_all_channels()

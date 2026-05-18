@@ -107,3 +107,15 @@ class PingBySlugTestCase(BaseTestCase):
         r = self.client.get(self.url + "FOO")
         self.assertEqual(r.content, b"invalid url format")
         self.assertEqual(r.status_code, 400)
+
+    def test_auto_provisioning_limits_check_count(self) -> None:
+        self.profile.check_limit = 1
+        self.profile.save()
+
+        # Create a second check
+        Check.objects.create(project=self.project, name="foo2", slug="foo2")
+
+        # Alice's account now has 2 checks, so is exactly 2 times over the check limit.
+        # Autoprovisioning should fail now:
+        r = self.client.get(f"/ping/{self.project.ping_key}/foo3?create=1")
+        self.assertEqual(r.status_code, 404)

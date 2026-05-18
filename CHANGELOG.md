@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 ### Bug Fixes
 - Fix WebhookValidator to handle input that contains square brackets
 - Update Check.rename_and_delete() to better handle race conditions
+- Enforce check limit (times two) when pinging by slug
 
 ## v4.2 - 2026-04-28
 
