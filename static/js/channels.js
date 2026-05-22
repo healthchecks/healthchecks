@@ -12,8 +12,11 @@ $(function() {
 
     var $cm = $("#checks-modal");
     function updateNumAssigned() {
-        var numAssigned = $cm.find("input:checked").length;
+        var numAssigned = $cm.find("input:checkbox:checked").length;
+        var numTotal = $cm.find("input:checkbox").length;
         $cm.find("#num-assigned").text(numAssigned);
+        $cm.find("#select-all").attr("disabled", numAssigned == numTotal);
+        $cm.find("#unselect-all").attr("disabled", numAssigned == 0);
     }
     $cm.on("click", "#select-all", function() {
         $cm.find("input[type='checkbox']").prop("checked", true);
