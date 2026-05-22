@@ -44,8 +44,10 @@
             </td>
             <td>
                 <div class="edit-checks"
-                     data-url="{% url 'hc-channel-checks' ch.code %}">
-                     {{ ch.n_checks }} check{{ ch.n_checks|pluralize }}
+                     data-url="{% url 'hc-channel-checks' ch.code %}"
+                     data-toggle="tooltip"
+                     title="Click to change assigned checks">
+                     {{ ch.n_checks }} of {{ num_checks }}
                 </div>
             </td>
             <td>

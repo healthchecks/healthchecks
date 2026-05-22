@@ -1,8 +1,9 @@
-#checks-modal .modal-header {
-    border-bottom: 0;
+#channel-checks-table-container {
+    max-height: 700px;
+    overflow-y: scroll;
 }
 
-.channel-checks-table > tbody > tr > th {
+.channel-checks-table > tbody > tr:first-child > td {
     border-top: 0;
 }
 

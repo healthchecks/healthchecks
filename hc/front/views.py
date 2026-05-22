@@ -1221,6 +1221,7 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         "project": project,
         "profile": project.owner_profile,
         "channels": channels,
+        "num_checks": project.check_set.count(),
         "enable_apprise": settings.APPRISE_ENABLED is True,
         "enable_call": bool(settings.TWILIO_AUTH),
         "enable_discord": bool(settings.DISCORD_CLIENT_ID),
@@ -1258,7 +1259,7 @@ def channel_checks(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
     channel = _get_rw_channel_for_user(request, code)
 
     assigned = set(channel.checks.values_list("code", flat=True).distinct())
-    checks = channel.project.check_set.order_by("created")
+    checks = list(channel.project.check_set.order_by("created"))
     ctx = {"checks": checks, "assigned": assigned, "channel": channel}
 
     return render(request, "front/channel_checks.html", ctx)

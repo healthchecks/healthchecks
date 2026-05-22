@@ -11,10 +11,19 @@ $(function() {
     });
 
     var $cm = $("#checks-modal");
-    $cm.on("click", "#toggle-all", function() {
-        var value = $(this).prop("checked");
-        $cm.find(".toggle").prop("checked", value);
+    function updateNumAssigned() {
+        var numAssigned = $cm.find("input:checked").length;
+        $cm.find("#num-assigned").text(numAssigned);
+    }
+    $cm.on("click", "#select-all", function() {
+        $cm.find("input[type='checkbox']").prop("checked", true);
+        updateNumAssigned();
     });
+    $cm.on("click", "#unselect-all", function() {
+        $cm.find("input[type='checkbox']").prop("checked", false);
+        updateNumAssigned();
+    });
+    $cm.on("change", "input", updateNumAssigned);
 
     $(".channel-remove").click(function() {
         var $this = $(this);
