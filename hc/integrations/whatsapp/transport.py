@@ -7,7 +7,6 @@ from typing import NoReturn
 from django.conf import settings
 from pydantic import BaseModel, ValidationError
 
-from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl

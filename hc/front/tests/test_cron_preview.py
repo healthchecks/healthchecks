@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from datetime import datetime, timezone
-from unittest.mock import Mock, patch
-
 import time_machine
 
 from hc.test import BaseTestCase

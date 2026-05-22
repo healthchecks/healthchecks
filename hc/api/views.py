@@ -267,6 +267,8 @@ def ping_by_slug(
             return HttpResponseNotFound("not found")
 
         profile = project.owner_profile
+        # When using auto-provisioning, users are allowed to temporarily
+        # exceed their check limit up to 2 times.
         if profile.num_checks_used() >= profile.check_limit * 2:
             return HttpResponseNotFound("not found")
 

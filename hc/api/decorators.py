@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable
+from typing import Any
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
+
 from hc.accounts.models import Project
 from hc.lib.typealias import ViewFunc
 
