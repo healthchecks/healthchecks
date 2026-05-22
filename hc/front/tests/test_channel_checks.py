@@ -11,7 +11,7 @@ class ChannelChecksTestCase(BaseTestCase):
         self.channel.value = "alice@example.org"
         self.channel.save()
 
-        Check.objects.create(project=self.project, name="Database Backups")
+        self.check = Check.objects.create(project=self.project, name="Database Backups")
 
     def test_it_works(self) -> None:
         url = f"/integrations/{self.channel.code}/checks/"
@@ -45,3 +45,12 @@ class ChannelChecksTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(url)
         self.assertEqual(r.status_code, 404)
+
+    def test_it_handles_no_checks(self) -> None:
+        self.check.delete()
+
+        url = f"/integrations/{self.channel.code}/checks/"
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(url)
+        self.assertContains(r, "there are currently no checks", status_code=200)
