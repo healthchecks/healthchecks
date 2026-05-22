@@ -7,6 +7,11 @@
     border-top: 0;
 }
 
+.channel-checks-table > tbody > tr:hover > td {
+    background: var(--table-bg-hover);
+    cursor: pointer;
+}
+
 .channel-checks-table td:first-child, .channel-checks-table th:first-child {
     padding-left: 16px;
 }
