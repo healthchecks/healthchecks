@@ -69,7 +69,7 @@
     {{ ch.ntfy.priority_display }} priority
 {% elif ch.kind == "group" %}
     Group,
-    {% with ch.group_channels|length as num_members %}
+    {% with ch.group_channels.count as num_members %}
     {{ num_members }} member{{ num_members|pluralize}}
     {% endwith %}
 {% elif ch.kind == "github" %}
