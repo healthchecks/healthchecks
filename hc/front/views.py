@@ -60,6 +60,7 @@ from hc.front.templatetags.hc_extras import (
 )
 from hc.front.validators import CronValidator, OnCalendarValidator
 from hc.lib.badges import get_badge_url
+from hc.lib.string import is_valid_uuid_string
 from hc.lib.tz import all_timezones
 from hc.lib.urls import absolute_reverse
 
@@ -1187,23 +1188,24 @@ def channels(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         if not rw:
             return HttpResponseForbidden()
 
-        channel_code = request.POST["channel"]
-        try:
-            channel = Channel.objects.get(code=channel_code)
-        except Channel.DoesNotExist:
+        channel_code = request.POST.get("channel", "")
+        if not is_valid_uuid_string(channel_code):
             return HttpResponseBadRequest()
-        if channel.project_id != project.id:
+
+        try:
+            channel = project.channel_set.get(code=channel_code)
+        except Channel.DoesNotExist:
             return HttpResponseForbidden()
 
         new_checks = []
         for key in request.POST:
             if key.startswith("check-"):
-                check_code = key[6:]
-                try:
-                    check = Check.objects.get(code=check_code)
-                except Check.DoesNotExist:
+                check_code = key.removeprefix("check-")
+                if not is_valid_uuid_string(check_code):
                     return HttpResponseBadRequest()
-                if check.project_id != project.id:
+                try:
+                    check = project.check_set.get(code=check_code)
+                except Check.DoesNotExist:
                     return HttpResponseForbidden()
                 new_checks.append(check)
 
