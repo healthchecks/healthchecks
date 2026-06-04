@@ -7,6 +7,13 @@ from hc.api.transports import HttpTransport
 
 
 class Gotify(HttpTransport):
+    def priority_for_status(self, status: str) -> int | None:
+        cfg = self.channel.gotify
+        return cfg.priority_up if status == "up" else cfg.priority
+
+    def is_noop(self, status: str) -> bool:
+        return self.priority_for_status(status) == 0
+
     def notify(self, flip: Flip, notification: Notification) -> None:
         base = self.channel.gotify.url
         if not base.endswith("/"):
@@ -28,5 +35,9 @@ class Gotify(HttpTransport):
                 "client::display": {"contentType": "text/markdown"},
             },
         }
+
+        priority = self.priority_for_status(flip.new_status)
+        if priority is not None:
+            payload["priority"] = priority
 
         self.post(url, json=payload)

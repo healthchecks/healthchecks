@@ -3,7 +3,7 @@ from __future__ import annotations
 from uuid import UUID
 
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
@@ -16,6 +16,9 @@ def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     project = _get_rw_project_for_user(request, code)
 
     if request.method == "POST":
+        if "priority" not in request.POST or "priority_up" not in request.POST:
+            return HttpResponseBadRequest("Missing required form fields")
+
         form = AddGotifyForm(request.POST)
         if form.is_valid():
             channel = Channel(project=project, kind="gotify")
