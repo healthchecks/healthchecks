@@ -78,7 +78,7 @@ class ProfileAdmin(ModelAdmin[Profile]):
     class Media:
         css = {"all": ("css/admin/profiles.css",)}
 
-    readonly_fields = ("user", "email")
+    readonly_fields = ("email",)
     search_fields = ["id", "user__email"]
     list_per_page = 30
     list_select_related = ("user",)
