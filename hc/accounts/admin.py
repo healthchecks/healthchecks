@@ -16,6 +16,7 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.utils.html import format_html
 from django_stubs_ext import WithAnnotations
+
 from hc.accounts.models import Credential, Profile, Project
 
 Lookups = Iterable[tuple[str, str]]
@@ -68,7 +69,6 @@ class NumChecksFilter(admin.SimpleListFilter):
 
 class ProfileAnnotations(TypedDict):
     num_checks: int
-    num_members: int
     plan: str
 
 
@@ -147,7 +147,6 @@ class ProfileAdmin(ModelAdmin[Profile]):
     def get_queryset(self, request: HttpRequest) -> QuerySet[Profile]:
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("user__project_set")
-        qs = qs.annotate(num_members=Count("user__project__member", distinct=True))
         qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
         qs = qs.annotate(plan=F("user__subscription__plan_name"))
         return qs
@@ -279,6 +278,7 @@ class UserAnnotations(TypedDict):
 
 admin.site.unregister(User)
 
+
 @admin.register(User)
 class HcUserAdmin(UserAdmin[User]):
     list_display = (
@@ -327,8 +327,6 @@ class HcUserAdmin(UserAdmin[User]):
             user.save()
 
         self.message_user(request, f"{len(qs)} user(s) deactivated")
-
-
 
 
 @admin.register(Credential)
