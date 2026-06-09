@@ -77,7 +77,7 @@ class SignupTestCase(TestCase):
 
         profile = Profile.objects.get()
         self.assertEqual(profile.check_limit, 20)
-        self.assertEqual(profile.sms_limit, 5)
+        self.assertEqual(profile.sms_limit, 0)
         self.assertEqual(profile.call_limit, 0)
 
     @override_settings(REGISTRATION_OPEN=False)

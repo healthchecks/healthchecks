@@ -85,7 +85,7 @@ class Profile(models.Model):
     token = models.CharField(max_length=128, blank=True)
 
     last_sms_date = models.DateTimeField(null=True, blank=True)
-    sms_limit = models.IntegerField(default=5)
+    sms_limit = models.IntegerField(default=0)
     sms_sent = models.IntegerField(default=0)
 
     last_call_date = models.DateTimeField(null=True, blank=True)
