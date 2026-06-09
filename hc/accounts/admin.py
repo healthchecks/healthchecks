@@ -9,7 +9,7 @@ from django.contrib.admin import ModelAdmin
 from django.contrib.auth import login as auth_login
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Count, F, QuerySet
+from django.db.models import Count, F, Func, OuterRef, QuerySet, Subquery
 from django.http import HttpRequest, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.template.loader import render_to_string
@@ -18,6 +18,7 @@ from django.utils.html import format_html
 from django_stubs_ext import WithAnnotations
 
 from hc.accounts.models import Credential, Profile, Project
+from hc.api.models import Check
 
 Lookups = Iterable[tuple[str, str]]
 
@@ -147,7 +148,21 @@ class ProfileAdmin(ModelAdmin[Profile]):
     def get_queryset(self, request: HttpRequest) -> QuerySet[Profile]:
         qs = super().get_queryset(request)
         qs = qs.prefetch_related("user__project_set")
-        qs = qs.annotate(num_checks=Count("user__project__check", distinct=True))
+
+        # Look up check count in a subquery.
+        # Doing it using a join (`annotate(num_checks=Count(...))`)
+        # would result in expensive joins when looking up the total number of
+        # profile objects.
+        #
+        # Use Func() instead of Count() here because Count() would
+        # also add a GROUP BY clause.
+        subquery = (
+            Check.objects.filter(project__owner=OuterRef("user_id"))
+            .annotate(count=Func("id", function="COUNT"))
+            .values("count")
+        )
+        qs = qs.annotate(num_checks=Subquery(subquery))
+
         qs = qs.annotate(plan=F("user__subscription__plan_name"))
         return qs
 
