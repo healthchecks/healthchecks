@@ -1127,7 +1127,10 @@ class Channel(models.Model):
 
         n.check_status = flip.new_status
         n.error = "Sending"
-        n.save()
+        try:
+            n.save()
+        except IntegrityError:
+            return "Channel or check does not exist any more"
 
         start, error, disabled = now(), "", self.disabled
         try:
