@@ -170,7 +170,8 @@ class SendAlertsTestCase(BaseTestCase):
         self.profile.refresh_from_db()
         self.assertEqual(self.profile.next_nag_date, original_nag_date)
 
-    def test_it_does_not_clobber_check_status(self) -> None:
+    @patch("hc.api.management.commands.sendalerts.statsd")
+    def test_it_does_not_clobber_check_status(self, statsd) -> None:
         check = Check(project=self.project, status="down")
         check.last_ping = now() - td(days=2)
         check.save()

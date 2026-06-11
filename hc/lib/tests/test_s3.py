@@ -5,6 +5,7 @@ from unittest.mock import Mock, call, patch
 
 from django.test import TestCase
 from django.test.utils import override_settings
+
 from hc.lib.s3 import GetObjectError, get_object
 
 try:
@@ -52,8 +53,11 @@ class S3TestCase(TestCase):
         client.get_object.assert_called_once()
         statsd.incr.assert_called_once()
 
+    @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
-    def test_get_object_handles_urllib_exceptions(self, client: Mock) -> None:
+    def test_get_object_handles_urllib_exceptions(
+        self, client: Mock, statsd: Mock
+    ) -> None:
         for e in [ProtocolError, InvalidHeader]:
             client.get_object.reset_mock()
             client.get_object.return_value.read = Mock(side_effect=e)
@@ -61,13 +65,17 @@ class S3TestCase(TestCase):
                 get_object("dummy-code", 1)
             client.get_object.assert_called_once()
 
+    @patch("hc.lib.s3.statsd")
     @patch("hc.lib.s3._client")
-    def test_get_object_handles_invalidresponseerror(self, client: Mock) -> None:
+    def test_get_object_handles_invalidresponseerror(
+        self, client: Mock, statsd: Mock
+    ) -> None:
         e = InvalidResponseError(123, "text/plain", None)
         client.get_object.return_value.read = Mock(side_effect=e)
         with self.assertRaises(GetObjectError):
             get_object("dummy-code", 1)
         client.get_object.assert_called_once()
+        statsd.incr.assert_called_once()
 
     @override_settings(S3_BUCKET=None)
     @patch("hc.lib.s3._client")
