@@ -45,8 +45,10 @@ def notify(flip: Flip) -> str | None:
         code8 = str(ch.code)[:8]
         if error:
             logs.append(f"  {code8} ({ch.kind}) Error in {secs:.1f}s: {error}")
+            statsd.incr(f"hc.notifications.{ch.kind}.fail")
         else:
             logs.append(f"  {code8} ({ch.kind}) OK in {secs:.1f}s")
+            statsd.incr(f"hc.notifications.{ch.kind}.success")
 
     statsd.timing("hc.sendalerts.dwellTime", send_start - flip.created)
     statsd.timing("hc.sendalerts.sendTime", now() - send_start)

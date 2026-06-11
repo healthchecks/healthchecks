@@ -1,12 +1,13 @@
 from __future__ import annotations
 
 from datetime import timedelta as td
-from unittest.mock import Mock, patch
+from unittest.mock import Mock, call, patch
 
 from django.utils.timezone import now
 
 from hc.api.management.commands.sendalerts import Command, notify
 from hc.api.models import Channel, Check, Flip
+from hc.api.transports import TransportError
 from hc.test import BaseTestCase
 
 
@@ -171,7 +172,7 @@ class SendAlertsTestCase(BaseTestCase):
         self.assertEqual(self.profile.next_nag_date, original_nag_date)
 
     @patch("hc.api.management.commands.sendalerts.statsd")
-    def test_it_does_not_clobber_check_status(self, statsd) -> None:
+    def test_it_does_not_clobber_check_status(self, statsd: Mock) -> None:
         check = Check(project=self.project, status="down")
         check.last_ping = now() - td(days=2)
         check.save()
@@ -196,3 +197,50 @@ class SendAlertsTestCase(BaseTestCase):
             # Check.get_status(), which reads Check.status. So we *must not*
             # clobber flip.owner.status.
             self.assertEqual(args[0].owner.status, "down")
+
+    @patch("hc.api.management.commands.sendalerts.statsd")
+    def test_it_increases_statsd_success_counter(self, statsd: Mock) -> None:
+        check = Check(project=self.project, status="down")
+        check.last_ping = now() - td(days=2)
+        check.save()
+
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        channel = Channel.objects.create(project=self.project, kind="webhook")
+        channel.checks.add(check)
+
+        with patch("hc.api.models.Channel.transport") as Webhook:
+            Webhook.is_noop.return_value = False
+            notify(flip)
+
+        self.assertEqual(
+            statsd.incr.mock_calls, [call("hc.notifications.webhook.success")]
+        )
+
+    @patch("hc.api.management.commands.sendalerts.statsd")
+    def test_it_increases_statsd_fail_counter(self, statsd: Mock) -> None:
+        check = Check(project=self.project, status="down")
+        check.last_ping = now() - td(days=2)
+        check.save()
+
+        flip = Flip(owner=check, created=check.last_ping)
+        flip.old_status = "up"
+        flip.new_status = "down"
+        flip.save()
+
+        channel = Channel.objects.create(project=self.project, kind="webhook")
+        channel.checks.add(check)
+
+        with patch("hc.api.models.Channel.transport") as Webhook:
+            Webhook.is_noop.return_value = False
+            # Rig Webhook.notify() to raise a TransportError.
+            # This should cause sendalerts to increase a statsd "fail" counter.
+            Webhook.notify.side_effect = TransportError("Test error message")
+            notify(flip)
+
+        self.assertEqual(
+            statsd.incr.mock_calls, [call("hc.notifications.webhook.fail")]
+        )
