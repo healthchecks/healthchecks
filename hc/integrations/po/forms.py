@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 from django import forms
 
 
@@ -14,4 +13,4 @@ class AddPushoverForm(forms.Form):
         key = self.cleaned_data["pushover_user_key"]
         prio = self.cleaned_data["prio"]
         prio_up = self.cleaned_data["prio_up"]
-        return "%s|%s|%s" % (key, prio, prio_up)
+        return f"{key}|{prio}|{prio_up}"
