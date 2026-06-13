@@ -100,6 +100,13 @@ NTFY_PRIORITIES = {
     0: "disabled",
 }
 
+GOTIFY_PRIORITIES = {
+    0: "disabled",
+    2: "low priority",
+    5: "normal priority",
+    9: "high priority",
+}
+
 
 def isostring(dt: datetime | None) -> str | None:
     """Convert the datetime to ISO 8601 format with no microseconds."""
@@ -982,6 +989,21 @@ class GotifyConf(BaseModel):
     token: str
     priority: int | None = Field(None, ge=0, le=9)
     priority_up: int | None = Field(None, ge=0, le=9)
+
+    @property
+    def priority_display(self) -> str | None:
+        parts = []
+        if self.priority in GOTIFY_PRIORITIES:
+            s = GOTIFY_PRIORITIES[self.priority]
+            parts.append(f"down: {s}")
+        if self.priority_up in GOTIFY_PRIORITIES:
+            s = GOTIFY_PRIORITIES[self.priority_up]
+            parts.append(f"up: {s}")
+
+        if parts:
+            return ", ".join(parts)
+
+        return None
 
 
 class Channel(models.Model):

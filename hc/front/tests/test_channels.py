@@ -168,3 +168,15 @@ class ChannelsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.channels_url)
         self.assertContains(r, "Fix&hellip;", status_code=200)
+
+    def test_it_shows_gotify_details(self) -> None:
+        ch = Channel(kind="gotify", project=self.project)
+        ch.value = json.dumps(
+            {"url": "https://example.org", "token": "abc", "priority": 5}
+        )
+        ch.save()
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.channels_url)
+
+        self.assertContains(r, "(down: normal priority)")
