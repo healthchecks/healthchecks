@@ -9,24 +9,39 @@ from django.shortcuts import redirect, render
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
 from hc.front.views import _get_rw_project_for_user
-from hc.integrations.gotify.forms import AddGotifyForm
+from hc.integrations.gotify.forms import GotifyForm
 
 
 @login_required
-def add_gotify(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project = _get_rw_project_for_user(request, code)
-
+def gotify_form(request: AuthenticatedHttpRequest, channel: Channel) -> HttpResponse:
+    adding = channel._state.adding
     if request.method == "POST":
-        form = AddGotifyForm(request.POST)
+        form = GotifyForm(request.POST)
         if form.is_valid():
-            channel = Channel(project=project, kind="gotify")
             channel.value = form.get_value()
             channel.save()
 
-            channel.assign_all_checks()
-            return redirect("hc-channels", project.code)
+            if adding:
+                channel.assign_all_checks()
+            return redirect("hc-channels", channel.project.code)
+    elif adding:
+        form = GotifyForm()
     else:
-        form = AddGotifyForm()
+        form = GotifyForm(
+            {
+                "token": channel.gotify.token,
+                "url": channel.gotify.url,
+                "priority": channel.gotify.priority,
+                "priority_up": channel.gotify.priority_up,
+            }
+        )
 
-    ctx = {"page": "channels", "project": project, "form": form}
-    return render(request, "add_gotify.html", ctx)
+    ctx = {"page": "channels", "project": channel.project, "form": form}
+    return render(request, "gotify_form.html", ctx)
+
+
+@login_required
+def add(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
+    project = _get_rw_project_for_user(request, code)
+    channel = Channel(project=project, kind="gotify")
+    return gotify_form(request, channel)

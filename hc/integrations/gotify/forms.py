@@ -7,7 +7,7 @@ from django import forms
 from hc.front.forms import LaxURLField
 
 
-class AddGotifyForm(forms.Form):
+class GotifyForm(forms.Form):
     error_css_class = "has-error"
     PRIORITY_CHOICES = [
         (0, "Disabled: Does not notify about Down events"),

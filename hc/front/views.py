@@ -1358,6 +1358,10 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         from hc.integrations.group.views import group_form
 
         return group_form(request, channel)
+    elif channel.kind == "gotify":
+        from hc.integrations.gotify.views import gotify_form
+
+        return gotify_form(request, channel)
 
     return HttpResponseBadRequest()
 
