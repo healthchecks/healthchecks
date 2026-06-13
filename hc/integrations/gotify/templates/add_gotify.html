@@ -74,7 +74,8 @@
                         class="form-control"
                         name="url"
                         placeholder="https://"
-                        value="{{ form.url.value|default:"" }}">
+                        value="{{ form.url.value|default:"" }}"
+                        required>
 
                     {% if form.url.errors %}
                     <div class="help-block">{{ form.url.errors|join:"" }}</div>
@@ -89,7 +90,8 @@
                         type="text"
                         class="form-control"
                         name="token"
-                        value="{{ form.token.value|default:"" }}">
+                        value="{{ form.token.value|default:"" }}"
+                        required>
 
                     {% if form.token.errors %}
                     <div class="help-block">{{ form.token.errors|join:"" }}</div>
@@ -97,43 +99,37 @@
                 </div>
             </div>
 
-            <div class="form-group {{ form.url.css_classes }}">
+            <div class="form-group {{ form.priority.css_classes }}">
                 <label class="col-sm-3 control-label">Priority for "down" events</label>
                 <div class="col-sm-9">
                     <select name="priority" class="form-control no-caret">
-                        <option value="0">
-                            Disabled: Does not notify about Down events.
+                        {% for value, label in form.PRIORITY_CHOICES %}
+                        {% comment %}the add:0 is needed to coerce the form's value to integer{% endcomment %}
+                        <option value="{{value }}" {% if form.priority.value|add:"0" == value %}selected{% endif %}>
+                            {{ label }}
                         </option>
-                        <option value="2">
-                            Low Priority: Quiet icon in notification bar.
-                        </option>
-                        <option value="5" selected="selected">
-                            Normal Priority: Sends a notification with sound.
-                        </option>
-                        <option value="9">
-                            High Priority: Sends a notification with sound and vibration.
-                        </option>
+                        {% endfor %}
                     </select>
+                    {% if form.priority.errors %}
+                    <div class="help-block">{{ form.priority.errors|join:"" }}</div>
+                    {% endif %}
                 </div>
             </div>
 
-            <div class="form-group {{ form.url.css_classes }}">
+            <div class="form-group {{ form.priority_up.css_classes }}">
                 <label class="col-sm-3 control-label">Priority for "up" events</label>
                 <div class="col-sm-9">
                     <select name="priority_up" class="form-control no-caret">
-                        <option value="0">
-                            Disabled: Does not notify about Up events.
+                        {% for value, label in form.PRIORITY_CHOICES %}
+                        {% comment %}the add:0 is needed to coerce the form's value to integer{% endcomment %}
+                        <option value="{{value }}" {% if form.priority_up.value|add:"0" == value %}selected{% endif %}>
+                            {{ label }}
                         </option>
-                        <option value="2">
-                            Low Priority: Quiet icon in notification bar.
-                        </option>
-                        <option value="5" selected="selected">
-                            Normal Priority: Sends a notification with sound.
-                        </option>
-                        <option value="9">
-                            High Priority: Sends a notification with sound and vibration.
-                        </option>
+                        {% endfor %}
                     </select>
+                    {% if form.priority_up.errors %}
+                    <div class="help-block">{{ form.priority_up.errors|join:"" }}</div>
+                    {% endif %}
                 </div>
             </div>
 

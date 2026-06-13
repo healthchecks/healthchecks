@@ -51,14 +51,14 @@ class AddGotifyTestCase(BaseTestCase):
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertEqual(r.status_code, 400)
+        self.assertContains(r, "This field is required")
 
     def test_it_requires_priority_up_field(self) -> None:
         form = {"url": "http://example.org", "token": "abc", "priority": "2"}
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, form)
-        self.assertEqual(r.status_code, 400)
+        self.assertContains(r, "This field is required")
 
     def test_it_requires_rw_access(self) -> None:
         self.bobs_membership.role = "r"
