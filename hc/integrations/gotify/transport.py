@@ -4,6 +4,7 @@ from urllib.parse import urlencode, urljoin
 
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport
+from hc.lib.typealias import JSONDict
 
 
 class Gotify(HttpTransport):
@@ -28,7 +29,7 @@ class Gotify(HttpTransport):
             "status": flip.new_status,
             "down_checks": self.down_checks(flip.owner),
         }
-        payload = {
+        payload: JSONDict = {
             "title": self.tmpl("gotify_title.html", **ctx),
             "message": self.tmpl("gotify_message.html", **ctx),
             "extras": {
