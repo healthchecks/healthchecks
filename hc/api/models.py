@@ -991,7 +991,7 @@ class GotifyConf(BaseModel):
     priority_up: int | None = Field(None, ge=0, le=9)
 
     @property
-    def priority_display(self) -> str | None:
+    def priority_display(self) -> str:
         parts = []
         if self.priority in GOTIFY_PRIORITIES:
             s = GOTIFY_PRIORITIES[self.priority]
@@ -1000,10 +1000,7 @@ class GotifyConf(BaseModel):
             s = GOTIFY_PRIORITIES[self.priority_up]
             parts.append(f"up: {s}")
 
-        if parts:
-            return ", ".join(parts)
-
-        return None
+        return ", ".join(parts)
 
 
 class Channel(models.Model):
