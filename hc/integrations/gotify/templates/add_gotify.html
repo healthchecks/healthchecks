@@ -67,7 +67,7 @@
 
             <div class="form-group {{ form.url.css_classes }}">
                 <label for="url" class="col-sm-3 control-label">Gotify Server URL</label>
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     <input
                         id="url"
                         type="text"
@@ -84,7 +84,7 @@
             </div>
             <div class="form-group {{ form.token.css_classes }}">
                 <label for="token" class="col-sm-3 control-label">Application Token</label>
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     <input
                         id="token"
                         type="text"
@@ -101,7 +101,7 @@
 
             <div class="form-group {{ form.priority.css_classes }}">
                 <label class="col-sm-3 control-label">Priority for "down" events</label>
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     <select name="priority" class="form-control no-caret">
                         {% for value, label in form.PRIORITY_CHOICES %}
                         {% comment %}the add:0 is needed to coerce the form's value to integer{% endcomment %}
@@ -118,7 +118,7 @@
 
             <div class="form-group {{ form.priority_up.css_classes }}">
                 <label class="col-sm-3 control-label">Priority for "up" events</label>
-                <div class="col-sm-9">
+                <div class="col-sm-6">
                     <select name="priority_up" class="form-control no-caret">
                         {% for value, label in form.PRIORITY_CHOICES %}
                         {% comment %}the add:0 is needed to coerce the form's value to integer{% endcomment %}
