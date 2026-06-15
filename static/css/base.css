@@ -381,6 +381,10 @@ input[type="number"]::-webkit-inner-spin-button {
     caret-color: transparent;
 }
 
+.selectize-control.no-caret .selectize-input.input-active {
+    cursor: default;
+}
+
 .btn-default {
     box-shadow: 0 5px 0 -3px rgba(0, 0, 0, 0.05);
 }
