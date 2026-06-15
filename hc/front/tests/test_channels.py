@@ -179,4 +179,4 @@ class ChannelsTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.channels_url)
 
-        self.assertContains(r, "(down: normal priority)")
+        self.assertContains(r, "down: normal priority")
