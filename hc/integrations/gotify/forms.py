@@ -10,7 +10,7 @@ from hc.front.forms import LaxURLField
 class GotifyForm(forms.Form):
     error_css_class = "has-error"
     PRIORITY_CHOICES = [
-        (0, "Disabled: Does not notify about Down events."),
+        (0, "Disabled: Does not notify."),
         (2, "Low Priority: Quiet icon in notification bar."),
         (5, "Normal Priority: Sends a notification with sound."),
         (9, "High Priority: Sends a notification with sound and vibration."),
