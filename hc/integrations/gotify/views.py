@@ -27,12 +27,19 @@ def gotify_form(request: AuthenticatedHttpRequest, channel: Channel) -> HttpResp
     elif adding:
         form = GotifyForm()
     else:
+        # When editing an existing integration, if priority is not set
+        # then use normal priority as the default.
+        def setdefault(prio: int | None) -> int:
+            if prio is None:
+                return 5
+            return prio
+
         form = GotifyForm(
             {
                 "token": channel.gotify.token,
                 "url": channel.gotify.url,
-                "priority": channel.gotify.priority,
-                "priority_up": channel.gotify.priority_up,
+                "priority": setdefault(channel.gotify.priority),
+                "priority_up": setdefault(channel.gotify.priority_up),
             }
         )
 

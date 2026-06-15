@@ -102,14 +102,7 @@
             <div class="form-group {{ form.priority.css_classes }}">
                 <label class="col-sm-3 control-label">Priority for "down" events</label>
                 <div class="col-sm-6">
-                    <select name="priority" class="form-control no-caret">
-                        {% for value, label in form.PRIORITY_CHOICES %}
-                        {% comment %}the add:0 is needed to coerce the form's value to integer{% endcomment %}
-                        <option value="{{value }}" {% if form.priority.value|add:"0" == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    {{ form.priority }}
                     {% if form.priority.errors %}
                     <div class="help-block">{{ form.priority.errors|join:"" }}</div>
                     {% endif %}
@@ -119,14 +112,7 @@
             <div class="form-group {{ form.priority_up.css_classes }}">
                 <label class="col-sm-3 control-label">Priority for "up" events</label>
                 <div class="col-sm-6">
-                    <select name="priority_up" class="form-control no-caret">
-                        {% for value, label in form.PRIORITY_CHOICES %}
-                        {% comment %}the add:0 is needed to coerce the form's value to integer{% endcomment %}
-                        <option value="{{value }}" {% if form.priority_up.value|add:"0" == value %}selected{% endif %}>
-                            {{ label }}
-                        </option>
-                        {% endfor %}
-                    </select>
+                    {{ form.priority_up }}
                     {% if form.priority_up.errors %}
                     <div class="help-block">{{ form.priority_up.errors|join:"" }}</div>
                     {% endif %}
