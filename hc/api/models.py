@@ -92,11 +92,11 @@ PO_PRIORITIES = {
 }
 
 NTFY_PRIORITIES = {
-    5: "max",
-    4: "high",
-    3: "default",
-    2: "low",
-    1: "min",
+    5: "max priority",
+    4: "high priority",
+    3: "default priority",
+    2: "low priority",
+    1: "min priority",
     0: "disabled",
 }
 
@@ -968,7 +968,15 @@ class NtfyConf(BaseModel):
 
     @property
     def priority_display(self) -> str:
-        return NTFY_PRIORITIES[self.priority]
+        parts = []
+        if self.priority in NTFY_PRIORITIES:
+            s = NTFY_PRIORITIES[self.priority]
+            parts.append(f"down: {s}")
+        if self.priority_up in NTFY_PRIORITIES:
+            s = NTFY_PRIORITIES[self.priority_up]
+            parts.append(f"up: {s}")
+
+        return ", ".join(parts)
 
 
 class TrelloConf(BaseModel):

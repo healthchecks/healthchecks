@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Fix WebhookValidator to handle input that contains square brackets
 - Update Check.rename_and_delete() to better handle race conditions
 - Enforce check limit (times two) when pinging by slug
+- Fix the "Edit Ntfy" form to preserve selected priorities when the form reloads
 
 ## v4.2 - 2026-04-28
 

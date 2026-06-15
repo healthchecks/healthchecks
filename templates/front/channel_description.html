@@ -66,7 +66,7 @@
     {% endif %}
 {% elif ch.kind == "ntfy" %}
     ntfy topic <span>{{ ch.ntfy.topic }}</span>,
-    {{ ch.ntfy.priority_display }} priority
+    {{ ch.ntfy.priority_display }}
 {% elif ch.kind == "group" %}
     Group,
     {% with ch.group_channels.count as num_members %}
@@ -75,7 +75,7 @@
 {% elif ch.kind == "github" %}
     GitHub repo <span>{{ ch.github.repo }}</span>
 {% elif ch.kind == "gotify" and ch.gotify.priority_display %}
-    Gotify ({{ ch.gotify.priority_display }})
+    Gotify, {{ ch.gotify.priority_display }}
 {% else %}
     {{ ch.get_kind_display }}
 {% endif %}
