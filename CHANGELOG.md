@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Add a note about unset ping key in the check details page (#1295)
 - In the "Add Gotify" form, let users specify alert priorities (#990, @BeyondMagic)
 - Add ability to edit existing Gotify integrations
+- Switch from Selectize to Tom Select for dropdown controls
 
 ### Bug Fixes
 - Fix WebhookValidator to handle input that contains square brackets
