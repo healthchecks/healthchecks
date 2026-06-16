@@ -37,13 +37,11 @@ def envint(s: str, default: str) -> int | None:
 
 
 @overload
-def envsecret(s: str) -> str | None:
-    ...
+def envsecret(s: str) -> str | None: ...
 
 
 @overload
-def envsecret(s: str, default: str) -> str:
-    ...
+def envsecret(s: str, default: str) -> str: ...
 
 
 def envsecret(s: str, default: str | None = None) -> str | None:
@@ -295,7 +293,7 @@ COMPRESS_FILTERS = {
         "compressor.filters.css_default.CssRelativeFilter",
         "compressor.filters.cssmin.rCSSMinFilter",
     ],
-    "js": ["compressor.filters.jsmin.rJSMinFilter"],
+    "js": [],
 }
 
 
