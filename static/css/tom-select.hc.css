@@ -5,6 +5,10 @@
     transition: none;
 }
 
+.ts-control:focus-visible {
+    outline: none;
+}
+
 .ts-control input {
     color: var(--input-color);
 }
