@@ -40,7 +40,7 @@ $(function () {
         cronPreviewHash = "";
         $("#cron-preview").html("<p>Updating...</p>");
         $("#schedule").val(this.dataset.kind == "cron" ? this.dataset.schedule: "* * * * *");
-        $("#tz")[0].selectize.setValue(this.dataset.tz, true);
+        $("#tz")[0].tomselect.setValue(this.dataset.tz, true);
         graceCron.value = parsed.value;
         graceCronUnit.value = parsed.unit;
         $("#update-cron-grace").val(this.dataset.grace);
@@ -50,7 +50,7 @@ $(function () {
         onCalendarPreviewHash = "";
         $("#oncalendar-preview").html("<p>Updating...</p>");
         $("#schedule-oncalendar").val(this.dataset.kind == "oncalendar" ? this.dataset.schedule: "*-*-* *:*:*");
-        $("#tz-oncalendar")[0].selectize.setValue(this.dataset.tz, true);
+        $("#tz-oncalendar")[0].tomselect.setValue(this.dataset.tz, true);
         graceOncalendar.value = parsed.value
         graceOncalendarUnit.value = parsed.unit
         $("#update-oncalendar-grace").val(this.dataset.grace);

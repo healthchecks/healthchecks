@@ -1,17 +1,28 @@
 $(function() {
-    function makeOptions(domId) {
-        var s = document.getElementById(domId).textContent;
-        return s.split(",").map(tz => ({value: tz, group: domId}))
-    }
+    var common = document.getElementById("common-timezones").textContent.split(",");
+    var all = document.getElementById("all-timezones").textContent.split(",");
 
-    $("select[name=tz]").selectize({
-        labelField: "value",
-        searchField: ["value"],
-        options: makeOptions("common-timezones").concat(makeOptions("all-timezones")),
-        optgroups: [
-            {label: "Common time zones", value: "common-timezones"},
-            {label: "All time zones (search by typing)", value: "all-timezones"}
-        ],
-        optgroupField: "group"
+    function toOption(tz) {
+        return {value: tz, group: common.includes(tz) ? ["c", "a"] : "a"}
+    }
+    var options = all.map(toOption);
+
+    document.querySelectorAll("select[name=tz]").forEach((el) => {
+        new TomSelect(el, {
+            diacritics: false,
+            labelField: "value",
+            lockOptgroupOrder: true,
+            maxOptions: null,
+            optgroupField: "group",
+            options: options,
+            optgroups: [
+                {value: "c", label: "Common time zones"},
+                {value: "a", label: "All time zones"}
+            ],
+            placeholder: "Type to search",
+            plugins: ["dropdown_input", "no_backspace_delete"],
+            refreshThrottle: 0,
+            searchField: ["value"],
+        });
     });
 });

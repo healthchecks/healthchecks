@@ -12,16 +12,18 @@ $(function () {
         return {value: this.textContent};
     }
 
-    $("#add-check-tags").selectize({
+    new TomSelect("#add-check-tags", {
         create: true,
         createOnBlur: true,
-        selectOnTab: false,
         delimiter: " ",
-        labelField: "value",
-        searchField: ["value"],
+        diacritics: false,
         hideSelected: true,
         highlight: false,
-        options: $("#my-checks-tags div").map(divToOption).get()
+        labelField: "value",
+        options: $("#my-checks-tags div").map(divToOption).get(),
+        refreshThrottle: 0,
+        render: {no_results:(data, escape) => ""},
+        searchField: ["value"],
     });
 
     function updateScheduleExtras() {
@@ -39,12 +41,12 @@ $(function () {
     modal.on("shown.bs.modal", function() {
         updateScheduleExtras();
         validateSchedule();
-        $("#add-check-tz")[0].selectize.setValue("UTC", true);
+        $("#add-check-tz")[0].tomselect.setValue("UTC", true);
         $("#add-check-name").focus();
 
         // Pre-select the currently active tags
         var selectedTags = $("#my-checks-tags .checked").map(function() { return this.textContent }).get();
-        $("#add-check-tags")[0].selectize.setValue(selectedTags);
+        $("#add-check-tags")[0].tomselect.setValue(selectedTags);
     });
 
     // Update the hidden field when user changes period inputs

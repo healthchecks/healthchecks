@@ -371,20 +371,6 @@ input[type="number"]::-webkit-inner-spin-button {
     color: var(--btn-remove-color);
 }
 
-/* Greyed out help text in selectize dropdowns (e.g. in "Add ntfy" form) */
-.selectize-control .help {
-    opacity: 0.6;
-}
-
-/* Hide caret to  mimic the standard <select> element */
-.selectize-control.no-caret {
-    caret-color: transparent;
-}
-
-.selectize-control.no-caret .selectize-input.input-active {
-    cursor: default;
-}
-
 .btn-default {
     box-shadow: 0 5px 0 -3px rgba(0, 0, 0, 0.05);
 }

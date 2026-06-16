@@ -9,7 +9,7 @@ $(function () {
         return false;
     });
 
-    // Configure Selectize for entering tags
+    // Configure Tom-Select for entering tags
     function toOption(tag) {
         return {value: tag}
     }
@@ -18,16 +18,18 @@ $(function () {
     // to a JS object, but we need an unconverted string:
     var allTags = $("#update-tags-input").attr("data-all-tags");
     var options = allTags ? allTags.split(" ").map(toOption) : [];
-    $("#update-tags-input").selectize({
+    new TomSelect("#update-tags-input", {
         create: true,
         createOnBlur: true,
-        selectOnTab: false,
         delimiter: " ",
-        labelField: "value",
-        searchField: ["value"],
+        diacritics: false,
         hideSelected: true,
         highlight: false,
-        options: options
+        labelField: "value",
+        options: options,
+        refreshThrottle: 0,
+        render: {no_results:(data, escape) => ""},
+        searchField: ["value"],
     });
 
     $("#new-check-alert a").click(function() {

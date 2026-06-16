@@ -86,7 +86,7 @@ code.totp-secret {
     font-size: 18px;
 }
 
-#tz-settings .selectize-control {
+#tz-settings .ts-wrapper {
     max-width: 300px;
 }
 

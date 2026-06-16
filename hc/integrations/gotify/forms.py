@@ -23,9 +23,5 @@ class GotifyForm(forms.Form):
         choices=PRIORITY_CHOICES, coerce=int, initial=5
     )
 
-    # Add "no-caret" CSS class to the <select> elements
-    priority.widget.attrs["class"] = "no-caret"
-    priority_up.widget.attrs["class"] = "no-caret"
-
     def get_value(self) -> str:
         return json.dumps(dict(self.cleaned_data), sort_keys=True)

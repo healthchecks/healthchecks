@@ -1,0 +1,77 @@
+.ts-control {
+    padding: 6px 12px;
+    border-color: var(--input-border);
+    color: var(--input-color);
+    transition: none;
+}
+
+.ts-control input {
+    color: var(--input-color);
+}
+
+.ts-control,
+.full .ts-control,
+.ts-wrapper.single.input-active .ts-control {
+    background: transparent;
+}
+
+.focus .ts-control {
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 0 4px rgba(102, 175, 233, 0.2);
+}
+
+.plugin-dropdown_input.focus.dropdown-active .ts-control {
+    border-color: var(--input-border);
+}
+
+.plugin-dropdown_input.focus .ts-dropdown .dropdown-input {
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 0 4px rgba(102, 175, 233, 0.2);
+    border: 1px solid #66afe9;
+    xborder-color: var(--input-border);
+}
+
+.ts-wrapper.single .ts-control::after {
+    border-color: var(--text-color) transparent transparent transparent;
+}
+
+.ts-wrapper.single.dropdown-active .ts-control::after {
+    border-color: transparent transparent var(--text-color) transparent;
+}
+
+.ts-dropdown {
+    background: var(--dropdown-bg);
+    color: var(--text-color);
+}
+
+.ts-dropdown .active.create,
+.ts-dropdown .create {
+    color: var(--text-color);
+}
+
+.ts-dropdown .active {
+    background-color: var(--dropdown-link-hover-bg);
+    color: var(--text-color);
+}
+
+.ts-dropdown .optgroup-header {
+    font-size: 12px;
+    background: var(--dropdown-bg);
+    color: var(--text-muted);
+}
+
+.ts-dropdown .optgroup::before {
+    border-top-color: var(--border-color);
+}
+
+.ts-wrapper .help {
+    opacity: 0.6;
+}
+
+.ts-wrapper.multi .ts-control > div {
+    padding: 2px 6px 2px 6px;
+    background: var(--ts-tag-bg);
+    color: var(--text-color);
+}
+
+.ts-wrapper.multi.has-items .ts-control {
+    padding: 5px 6px 1px 6px;
+}

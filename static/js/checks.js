@@ -10,8 +10,8 @@ $(function () {
         $("#update-name-input").val(this.dataset.name);
         $("#update-slug-input").val(this.dataset.slug);
 
-        var tagsSelectize = document.getElementById("update-tags-input").selectize;
-        tagsSelectize.setValue(this.dataset.tags.split(" "));
+        var tagsTs = document.getElementById("update-tags-input").tomselect;
+        tagsTs.setValue(this.dataset.tags.split(" "));
 
         $("#update-desc-input").val(this.dataset.desc);
         $("#update-name-modal").modal("show");
@@ -341,21 +341,23 @@ $(function () {
         adaptiveSetInterval(refreshStatus);
     }
 
-    // Configure Selectize for entering tags
+    // Configure TomSelect for entering tags
     function divToOption() {
         return { value: this.textContent };
     }
 
-    $("#update-tags-input").selectize({
+    new TomSelect("#update-tags-input", {
         create: true,
         createOnBlur: true,
-        selectOnTab: false,
         delimiter: " ",
-        labelField: "value",
-        searchField: ["value"],
+        diacritics: false,
         hideSelected: true,
         highlight: false,
+        labelField: "value",
         options: $("#my-checks-tags div").map(divToOption).get(),
+        refreshThrottle: 0,
+        render: {no_results: (data, escape) => ""},
+        searchField: ["value"],
     });
 
     $(".my-checks-url").tooltip({ container: "body", title: "Click to copy" });

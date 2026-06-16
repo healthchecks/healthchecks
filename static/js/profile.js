@@ -1,5 +1,11 @@
 $(function() {
-    $("select[name=tz]").selectize();
+    var tzTom = new TomSelect("select[name=tz]", {
+        diacritics: false,
+        maxOptions: null,
+        placeholder: "Type to search",
+        plugins: ["dropdown_input", "no_backspace_delete"],
+        refreshThrottle: 0,
+    });
 
     $(".leave-project").click(function() {
         $("#leave-project-name").text(this.dataset.name);
@@ -18,7 +24,7 @@ $(function() {
         $("#browser-tz-hint").removeClass("hide");
     }
     $("#browser-tz-hint a").click(function() {
-        $("#tz")[0].selectize.setValue(browserTz, true);
+        tzTom.setValue(browserTz, true);
         return false;
     });
 
