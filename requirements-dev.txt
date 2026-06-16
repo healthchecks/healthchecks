@@ -1,4 +1,4 @@
-apprise==1.9.9
+apprise==1.11.0
 django-stubs==6.0.5
 Markdown==3.10.2
 minio==7.2.20
