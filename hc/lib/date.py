@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
+from django.template.defaultfilters import pluralize
 from django.utils.timezone import now
 
 
@@ -78,6 +79,25 @@ def format_approx_duration(duration: timedelta) -> str:
         return f"{hours} h {mins} min"
 
     return f"{mins} min {secs} sec"
+
+
+def format_duration_for_sentence(duration: timedelta) -> str:
+    total_seconds = int(duration.total_seconds())
+
+    mins, secs = divmod(total_seconds, 60)
+    hours, mins = divmod(mins, 60)
+    days, hours = divmod(hours, 24)
+
+    if days:
+        return f"{days} day{pluralize(days)}, {hours} hour{pluralize(hours)}"
+
+    if hours:
+        return f"{hours} hour{pluralize(hours)}, {mins} minute{pluralize(mins)}"
+
+    if mins:
+        return f"{mins} minute{pluralize(mins)}, {secs} second{pluralize(secs)}"
+
+    return f"{secs} second{pluralize(secs)}"
 
 
 def month_boundaries(months: int, tzstr: str) -> list[datetime]:

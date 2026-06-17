@@ -65,3 +65,29 @@ class FlipModelTestCase(BaseTestCase):
 
         channels = self.flip.select_channels()
         self.assertEqual(channels, [c1, c9, self.channel])
+
+    def test_it_calculates_down_duration(self) -> None:
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=10)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+
+        self.assertEqual(up_flip.down_duration, td(minutes=10))
+
+    def test_down_duration_asserts_flips_status(self) -> None:
+        with self.assertRaises(AssertionError):
+            self.flip.down_duration
+
+    def test_down_checks_prev_flips_status(self) -> None:
+        self.flip.old_status = "down"
+        self.flip.new_status = "up"
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=10)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+
+        self.assertIsNone(up_flip.down_duration)

@@ -1409,6 +1409,19 @@ class Flip(models.Model):
             return "received a failure signal"
         return None
 
+    @cached_property
+    def down_duration(self) -> td | None:
+        """For going-up flips, calculate the downtime duration."""
+
+        assert self.old_status == "down"
+
+        q = self.owner.flip_set.filter(created__lt=self.created).order_by("-created")
+        prev_flip = q.first()
+        if prev_flip and prev_flip.new_status == "down":
+            return self.created - prev_flip.created
+
+        return None
+
 
 class TokenBucket(models.Model):
     value = models.CharField(max_length=80, unique=True)

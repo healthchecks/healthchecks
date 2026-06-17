@@ -77,6 +77,21 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("received a failure signal", payload["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["text"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_exitstatus(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 

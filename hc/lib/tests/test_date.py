@@ -9,6 +9,7 @@ import time_machine
 from hc.lib.date import (
     day_boundaries,
     format_approx_duration,
+    format_duration_for_sentence,
     format_hms,
     month_boundaries,
     seconds_in_month,
@@ -60,6 +61,27 @@ class ApproxFormattingTestCase(TestCase):
     def test_minutes_work(self) -> None:
         s = format_approx_duration(td(minutes=12, seconds=24))
         self.assertEqual(s, "12 min 24 sec")
+
+
+class ForSentenceFormattingTestCase(TestCase):
+    def test_it_works(self) -> None:
+        samples = [
+            (td(days=3, hours=6, minutes=12, seconds=24), "3 days, 6 hours"),
+            (td(days=1, hours=6, minutes=12, seconds=24), "1 day, 6 hours"),
+            (td(days=3, hours=1, minutes=12, seconds=24), "3 days, 1 hour"),
+            (td(hours=6, minutes=12, seconds=24), "6 hours, 12 minutes"),
+            (td(hours=1, minutes=12, seconds=24), "1 hour, 12 minutes"),
+            (td(hours=6, minutes=1, seconds=24), "6 hours, 1 minute"),
+            (td(minutes=12, seconds=24), "12 minutes, 24 seconds"),
+            (td(minutes=1, seconds=24), "1 minute, 24 seconds"),
+            (td(minutes=12, seconds=1), "12 minutes, 1 second"),
+            (td(seconds=12), "12 seconds"),
+            (td(seconds=1), "1 second"),
+            (td(milliseconds=500), "0 seconds"),
+        ]
+
+        for duration, expected in samples:
+            self.assertEqual(format_duration_for_sentence(duration), expected)
 
 
 @time_machine.travel(CURRENT_TIME)

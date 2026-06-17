@@ -13,7 +13,13 @@ from django.templatetags.static import static
 from django.utils.html import escape, format_html
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.timezone import now
-from hc.lib.date import format_approx_duration, format_duration, format_hms
+
+from hc.lib.date import (
+    format_approx_duration,
+    format_duration,
+    format_duration_for_sentence,
+    format_hms,
+)
 from hc.lib.urls import absolute_url
 
 if TYPE_CHECKING:
@@ -31,6 +37,11 @@ def hc_duration(d: timedelta) -> str:
 @register.filter
 def hc_approx_duration(d: timedelta) -> str:
     return format_approx_duration(d)
+
+
+@register.filter
+def hc_duration_for_sentence(d: timedelta) -> str:
+    return format_duration_for_sentence(d)
 
 
 @register.filter
