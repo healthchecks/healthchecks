@@ -5,7 +5,6 @@ $(function() {
     function toOption(tz) {
         return {value: tz, group: common.includes(tz) ? ["c", "a"] : "a"}
     }
-    var options = all.map(toOption);
 
     document.querySelectorAll("select[name=tz]").forEach((el) => {
         new TomSelect(el, {
@@ -14,7 +13,7 @@ $(function() {
             lockOptgroupOrder: true,
             maxOptions: null,
             optgroupField: "group",
-            options: options,
+            options: all.map(toOption),
             optgroups: [
                 {value: "c", label: "Common time zones"},
                 {value: "a", label: "All time zones"}
