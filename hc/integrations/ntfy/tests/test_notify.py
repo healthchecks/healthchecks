@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
@@ -57,15 +58,16 @@ class NotifyNtfyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(
-            payload["title"],
-            "Foo is DOWN (success signal did not arrive on time, grace time passed)",
+        self.assertEqual(payload["title"], "Foo")
+        self.assertIn(
+            "**Foo** is **DOWN** (success signal did not arrive on time, grace time passed)",
+            payload["message"],
         )
-        self.assertIn("Project: Alices Project", payload["message"])
-        self.assertIn("Tags: foo, bar", payload["message"])
-        self.assertIn("Period: 1 day", payload["message"])
-        self.assertIn("Total Pings: 112233", payload["message"])
-        self.assertIn("Last Ping: Success, 10 minutes ago", payload["message"])
+        self.assertIn("**Project:** Alices Project", payload["message"])
+        self.assertIn("**Tags:** foo, bar", payload["message"])
+        self.assertIn("**Period:** 1 day", payload["message"])
+        self.assertIn("**Total Pings:** 112233", payload["message"])
+        self.assertIn("**Last Ping:** Success, 10 minutes ago", payload["message"])
 
         self.assertEqual(payload["actions"][0]["url"], self.check.cloaked_url())
         self.assertNotIn("All the other checks are up.", payload["message"])
@@ -78,10 +80,22 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(
-            payload["title"],
-            "Foo is DOWN (received a failure signal)",
-        )
+        self.assertIn("(received a failure signal)", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_reports_last_pings_exit_code(self, mock_post: Mock) -> None:
@@ -94,32 +108,19 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("Last Ping: Exit status 123", payload["message"])
+        self.assertIn("**Last Ping:** Exit status 123", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_does_not_escape_special_characters(self, mock_post: Mock) -> None:
+    def test_it_escapes_special_characters_in_message(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        self.project.name = "<Alice's Project> "
+        self.project.name = "Alice & Bob > Charlie"
         self.project.save()
-
-        self.check.name = "<Name>"
-        self.check.tags = "<foo>"
-        self.check.save()
-
-        other = Check(project=self.project)
-        other.name = "<Foobar>"
-        other.status = "down"
-        other.last_ping = now() - td(minutes=61)
-        other.save()
 
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("<Name> is DOWN", payload["title"])
-        self.assertIn("Project: <Alice's Project>", payload["message"])
-        self.assertIn("Tags: <foo>", payload["message"])
-        self.assertIn("<Foobar>", payload["message"])
+        self.assertIn("**Project:** Alice &amp; Bob &gt; Charlie", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_cron_schedule_and_tz(self, mock_post: Mock) -> None:
@@ -131,8 +132,8 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("Schedule: * * * * *", payload["message"])
-        self.assertIn("Time Zone: Europe/Riga", payload["message"])
+        self.assertIn("**Schedule:** `* * * * *`", payload["message"])
+        self.assertIn("**Time Zone:** Europe/Riga", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_oncalendar_schedule_and_tz(self, mock_post: Mock) -> None:
@@ -145,8 +146,8 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("Schedule: Mon 2-29", payload["message"])
-        self.assertIn("Time Zone: Europe/Riga", payload["message"])
+        self.assertIn("**Schedule:** `Mon 2-29`", payload["message"])
+        self.assertIn("**Time Zone:** Europe/Riga", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:

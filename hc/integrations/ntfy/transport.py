@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 
@@ -44,10 +45,10 @@ class Ntfy(HttpTransport):
         }
 
         url = self.channel.ntfy.url
-        headers = {}
+        headers = {"X-Markdown": "true"}
         if self.channel.ntfy.token:
-            headers = {"Authorization": f"Bearer {self.channel.ntfy.token}"}
+            headers["Authorization"] = f"Bearer {self.channel.ntfy.token}"
         elif url == "https://ntfy.sh" and settings.NTFY_SH_TOKEN:
-            headers = {"Authorization": f"Bearer {settings.NTFY_SH_TOKEN}"}
+            headers["Authorization"] = f"Bearer {settings.NTFY_SH_TOKEN}"
 
         self.post(url, headers=headers, json=payload)

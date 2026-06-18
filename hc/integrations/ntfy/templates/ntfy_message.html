@@ -1,28 +1,35 @@
 {% load hc_extras humanize linemode %}{% linemode %}
-{% autoescape off %}
+{% if status == "down" %}
+    {% line %}The check **{{ check.name_then_code }}** is **DOWN**{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
+    {% line %}{% endline %}
+{% else %}
+    {% line %}The check **{{ check.name_then_code }}** is now **UP**.{% if flip.down_duration%} The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endif %}{% endline %}
+    {% line %}{% endline %}
+{% endif %}
+
 {% if check.project.name %}
-{% line %}Project: {{ check.project.name }}{% endline %}
+{% line %}**Project:** {{ check.project.name }}{% endline %}
 {% endif %}
 
 {% if check.tags_list %}
-{% line %}Tags: {{ check.tags_list|join:", " }}{% endline %}
+{% line %}**Tags:** {{ check.tags_list|join:", " }}{% endline %}
 {% endif %}
 
 {% if check.kind == "simple" %}
-{% line %}Period: {{ check.timeout|hc_duration }}{% endline %}
+{% line %}**Period:** {{ check.timeout|hc_duration }}{% endline %}
 {% endif %}
 
 {% if check.kind == "cron" or check.kind == "oncalendar" %}
-{% line %}Schedule: {{ check.schedule }}{% endline %}
-{% line %}Time Zone: {{ check.tz }}{% endline %}
+{% line %}**Schedule:** `{{ check.schedule }}`{% endline %}
+{% line %}**Time Zone:** {{ check.tz }}{% endline %}
 {% endif %}
 
-{% line %}Total Pings: {% if ping %}{{ ping.n }}{% else %}0{% endif %}{% endline %}
+{% line %}**Total Pings:** {% if ping %}{{ ping.n }}{% else %}0{% endif %}{% endline %}
 
 {% if ping is None %}
-{% line %}Last Ping: Never{% endline %}
+{% line %}**Last Ping:** Never{% endline %}
 {% else %}
-{% line %}Last Ping: {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}{% endline %}
+{% line %}**Last Ping:** {{ ping.get_kind_display }}, {{ ping.created|naturaltime }}{% endline %}
 {% endif %}
 
 {% if down_checks is not None %}
@@ -33,12 +40,11 @@
         {% else %}
             {% line %}The following checks are {% if status == "down" %}also{% else %}still{% endif %} down:{% endline %}
             {% for c in down_checks %}
-                {% line %}• {{ c.name_then_code }} (last ping: {{ c.last_ping|naturaltime|default:"never" }}){% endline %}
+                {% line %}• **{{ c.name_then_code }}** (last ping: {{ c.last_ping|naturaltime|default:"never" }}){% endline %}
             {% endfor %}
         {% endif %}
     {% else %}
         {% line %}All the other checks are up.{% endline %}
     {% endif %}
 {% endif %}
-{% endautoescape %}
 {% endlinemode %}

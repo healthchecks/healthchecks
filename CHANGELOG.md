@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - In the "Add Gotify" form, let users specify alert priorities (#990, @BeyondMagic)
 - Add ability to edit existing Gotify integrations
 - Switch from Selectize to Tom Select for dropdown controls
+- Implement Markdown formatting in Ntfy notifications
 
 ### Bug Fixes
 - Fix WebhookValidator to handle input that contains square brackets
