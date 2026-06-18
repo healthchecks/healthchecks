@@ -58,9 +58,9 @@ class NotifyNtfyTestCase(BaseTestCase):
         assert Notification.objects.count() == 1
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertEqual(payload["title"], "Foo")
+        self.assertEqual(payload["title"], "Foo is DOWN")
         self.assertIn(
-            "**Foo** is **DOWN** (success signal did not arrive on time, grace time passed)",
+            "Reason: success signal did not arrive on time, grace time passed.",
             payload["message"],
         )
         self.assertIn("**Project:** Alices Project", payload["message"])
@@ -80,7 +80,7 @@ class NotifyNtfyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["json"]
-        self.assertIn("(received a failure signal)", payload["message"])
+        self.assertIn("Reason: received a failure signal.", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_reports_down_duration(self, mock_post: Mock) -> None:
