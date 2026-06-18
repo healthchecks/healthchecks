@@ -34,6 +34,7 @@ class Ntfy(HttpTransport):
             "priority": self.priority(flip.new_status),
             "title": self.tmpl("ntfy_title.html", **ctx),
             "message": self.tmpl("ntfy_message.html", **ctx),
+            "markdown": True,
             "tags": ["red_circle" if flip.new_status == "down" else "green_circle"],
             "actions": [
                 {
@@ -45,7 +46,7 @@ class Ntfy(HttpTransport):
         }
 
         url = self.channel.ntfy.url
-        headers = {"X-Markdown": "true"}
+        headers = {}
         if self.channel.ntfy.token:
             headers["Authorization"] = f"Bearer {self.channel.ntfy.token}"
         elif url == "https://ntfy.sh" and settings.NTFY_SH_TOKEN:
