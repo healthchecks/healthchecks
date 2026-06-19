@@ -10,6 +10,7 @@ from django.core import mail
 from django.core.mail import EmailMessage, EmailMultiAlternatives
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
@@ -147,6 +148,21 @@ class NotifySignalTestCase(BaseTestCase):
         assert socketobj.req
         params = socketobj.req["params"]
         self.assertIn("received a failure signal", params["message"])
+
+    def test_it_reports_down_duration(self, socket: Mock) -> None:
+        socketobj = setup_mock(socket, {})
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        assert socketobj.req
+        params = socketobj.req["params"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", params["message"])
 
     def test_it_shows_exitstatus(self, socket: Mock) -> None:
         socketobj = setup_mock(socket, {})

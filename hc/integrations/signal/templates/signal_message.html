@@ -2,7 +2,7 @@
 {% if status == "down" %}
     {% line %}The check <b>{{ check.name_then_code }}</b> is <b>DOWN</b>{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
 {% else %}
-    {% line %}The check <b>{{ check.name_then_code }}</b> is now <b>UP</b>.{% endline %}
+    {% line %}The check <b>{{ check.name_then_code }}</b> is now <b>UP</b>.{% if flip.down_duration %} The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endif %}{% endline %}
 {% endif %}
 
 {% line %}{% endline %}
