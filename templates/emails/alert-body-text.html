@@ -5,6 +5,9 @@
 {% if flip.reason %}
 {% line %}Reason: {{ flip.reason_long}}.{% endline %}
 {% endif %}
+{% if flip.new_status == "up" and flip.down_duration %}
+{% line %}The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endline %}
+{% endif %}
 {% line %}{% endline %}
 
 {% line %}View on {% site_name %}:{% endline %}

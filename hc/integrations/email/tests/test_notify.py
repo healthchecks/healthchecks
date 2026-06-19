@@ -108,6 +108,17 @@ class NotifyEmailTestCase(BaseTestCase):
         # Check's code must not be in the plain text or html
         self.assertEmailNotContains(str(self.check.code))
 
+    def test_it_reports_down_duration(self) -> None:
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        self.assertEmailContains("The downtime lasted 1 hour, 30 minutes.")
+
     @time_machine.travel(EPOCH + td(hours=1))
     def test_it_uses_users_preferred_timezone(self) -> None:
         self.channel.value = "bob@example.org"

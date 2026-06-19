@@ -7,6 +7,7 @@
     "{{ check.name_then_code }}" is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
     {% else %}
     "{{ check.name_then_code }}" is UP.
+    {% if flip.down_duration %}The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endif%}
     {% endif %}
     <a href="{{ check.cloaked_url }}">View on {% site_name %}&hellip;</a>
 </p>
