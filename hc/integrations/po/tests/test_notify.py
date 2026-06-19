@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping, TokenBucket
 from hc.test import BaseTestCase
 
@@ -54,7 +55,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(url, API + "/messages.json")
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload["title"], "🔴 Foo")
+        self.assertEqual(payload["title"], "🔴 Foo is DOWN")
         self.assertEqual(payload["url"], self.check.cloaked_url())
         self.assertIn("112233", payload["message"])
         self.assertIn("10 minutes ago", payload["message"])
@@ -74,7 +75,23 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertIn("received a failure signal", payload["message"])
+        self.assertIn("Reason: received a failure signal", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        self._setup_data("123|0")
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_cron_schedule(self, mock_post: Mock) -> None:
@@ -121,7 +138,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 1)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload["title"], "🟢 Foo")
+        self.assertEqual(payload["title"], "🟢 Foo is UP")
         self.assertEqual(payload["priority"], 2)
         self.assertIn("retry", payload)
         self.assertIn("expire", payload)
@@ -156,7 +173,7 @@ class NotifyPushoverTestCase(BaseTestCase):
 
         up_args, up_kwargs = mock_post.call_args_list[1]
         payload = up_kwargs["data"]
-        self.assertEqual(payload["title"], "🟢 Foo")
+        self.assertEqual(payload["title"], "🟢 Foo is UP")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_all_other_checks_up_note(self, mock_post: Mock) -> None:
@@ -232,7 +249,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         payload = mock_post.call_args.kwargs["data"]
-        self.assertEqual(payload["title"], "🔴 Foo & Bar")
+        self.assertEqual(payload["title"], "🔴 Foo & Bar is DOWN")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_disabled_priority(self, mock_post: Mock) -> None:

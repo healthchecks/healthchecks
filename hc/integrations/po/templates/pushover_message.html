@@ -1,8 +1,8 @@
 {% load hc_extras humanize linemode %}{% linemode %}
-{% if status == "down" %}
-    {% line %}The check <b>{{ check.name_then_code }}</b> is <b>DOWN</b>{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
-{% else %}
-    {% line %}The check <b>{{ check.name_then_code }}</b> is now <b>UP</b>.{% endline %}
+{% if status == "down" and flip.reason %}
+    {% line %}Reason: {{ flip.reason_long }}.{% endline %}
+{% elif status == "up" and flip.down_duration %}
+    {% line %}The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endline %}
 {% endif %}
 
 {% line %}{% endline %}
