@@ -99,7 +99,7 @@ def alert(
     m = make_message("alert", to, ctx, headers=headers)
     if attachment:
         m.attach("last-ping.eml", attachment, "message/rfc822")
-    send(m)
+    send(m, block=True)
 
 
 def verify_email(to: str, ctx: dict[str, Any]) -> None:
