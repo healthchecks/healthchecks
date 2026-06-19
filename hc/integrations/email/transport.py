@@ -52,6 +52,10 @@ class Email(Transport):
 
             subject = attachment.get("subject", "")
 
+        # FIXME: temporarily disable the last-ping-as-attachment
+        # functionality until bug #1311 is fixed.
+        attachment = None
+
         ctx = {
             "flip": flip,
             "check": flip.owner,
