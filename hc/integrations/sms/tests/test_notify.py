@@ -75,6 +75,25 @@ class NotifySmsTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["data"]
         self.assertIn("received a failure signal", payload["Body"])
 
+    @override_settings(TWILIO_FROM="+000", TWILIO_MESSAGING_SERVICE_SID=None)
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        payload = {"value": "+123123123", "up": True, "down": False}
+        self.channel.value = json.dumps(payload)
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        payload = mock_post.call_args.kwargs["data"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["Body"])
+
     @override_settings(TWILIO_ACCOUNT=None)
     def test_it_requires_twilio_configuration(self) -> None:
         self.channel.notify(self.flip)

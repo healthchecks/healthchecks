@@ -80,7 +80,7 @@ class FlipModelTestCase(BaseTestCase):
         with self.assertRaises(AssertionError):
             self.flip.down_duration
 
-    def test_down_checks_prev_flips_status(self) -> None:
+    def test_down_duration_checks_prev_flips_status(self) -> None:
         self.flip.old_status = "down"
         self.flip.new_status = "up"
         self.flip.save()
@@ -91,3 +91,14 @@ class FlipModelTestCase(BaseTestCase):
         up_flip.new_status = "up"
 
         self.assertIsNone(up_flip.down_duration)
+
+    def test_down_duration_handles_unsaved_check(self) -> None:
+        check = Check(project=self.project)
+        flip = Flip(owner=check)
+        flip.created = now()
+        flip.old_status = "down"
+        flip.new_status = "up"
+
+        # The check is not saved, and does not have a primary key.
+        # down_duration cannot fetch its flips and should return None.
+        self.assertIsNone(flip.down_duration)

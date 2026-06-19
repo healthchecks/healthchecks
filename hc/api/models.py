@@ -1413,6 +1413,11 @@ class Flip(models.Model):
     def down_duration(self) -> td | None:
         """For going-up flips, calculate the downtime duration."""
 
+        if not self.owner.id:
+            # The check is not saved yet. This is the case when sending a
+            # test notification.
+            return None
+
         assert self.old_status == "down"
 
         q = self.owner.flip_set.filter(created__lt=self.created).order_by("-created")
