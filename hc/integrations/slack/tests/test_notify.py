@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
@@ -83,6 +84,23 @@ class NotifySlackTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         attachment = payload["attachments"][0]
         self.assertEqual(attachment["text"], "Reason: received a failure signal.")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        self._setup_data("https://example.org")
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        attachment = payload["attachments"][0]
+        self.assertEqual(attachment["text"], "The downtime lasted 1 hour, 30 minutes.")
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_slack_with_complex_value(self, mock_post: Mock) -> None:

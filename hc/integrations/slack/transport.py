@@ -4,11 +4,12 @@ import logging
 from typing import NoReturn
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.front.templatetags.hc_extras import absolute_site_logo_url
 from hc.lib import curl
-from hc.lib.date import format_duration
+from hc.lib.date import format_duration, format_duration_for_sentence
 from hc.lib.typealias import JSONDict, JSONValue
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,13 @@ class Slackalike(HttpTransport):
         check = flip.owner
         name = check.name_then_code()
         fields = SlackFields()
+        text = None
+        if flip.reason:
+            text = f"Reason: {flip.reason_long()}." if flip.reason else None
+        elif flip.new_status == "up" and flip.down_duration:
+            formatted_duration = format_duration_for_sentence(flip.down_duration)
+            text = f"The downtime lasted {formatted_duration}."
+
         result: JSONDict = {
             "username": settings.SITE_NAME,
             "icon_url": absolute_site_logo_url(),
@@ -42,7 +50,7 @@ class Slackalike(HttpTransport):
                     "mrkdwn_in": ["fields"],
                     "title": f"“{name}” is {flip.new_status.upper()}.",
                     "title_link": check.cloaked_url(),
-                    "text": f"Reason: {flip.reason_long()}." if flip.reason else None,
+                    "text": text,
                     "fields": fields,
                 }
             ],
