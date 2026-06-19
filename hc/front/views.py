@@ -751,19 +751,25 @@ def ping_details(
     except Ping.DoesNotExist:
         return render(request, "front/ping_details_not_found.html")
 
-    body = ping.get_body()
+    try:
+        body_bytes = ping.get_body_bytes()
+    except Ping.GetBodyError:
+        body_bytes = None
+
     ctx = {
         "check": check,
         "ping": ping,
-        "body": body,
+        "body": body_bytes.decode(errors="replace") if body_bytes else None,
         "plain": None,
         "html": None,
         "active": None,
         "tz_switches": _tz_switches(request.profile, check),
     }
 
-    if ping.scheme == "email" and body:
-        parsed = email.message_from_string(body, policy=email.policy.SMTP)
+    if ping.scheme == "email" and body_bytes:
+        # Don't use message_from_string here, it seems to mangle
+        # UTF8 in message body.
+        parsed = email.message_from_bytes(body_bytes, policy=email.policy.SMTP)
         ctx["subject"] = parsed.get("subject", "")
 
         # The "active" tab is set to show the value that's successfully parsed last.

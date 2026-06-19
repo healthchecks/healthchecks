@@ -43,6 +43,12 @@ PGI+aGVsbG88L2I+
 --bbb
 """
 
+PLAINTEXT_UTF8_EMAIL = """Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+glāžšķūņu rūķīši
+""".encode()
+
 
 class PingDetailsTestCase(BaseTestCase):
     def setUp(self) -> None:
@@ -176,6 +182,16 @@ class PingDetailsTestCase(BaseTestCase):
         # aGVsbG8gd29ybGQ= is base64("hello world")
         self.assertContains(r, "aGVsbG8gd29ybGQ=")
         self.assertContains(r, "hello world")
+
+    def test_it_handles_utf8_encoded_plaintext(self) -> None:
+        Ping.objects.create(
+            owner=self.check, n=1, scheme="email", body_raw=PLAINTEXT_UTF8_EMAIL
+        )
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.get(self.url)
+
+        self.assertContains(r, "<pre>glāžšķūņu rūķīši")
 
     def test_it_handles_bad_base64_in_email_body(self) -> None:
         Ping.objects.create(
