@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -66,6 +67,21 @@ class NotifyRocketChatTestCase(BaseTestCase):
 
         text = mock_post.call_args.kwargs["json"]["text"]
         self.assertIn("is DOWN (received a failure signal).", text)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        text = mock_post.call_args.kwargs["json"]["text"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", text)
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_does_not_escape_name(self, mock_post: Mock) -> None:
