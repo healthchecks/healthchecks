@@ -46,24 +46,24 @@ class NotifyAppriseTestCase(BaseTestCase):
         self.flip.created = now()
         self.flip.old_status = "new"
         self.flip.new_status = "down"
+        self.flip.reason = "timeout"
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
-    def test_it_works(self, mock_apprise: Mock) -> None:
-        mock_aobj = Mock()
-        mock_aobj.add.return_value = True
-        mock_aobj.notify.return_value = True
-        mock_apprise.return_value = mock_aobj
+    def test_it_works(self, apprise: Mock) -> None:
         self.channel.notify(self.flip)
         self.assertEqual(Notification.objects.count(), 1)
 
-        body = mock_apprise.return_value.notify.call_args.kwargs["body"]
-        self.assertIn("Foo is DOWN", body)
-        self.assertIn("Last ping was 10 minutes ago.", body)
+        kwargs = apprise.return_value.notify.call_args.kwargs
+        self.assertEqual(kwargs["title"], "Foo is DOWN")
+        self.assertEqual(
+            kwargs["body"],
+            "Reason: success signal did not arrive on time, grace time passed.",
+        )
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=False)
-    def test_apprise_disabled(self, mock_apprise: Mock) -> None:
+    def test_apprise_disabled(self, apprise: Mock) -> None:
         self.channel.notify(self.flip)
 
         n = Notification.objects.get()
@@ -71,15 +71,24 @@ class NotifyAppriseTestCase(BaseTestCase):
 
     @patch("apprise.Apprise")
     @override_settings(APPRISE_ENABLED=True)
-    def test_it_handles_no_last_ping(self, mock_apprise: Mock) -> None:
-        self.ping.delete()
-
-        mock_aobj = Mock()
-        mock_aobj.add.return_value = True
-        mock_aobj.notify.return_value = True
-        mock_apprise.return_value = mock_aobj
+    def test_it_handles_reason_failure(self, apprise: Mock) -> None:
+        self.flip.reason = "fail"
         self.channel.notify(self.flip)
 
-        body = mock_apprise.return_value.notify.call_args.kwargs["body"]
-        self.assertIn("Foo is DOWN", body)
-        self.assertNotIn("Last ping was", body)
+        body = apprise.return_value.notify.call_args.kwargs["body"]
+        self.assertEqual(body, "Reason: received a failure signal.")
+
+    @patch("apprise.Apprise")
+    @override_settings(APPRISE_ENABLED=True)
+    def test_it_reports_down_duration(self, apprise: Mock) -> None:
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        kwargs = apprise.return_value.notify.call_args.kwargs
+        self.assertEqual(kwargs["title"], "Foo is UP")
+        self.assertEqual(kwargs["body"], "The downtime lasted 1 hour, 30 minutes.")

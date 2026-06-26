@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 
@@ -18,10 +19,10 @@ class Apprise(HttpTransport):
             raise TransportError("Apprise is disabled and/or not installed")
 
         a = apprise.Apprise()
-        check, status, ping = flip.owner, flip.new_status, self.last_ping(flip)
+        check, status = flip.owner, flip.new_status
         title = self.tmpl("apprise_title.html", check=check, status=status)
         body = self.tmpl(
-            "apprise_description.html", check=check, status=status, ping=ping
+            "apprise_description.html", check=check, status=status, flip=flip
         )
 
         a.add(self.channel.value)

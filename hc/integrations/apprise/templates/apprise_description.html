@@ -1,5 +1,11 @@
-{% load humanize %}
-{{ check.name_then_code }} is {{ status|upper }}.
-{% if status == "down" and ping %}
-Last ping was {{ ping.created|naturaltime }}.
+{% load hc_extras humanize linemode %}{% linemode %}
+{% if status == "down" %}
+    {% if flip.reason %}
+    {% line %}Reason: {{ flip.reason_long }}.{% endline%}
+    {% endif %}
+{% else %}
+    {% if flip.down_duration %}
+    {% line %}The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endline %}
+    {% endif %}
 {% endif %}
+{% endlinemode %}
