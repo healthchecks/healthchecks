@@ -1,6 +1,7 @@
 {% load hc_extras humanize %}
 
 [{{ check.name_then_code }}]({{ check.cloaked_url }}) is **{{ status|upper }}**{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
+{% if flip.new_status == "up" and flip.down_duration %}The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endif %}
 
 {% if check.desc %}
 ---
