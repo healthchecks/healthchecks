@@ -1,6 +1,6 @@
-{% load humanize %}
+{% load hc_extras humanize %}
 {% if status == "down" %}
     {{ check.name_then_code }} is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
 {% else %}
-    {{ check.name_then_code }} is now UP.
+    {{ check.name_then_code }} is now UP.{% if flip.new_status == "up" and flip.down_duration %} The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endif %}
 {% endif %}

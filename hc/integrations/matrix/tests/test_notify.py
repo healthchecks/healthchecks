@@ -6,6 +6,7 @@ from urllib.parse import quote
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -66,6 +67,25 @@ class NotifyMatrixTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_reason_failure(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        method, url = mock_post.call_args.args
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["body"])
+        self.assertIn(
+            "The downtime lasted 1 hour, 30 minutes.", payload["formatted_body"]
+        )
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
         self.flip.reason = "fail"
