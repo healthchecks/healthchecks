@@ -4,6 +4,7 @@ from unittest.mock import Mock
 
 from aiosmtpd.smtp import Envelope, Session
 from django.test.utils import override_settings
+
 from hc.api.management.commands.smtpd import PingHandler, _process_message
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
@@ -341,3 +342,15 @@ class SmtpdTestCase(BaseTestCase):
         # Since the check is paused and manual resume is enabled, the ping should
         # be ignored even though keywords do match
         self.assertEqual(ping.kind, "ign")
+
+    def test_it_handles_non_ascii_keywords(self) -> None:
+        self.check.filter_body = True
+        self.check.failure_kw = "glāžšķūņu"
+        self.check.save()
+
+        body = HTML_PAYLOAD_TMPL % ("subject", "glāžšķūņu rūķīši")
+        _process_message("1.2.3.4", "foo@example.org", self.email, body.encode("utf8"))
+
+        ping = Ping.objects.latest("id")
+        self.assertEqual(ping.scheme, "email")
+        self.assertEqual(ping.kind, "fail")

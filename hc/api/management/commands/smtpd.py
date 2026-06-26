@@ -74,9 +74,8 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
 
     action = "success"
     if check.filter_subject or check.filter_body:
-        data_str = data.decode(errors="replace")
         # Specify policy, the default policy does not decode encoded headers:
-        message = email.message_from_string(data_str, policy=email.policy.SMTP)
+        message = email.message_from_bytes(data, policy=email.policy.SMTP)
         text = _to_text(message, check.filter_subject, check.filter_body)
 
         if check.failure_kw and match_keywords(text, check.failure_kw):
