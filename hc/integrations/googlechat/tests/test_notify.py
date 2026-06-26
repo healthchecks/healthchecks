@@ -7,6 +7,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
@@ -86,6 +87,23 @@ class NotifyGoogleChatTestCase(BaseTestCase):
         payload = mock_post.call_args.kwargs["json"]
         fields = self.fields(payload)
         self.assertIn("Reason: received a failure signal.", fields["text"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        self._setup_data()
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        payload = mock_post.call_args.kwargs["json"]
+        fields = self.fields(payload)
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", fields["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_500(self, mock_post: Mock) -> None:
@@ -185,7 +203,7 @@ class NotifyGoogleChatTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_ignored_nonzero_exitstatus(self, mock_post: Mock) -> None:
-        self._setup_data("123")
+        self._setup_data()
         mock_post.return_value.status_code = 200
 
         self.ping.kind = "ign"

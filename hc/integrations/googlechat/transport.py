@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport
 from hc.lib.date import format_duration
@@ -21,11 +22,9 @@ class GoogleChat(HttpTransport):
 
         fields = GoogleChatFields()
 
-        emoji = "🔴" if flip.new_status == "down" else "🟢"
-        title = f"{emoji} <b>{check.name_then_code()}</b> is <b>{flip.new_status.upper()}</b>. "
-        if flip.reason:
-            title += f"Reason: {flip.reason_long()}."
-        fields.append({"textParagraph": {"text": title}})
+        ctx = {"flip": flip, "check": check, "status": flip.new_status}
+        text = self.tmpl("googlechat_message.html", **ctx)
+        fields.append({"textParagraph": {"text": text}})
 
         if check.project.name:
             fields.add("Project", check.project.name)
