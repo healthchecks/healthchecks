@@ -1,5 +1,7 @@
+{% load hc_extras %}
 {% if status == "down" %}
 The check "{{ check.name_then_code|safe }}" is DOWN{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.
 {% else %}
-The check "{{ check.name_then_code|safe }}" is UP.
+The check "{{ check.name_then_code|safe }}" is UP.{% if flip.down_duration %}
+The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endif %}
 {% endif %}

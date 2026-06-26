@@ -34,13 +34,12 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
         self.flip = Flip(owner=self.check)
         self.flip.created = now()
-        self.flip.old_status = "new"
-        self.flip.new_status = "up"
+        self.flip.old_status = "up"
+        self.flip.new_status = "down"
         self.flip.reason = "timeout"
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_works(self, mock_post: Mock) -> None:
-        self.flip.new_status = "down"
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.flip)
@@ -55,7 +54,6 @@ class NotifyPushbulletTestCase(BaseTestCase):
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_reason_fail(self, mock_post: Mock) -> None:
-        self.flip.new_status = "down"
         self.flip.reason = "fail"
         mock_post.return_value.status_code = 200
 
@@ -66,7 +64,23 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.assertIn("received a failure signal", payload["body"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+
+        _, kwargs = mock_post.call_args
+        payload = kwargs["json"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["body"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_up(self, mock_post: Mock) -> None:
+        self.flip.old_status = "down"
+        self.flip.new_status = "up"
         mock_post.return_value.status_code = 200
 
         self.channel.notify(self.flip)
@@ -86,20 +100,7 @@ class NotifyPushbulletTestCase(BaseTestCase):
         self.channel.notify(self.flip)
 
         _, kwargs = mock_post.call_args
-        self.assertEqual(
+        self.assertIn(
+            'The check "Foo & Bar" is DOWN ',
             kwargs["json"]["body"],
-            'The check "Foo & Bar" is UP.',
         )
-
-    @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_handles_no_last_ping(self, mock_post: Mock) -> None:
-        self.ping.delete()
-        self.check.status = "down"
-        self.check.save()
-        mock_post.return_value.status_code = 200
-
-        self.channel.notify(self.flip)
-
-        _, kwargs = mock_post.call_args
-        payload = kwargs["json"]
-        self.assertNotIn("""Last ping was""", payload["body"])

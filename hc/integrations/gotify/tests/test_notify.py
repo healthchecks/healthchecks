@@ -76,6 +76,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         up_flip.old_status = "down"
         up_flip.new_status = "up"
         self.channel.notify(up_flip)
+
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["message"])
 
