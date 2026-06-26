@@ -17,6 +17,7 @@ All notable changes to this project will be documented in this file.
 - Update Check.rename_and_delete() to better handle race conditions
 - Enforce check limit (times two) when pinging by slug
 - Fix the "Edit Ntfy" form to preserve selected priorities when the form reloads
+- Fix the parsing of inbound emails with UTF8 body (#1311)
 
 ## v4.2 - 2026-04-28
 
