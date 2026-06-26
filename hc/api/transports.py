@@ -5,6 +5,7 @@ import time
 from typing import TYPE_CHECKING, Any, NoReturn
 
 from django.template.loader import render_to_string
+
 from hc.front.templatetags.hc_extras import sortchecks
 from hc.lib import curl
 
@@ -15,25 +16,37 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
-    """Return ping body for a given Ping object.
+def get_ping_body_bytes(ping: Ping | None) -> bytes | None:
+    """Return ping body as bytes for a given Ping object.
 
-    Does two extra things in addition to simply calling Ping.get_body():
-    * if body has not been uploaded to object storage yet, waits 5 seconds
-      and tries to fetch it again
-    * if body is longer than the `maxlen` argument, truncate it
+    If body has not been uploaded to object storage yet, wait 5 seconds
+    and try to fetch it again.
     """
-    body = None
     if ping and ping.has_body():
-        body = ping.get_body()
-        if body is None and ping.object_size:
-            # Body is not uploaded to object storage yet.
-            # Wait 5 seconds, then fetch the body again.
-            time.sleep(5)
-            body = ping.get_body()
+        try:
+            if result := ping.get_body_bytes():
+                return result
 
-    if body and maxlen and len(body) > maxlen:
-        body = body[:maxlen] + "\n[truncated]"
+            if ping.object_size:
+                # If the ping object has an object size but get_body_bytes returns
+                # None then body is not uploaded to the object storage yet.
+                # When sending notifications we can afford to wait a little
+                # bit and retry.
+                time.sleep(5)
+                return ping.get_body_bytes()
+        except Ping.GetBodyError:
+            pass
+
+    return None
+
+
+def get_ping_body(ping: Ping | None, maxlen: int | None = None) -> str | None:
+    """Return ping body for a given Ping object."""
+    body = None
+    if body_bytes := get_ping_body_bytes(ping):
+        body = body_bytes.decode(errors="replace")
+        if maxlen and len(body) > maxlen:
+            body = body[:maxlen] + "\n[truncated]"
 
     return body
 

@@ -772,7 +772,7 @@ class Ping(models.Model):
             return None
 
         if body_bytes:
-            return bytes(body_bytes).decode(errors="replace")
+            return body_bytes.decode(errors="replace")
 
         return None
 

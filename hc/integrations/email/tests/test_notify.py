@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import email
 import json
 from datetime import datetime, timezone
 from datetime import timedelta as td
@@ -402,3 +403,22 @@ Hello 123
         # The message/rfc822 part should have been removed
         self.assertNotIn("Inner subject", attachment_str)
         self.assertNotIn("Hello 123", attachment_str)
+
+    @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
+    @patch("hc.lib.emails.send")
+    def test_it_handles_non_ascii_in_last_ping_body(self, send: Mock) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = """Subject: testing
+
+glāžšķūņu rūķīši
+""".encode()
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        self.assertTrue(send.called)
+
+        # Make sure the assembled message serializes to bytes.
+        # If it does not, the real SMTP backend will throw an exception
+        message = send.call_args.args[0]
+        message.message(policy=email.policy.SMTP).as_bytes()

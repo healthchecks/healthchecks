@@ -4,7 +4,7 @@ import email
 
 from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
-from hc.api.transports import Transport, TransportError, get_ping_body
+from hc.api.transports import Transport, TransportError, get_ping_body_bytes
 from hc.lib import emails
 from hc.lib.signing import sign_bounce_id
 
@@ -34,10 +34,10 @@ class Email(Transport):
             projects = None
 
         ping = self.last_ping(flip)
-        body = get_ping_body(ping)
+        body_bytes = get_ping_body_bytes(ping)
         subject, attachment = None, None
-        if ping is not None and ping.scheme == "email" and body:
-            attachment = email.message_from_string(body, policy=email.policy.SMTP)
+        if ping is not None and ping.scheme == "email" and body_bytes:
+            attachment = email.message_from_bytes(body_bytes, policy=email.policy.SMTP)
             # If this is a multipart message then drop message/rfc822 parts to
             # avoid recursion issues with deep attachment-within-attachment stacks.
             if attachment.is_multipart():
@@ -52,15 +52,11 @@ class Email(Transport):
 
             subject = attachment.get("subject", "")
 
-        # FIXME: temporarily disable the last-ping-as-attachment
-        # functionality until bug #1311 is fixed.
-        attachment = None
-
         ctx = {
             "flip": flip,
             "check": flip.owner,
             "ping": ping,
-            "body": body,
+            "body": body_bytes.decode(errors="replace") if body_bytes else None,
             "subject": subject,
             "projects": projects,
             "unsub_link": unsub_link,
