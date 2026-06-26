@@ -5,6 +5,7 @@ from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 
@@ -63,6 +64,20 @@ class NotifyGotidyTestCase(BaseTestCase):
 
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("received a failure signal", payload["message"])
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_reports_down_duration(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 200
+
+        self.flip.save()
+
+        up_flip = Flip(owner=self.check)
+        up_flip.created = self.flip.created + td(minutes=90)
+        up_flip.old_status = "down"
+        up_flip.new_status = "up"
+        self.channel.notify(up_flip)
+        payload = mock_post.call_args.kwargs["json"]
+        self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["message"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_handles_subpath(self, mock_post: Mock) -> None:
@@ -181,6 +196,7 @@ class NotifyGotidyTestCase(BaseTestCase):
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_uses_configured_priority_up(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
+        self.flip.old_status = "down"
         self.flip.new_status = "up"
         self.channel.value = json.dumps(
             {

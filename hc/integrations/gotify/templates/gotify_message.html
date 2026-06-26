@@ -1,8 +1,12 @@
-{% load humanize linemode %}{% linemode %}
+{% load hc_extras humanize linemode %}{% linemode %}
 {% if status == "down" %}
     {% line %}🔴 The check [{{ check.name_then_code }}]({{ check.cloaked_url }}) is **DOWN**{% if flip.reason %} ({{ flip.reason_long }}){% endif %}.{% endline %}
 {% else %}
     {% line %}🟢 The check [{{ check.name_then_code }}]({{ check.cloaked_url }}) is now **UP**.{% endline %}
+    {% if flip.down_duration %}
+    {% line %}{% endline %}
+    {% line %}The downtime lasted {{ flip.down_duration|hc_duration_for_sentence }}.{% endline %}
+    {% endif %}
 {% endif %}
 
 {% if down_checks is not None %}
