@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 - Add ability to edit existing Gotify integrations
 - Switch from Selectize to Tom Select for dropdown controls
 - Implement Markdown formatting in Ntfy notifications
+- Update alert templates to report downtime duration (#1309)
 
 ### Bug Fixes
 - Fix WebhookValidator to handle input that contains square brackets
