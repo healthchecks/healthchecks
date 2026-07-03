@@ -175,6 +175,18 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEqual(code, str(self.check.code))
         self.assertEqual(n, 112233)
 
+    @override_settings(S3_BUCKET="test-bucket")
+    @patch("hc.api.models.Ping.get_body_bytes")
+    def test_it_handles_getbodyerror_exception(self, get_body_bytes: Mock) -> None:
+        get_body_bytes.side_effect = Ping.GetBodyError()
+
+        self.ping.object_size = 1000
+        self.ping.body_raw = None
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+        self.assertEmailContainsHtml("The request body data is being processed")
+
     def test_it_shows_cron_schedule(self) -> None:
         self.check.kind = "cron"
         self.check.schedule = "0 18-23,0-8 * * *"
