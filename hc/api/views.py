@@ -900,6 +900,11 @@ def bounces(request: HttpRequest) -> HttpResponse:
 
     permanent = status.startswith("5.")
     transient = status.startswith("4.")
+    # Special case 5.4.4 (unable to route, probably due to DNS issues) as transient
+    if status == "5.4.4":
+        permanent = False
+        transient = True
+
     if not permanent and not transient:
         return HttpResponse("OK (ignored)")
 
