@@ -19,6 +19,7 @@ All notable changes to this project will be documented in this file.
 - Enforce check limit (times two) when pinging by slug
 - Fix the "Edit Ntfy" form to preserve selected priorities when the form reloads
 - Fix the parsing of inbound emails with UTF8 body (#1311)
+- Add rate-limiting by email in the /accounts/signup view
 
 ## v4.2 - 2026-04-28
 

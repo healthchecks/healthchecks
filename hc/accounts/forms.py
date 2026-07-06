@@ -41,6 +41,12 @@ class SignupForm(forms.Form):
         assert isinstance(v, str)
         if len(v) > 254:
             raise forms.ValidationError("Address is too long.")
+        # When user signs up with an email address that already has an account
+        # we send them the magic login link. Hence we must rate-limit attempts
+        # to sign in with a specific email address the same as we would in
+        # the login form:
+        if not TokenBucket.authorize_login_email(v):
+            raise forms.ValidationError("Too many attempts, please try later.")
 
         return v
 

@@ -144,6 +144,17 @@ class SignupTestCase(TestCase):
         r = self.client.post("/accounts/signup/", form)
         self.assertContains(r, "please try later")
 
+    @override_settings(SECRET_KEY="test-secret")
+    def test_it_rate_limits_email_address(self) -> None:
+        # "d60d..." is sha1("alice@example.orgtest-secret")
+        obj = TokenBucket(value="em-d60db3b2343e713a4de3e92d4eb417e4f05f06ab")
+        obj.tokens = 0
+        obj.save()
+
+        form = {"identity": "alice@example.org", "tz": ""}
+        r = self.client.post("/accounts/signup/", form)
+        self.assertContains(r, "please try later")
+
     def test_rate_limiter_uses_x_forwarded_for(self) -> None:
         obj = TokenBucket(value="auth-ip-127.0.0.2")
         obj.tokens = 0
