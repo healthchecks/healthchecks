@@ -12,6 +12,7 @@ All notable changes to this project will be documented in this file.
 - Switch from Selectize to Tom Select for dropdown controls
 - Implement Markdown formatting in Ntfy notifications
 - Update alert templates to report downtime duration (#1309)
+- Switch to Argon2 as the default hasher for passwords and login tokens
 
 ### Bug Fixes
 - Fix WebhookValidator to handle input that contains square brackets

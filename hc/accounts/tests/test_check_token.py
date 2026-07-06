@@ -10,7 +10,7 @@ from hc.test import BaseTestCase
 class CheckTokenTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.profile.token = make_password("secret-token", "login")
+        self.profile.token = make_password("secret-token")
         self.profile.save()
 
         signed_token = TimestampSigner().sign("secret-token")

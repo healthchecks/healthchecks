@@ -122,7 +122,7 @@ class Profile(models.Model):
     def prepare_token(self) -> str:
         token = token_urlsafe(24)
         # Store a hashed transformation of the login token
-        self.token = make_password(token, "login")
+        self.token = make_password(token)
         self.save()
         # Sign the token so we can check its age later
         return TimestampSigner().sign(token)
@@ -133,7 +133,7 @@ class Profile(models.Model):
         except BadSignature:
             return False
 
-        return "login" in self.token and check_password(token, self.token)
+        return check_password(token, self.token)
 
     def send_instant_login_link(
         self, membership: Member | None = None, redirect_url: str | None = None

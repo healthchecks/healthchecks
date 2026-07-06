@@ -12,7 +12,7 @@ from hc.test import BaseTestCase
 class ChangeEmailVerifyTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.profile.token = make_password("secret-token", "login")
+        self.profile.token = make_password("secret-token")
         self.profile.save()
 
         self.checks_url = f"/projects/{self.project.code}/checks/"
