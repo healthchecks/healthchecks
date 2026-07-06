@@ -19,7 +19,7 @@ class TokenBucketTestCase(BaseTestCase):
         self.assertTrue(r)
 
         obj = TokenBucket.objects.get()
-        self.assertEqual(obj.tokens, 0.95)
+        self.assertEqual(obj.tokens, 0.9)
         self.assertEqual(obj.value, "em-" + ALICE_HASH)
 
     def test_it_handles_insufficient_tokens(self) -> None:
@@ -38,7 +38,7 @@ class TokenBucketTestCase(BaseTestCase):
         self.assertTrue(r)
 
         obj.refresh_from_db()
-        self.assertAlmostEqual(obj.tokens, 0.45, places=4)
+        self.assertAlmostEqual(obj.tokens, 0.4, places=4)
 
     def test_it_normalizes_email(self) -> None:
         emails = ("alice+alias@example.org", "a.li.ce@example.org")

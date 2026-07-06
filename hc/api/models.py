@@ -1483,8 +1483,8 @@ class TokenBucket(models.Model):
         salted_encoded = (email + settings.SECRET_KEY).encode()
         hashed = hashlib.sha1(salted_encoded).hexdigest()
 
-        # 20 login attempts for a single email per hour:
-        return TokenBucket.authorize(f"em-{hashed}", 20, 3600)
+        # 10 login attempts for a single email per hour:
+        return TokenBucket.authorize(f"em-{hashed}", 10, 3600)
 
     @staticmethod
     def authorize_invite(user: User) -> bool:
