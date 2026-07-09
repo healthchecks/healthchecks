@@ -487,10 +487,13 @@ class Project(models.Model):
     def update_next_nag_dates(self) -> None:
         """Update next_nag_date on profiles of all members of this project."""
 
-        is_owner = Q(user_id=self.owner_id)
-        is_member = Q(user__memberships__project=self)
-        q = Profile.objects.filter(is_owner | is_member).exclude(nag_period=NO_NAG)
+        # Use an UNION of two simple queries to look up project's user ids.
+        # On PostgreSQL this is much faster than using JOIN.
+        owner_id = User.objects.filter(id=self.owner_id).values_list("id")
+        member_ids = Member.objects.filter(project=self).values_list("user_id")
+        user_ids = owner_id.union(member_ids)
 
+        q = Profile.objects.filter(user_id__in=user_ids).exclude(nag_period=NO_NAG)
         for profile in q:
             profile.update_next_nag_date()
 
