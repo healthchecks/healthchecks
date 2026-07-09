@@ -195,7 +195,17 @@ class Profile(models.Model):
 
         from hc.api.models import Check
 
-        return Check.objects.filter(project__in=self.projects())
+        # Optimization: rather than selecting project IDs using self.projects()
+        # which uses an expensive left join, select them here using an UNION of two
+        # simple queries.
+
+        # IDs of of the projects this user owns
+        q1 = Project.objects.filter(owner_id=self.user_id).values_list("id")
+        # IDs of the projects this user is a member of
+        q2 = Member.objects.filter(user_id=self.user_id).values_list("project_id")
+        project_ids = q1.union(q2)
+
+        return Check.objects.filter(project__in=project_ids)
 
     def send_report(self, nag: bool = False) -> bool:
         q = self.checks_from_all_projects()
