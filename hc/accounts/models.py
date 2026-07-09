@@ -182,30 +182,27 @@ class Profile(models.Model):
         }
         emails.transfer_request(self.user.email, ctx)
 
+    def project_ids(self) -> QuerySet[Project, tuple[int]]:
+        """Return a queryset returning IDs of all projects we have access to."""
+        # Construct a UNION of two simple queries. This could be alternatively
+        # be done in a single query and filtering by Q(is_owner) | Q(is_member).
+        # But the single query approach has significantly worse performance
+        # on PostgreSQL.
+        owned_ids = Project.objects.filter(owner_id=self.user_id).values_list("id")
+        joined_ids = Member.objects.filter(user_id=self.user_id).values_list("project_id")
+        return owned_ids.union(joined_ids)
+
+
     def projects(self) -> QuerySet[Project]:
         """Return a queryset of all projects we have access to."""
-
-        is_owner = Q(owner_id=self.user_id)
-        is_member = Q(member__user_id=self.user_id)
-        q = Project.objects.filter(is_owner | is_member)
-        return q.distinct().order_by(Lower("name"))
+        return Project.objects.filter(id__in=self.project_ids()).order_by(Lower("name"))
 
     def checks_from_all_projects(self) -> CheckQuerySet:
         """Return a queryset of checks from projects we have access to."""
 
         from hc.api.models import Check
 
-        # Optimization: rather than selecting project IDs using self.projects()
-        # which uses an expensive left join, select them here using an UNION of two
-        # simple queries.
-
-        # IDs of of the projects this user owns
-        q1 = Project.objects.filter(owner_id=self.user_id).values_list("id")
-        # IDs of the projects this user is a member of
-        q2 = Member.objects.filter(user_id=self.user_id).values_list("project_id")
-        project_ids = q1.union(q2)
-
-        return Check.objects.filter(project__in=project_ids)
+        return Check.objects.filter(project__in=self.project_ids())
 
     def send_report(self, nag: bool = False) -> bool:
         q = self.checks_from_all_projects()
