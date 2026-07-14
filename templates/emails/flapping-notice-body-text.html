@@ -1,7 +1,7 @@
 {% load hc_extras %}
 Hello,
 
-The check "{{ check.name }}" in your {% site_name %} account is currently flapping.
+The check "{{ check.name }}" in project "{{ check.project.name }}" is currently flapping.
 It has changed between the "up" and "down" states {{ num_flips }} times
 in the last 24 hours.
 

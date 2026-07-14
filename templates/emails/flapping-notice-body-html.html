@@ -4,8 +4,10 @@
 {% block content %}
 Hello,<br /><br />
 
-The check <a href="{{ check.cloaked_url }}"><strong>{{ check.name }}</strong></a> in your {% site_name %} account is currently flapping.
-It has changed between the "up" and "down" states <strong>{{ num_flips }}</strong> times in the last 24 hours.<br /><br />
+The check <a href="{{ check.cloaked_url }}"><strong>{{ check.name }}</strong></a>
+in project <strong>{{ check.project.name }}</strong> is currently flapping.
+It has changed between the "up" and "down" states <strong>{{ num_flips }}</strong>
+times in the last 24 hours.<br /><br />
 
 Common reasons for a check changing its state frequently are:<br />
 

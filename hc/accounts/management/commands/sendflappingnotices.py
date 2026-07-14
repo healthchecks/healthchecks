@@ -12,6 +12,8 @@ from django.utils.timezone import now
 from hc.api.models import Check
 from hc.lib import emails
 
+FLIP_THRESHOLD = 200
+
 
 class Command(BaseCommand):
     help = """Send notices about flapping checks."""
@@ -23,26 +25,27 @@ class Command(BaseCommand):
         q = Check.objects.only("name")
         q = q.filter(flip__created__gt=now() - td(hours=24))
         q = q.annotate(num_flips=Count("flip"))
-        q = q.filter(num_flips__gt=200)
+        q = q.filter(num_flips__gt=FLIP_THRESHOLD)
         q = q.order_by("-num_flips")
 
         sent = 0
         for check in q:
             email = check.project.owner.email
-            self.stdout.write(
-                f"[{check.num_flips}] Sending notice to {email} about '{check.name}'"
-            )
+            for email in check.project.team_emails():
+                self.stdout.write(
+                    f"[{check.num_flips}] Sending notice to {email} about '{check.name}'"
+                )
 
-            ctx = {
-                "email": email,
-                "check": check,
-                "num_flips": check.num_flips,
-                "support_email": settings.SUPPORT_EMAIL,
-            }
-            emails.flapping_notice(email, ctx)
-            sent += 1
+                ctx = {
+                    "email": email,
+                    "check": check,
+                    "num_flips": check.num_flips,
+                    "support_email": settings.SUPPORT_EMAIL,
+                }
+                emails.flapping_notice(email, ctx)
+                sent += 1
 
-            # Throttle so we don't send too many emails at once:
-            self.pause()
+                # Throttle so we don't send too many emails at once:
+                self.pause()
 
         return f"Done! Notices sent: {sent}\n"
