@@ -1,12 +1,12 @@
 aiosmtpd==1.4.6
 cronsim==2.7
-Django[argon2]==6.0.6
+Django[argon2]==6.0.7
 django-compressor==4.6
 django-stubs-ext==6.0.6
-fido2==2.2.0
+fido2==2.2.1
 oncalendar==1.1
 psycopg==3.3.4
-pycurl==7.46.0
+pycurl==7.47.0
 pydantic==2.13.4
 PyJWT[crypto]==2.13.0
 pyotp==2.10.0
