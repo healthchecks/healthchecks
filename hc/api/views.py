@@ -15,6 +15,7 @@ from django.conf import settings
 from django.core.signing import BadSignature
 from django.db import connection, transaction
 from django.db.models import Prefetch
+from django.db.models.functions import Length
 from django.http import (
     Http404,
     HttpRequest,
@@ -610,7 +611,11 @@ def pings(request: ApiRequest, code: UUID) -> HttpResponse:
 
     # Query in descending order so we're sure to get the most recent
     # pings, regardless of the limit restriction
-    pings = list(Ping.objects.filter(owner=check).order_by("-id")[:limit])
+    q = Ping.objects.filter(owner=check).order_by("-id")
+    # Optimization: query just the length of body_raw instead of body_raw itself.
+    q = q.defer("body_raw").annotate(body_raw_length=Length("body_raw"))
+    pings = list(q[:limit])
+
     prepare_durations(pings)
 
     # Pass check's code to Ping.to_dict(), so it does not need to look it up

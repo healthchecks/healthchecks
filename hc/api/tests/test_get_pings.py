@@ -1,9 +1,10 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from uuid import uuid4
+
+from django.test.utils import override_settings
 
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase, TestHttpResponse
@@ -32,7 +33,7 @@ class GetPingsTestCase(BaseTestCase):
         self.ping.ua = "foo-agent"
         self.ping.save()
 
-        self.url = f"/api/v1/checks/{self.a1.code}/pings/"
+        self.url = f"/api/v3/checks/{self.a1.code}/pings/"
 
     def get(self, api_key: str = "X" * 32) -> TestHttpResponse:
         return self.csrf_client.get(self.url, HTTP_X_API_KEY=api_key)
@@ -51,6 +52,8 @@ class GetPingsTestCase(BaseTestCase):
         self.assertEqual(ping["scheme"], "https")
         self.assertEqual(ping["method"], "get")
         self.assertEqual(ping["ua"], "foo-agent")
+        # body_raw is null, object_size is null, body_url should be None
+        self.assertIsNone(ping["body_url"])
 
     def test_readonly_key_is_not_allowed(self) -> None:
         self.project.api_key_readonly = "R" * 32
@@ -102,3 +105,43 @@ class GetPingsTestCase(BaseTestCase):
         doc = self.get().json()
         ping = doc["pings"][0]
         self.assertEqual(ping["rid"], str(self.ping.rid))
+
+    def test_it_handles_empty_body_raw(self) -> None:
+        self.ping.body_raw = b""
+        self.ping.save()
+
+        doc = self.get().json()
+        ping = doc["pings"][0]
+        self.assertIsNone(ping["body_url"])
+
+    def test_it_handles_zero_object_size(self) -> None:
+        self.ping.object_size = 0
+        self.ping.save()
+
+        doc = self.get().json()
+        ping = doc["pings"][0]
+        self.assertIsNone(ping["body_url"])
+
+    @override_settings(SITE_ROOT="http://testserver")
+    def test_it_handles_nonempty_body_raw(self) -> None:
+        self.ping.body_raw = b"this is ping body"
+        self.ping.save()
+
+        doc = self.get().json()
+        ping = doc["pings"][0]
+        self.assertEqual(
+            ping["body_url"],
+            f"http://testserver/api/v3/checks/{self.a1.code}/pings/1/body",
+        )
+
+    @override_settings(SITE_ROOT="http://testserver")
+    def test_it_handles_nonempty_object_size(self) -> None:
+        self.ping.object_size = 123
+        self.ping.save()
+
+        doc = self.get().json()
+        ping = doc["pings"][0]
+        self.assertEqual(
+            ping["body_url"],
+            f"http://testserver/api/v3/checks/{self.a1.code}/pings/1/body",
+        )
