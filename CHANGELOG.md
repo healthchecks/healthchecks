@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v4.3-dev - Unreleased
+## v4.3 - 2026-07-14
 
 ### Improvements
 - Send "Monthly Phone/SMS/WA Limit Reached" notice to all team members (not just owner)
@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Implement Markdown formatting in Ntfy notifications
 - Update alert templates to report downtime duration (#1309)
 - Switch to Argon2 as the default hasher for passwords and login tokens
+- Optimize DB queries for team membership lookups and for the "Get Pings" API call
 
 ### Bug Fixes
 - Fix WebhookValidator to handle input that contains square brackets
