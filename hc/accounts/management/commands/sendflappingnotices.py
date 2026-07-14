@@ -30,7 +30,6 @@ class Command(BaseCommand):
 
         sent = 0
         for check in q:
-            email = check.project.owner.email
             for email in check.project.team_emails():
                 self.stdout.write(
                     f"[{check.num_flips}] Sending notice to {email} about '{check.name}'"
