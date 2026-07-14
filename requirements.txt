@@ -2,7 +2,7 @@ aiosmtpd==1.4.6
 cronsim==2.7
 Django[argon2]==6.0.7
 django-compressor==4.6
-django-stubs-ext==6.0.6
+django-stubs-ext==6.0.7
 fido2==2.2.1
 oncalendar==1.1
 psycopg==3.3.4
