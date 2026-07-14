@@ -4,7 +4,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 COPY requirements.txt /tmp
 # build-essential is required to build uswsi, psycopg, mysqlclient
-# libffi-dev is required to build cffi (a dependency of minio)
+# libffi-dev is required to build cffi (a dependency of minio and cryptography)
 # libpq-dev is required to build psycopg[c]
 # libmaria-dev is required to build mysqlclient
 # libcurl4-openssl-dev is required to build pycurl
