@@ -259,37 +259,35 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertIn("11 other checks are also down.", payload["text"])
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_disables_channel_on_403_group_deleted(self, mock_post: Mock) -> None:
-        mock_post.return_value.status_code = 403
-        mock_post.return_value.content = b"""{
-            "description": "Forbidden: the group chat was deleted"
-        }"""
+    def test_it_disables_channel_on_403(self, mock_post: Mock) -> None:
+        messages = [
+            "Forbidden: the group chat was deleted",
+            "Forbidden: bot was blocked by the user",
+            "Forbidden: user is deactivated",
+            "Forbidden: bot was kicked from the group chat",
+            "Forbidden: bot was kicked from the supergroup chat",
+        ]
 
-        self.channel.notify(self.flip)
-        self.channel.refresh_from_db()
-        self.assertTrue(self.channel.disabled)
+        for m in messages:
+            mock_post.return_value.status_code = 403
+            mock_post.return_value.content = json.dumps({"description": m}).encode()
+
+            # Reset the disabled flag before each sub-test:
+            self.channel.disabled = False
+            self.channel.save()
+
+            self.channel.notify(self.flip)
+            self.channel.refresh_from_db()
+            self.assertTrue(self.channel.disabled, f"Not disabled for {m}")
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_disables_channel_on_403_bot_blocked(self, mock_post: Mock) -> None:
+    def test_it_does_not_disable_on_unknown_403(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 403
-        mock_post.return_value.content = b"""{
-            "description": "Forbidden: bot was blocked by the user"
-        }"""
+        mock_post.return_value.content = json.dumps({"description": "oops"}).encode()
 
         self.channel.notify(self.flip)
         self.channel.refresh_from_db()
-        self.assertTrue(self.channel.disabled)
-
-    @patch("hc.api.transports.curl.request", autospec=True)
-    def test_it_disables_channel_on_403_deactivated(self, mock_post: Mock) -> None:
-        mock_post.return_value.status_code = 403
-        mock_post.return_value.content = b"""{
-            "description": "Forbidden: user is deactivated"
-        }"""
-
-        self.channel.notify(self.flip)
-        self.channel.refresh_from_db()
-        self.assertTrue(self.channel.disabled)
+        self.assertFalse(self.channel.disabled)
 
     @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:

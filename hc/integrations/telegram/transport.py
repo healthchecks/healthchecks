@@ -3,10 +3,11 @@ from __future__ import annotations
 from typing import NoReturn
 
 from django.conf import settings
+from pydantic import BaseModel, ValidationError
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.lib import curl
-from pydantic import BaseModel, ValidationError
 
 
 class MigrationRequiredError(TransportError):
@@ -46,6 +47,10 @@ class Telegram(HttpTransport):
         elif m.description == "Forbidden: bot was blocked by the user":
             permanent = True
         elif m.description == "Forbidden: user is deactivated":
+            permanent = True
+        elif m.description == "Forbidden: bot was kicked from the group chat":
+            permanent = True
+        elif m.description == "Forbidden: bot was kicked from the supergroup chat":
             permanent = True
 
         raise TransportError(message, permanent=permanent)
