@@ -290,6 +290,29 @@ class NotifyTelegramTestCase(BaseTestCase):
         self.assertFalse(self.channel.disabled)
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_disables_channel_on_chat_not_found(self, mock_post: Mock) -> None:
+        m = "Bad Request: chat not found"
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.content = json.dumps({"description": m}).encode()
+
+        # Reset the disabled flag before each sub-test:
+        self.channel.disabled = False
+        self.channel.save()
+
+        self.channel.notify(self.flip)
+        self.channel.refresh_from_db()
+        self.assertTrue(self.channel.disabled, f"Not disabled for {m}")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_does_not_disable_on_unknown_400(self, mock_post: Mock) -> None:
+        mock_post.return_value.status_code = 400
+        mock_post.return_value.content = json.dumps({"description": "oops"}).encode()
+
+        self.channel.notify(self.flip)
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.disabled)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_it_shows_last_ping_body(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 

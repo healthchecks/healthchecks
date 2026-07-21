@@ -52,6 +52,8 @@ class Telegram(HttpTransport):
             permanent = True
         elif m.description == "Forbidden: bot was kicked from the supergroup chat":
             permanent = True
+        elif m.description == "Bad Request: chat not found":
+            permanent = True
 
         raise TransportError(message, permanent=permanent)
 
