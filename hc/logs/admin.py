@@ -20,6 +20,7 @@ class RecordsAdmin(ModelAdmin[Record]):
         "created",
         "level",
     )
+    list_per_page = 200
 
     def when(self, obj: Record) -> str:
         return obj.created.strftime("%b %-d, %H:%M")

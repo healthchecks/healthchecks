@@ -22,3 +22,8 @@ class Record(models.Model):
     level = models.PositiveSmallIntegerField(choices=LEVELS)
     message = models.TextField()
     traceback = models.TextField()
+
+    def __str__(self) -> str:
+        if len(self.message) < 100:
+            return self.message
+        return self.message[:100] + "..."
