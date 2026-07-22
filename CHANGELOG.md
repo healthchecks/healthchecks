@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 ### Improvements
 - Send flapping notices to all team members (not just the owner)
 
+### Bug Fixes
+- Fix the email integration to sanitize long lines in .eml attachments
+
 ## v4.3 - 2026-07-14
 
 ### Improvements

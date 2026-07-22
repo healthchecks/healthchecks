@@ -434,3 +434,55 @@ glāžšķūņu rūķīši
         # If it does not, the real SMTP backend will throw an exception
         message = send.call_args.args[0]
         message.message(policy=email.policy.SMTP).as_bytes()
+
+    @patch("hc.lib.emails.send")
+    def test_it_wraps_long_8bit_body(self, send: Mock) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = f"""Subject: testing
+Content-Transfer-Encoding: 8bit
+
+{"0123456789" * 10}
+""".encode()
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        self.assertTrue(send.called)
+
+        # Make sure the email message has no lines longer than 80 characters
+        message = send.call_args.args[0]
+        eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
+        for line in eml.split("\n"):
+            self.assertLess(len(line), 80)
+
+    @patch("hc.lib.emails.send")
+    def test_it_wraps_long_8bit_mime_part(self, send: Mock) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = f"""Subject: testing
+Content-Type: multipart/alternative; boundary="0000000000003d3077065730508f"
+
+--0000000000003d3077065730508f
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+
+{"0123456789" * 10}
+
+--0000000000003d3077065730508f
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+
+<div>{"0123456789" * 10}</div>
+
+--0000000000003d3077065730508f--
+""".encode()
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        self.assertTrue(send.called)
+
+        # Make sure the email message has no lines longer than 80 characters
+        message = send.call_args.args[0]
+        eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
+        for line in eml.split("\n"):
+            self.assertLess(len(line), 80)

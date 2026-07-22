@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import email
+from email.message import EmailMessage
 
 from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
@@ -10,6 +11,29 @@ from hc.lib.signing import sign_bounce_id
 
 
 class Email(Transport):
+    def bytes_to_sanitized_message(self, data: bytes) -> EmailMessage:
+        m = email.message_from_bytes(data, policy=email.policy.SMTP)
+        if m.is_multipart():
+            parts = m.get_payload()
+            # If is_multipart=True then get_payload() returns list[Message].
+            # Mypy does not know this, hence the assert.
+            assert isinstance(parts, list)
+            # use list() here so we don't mutate the same list we're iterating
+            for part in list(parts):
+                if part.get_content_type() == "message/rfc822":
+                    # Drop message/rfc822 parts to avoid recursion issues with
+                    # deep attachment-within-attachment stacks.
+                    parts.remove(part)
+                if part.get_content_maintype() == "text":
+                    # Call set_content to force correct content-transfer-encoding
+                    # selection and line wrapping
+                    part.set_content(part.get_content())
+        else:
+            # Call set_content to force correct content-transfer-encoding
+            # selection and line wrapping
+            m.set_content(m.get_content())
+        return m
+
     def notify(self, flip: Flip, notification: Notification) -> None:
         if not self.channel.email_verified:
             raise TransportError("Email not verified")
@@ -37,19 +61,7 @@ class Email(Transport):
         body_bytes = get_ping_body_bytes(ping)
         subject, attachment = None, None
         if ping is not None and ping.scheme == "email" and body_bytes:
-            attachment = email.message_from_bytes(body_bytes, policy=email.policy.SMTP)
-            # If this is a multipart message then drop message/rfc822 parts to
-            # avoid recursion issues with deep attachment-within-attachment stacks.
-            if attachment.is_multipart():
-                parts = attachment.get_payload()
-                # If is_multipart=True then get_payload() returns list[Message].
-                # Mypy does not know this, hence the assert.
-                assert isinstance(parts, list)
-                # use list() here so we don't mutate the same list we're iterating
-                for part in list(parts):
-                    if part.get_content_type() == "message/rfc822":
-                        parts.remove(part)
-
+            attachment = self.bytes_to_sanitized_message(body_bytes)
             subject = attachment.get("subject", "")
 
         ctx = {
