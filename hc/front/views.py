@@ -400,15 +400,15 @@ def index(request: HttpRequest) -> HttpResponse:
     projects = list(q)
     any_down = False
     for project in projects:
-        setattr(project, "overall_status", summary[project.code]["status"])
-        setattr(project, "any_started", summary[project.code]["started"])
+        project.overall_status = summary[project.code]["status"]
+        project.any_started = summary[project.code]["started"]
         if summary[project.code]["status"] == "down":
             any_down = True
 
     # The list returned by projects() is already sorted . Do an additional sorting pass
     # to move projects with overall_status=down to the front (without changing their
     # relative order)
-    projects.sort(key=lambda p: getattr(p, "overall_status") != "down")
+    projects.sort(key=lambda p: p.overall_status != "down")
     ctx = {
         "page": "projects",
         "projects": projects,
@@ -432,7 +432,7 @@ def projects_menu(request: AuthenticatedHttpRequest) -> HttpResponse:
                 statuses[check.project_id] = status
 
     for p in projects:
-        setattr(p, "overall_status", statuses[p.id])
+        p.overall_status = statuses[p.id]
 
     return render(request, "front/projects_menu.html", {"projects": projects})
 

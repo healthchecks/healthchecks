@@ -451,6 +451,9 @@ class Project(models.Model):
     show_slugs = models.BooleanField(default=False)
 
     objects = ProjectManager()
+    # used in hc.front.views to cache the aggregate status of all checks in the project
+    overall_status: str
+    any_started: bool
 
     def __str__(self) -> str:
         return self.name or self.owner.email
