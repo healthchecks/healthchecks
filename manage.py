@@ -11,7 +11,7 @@ if __name__ == "__main__":
     logger = logging.getLogger("django")
     try:
         execute_from_command_line(sys.argv)
-    except Exception as e:
+    except Exception:
         msg = "Admin Command Error: %s"
         logger.error(msg, " ".join(sys.argv), exc_info=sys.exc_info())
-        raise e
+        raise
