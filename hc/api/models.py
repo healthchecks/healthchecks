@@ -629,8 +629,8 @@ class Check(models.Model):
         # A list of flips and time interval boundaries
         events = [(b, "---") for b in boundaries]
         q = self.flip_set.filter(created__gt=min(boundaries))
-        q = q.values_list("created", "old_status")
-        events.extend(q)
+        pair_q = q.values_list("created", "old_status")
+        events.extend(pair_q)
 
         # Iterate through flips and boundaries,
         # and for each "down" event increase the counters in `totals`.
