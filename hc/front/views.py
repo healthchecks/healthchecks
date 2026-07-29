@@ -205,8 +205,6 @@ def _refresh_last_active_date(request: AuthenticatedHttpRequest) -> None:
         # and push forward its expiry date:
         request.session["last_active"] = profile.last_active_date.timestamp()
 
-    return None
-
 
 def _get_referer_qs(request: HttpRequest) -> str:
     parsed = urlparse(request.headers.get("Referer", ""))

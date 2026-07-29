@@ -189,9 +189,10 @@ class Profile(models.Model):
         # But the single query approach has significantly worse performance
         # on PostgreSQL.
         owned_ids = Project.objects.filter(owner_id=self.user_id).values_list("id")
-        joined_ids = Member.objects.filter(user_id=self.user_id).values_list("project_id")
+        joined_ids = Member.objects.filter(user_id=self.user_id).values_list(
+            "project_id"
+        )
         return owned_ids.union(joined_ids)
-
 
     def projects(self) -> QuerySet[Project]:
         """Return a queryset of all projects we have access to."""
@@ -493,8 +494,6 @@ class Project(models.Model):
         q = Profile.objects.filter(user_id__in=user_ids).exclude(nag_period=NO_NAG)
         for profile in q:
             profile.update_next_nag_date()
-
-        return None
 
     def get_n_down(self) -> int:
         result = 0
