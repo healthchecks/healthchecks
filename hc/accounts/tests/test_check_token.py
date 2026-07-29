@@ -83,5 +83,5 @@ class CheckTokenTestCase(BaseTestCase):
         self.assertNotIn("_auth_user_id", self.client.session)
 
         # Instead, it should set 2fa_user_id in the session
-        user_id, email, valid_until = self.client.session["2fa_user"]
+        user_id, _email, _valid_until = self.client.session["2fa_user"]
         self.assertEqual(user_id, self.alice.id)

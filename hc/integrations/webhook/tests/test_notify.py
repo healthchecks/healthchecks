@@ -6,6 +6,7 @@ from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.lib.curl import CurlError
 from hc.test import BaseTestCase
@@ -209,7 +210,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        args, kwargs = mock_get.call_args
+        args = mock_get.call_args.args
         self.assertEqual(args, ("get", "http://host/%24TAG1"))
 
     @patch("hc.api.transports.curl.request", autospec=True)
@@ -224,7 +225,7 @@ class NotifyWebhookTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        args, kwargs = mock_get.call_args
+        args = mock_get.call_args.args
         self.assertEqual(args, ("get", "http://bar"))
 
     @patch("hc.api.transports.curl.request", autospec=True)

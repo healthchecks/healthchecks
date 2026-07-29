@@ -189,7 +189,7 @@ class SendAlertsTestCase(BaseTestCase):
             Webhook.is_noop.return_value = False
             notify(flip)
 
-            args, kwargs = Webhook.notify.call_args
+            args = Webhook.notify.call_args.args
             # Before sending a notification, we used to set flip.owner.status value
             # to "IF_YOU_SEE_THIS_WE_HAVE_A_BUG". The idea was to use it as 0xDEADBEEF:
             # if it surfaces anywhere in notification contents we know we have a bug.

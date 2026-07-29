@@ -86,7 +86,7 @@ class AddTelegramTestCase(BaseTestCase):
         r = self.client.post(self.bot_url, data, content_type="application/json")
         self.assertEqual(r.status_code, 200)
         mock_request.assert_called_once()
-        args, kwargs = mock_request.call_args
+        kwargs = mock_request.call_args.kwargs
         self.assertEqual(kwargs["json"]["chat_id"], 123)
         self.assertIsNone(kwargs["json"]["message_thread_id"])
 
@@ -104,7 +104,7 @@ class AddTelegramTestCase(BaseTestCase):
         r = self.client.post(self.bot_url, data, content_type="application/json")
         self.assertEqual(r.status_code, 200)
         mock_request.assert_called_once()
-        args, kwargs = mock_request.call_args
+        kwargs = mock_request.call_args.kwargs
         self.assertEqual(kwargs["json"]["chat_id"], 123)
         self.assertEqual(kwargs["json"]["message_thread_id"], 456)
 

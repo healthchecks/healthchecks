@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 from django.core import mail
 from django.test.utils import override_settings
+
 from hc.api.models import Channel, Notification
 from hc.test import BaseTestCase
 
@@ -101,7 +102,7 @@ class SendTestNotificationTestCase(BaseTestCase):
         self.assertRedirects(r, self.channels_url)
         self.assertContains(r, "Test notification sent!")
 
-        args, kwargs = mock_get.call_args
+        args = mock_get.call_args.args
         self.assertEqual(args, ("get", "http://example-url"))
 
     def test_it_handles_webhooks_with_no_urls(self) -> None:

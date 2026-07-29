@@ -57,7 +57,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertEqual(url, "https://example.org/api/v1/messages")
 
         payload = mock_post.call_args.kwargs["data"]
@@ -139,7 +139,7 @@ class NotifyZulipTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertEqual(url, "https://custom.example.org/api/v1/messages")
 
         payload = mock_post.call_args.kwargs["data"]

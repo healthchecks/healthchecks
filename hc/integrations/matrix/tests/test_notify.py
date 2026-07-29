@@ -50,7 +50,7 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertIn("https://example.net", url)
         self.assertIn(quote("!foo:example.org"), url)
 
@@ -77,7 +77,6 @@ class NotifyMatrixTestCase(BaseTestCase):
         up_flip.new_status = "up"
         self.channel.notify(up_flip)
 
-        method, url = mock_post.call_args.args
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("The downtime lasted 1 hour, 30 minutes.", payload["body"])
         self.assertIn(
@@ -92,7 +91,6 @@ class NotifyMatrixTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
-        method, url = mock_post.call_args.args
         payload = mock_post.call_args.kwargs["json"]
         self.assertIn("received a failure signal", payload["body"])
         self.assertIn("received a failure signal", payload["formatted_body"])

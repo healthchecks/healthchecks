@@ -118,7 +118,7 @@ class NotifyOpsgenieTestCase(BaseTestCase):
         self.assertEqual(n.error, "")
 
         self.assertEqual(mock_post.call_count, 1)
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertTrue(str(self.check.unique_key) in url)
 
     @patch("hc.api.transports.curl.request", autospec=True)

@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.db.models import Count, F
 from django.utils.timezone import now
+
 from hc.accounts.models import Profile
 
 
@@ -29,7 +30,7 @@ class Command(BaseCommand):
         q = q.annotate(n_teams=Count("memberships"))
         q = q.filter(date_joined__lt=month_ago, last_login=None, n_teams=0)
 
-        n, summary = q.delete()
+        _n, summary = q.delete()
         count = summary.get("auth.User", 0)
         self.stdout.write(f"Pruned {count} never-logged-in user accounts.")
 

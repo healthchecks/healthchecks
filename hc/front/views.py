@@ -319,7 +319,7 @@ def status(request: HttpRequest, code: UUID) -> HttpResponse:
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
 
-    project, rw = _get_project_for_user(request, code)
+    project, _rw = _get_project_for_user(request, code)
     checks = list(Check.objects.filter(project=project))
 
     details = []
@@ -737,7 +737,7 @@ def ping_details(
     # * it calls ping.get_body(), which reads self.owner.code, triggering a query
     # * the template calls ping.duration() which queries past "/start" events
 
-    check, rw = _get_check_for_user(request, code)
+    check, _rw = _get_check_for_user(request, code)
     q = Ping.objects.filter(owner=check)
     if n:
         q = q.filter(n=n)
@@ -798,7 +798,7 @@ def ping_details(
 
 @login_required
 def ping_body(request: AuthenticatedHttpRequest, code: UUID, n: int) -> HttpResponse:
-    check, rw = _get_check_for_user(request, code)
+    check, _rw = _get_check_for_user(request, code)
     ping = get_object_or_404(Ping, owner=check, n=n)
 
     try:
@@ -946,7 +946,7 @@ def _get_events(
 
 @login_required
 def log(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
+    check, _rw = _get_check_for_user(request, code, preload_owner_profile=True)
 
     smin = check.created
     smax = now()
@@ -1138,7 +1138,7 @@ def status_single(request: HttpRequest, code: UUID) -> HttpResponse:
 
 @login_required
 def badges(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
-    project, rw = _get_project_for_user(request, code)
+    project, _rw = _get_project_for_user(request, code)
 
     if request.method == "POST":
         form = forms.BadgeSettingsForm(request.POST)
@@ -1291,7 +1291,7 @@ def update_channel_name(request: AuthenticatedHttpRequest, code: UUID) -> HttpRe
 def send_test_notification(
     request: AuthenticatedHttpRequest, code: UUID
 ) -> HttpResponse:
-    channel, rw = _get_channel_for_user(request, code)
+    channel, _rw = _get_channel_for_user(request, code)
 
     dummy = Check(name="TEST", status="down", project=channel.project)
     dummy.last_ping = now() - td(days=1)
@@ -1376,7 +1376,7 @@ def log_events(request: HttpRequest, code: UUID) -> HttpResponse:
     if not request.user.is_authenticated:
         return HttpResponseForbidden()
 
-    check, rw = _get_check_for_user(request, code, preload_owner_profile=True)
+    check, _rw = _get_check_for_user(request, code, preload_owner_profile=True)
     form = forms.LogFiltersForm(request.GET)
     if not form.is_valid():
         return HttpResponseBadRequest()

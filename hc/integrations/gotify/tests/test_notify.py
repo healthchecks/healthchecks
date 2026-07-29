@@ -46,7 +46,7 @@ class NotifyGotidyTestCase(BaseTestCase):
         self.channel.notify(self.flip)
         assert Notification.objects.count() == 1
 
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertEqual(url, "https://example.org/message?token=abc")
 
         payload = mock_post.call_args.kwargs["json"]
@@ -89,7 +89,7 @@ class NotifyGotidyTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertEqual(url, "https://example.org/sub/message?token=abc")
 
     @patch("hc.api.transports.curl.request", autospec=True)
@@ -101,7 +101,7 @@ class NotifyGotidyTestCase(BaseTestCase):
 
         self.channel.notify(self.flip)
 
-        method, url = mock_post.call_args.args
+        _method, url = mock_post.call_args.args
         self.assertEqual(url, "https://example.org/sub/message?token=abc")
 
     @patch("hc.api.transports.curl.request", autospec=True)
