@@ -71,8 +71,7 @@ def signal_captcha(request: AuthenticatedHttpRequest) -> HttpResponse:
     if request.method == "POST":
         challenge = request.POST.get("challenge", "")
         captcha = request.POST.get("captcha", "")
-        if captcha.startswith("signalcaptcha://"):
-            captcha = captcha[16:]
+        captcha = captcha.removeprefix("signalcaptcha://")
 
         payload = {
             "jsonrpc": "2.0",
