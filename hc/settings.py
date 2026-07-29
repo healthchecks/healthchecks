@@ -14,6 +14,7 @@ from typing import Any, overload
 from urllib.parse import urlparse
 
 import django_stubs_ext
+from django.core.exceptions import ImproperlyConfigured
 from django.http.request import split_domain_port
 
 django_stubs_ext.monkeypatch()
@@ -24,7 +25,7 @@ def envbool(s: str, default: str) -> bool:
     v = os.getenv(s, default=default)
     if v not in ("", "True", "False"):
         msg = f"Unexpected value {s}={v}, use 'True' or 'False'"
-        raise Exception(msg)
+        raise ImproperlyConfigured(msg)
     return v == "True"
 
 
@@ -58,7 +59,7 @@ def envsecret(s: str, default: str | None = None) -> str | None:
             # If the _FILE env var has a non-empty value then the value *must*
             # be a path to a readable file. If we cannot access the file then we
             # fail loudly
-            raise Exception(f"Error reading {s}_FILE ({secret_path})")
+            raise ImproperlyConfigured(f"Error reading {s}_FILE ({secret_path})")
         return p.read_text().strip()
 
     return os.getenv(s, default)
