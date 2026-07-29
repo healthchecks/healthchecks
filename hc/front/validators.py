@@ -12,7 +12,7 @@ from hc.lib.tz import all_timezones
 
 
 class WebhookValidator(URLValidator):
-    schemes = ["http", "https"]
+    schemes = ("http", "https")
 
     def add_tld(self, value: str) -> str:
         try:

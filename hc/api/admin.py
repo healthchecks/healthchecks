@@ -31,7 +31,7 @@ class ChecksAdmin(ModelAdmin[Check]):
     class Media:
         css = {"all": ("css/admin/checks.css",)}
 
-    search_fields = ["id", "name", "slug", "code", "project__owner__email"]
+    search_fields = ("id", "name", "slug", "code", "project__owner__email")
     readonly_fields = ("code", "badge_key")
     raw_id_fields = ("project",)
     list_select_related = ("project",)
@@ -100,7 +100,7 @@ class SchemeListFilter(admin.SimpleListFilter):
 class MethodListFilter(admin.SimpleListFilter):
     title = "Method"
     parameter_name = "method"
-    methods = ["HEAD", "GET", "POST", "PUT", "DELETE"]
+    methods = ("HEAD", "GET", "POST", "PUT", "DELETE")
 
     def lookups(self, request: HttpRequest, model_admin: ModelAdmin[Ping]) -> Lookups:
         return zip(self.methods, self.methods)
@@ -114,7 +114,7 @@ class MethodListFilter(admin.SimpleListFilter):
 class KindListFilter(admin.SimpleListFilter):
     title = "Kind"
     parameter_name = "kind"
-    kinds = ["start", "fail"]
+    kinds = ("start", "fail")
 
     def lookups(self, request: HttpRequest, model_admin: ModelAdmin[Ping]) -> Lookups:
         return zip(self.kinds, self.kinds)
@@ -195,7 +195,7 @@ class ChannelsAdmin(ModelAdmin[Channel]):
     class Media:
         css = {"all": ("css/admin/channels.css",)}
 
-    search_fields = ["value", "project__owner__email", "name", "code"]
+    search_fields = ("value", "project__owner__email", "name", "code")
     readonly_fields = ("code",)
     list_display = (
         "id",
@@ -210,7 +210,7 @@ class ChannelsAdmin(ModelAdmin[Channel]):
     )
     list_filter = ("kind", LastNotifyDurationFilter, LastErrorFilter, "disabled")
     raw_id_fields = ("project", "checks")
-    actions = ["disable"]
+    actions = ("disable",)
 
     def created_(self, obj: Channel) -> date:
         return obj.created.date()
@@ -296,7 +296,7 @@ class NotificationsAdmin(ModelAdmin[Notification]):
     class Media:
         css = {"all": ("css/admin/notifications.css",)}
 
-    search_fields = ["owner__name", "owner__code", "channel__value", "error", "code"]
+    search_fields = ("owner__name", "owner__code", "channel__value", "error", "code")
     readonly_fields = ("owner", "code")
     list_select_related = ("channel", "channel__project", "channel__project__owner")
     list_display = (

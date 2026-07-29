@@ -79,7 +79,7 @@ class ProfileAdmin(ModelAdmin[Profile]):
         css = {"all": ("css/admin/profiles.css",)}
 
     readonly_fields = ("email",)
-    search_fields = ["id", "user__email"]
+    search_fields = ("id", "user__email")
     list_per_page = 30
     list_select_related = ("user",)
     list_display = (
@@ -253,7 +253,7 @@ class ProjectAdmin(ModelAdmin[Project]):
     readonly_fields = ("code", "owner")
     list_select_related = ("owner",)
     list_display = ("id", "name_", "users", "usage", "switch")
-    search_fields = ["id", "name", "owner__email", "code"]
+    search_fields = ("id", "name", "owner__email", "code")
 
     class Media:
         css = {"all": ("css/admin/projects.css",)}
@@ -309,8 +309,7 @@ class HcUserAdmin(UserAdmin[User]):
     list_display_links = ("id", "email")
     list_filter = ("last_login", "date_joined", "is_staff", "is_active")
     actions = ("activate", "deactivate")
-
-    ordering = ["-id"]
+    ordering = ("-id",)
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[User]:
         qs = super().get_queryset(request)
@@ -347,8 +346,8 @@ class HcUserAdmin(UserAdmin[User]):
 @admin.register(Credential)
 class CredentialAdmin(ModelAdmin[Credential]):
     list_display = ("id", "created", "email", "name")
-    search_fields = ["id", "code", "name", "user__email"]
-    list_filter = ["created"]
+    search_fields = ("id", "code", "name", "user__email")
+    list_filter = ("created",)
     readonly_fields = ("user",)
 
     def email(self, obj: Credential) -> str:
