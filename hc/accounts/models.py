@@ -514,7 +514,7 @@ class Project(models.Model):
             return True
 
         # It's a problem if any integration has a logged error
-        return True if max(errors) else False
+        return any(errors)
 
     def transfer_request(self) -> Member | None:
         return self.member_set.filter(transfer_request_date__isnull=False).first()
