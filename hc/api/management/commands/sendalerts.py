@@ -143,7 +143,7 @@ class Command(BaseCommand):
 
         try:
             status = check.get_status()
-        except Exception as e:
+        except Exception:
             # Make sure we don't trip on this check again for an hour:
             # Otherwise sendalerts may end up in a crash loop.
             q.update(alert_after=now() + td(hours=1))
