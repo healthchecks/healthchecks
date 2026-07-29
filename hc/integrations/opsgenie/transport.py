@@ -3,12 +3,13 @@ from __future__ import annotations
 from typing import NoReturn, cast
 
 from django.conf import settings
+from pydantic import BaseModel, ValidationError
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
 from hc.lib.date import format_duration
 from hc.lib.typealias import JSONDict, JSONValue
-from pydantic import BaseModel, ValidationError
 
 
 class Opsgenie(HttpTransport):

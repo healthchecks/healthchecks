@@ -5,6 +5,7 @@ from datetime import timedelta as td
 from unittest.mock import Mock, patch
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check, Flip, Notification, Ping
 from hc.test import BaseTestCase
 

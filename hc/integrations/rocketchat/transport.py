@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 from hc.front.templatetags.hc_extras import absolute_site_logo_url

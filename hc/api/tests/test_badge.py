@@ -5,6 +5,7 @@ from datetime import timedelta as td
 from django.conf import settings
 from django.core.signing import base64_hmac
 from django.utils.timezone import now
+
 from hc.api.models import Check
 from hc.test import BaseTestCase
 

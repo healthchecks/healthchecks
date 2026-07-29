@@ -4,6 +4,7 @@ import json
 from urllib.parse import quote
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.lib.string import replace

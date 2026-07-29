@@ -3,6 +3,7 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
+
 from hc.api.models import TokenBucket
 from hc.api.transports import TransportError
 from hc.test import BaseTestCase

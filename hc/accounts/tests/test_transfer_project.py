@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from urllib.parse import quote_plus
+
 from django.core import mail
 from django.utils.timezone import now
 

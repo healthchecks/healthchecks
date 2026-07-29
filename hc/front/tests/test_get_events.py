@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 from uuid import uuid4
 
 from hc.api.models import Check, Ping

@@ -10,13 +10,14 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import redirect, render
+from pydantic import BaseModel, ValidationError
+
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
 from hc.front.decorators import require_setting
 from hc.front.views import _get_rw_project_for_user
 from hc.lib import curl
 from hc.lib.urls import absolute_reverse
-from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 

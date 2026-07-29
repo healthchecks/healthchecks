@@ -4,6 +4,7 @@ import json
 from unittest.mock import Mock, patch
 
 from django.test.utils import override_settings
+
 from hc.test import BaseTestCase
 
 # Address is either a string (the path to the unix socket)

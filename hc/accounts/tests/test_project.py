@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core import mail
 from django.test.utils import override_settings
+
 from hc.accounts.models import Member, Project
 from hc.api.models import TokenBucket
 from hc.test import BaseTestCase

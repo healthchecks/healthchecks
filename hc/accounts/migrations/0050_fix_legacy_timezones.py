@@ -3,6 +3,7 @@ from typing import Any
 
 from django.apps.registry import Apps
 from django.db import migrations
+
 from hc.lib.tz import legacy_timezones
 
 

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 
 from django import forms
+
 from hc.front.validators import (
     CronValidator,
     OnCalendarValidator,

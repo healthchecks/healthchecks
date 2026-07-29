@@ -3,6 +3,7 @@ from __future__ import annotations
 from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import User
+
 from hc.accounts.management.commands.createsuperuser import Command
 from hc.test import BaseTestCase
 

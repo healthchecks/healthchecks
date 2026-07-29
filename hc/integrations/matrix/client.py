@@ -3,8 +3,9 @@ from __future__ import annotations
 from urllib.parse import quote
 
 from django.conf import settings
-from hc.lib import curl
 from pydantic import BaseModel, Field, ValidationError
+
+from hc.lib import curl
 
 JOIN_ERRORS = {
     403: f"Matrix server returned status 403 (Forbidden).\nDid you invite {settings.MATRIX_USER_ID} to the room?",

@@ -5,6 +5,7 @@ from uuid import UUID
 
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check
 from hc.test import BaseTestCase, TestHttpResponse
 

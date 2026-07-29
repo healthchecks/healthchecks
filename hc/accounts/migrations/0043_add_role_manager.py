@@ -1,4 +1,5 @@
 from django.db import migrations, models
+
 from hc.accounts.models import Member
 
 

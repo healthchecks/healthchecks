@@ -5,6 +5,7 @@ from uuid import UUID
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
+
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
 from hc.front import forms

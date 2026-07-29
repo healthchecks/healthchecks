@@ -4,10 +4,11 @@ import logging
 from typing import NoReturn
 
 from django.conf import settings
+from pydantic import BaseModel, ValidationError
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError
 from hc.lib import curl
-from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 

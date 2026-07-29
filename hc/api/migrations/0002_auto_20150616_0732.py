@@ -1,5 +1,6 @@
-from django.db import models, migrations
 from datetime import timedelta as td
+
+from django.db import migrations, models
 
 
 class Migration(migrations.Migration):

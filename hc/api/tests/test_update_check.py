@@ -4,6 +4,7 @@ import uuid
 from datetime import timedelta as td
 
 from django.utils.timezone import now
+
 from hc.api.models import Channel, Check
 from hc.lib.typealias import JSONDict
 from hc.test import BaseTestCase, TestHttpResponse

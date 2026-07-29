@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import timedelta as td
 
 from django.utils.timezone import now
+
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
 

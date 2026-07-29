@@ -4,6 +4,7 @@ from urllib.parse import quote
 from uuid import uuid4
 
 from django.conf import settings
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, get_ping_body
 

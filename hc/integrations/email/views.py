@@ -8,6 +8,7 @@ from django.core import signing
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
+
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
 from hc.front.views import _get_rw_project_for_user

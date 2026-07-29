@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 from django.test import Client
 from django.test.utils import override_settings
 from django.utils.timezone import now
+
 from hc.api.models import Check, Flip, Ping
 from hc.test import BaseTestCase
 

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from datetime import timedelta as td
-from datetime import timezone
 
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase, TestHttpResponse

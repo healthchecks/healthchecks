@@ -9,6 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.shortcuts import redirect, render
 from django.views.decorators.http import require_POST
+from pydantic import BaseModel, TypeAdapter, ValidationError
+
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.api.models import Channel
 from hc.front.decorators import require_setting
@@ -16,7 +18,6 @@ from hc.front.views import _get_rw_project_for_user
 from hc.integrations.trello.forms import AddTrelloForm
 from hc.lib import curl
 from hc.lib.urls import absolute_reverse
-from pydantic import BaseModel, TypeAdapter, ValidationError
 
 logger = logging.getLogger(__name__)
 

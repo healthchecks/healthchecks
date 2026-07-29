@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from django.conf import settings
 from django.utils.html import escape
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import HttpTransport, TransportError, get_ping_body
 from hc.integrations.slack.transport import SlackFields

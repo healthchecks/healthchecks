@@ -5,6 +5,7 @@ from typing import Any
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
+
 from hc.front.views import _replace_placeholders
 from hc.lib.html import html2text
 

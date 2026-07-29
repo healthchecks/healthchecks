@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 
 from django import forms
+
 from hc.front.forms import LaxURLField
 
 ZULIP_TARGETS = (("stream", "Stream"), ("private", "Private"))
