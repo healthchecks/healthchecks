@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from typing import cast
 
 from django.conf import settings
 from django.contrib import auth
 from django.core.exceptions import MiddlewareNotUsed
 from django.http import HttpRequest, HttpResponse
 
+from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Profile
 
 MiddlewareFunc = Callable[[HttpRequest], HttpResponse]
@@ -20,7 +22,8 @@ class TeamAccessMiddleware:
         if not request.user.is_authenticated:
             return self.get_response(request)
 
-        setattr(request, "profile", Profile.objects.for_user(request.user))
+        request = cast(AuthenticatedHttpRequest, request)
+        request.profile = Profile.objects.for_user(request.user)
         return self.get_response(request)
 
 
