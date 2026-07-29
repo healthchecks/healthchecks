@@ -695,7 +695,7 @@ def flips_by_unique_key(request: ApiRequest, unique_key: str) -> HttpResponse:
 @csrf_exempt
 @authorize_read
 def badges(request: ApiRequest) -> JsonResponse:
-    tags = set(["*"])
+    tags = {"*"}
     for check in request.project.check_set.all():
         tags.update(check.tags_list())
 
