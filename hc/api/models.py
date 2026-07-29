@@ -746,9 +746,9 @@ class Ping(models.Model):
         # use that instead of body_raw itself. This enables a defer("body_raw")
         # optimization in the "Get Pings" API call.
         if hasattr(self, "body_raw_length"):
-            return True if getattr(self, "body_raw_length") else False
+            return bool(self.body_raw_length)
 
-        return True if self.body_raw else False
+        return bool(self.body_raw)
 
     def get_body_bytes(self) -> bytes | None:
         if self.object_size and self.n:
