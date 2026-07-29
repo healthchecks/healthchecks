@@ -31,7 +31,7 @@ class EmailThread(Thread):
                 if attempt + 1 == self.MAX_TRIES:
                     # This was the last attempt and it failed:
                     # re-raise the exception
-                    raise e
+                    raise
 
                 # Wait 1s before retrying
                 time.sleep(1)

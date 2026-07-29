@@ -6,6 +6,7 @@ from threading import Thread
 from uuid import UUID
 
 from django.conf import settings
+
 from hc.lib.statsd import statsd
 
 try:
@@ -114,7 +115,7 @@ def put_object(code: UUID, n: int, data: bytes) -> None:
                 print(f"InternalError, retrying ({retries=})...")
                 continue
 
-            raise e
+            raise
 
 
 def _remove_objects(code: UUID, upto_n: int) -> None:

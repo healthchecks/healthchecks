@@ -8,10 +8,11 @@ import uuid
 from collections.abc import Iterator
 
 from django.conf import settings
+from pydantic import BaseModel, ValidationError
+
 from hc.api.models import Flip, Notification
 from hc.api.transports import Transport, TransportError
 from hc.lib.html import extract_signal_styles
-from pydantic import BaseModel, ValidationError
 
 logger = logging.getLogger(__name__)
 
@@ -180,9 +181,9 @@ class Signal(Transport):
                 self.channel.send_signal_captcha_alert(e.token, e.reply.decode())
                 plaintext, _ = extract_signal_styles(text)
                 self.channel.send_signal_rate_limited_notice(text, plaintext)
-                raise e
+                raise
             except TransportError as e:
                 tries_left -= 1
                 if e.permanent or tries_left == 0:
-                    raise e
+                    raise
                 logger.debug("Retrying signal-cli call")

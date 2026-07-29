@@ -193,7 +193,7 @@ class HttpTransport(Transport):
                 # If we have no tries left then abort the retry loop by re-raising
                 # the exception:
                 if tries_left == 0:
-                    raise e
+                    raise
 
     # Convenience wrapper around self.request for making "POST" requests
     @classmethod
