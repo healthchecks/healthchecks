@@ -15,7 +15,8 @@ except ImportError:
 
 
 def _process(name: str, lexer: Lexer) -> None:
-    source = open(f"templates/front/snippets/{name}.txt").read()
+    with open(f"templates/front/snippets/{name}.txt") as f:
+        source = f.read()
     processed = highlight(source, lexer, HtmlFormatter())
     processed = processed.replace("PING_URL", "{{ ping_url }}")
     processed = processed.replace("SITE_ROOT", "{{ SITE_ROOT }}")
