@@ -20,14 +20,14 @@ class EmailThread(Thread):
         self.message = message
 
     def run(self) -> None:
-        for attempt in range(0, self.MAX_TRIES):
+        for attempt in range(self.MAX_TRIES):
             try:
                 # Make sure each retry creates a new connection:
                 self.message.connection = None
                 self.message.send()
                 # No exception--great! Return from the retry loop
                 return
-            except (SMTPServerDisconnected, SMTPDataError) as e:
+            except (SMTPServerDisconnected, SMTPDataError):
                 if attempt + 1 == self.MAX_TRIES:
                     # This was the last attempt and it failed:
                     # re-raise the exception

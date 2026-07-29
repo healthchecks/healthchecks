@@ -107,7 +107,7 @@ def month_boundaries(months: int, tzstr: str) -> list[datetime]:
 
     now_value = now().astimezone(tz)
     y, m = now_value.year, now_value.month
-    for x in range(0, months):
+    for x in range(months):
         result.append(datetime(y, m, 1, tzinfo=tz))
 
         m -= 1
@@ -125,7 +125,7 @@ def week_boundaries(weeks: int, tzstr: str) -> list[datetime]:
 
     today = now().astimezone(tz).date()
     needle = today - timedelta(days=today.weekday())
-    for x in range(0, weeks):
+    for x in range(weeks):
         result.append(datetime(needle.year, needle.month, needle.day, tzinfo=tz))
         needle -= timedelta(days=7)
 
@@ -138,7 +138,7 @@ def day_boundaries(days: int, tzstr: str) -> list[datetime]:
     result: list[datetime] = []
 
     needle = now().astimezone(tz).date()
-    for x in range(0, days):
+    for x in range(days):
         result.append(datetime(needle.year, needle.month, needle.day, tzinfo=tz))
         needle -= timedelta(days=1)
 

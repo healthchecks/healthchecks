@@ -152,7 +152,7 @@ class NotifyGotidyTestCase(BaseTestCase):
     def test_it_does_not_show_more_than_10_other_checks(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
 
-        for i in range(0, 11):
+        for i in range(11):
             other = Check(project=self.project)
             other.name = f"Foobar #{i}"
             other.status = "down"

@@ -226,7 +226,7 @@ class NotifyPushoverTestCase(BaseTestCase):
         self._setup_data("123|0")
         mock_post.return_value.status_code = 200
 
-        for i in range(0, 11):
+        for i in range(11):
             other = Check(project=self.project)
             other.name = f"Foobar #{i}"
             other.status = "down"

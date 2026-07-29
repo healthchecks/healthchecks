@@ -20,7 +20,7 @@ class SendFlappingNoticesTestCase(BaseTestCase):
 
         c = Check.objects.create(project=self.project, name="Foo")
         nao = now()
-        for i in range(0, 4):
+        for i in range(4):
             Flip.objects.create(owner=c, created=nao, old_status="new", new_status="up")
 
     def test_it_sends_notice(self) -> None:
