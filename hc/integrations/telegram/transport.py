@@ -18,6 +18,14 @@ class MigrationRequiredError(TransportError):
 
 class Telegram(HttpTransport):
     SM = f"https://api.telegram.org/bot{settings.TELEGRAM_TOKEN}/sendMessage"
+    PERMANENT_ERRORS = (
+        "Forbidden: the group chat was deleted",
+        "Forbidden: bot was blocked by the user",
+        "Forbidden: user is deactivated",
+        "Forbidden: bot was kicked from the group chat",
+        "Forbidden: bot was kicked from the supergroup chat",
+        "Bad Request: chat not found",
+    )
 
     class MigrationParameters(BaseModel):
         migrate_to_chat_id: int
@@ -40,21 +48,8 @@ class Telegram(HttpTransport):
             chat_id = m.parameters.migrate_to_chat_id
             raise MigrationRequiredError(m.description, chat_id)
 
-        permanent = False
         message += f' with a message: "{m.description}"'
-        if m.description == "Forbidden: the group chat was deleted":
-            permanent = True
-        elif m.description == "Forbidden: bot was blocked by the user":
-            permanent = True
-        elif m.description == "Forbidden: user is deactivated":
-            permanent = True
-        elif m.description == "Forbidden: bot was kicked from the group chat":
-            permanent = True
-        elif m.description == "Forbidden: bot was kicked from the supergroup chat":
-            permanent = True
-        elif m.description == "Bad Request: chat not found":
-            permanent = True
-
+        permanent = m.description in cls.PERMANENT_ERRORS
         raise TransportError(message, permanent=permanent)
 
     @classmethod
