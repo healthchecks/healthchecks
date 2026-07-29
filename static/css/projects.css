@@ -2,13 +2,19 @@
     color: var(--text-color);
 }
 
-#project-selector a:hover {
+#project-selector a:hover,
+#project-selector a:focus {
     text-decoration: none;
 }
 
 #project-selector a:hover .project,
 #project-selector .project.selected {
     border-color: var(--link-color);
+}
+
+#project-selector a:focus .project {
+    border-color: var(--link-color);
+    outline: solid var(--link-color);
 }
 
 #project-selector .project {

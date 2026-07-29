@@ -20,8 +20,8 @@
 
         <div id="project-selector" class="row">
             {% for project in projects %}
-            <a href="{% url 'hc-checks' project.code %}">
-                <div id="{{ project.code }}" class="col-sm-6 col-md-4">
+            <div id="{{ project.code }}" class="col-sm-6 col-md-4">
+                <a href="{% url 'hc-checks' project.code %}">
                     <div class="panel project {% if project.id == last_project_id %}selected{% endif %}">
                         <div class="indicators">
                             <div class="status ic-{{ project.overall_status }}"></div>
@@ -37,17 +37,17 @@
                         </div>
 
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
             {% endfor %}
 
-            <a id="add-project" href="#" data-toggle="modal" data-target="#add-project-modal">
-                <div class="col-sm-6 col-md-4">
+            <div class="col-sm-6 col-md-4">
+                <a id="add-project" href="#" data-toggle="modal" data-target="#add-project-modal">
                     <div class="panel project">
                         New Project&hellip;
                     </div>
-                </div>
-            </a>
+                </a>
+            </div>
 
         </div>
     </div>
