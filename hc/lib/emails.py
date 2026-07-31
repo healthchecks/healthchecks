@@ -38,12 +38,17 @@ class EmailThread(Thread):
 
 
 def make_message(
-    name: str, to: str | list[str], ctx: dict[str, Any], headers: dict[str, str] = {}
+    name: str,
+    to: str | list[str],
+    ctx: dict[str, Any],
+    headers: dict[str, str] | None = None,
 ) -> Message:
     subject = render(f"emails/{name}-subject.html", ctx).strip()
     # xa0 is a non-breaking space, in text emails we want regular spaces
     body = render(f"emails/{name}-body-text.html", ctx).replace("\xa0", " ")
     html = render(f"emails/{name}-body-html.html", ctx)
+    if headers is None:
+        headers = {}
 
     domain = settings.DEFAULT_FROM_EMAIL.split("@")[-1].strip(">")
     headers["Message-ID"] = make_msgid(domain=domain)
