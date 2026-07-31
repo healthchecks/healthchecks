@@ -517,11 +517,7 @@ class Check(models.Model):
                 self.last_start = frozen_now
                 self.last_start_rid = rid
                 # Don't update "last_ping" field.
-            elif action == "ign":
-                pass
-            elif action == "log":
-                pass
-            else:
+            elif action in ("success", "fail"):
                 self.last_ping = frozen_now
                 self.last_duration = None
                 if self.last_start:

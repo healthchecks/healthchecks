@@ -436,4 +436,4 @@ ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
 
 # Read additional configuration from hc/local_settings.py if it exists
 if (BASE_DIR / "hc/local_settings.py").exists():
-    from .local_settings import *  # noqa: F403
+    from .local_settings import *

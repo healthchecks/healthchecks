@@ -379,7 +379,7 @@ class Profile(models.Model):
                 return dt
             if self.reports == "monthly" and dt.day == 1:
                 return dt
-            elif self.reports == "weekly" and dt.weekday() == 0:
+            if self.reports == "weekly" and dt.weekday() == 0:
                 return dt
 
     def is_past_over_limit_grace(self) -> bool:
