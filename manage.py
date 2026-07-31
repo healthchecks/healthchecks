@@ -13,5 +13,5 @@ if __name__ == "__main__":
         execute_from_command_line(sys.argv)
     except Exception:
         msg = "Admin Command Error: %s"
-        logger.error(msg, " ".join(sys.argv), exc_info=sys.exc_info())
+        logger.exception(msg, " ".join(sys.argv))
         raise
