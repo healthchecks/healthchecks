@@ -264,7 +264,7 @@ class ChannelsAdmin(ModelAdmin[Channel]):
             return "OK"
         return "-"
 
-    def disable(self, request: HttpRequest, qs: QuerySet[Check]) -> None:
+    def disable(self, request: HttpRequest, qs: QuerySet[Channel]) -> None:
         num_disabled = qs.update(disabled=True)
         self.message_user(request, f"Disabled {num_disabled} channel(s)")
 
