@@ -14,7 +14,7 @@ team management features: projects, team members, read-only access.
 The building blocks are:
 
 * Python 3.12+
-* Django 6.0
+* Django 6.1
 * PostgreSQL, MySQL or MariaDB
 
 Healthchecks is licensed under the BSD 3-clause license.
@@ -181,7 +181,9 @@ environment variables:
     EMAIL_USE_SSL = True
     ```
 
-    Port 465 should be the preferred method according to [RFC8314 Section 3.3: Implicit TLS for SMTP Submission](https://tools.ietf.org/html/rfc8314#section-3.3). Be sure to use a TLS certificate and not an SSL one.
+    Port 465 should be the preferred method according to [RFC8314 Section 3.3: Implicit
+    TLS for SMTP Submission](https://tools.ietf.org/html/rfc8314#section-3.3). Be sure
+    to use a TLS certificate and not an SSL one.
 
 - Explicit TLS:
     ```python
