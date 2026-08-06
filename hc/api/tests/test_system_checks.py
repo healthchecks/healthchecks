@@ -18,7 +18,7 @@ class SystemChecksCase(BaseTestCase):
         ids = [item.id for item in settings_check(None, None)]
         self.assertEqual(ids, ["hc.api.E002"])
 
-    @override_settings(EMAIL_HOST=None)
+    @override_settings(MAILERS={})
     def test_it_warns_about_missing_smtp_credentials(self) -> None:
         ids = [item.id for item in settings_check(None, None)]
         self.assertEqual(ids, ["hc.api.W002"])

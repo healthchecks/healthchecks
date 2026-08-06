@@ -480,7 +480,7 @@ class Project(models.Model):
         m = Member.objects.create(user=user, project=self, role=role)
         checks_url = reverse("hc-checks", args=[self.code])
 
-        if settings.EMAIL_HOST:
+        if settings.MAILERS:
             profile = Profile.objects.for_user(user)
             profile.send_instant_login_link(membership=m, redirect_url=checks_url)
         return True

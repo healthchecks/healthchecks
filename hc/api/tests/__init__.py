@@ -13,7 +13,12 @@ class CustomRunner(DiscoverRunner):
 
         # Send emails synchronously
         settings.BLOCKING_EMAILS = True
-        # Make sure EMAIL_HOST is set as hc.lib.emails.send() requires it
-        settings.EMAIL_HOST = "example.org"
+        # Make sure MAILERS is set as hc.lib.emails.send() requires it
+        settings.MAILERS = {
+            "default": {
+                "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+                "OPTIONS": {},
+            },
+        }
 
         super().__init__(*args, **kwargs)

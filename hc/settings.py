@@ -313,14 +313,25 @@ def immutable_file_test(path: Any, url: str) -> bool:
 WHITENOISE_IMMUTABLE_FILE_TEST = immutable_file_test
 
 # SMTP credentials for sending email
-EMAIL_HOST = os.getenv("EMAIL_HOST", "")
-EMAIL_PORT = envint("EMAIL_PORT", "587")
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = envsecret("EMAIL_HOST_PASSWORD", "")
-EMAIL_USE_TLS = envbool("EMAIL_USE_TLS", "True")
-EMAIL_USE_SSL = envbool("EMAIL_USE_SSL", "False")
 EMAIL_USE_VERIFICATION = envbool("EMAIL_USE_VERIFICATION", "True")
 EMAIL_MAIL_FROM_TMPL = os.getenv("EMAIL_MAIL_FROM_TMPL", "")
+
+MAILERS = {}
+if os.getenv("EMAIL_HOST"):
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "OPTIONS": {
+                "host": os.getenv("EMAIL_HOST", ""),
+                "port": envint("EMAIL_PORT", "587"),
+                "use_tls": envbool("EMAIL_USE_TLS", "True"),
+                "use_ssl": envbool("EMAIL_USE_SSL", "False"),
+                "username": os.getenv("EMAIL_HOST_USER", ""),
+                "password": envsecret("EMAIL_HOST_PASSWORD", ""),
+            },
+        },
+    }
+
 
 # WebAuthn
 RP_ID = os.getenv("RP_ID")

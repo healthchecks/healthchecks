@@ -22,8 +22,6 @@ class EmailThread(Thread):
     def run(self) -> None:
         for attempt in range(self.MAX_TRIES):
             try:
-                # Make sure each retry creates a new connection:
-                self.message.connection = None
                 self.message.send()
                 # No exception--great! Return from the retry loop
                 return
@@ -71,7 +69,7 @@ def make_message(
 
 
 def send(message: Message, block: bool = False) -> None:
-    assert settings.EMAIL_HOST, (
+    assert settings.MAILERS, (
         "No SMTP configuration,"
         " see https://github.com/healthchecks/healthchecks#sending-emails"
     )

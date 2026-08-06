@@ -196,7 +196,7 @@ def login(request: HttpRequest) -> HttpResponse:
         "registration_open": settings.REGISTRATION_OPEN,
         "support_email": settings.SUPPORT_EMAIL,
         "account_closed": "account-closed" in request.GET,
-        "use_magic_form": bool(settings.EMAIL_HOST),
+        "use_magic_form": bool(settings.MAILERS),
     }
     return render(request, "accounts/login.html", ctx)
 

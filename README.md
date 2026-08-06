@@ -173,10 +173,10 @@ environment variables:
 - Implicit TLS (*recommended*):
     ```python
     DEFAULT_FROM_EMAIL = "valid-sender-address@example.org"
-    EMAIL_HOST = "your-smtp-server-here.com"
+    EMAIL_HOST = "smtp.example.org"
     EMAIL_PORT = 465
-    EMAIL_HOST_USER = "smtp-username"
-    EMAIL_HOST_PASSWORD = "smtp-password"
+    EMAIL_HOST_USER = "example-username"
+    EMAIL_HOST_PASSWORD = "example-password"
     EMAIL_USE_TLS = False
     EMAIL_USE_SSL = True
     ```
@@ -188,15 +188,15 @@ environment variables:
 - Explicit TLS:
     ```python
     DEFAULT_FROM_EMAIL = "valid-sender-address@example.org"
-    EMAIL_HOST = "your-smtp-server-here.com"
+    EMAIL_HOST = "smtp.example.org"
     EMAIL_PORT = 587
-    EMAIL_HOST_USER = "smtp-username"
-    EMAIL_HOST_PASSWORD = "smtp-password"
+    EMAIL_HOST_USER = "example-username"
+    EMAIL_HOST_PASSWORD = "example-password"
     EMAIL_USE_TLS = True
     ```
 
-For more information, have a look at Django documentation,
-[Sending Email](https://docs.djangoproject.com/en/4.2/topics/email/) section.
+Healthchecks use these environment variables to construct the `settings.MAILERS`
+dictionary (a standard Django setting, [docs](https://docs.djangoproject.com/en/6.1/ref/settings/#std-setting-MAILERS)).
 
 ## Receiving Emails
 

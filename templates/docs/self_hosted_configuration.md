@@ -139,7 +139,7 @@ ALLOWED_HOSTS=first.example.org,second.example.org
 
 Aside from the comma-separated syntax, this is a standard Django setting.
 Read more about it in the
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#allowed-hosts).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#allowed-hosts).
 
 ## `APPRISE_ENABLED` {: #APPRISE_ENABLED }
 
@@ -165,28 +165,28 @@ The database engine to use. Possible values: `sqlite`, `postgres`, `mysql`.
 Default: `0`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#conn-max-age).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#conn-max-age).
 
 ## `DB_HOST` {: #DB_HOST }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#host).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#host).
 
 ## `DB_NAME` {: #DB_NAME }
 
 Default: `hc` (PostgreSQL, MySQL) or `/path/to/projectdir/hc.sqlite` (SQLite)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#name).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#name).
 
 ## `DB_PASSWORD` {: #DB_PASSWORD }
 
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#password).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#password).
 
 ## `DB_PASSWORD_FILE` {: #DB_PASSWORD_FILE }
 
@@ -202,7 +202,7 @@ precedence.
 Default: `""` (empty string)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#port).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#port).
 
 ## `DB_SSLMODE` {: #DB_SSLMODE }
 
@@ -221,7 +221,7 @@ PostgreSQL-specific, [details](https://www.postgresql.org/docs/10/libpq-connect.
 Default: `postgres` (PostgreSQL) or `root` (MySQL)
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#user).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#user).
 
 ## `DEBUG` {: #DEBUG }
 
@@ -232,14 +232,14 @@ A boolean that turns on/off debug mode.
 _Never run a Healthchecks instance in production with the debug mode turned on!_
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#debug).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#debug).
 
 ## `DEFAULT_FROM_EMAIL` {: #DEFAULT_FROM_EMAIL }
 
 Default: `healthchecks@example.org`
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#default-from-email).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#default-from-email).
 
 ## `DISCORD_CLIENT_ID` {: #DISCORD_CLIENT_ID }
 
@@ -279,15 +279,34 @@ setting. If `DISCORD_CLIENT_SECRET` and `DISCORD_CLIENT_SECRET_FILE` are both se
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host).
+The hostname of a SMTP server to use for sending email. If this environment variable
+is not set, Healthchecks will not be able to send any email.
+
+**On using `local_settings.py`:**
+Healthchecks reads SMTP settings from the `EMAIL_*` environment variables,
+and uses them to construct the `settings.MAILERS` dictionary (a standard Django setting,
+read more in [Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#std-setting-MAILERS)).
+To configure SMTP server in the `local_settings.py` file, use the
+`MAILERS` setting, not the individual `EMAIL_*` settings:
+
+```
+MAILERS = {
+    "default": {
+        "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+        "OPTIONS": {
+            "host": "smtp.example.org",
+            "username": "example-username",
+            "password": "example-password",
+        },
+    },
+}
+```
 
 ## `EMAIL_HOST_PASSWORD` {: #EMAIL_HOST_PASSWORD }
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-password).
+Password to use for the SMTP server defined in [EMAIL_HOST](#EMAIL_HOST).
 
 ## `EMAIL_HOST_PASSWORD_FILE` {: #EMAIL_HOST_PASSWORD_FILE }
 
@@ -302,29 +321,27 @@ are both set, `EMAIL_HOST_PASSWORD_FILE` takes precedence.
 
 Default: `""` (empty string)
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-host-user).
+Username to use for the SMTP server defined in [EMAIL_HOST](#EMAIL_HOST).
 
 ## `EMAIL_PORT` {: #EMAIL_PORT }
 
 Default: `587`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-port).
+Port to use for the SMTP server defined in [EMAIL_HOST](#EMAIL_HOST).
 
 ## `EMAIL_USE_TLS` {: #EMAIL_USE_TLS }
 
 Default: `True`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-tls).
+hether to use a TLS (secure) connection when talking to the SMTP server.
+This is used for explicit TLS connections, generally on port 587.
 
 ## `EMAIL_USE_SSL` {: #EMAIL_USE_SSL}
 
 Default: `False`
 
-This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#email-use-ssl).
+Whether to use an implicit TLS (secure) connection when talking to the SMTP server.
+It is generally used on port 465.
 
 ## `EMAIL_USE_VERIFICATION` {: #EMAIL_USE_VERIFICATION }
 
@@ -873,7 +890,7 @@ A secret key used for cryptographic signing. Should be set to a unique,
 unpredictable value.
 
 This is a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secret-key).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#secret-key).
 
 ## `SECRET_KEY_FILE` {: #SECRET_KEY_FILE }
 
@@ -919,7 +936,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 ```
 
 This environment variable maps to a standard Django setting, read more in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#secure-proxy-ssl-header).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#secure-proxy-ssl-header).
 
 ## `SHELL_ENABLED` {: #SHELL_ENABLED }
 
@@ -1035,11 +1052,11 @@ then Healthchecks automatically sets the following additional Django settings:
 for correct redirection to a log-in page when an unauthenticated user requests a
 page that requires authentication. `LOGIN_URL` is a standard Django setting, read more
 about it in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#login-url).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#login-url).
 * <code>STATIC_URL=<b>/prefix</b>/static/</code>. Required for correct
 URL generation to static files (JS, CSS, images). `STATIC_URL` is a standard Django
 setting, read more about it in
-[Django documentation](https://docs.djangoproject.com/en/5.1/ref/settings/#static-url).
+[Django documentation](https://docs.djangoproject.com/en/6.1/ref/settings/#static-url).
 
 **On using `local_settings.py`:** Healthchecks only sets the above additional settings
 if you specify `SITE_ROOT` via an environment variable. If you instead specify it in

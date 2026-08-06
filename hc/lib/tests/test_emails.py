@@ -39,7 +39,7 @@ class EmailsTestCase(TestCase):
 
         self.assertEqual(mock_msg.send.call_count, 2)
 
-    @override_settings(EMAIL_HOST="")
+    @override_settings(MAILERS={})
     def test_it_requires_smtp_configuration(self, mock_time: Mock) -> None:
         with self.assertRaises(AssertionError):
             send(Mock())

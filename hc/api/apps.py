@@ -42,10 +42,10 @@ def settings_check(
             )
         )
 
-    if not settings.EMAIL_HOST:
+    if not settings.MAILERS:
         items.append(
             Warning(
-                "settings.EMAIL_HOST is not set, cannot send email",
+                "No SMTP configuration, cannot send email",
                 hint="See https://github.com/healthchecks/healthchecks#sending-emails",
                 id="hc.api.W002",
             )
