@@ -92,24 +92,39 @@ click on the "Account" dropdown in top navigation, and select "Site Administrati
 
 ## Sending Emails
 
-Healthchecks needs SMTP credentials to be able to send emails:
-login links, monitoring notifications, monthly reports.
+Healthchecks must be able to send email messages, so it can send out login
+links and alerts to users. Specify your SMTP credentials using the following
+environment variables:
 
-Specify SMTP credentials using the `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`,
-`EMAIL_HOST_PASSWORD`, `EMAIL_USE_SSL`, and `EMAIL_USE_TLS` environment variables.
-Example:
+- Implicit TLS (*recommended*):
 
-```ini
-EMAIL_HOST=my-smtp-server-here.com
-EMAIL_PORT=465
-EMAIL_HOST_USER=my-username
-EMAIL_HOST_PASSWORD=mypassword
-EMAIL_USE_SSL = True
+```python
+DEFAULT_FROM_EMAIL = "valid-sender-address@example.org"
+EMAIL_HOST = "smtp.example.org"
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "example-username"
+EMAIL_HOST_PASSWORD = "example-password"
 EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
 ```
 
-You can read more about handling outbound email in the Django documentation,
-[Sending Email](https://docs.djangoproject.com/en/4.2/topics/email/) section.
+Port 465 should be the preferred method according to [RFC8314 Section 3.3: Implicit
+TLS for SMTP Submission](https://tools.ietf.org/html/rfc8314#section-3.3). Be sure
+to use a TLS certificate and not an SSL one.
+
+- Explicit TLS:
+
+```python
+DEFAULT_FROM_EMAIL = "valid-sender-address@example.org"
+EMAIL_HOST = "smtp.example.org"
+EMAIL_PORT = 587
+EMAIL_HOST_USER = "example-username"
+EMAIL_HOST_PASSWORD = "example-password"
+EMAIL_USE_TLS = True
+```
+
+Healthchecks use these environment variables to construct the `settings.MAILERS`
+dictionary (a standard Django setting, [docs](https://docs.djangoproject.com/en/6.1/ref/settings/#std-setting-MAILERS)).
 
 ## Receiving Emails
 

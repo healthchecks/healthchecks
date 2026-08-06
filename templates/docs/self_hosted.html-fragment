@@ -97,21 +97,37 @@ specific users, inspect contents of database tables.</p>
 <p>Then, log into the site using the superuser credentials. Once logged in,
 click on the "Account" dropdown in top navigation, and select "Site Administration".</p>
 <h2>Sending Emails</h2>
-<p>Healthchecks needs SMTP credentials to be able to send emails:
-login links, monitoring notifications, monthly reports.</p>
-<p>Specify SMTP credentials using the <code>EMAIL_HOST</code>, <code>EMAIL_PORT</code>, <code>EMAIL_HOST_USER</code>,
-<code>EMAIL_HOST_PASSWORD</code>, <code>EMAIL_USE_SSL</code>, and <code>EMAIL_USE_TLS</code> environment variables.
-Example:</p>
-<div class="highlight"><pre><span></span><code><span class="na">EMAIL_HOST</span><span class="o">=</span><span class="s">my-smtp-server-here.com</span>
-<span class="na">EMAIL_PORT</span><span class="o">=</span><span class="s">465</span>
-<span class="na">EMAIL_HOST_USER</span><span class="o">=</span><span class="s">my-username</span>
-<span class="na">EMAIL_HOST_PASSWORD</span><span class="o">=</span><span class="s">mypassword</span>
-<span class="na">EMAIL_USE_SSL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="na">EMAIL_USE_TLS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<p>Healthchecks must be able to send email messages, so it can send out login
+links and alerts to users. Specify your SMTP credentials using the following
+environment variables:</p>
+<ul>
+<li>Implicit TLS (<em>recommended</em>):</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_FROM_EMAIL</span> <span class="o">=</span> <span class="s2">&quot;valid-sender-address@example.org&quot;</span>
+<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.example.org&quot;</span>
+<span class="n">EMAIL_PORT</span> <span class="o">=</span> <span class="mi">465</span>
+<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s2">&quot;example-username&quot;</span>
+<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;example-password&quot;</span>
+<span class="n">EMAIL_USE_TLS</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">EMAIL_USE_SSL</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>
 
-<p>You can read more about handling outbound email in the Django documentation,
-<a href="https://docs.djangoproject.com/en/4.2/topics/email/">Sending Email</a> section.</p>
+<p>Port 465 should be the preferred method according to <a href="https://tools.ietf.org/html/rfc8314#section-3.3">RFC8314 Section 3.3: Implicit
+TLS for SMTP Submission</a>. Be sure
+to use a TLS certificate and not an SSL one.</p>
+<ul>
+<li>Explicit TLS:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_FROM_EMAIL</span> <span class="o">=</span> <span class="s2">&quot;valid-sender-address@example.org&quot;</span>
+<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.example.org&quot;</span>
+<span class="n">EMAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span>
+<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s2">&quot;example-username&quot;</span>
+<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;example-password&quot;</span>
+<span class="n">EMAIL_USE_TLS</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre></div>
+
+<p>Healthchecks use these environment variables to construct the <code>settings.MAILERS</code>
+dictionary (a standard Django setting, <a href="https://docs.djangoproject.com/en/6.1/ref/settings/#std-setting-MAILERS">docs</a>).</p>
 <h2>Receiving Emails</h2>
 <p>Healthchecks comes with a <code>smtpd</code> management command, which starts up an
 SMTP listener service. With the command running, you can ping your
