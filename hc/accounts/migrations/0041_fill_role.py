@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def fill_member_role(apps: Apps, schema_editor: Any) -> None:
+def fill_member_role(apps: StateApps, schema_editor: Any) -> None:
     Member = apps.get_model("accounts", "Member")
     Member.objects.filter(rw=False).update(role="r")
     Member.objects.filter(rw=True).update(role="w")

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def remove_anon_checks(apps: Apps, schema_editor: Any) -> None:
+def remove_anon_checks(apps: StateApps, schema_editor: Any) -> None:
     Check = apps.get_model("api", "Check")
     Check.objects.filter(user=None).delete()
 

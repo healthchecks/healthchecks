@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def fill_project_id(apps: Apps, schema_editor: Any) -> None:
+def fill_project_id(apps: StateApps, schema_editor: Any) -> None:
     Project = apps.get_model("accounts", "Project")
     Check = apps.get_model("api", "Check")
     Channel = apps.get_model("api", "Channel")

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def fill_reports_field(apps: Apps, schema_editor: Any) -> None:
+def fill_reports_field(apps: StateApps, schema_editor: Any) -> None:
     Profile = apps.get_model("accounts", "Profile")
     Profile.objects.filter(reports_allowed=False).update(reports="off")
     Profile.objects.filter(reports_allowed=True).update(reports="monthly")

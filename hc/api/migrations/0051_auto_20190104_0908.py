@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def fill_ping_kind(apps: Apps, schema_editor: Any) -> None:
+def fill_ping_kind(apps: StateApps, schema_editor: Any) -> None:
     Ping = apps.get_model("api", "Ping")
 
     q = Ping.objects.filter(start=True)

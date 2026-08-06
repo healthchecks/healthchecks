@@ -5,11 +5,11 @@ from __future__ import annotations
 import uuid
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def fill_code(apps: Apps, schema_editor: Any) -> None:
+def fill_code(apps: StateApps, schema_editor: Any) -> None:
     Notification = apps.get_model("api", "Notification")
     for n in Notification.objects.filter(code=None):
         n.code = uuid.uuid4()

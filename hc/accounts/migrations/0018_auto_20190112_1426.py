@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def create_projects(apps: Apps, schema_editor: Any) -> None:
+def create_projects(apps: StateApps, schema_editor: Any) -> None:
     Profile = apps.get_model("accounts", "Profile")
     Project = apps.get_model("accounts", "Project")
     Member = apps.get_model("accounts", "Member")

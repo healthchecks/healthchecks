@@ -3,11 +3,11 @@
 import uuid
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def fill_badge_key(apps: Apps, schema_editor: Any) -> None:
+def fill_badge_key(apps: StateApps, schema_editor: Any) -> None:
     Check = apps.get_model("api", "Check")
     for c in Check.objects.filter(badge_key=None):
         c.badge_key = uuid.uuid4()

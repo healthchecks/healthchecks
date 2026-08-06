@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-from django.apps.registry import Apps
 from django.db import migrations
+from django.db.migrations.state import StateApps
 
 
-def move_body_to_body_raw(apps: Apps, schema_editor: Any) -> None:
+def move_body_to_body_raw(apps: StateApps, schema_editor: Any) -> None:
     Ping = apps.get_model("api", "Ping")
     i = 0
     for ping in Ping.objects.exclude(body="").exclude(body=None):
