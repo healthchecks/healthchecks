@@ -144,7 +144,7 @@ Healthchecks reads configuration from environment variables. See the
 you can set via environment variables.
 
 In addition, Healthchecks reads settings from the `hc/local_settings.py` file if it
-exists. You can set or override any [standard Django setting](https://docs.djangoproject.com/en/5.1/ref/settings/)
+exists. You can set or override any [standard Django setting](https://docs.djangoproject.com/en/6.1/ref/settings/)
 in this file. You can copy the provided `hc/local_settings.py.example` as
 `hc/local_settings.py` and use it as a starting point.
 
@@ -539,15 +539,15 @@ Here is a non-exhaustive list of pointers and things to check before launching a
 Healthchecks instance in production.
 
 * Environment variables, settings.py and local_settings.py.
-  * [DEBUG](https://docs.djangoproject.com/en/4.2/ref/settings/#debug). Make sure it is
+  * [DEBUG](https://docs.djangoproject.com/en/6.1/ref/settings/#debug). Make sure it is
     set to `False`.
-  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts).
+  * [ALLOWED_HOSTS](https://docs.djangoproject.com/en/6.1/ref/settings/#allowed-hosts).
     Make sure it contains the correct domain name you want to use.
   * Server Errors. When DEBUG=False, Django will not show detailed error pages, and
     will not print exception tracebacks to standard output. To receive exception
     tracebacks in email, review and edit the
-    [ADMINS](https://docs.djangoproject.com/en/4.2/ref/settings/#admins) and
-    [SERVER_EMAIL](https://docs.djangoproject.com/en/4.2/ref/settings/#server-email)
+    [ADMINS](https://docs.djangoproject.com/en/6.1/ref/settings/#admins) and
+    [SERVER_EMAIL](https://docs.djangoproject.com/en/6.1/ref/settings/#server-email)
     settings. Consider setting up exception logging with [Sentry](https://sentry.io/for/django/).
 * Use a reverse proxy. Do not expose the Healthchecks instance directly to the public
   internet, put a reverse proxy such as nginx, HAProxy, or Caddy in front of it.
