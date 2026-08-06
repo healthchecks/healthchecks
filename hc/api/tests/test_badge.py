@@ -15,7 +15,9 @@ class BadgeTestCase(BaseTestCase):
         super().setUp()
         self.check = Check.objects.create(project=self.project, tags="foo bar")
 
-        sig = base64_hmac(str(self.project.badge_key), "foo", settings.SECRET_KEY)
+        sig = base64_hmac(
+            str(self.project.badge_key), "foo", settings.SECRET_KEY, algorithm="sha1"
+        )
         sig = sig[:8]
 
         self.svg_url = f"/badge/{self.project.badge_key}/{sig}-2/foo.svg"
@@ -66,7 +68,9 @@ class BadgeTestCase(BaseTestCase):
         self.check.tags = "db@dc1"
         self.check.save()
 
-        sig = base64_hmac(str(self.project.badge_key), "db@dc1", settings.SECRET_KEY)
+        sig = base64_hmac(
+            str(self.project.badge_key), "db@dc1", settings.SECRET_KEY, algorithm="sha1"
+        )
         sig = sig[:8]
         url = f"/badge/{self.project.badge_key}/{sig}/db%2540dc1.svg"
 

@@ -101,14 +101,14 @@ def get_badge_svg(tag: str, status: str) -> str:
 
 
 def check_signature(badge_key: str, tag: str, sig: str) -> bool:
-    ours = base64_hmac(str(badge_key), tag, settings.SECRET_KEY)
+    ours = base64_hmac(str(badge_key), tag, settings.SECRET_KEY, algorithm="sha1")
     return ours[:8] == sig[:8]
 
 
 def get_badge_url(
     badge_key: str, tag: str, fmt: str = "svg", with_late: bool = False
 ) -> str:
-    sig = base64_hmac(str(badge_key), tag, settings.SECRET_KEY)[:8]
+    sig = base64_hmac(str(badge_key), tag, settings.SECRET_KEY, algorithm="sha1")[:8]
     if not with_late:
         sig += "-2"
 
