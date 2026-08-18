@@ -564,7 +564,7 @@ def update_name(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         check.slug = form.cleaned_data["slug"]
         check.tags = form.cleaned_data["tags"]
         check.desc = form.cleaned_data["desc"]
-        check.save()
+        check.save(update_fields=("name", "slug", "tags", "desc"))
 
     if "/details/" in request.headers.get("Referer", ""):
         return redirect("hc-details", code)
