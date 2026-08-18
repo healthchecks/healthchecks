@@ -87,7 +87,12 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.assertTrue(self.profile.next_nag_date)
 
     def test_it_saves_cron_expression(self) -> None:
-        payload = {"kind": "cron", "schedule": "5 * * * *", "tz": "UTC", "grace": 60}
+        payload = {
+            "kind": "cron",
+            "schedule": "5 * * * *",
+            "tz": "Europe/Riga",
+            "grace": 60,
+        }
 
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
@@ -96,6 +101,7 @@ class UpdateTimeoutTestCase(BaseTestCase):
         self.check.refresh_from_db()
         self.assertEqual(self.check.kind, "cron")
         self.assertEqual(self.check.schedule, "5 * * * *")
+        self.assertEqual(self.check.tz, "Europe/Riga")
 
     def test_it_validates_cron_expression(self) -> None:
         self.client.login(username="alice@example.org", password="password")
