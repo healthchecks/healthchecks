@@ -1070,7 +1070,7 @@ def transfer(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
                 return HttpResponseBadRequest()
 
         check.project = target_project
-        check.save()
+        check.save(update_fields=("project",))
         check.assign_all_channels()
 
         messages.success(request, "Check transferred successfully!")
