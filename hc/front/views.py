@@ -591,7 +591,19 @@ def filtering_rules(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespon
 
         check.methods = form.cleaned_data["methods"]
         check.manual_resume = form.cleaned_data["manual_resume"]
-        check.save()
+        check.save(
+            update_fields=(
+                "filter_subject",
+                "filter_body",
+                "filter_http_body",
+                "filter_default_fail",
+                "start_kw",
+                "success_kw",
+                "failure_kw",
+                "methods",
+                "manual_resume",
+            )
+        )
 
     return redirect("hc-details", code)
 
