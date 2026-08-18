@@ -840,7 +840,7 @@ def pause(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check.status = "paused"
     check.last_start = None
     check.alert_after = None
-    check.save()
+    check.save(update_fields=("status", "last_start", "alert_after"))
 
     # After pausing a check we must check if all checks are up,
     # and Profile.next_nag_date needs to be cleared out:
@@ -866,7 +866,7 @@ def resume(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check.last_start = None
     check.last_ping = None
     check.alert_after = None
-    check.save()
+    check.save(update_fields=("status", "last_start", "last_ping", "alert_after"))
 
     return redirect("hc-details", code)
 
