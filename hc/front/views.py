@@ -612,6 +612,7 @@ def filtering_rules(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespon
 @login_required
 def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check = _get_rw_check_for_user(request, code)
+    fields = ("kind", "timeout", "grace", "schedule", "tz", "alert_after")
 
     kind = request.POST.get("kind")
     if kind == "simple":
@@ -663,12 +664,12 @@ def update_timeout(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespons
             # Kick off nags. This would normally happen in the sendalerts management
             # command while processing a flip, but we have already marked the flip
             # as processed
-            check.save()
+            check.save(update_fields=fields + ("status",))
             check_saved = True
             check.project.update_next_nag_dates()
 
     if not check_saved:
-        check.save()
+        check.save(update_fields=fields)
 
     if "/details/" in request.headers.get("Referer", ""):
         return redirect("hc-details", code)
