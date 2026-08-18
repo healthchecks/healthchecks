@@ -892,7 +892,16 @@ def clear_events(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check.last_duration = None
     check.has_confirmation_link = False
     check.alert_after = None
-    check.save()
+    check.save(
+        update_fields=(
+            "status",
+            "last_ping",
+            "last_start",
+            "last_duration",
+            "has_confirmation_link",
+            "alert_after",
+        )
+    )
 
     check.ping_set.all().delete()
     check.notification_set.all().delete()
