@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from django.utils.timezone import now
+from datetime import datetime, timedelta, timezone
 
 from hc.api.models import Check, Ping
 from hc.test import BaseTestCase
@@ -10,7 +10,12 @@ class ClearEventsTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
         self.check = Check.objects.create(project=self.project)
-        self.check.last_ping = now()
+        self.check.status = "up"
+        self.check.last_start = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        self.check.last_ping = datetime(2020, 1, 1, tzinfo=timezone.utc)
+        self.check.alert_after = datetime(2020, 1, 1, 1, tzinfo=timezone.utc)
+        self.check.last_duration = timedelta(minutes=1)
+        self.check.has_confirmation_link = True
         self.check.n_pings = 1
         self.check.save()
 
@@ -25,7 +30,12 @@ class ClearEventsTestCase(BaseTestCase):
         self.assertRedirects(r, self.redirect_url)
 
         self.check.refresh_from_db()
+        self.assertEqual(self.check.status, "new")
+        self.assertIsNone(self.check.last_start)
         self.assertIsNone(self.check.last_ping)
+        self.assertIsNone(self.check.last_duration)
+        self.assertIsNone(self.check.alert_after)
+        self.assertFalse(self.check.has_confirmation_link)
         self.assertFalse(self.check.ping_set.exists())
 
     def test_team_access_works(self) -> None:
