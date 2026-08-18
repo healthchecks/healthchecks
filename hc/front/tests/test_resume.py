@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from hc.api.models import Check, Flip
 from hc.test import BaseTestCase
 
@@ -7,7 +9,13 @@ from hc.test import BaseTestCase
 class ResumeTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
-        self.check = Check.objects.create(project=self.project, status="paused")
+        self.check = Check.objects.create(
+            project=self.project,
+            status="paused",
+            last_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
+            last_ping=datetime(2020, 1, 1, tzinfo=timezone.utc),
+            alert_after=datetime(2020, 1, 1, 1, tzinfo=timezone.utc),
+        )
         self.url = f"/checks/{self.check.code}/resume/"
         self.redirect_url = f"/checks/{self.check.code}/details/"
 
@@ -18,6 +26,9 @@ class ResumeTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.status, "new")
+        self.assertIsNone(self.check.last_start)
+        self.assertIsNone(self.check.last_ping)
+        self.assertIsNone(self.check.alert_after)
 
         flip = Flip.objects.get()
         self.assertEqual(flip.old_status, "paused")
