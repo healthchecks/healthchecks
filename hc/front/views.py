@@ -581,29 +581,20 @@ def filtering_rules(request: AuthenticatedHttpRequest, code: UUID) -> HttpRespon
 
     form = forms.FilteringRulesForm(request.POST)
     if form.is_valid():
-        check.filter_subject = form.cleaned_data["filter_subject"]
-        check.filter_body = form.cleaned_data["filter_body"]
-        check.filter_http_body = form.cleaned_data["filter_http_body"]
-        check.filter_default_fail = form.cleaned_data["filter_default_fail"]
-        check.start_kw = form.cleaned_data["start_kw"]
-        check.success_kw = form.cleaned_data["success_kw"]
-        check.failure_kw = form.cleaned_data["failure_kw"]
-
-        check.methods = form.cleaned_data["methods"]
-        check.manual_resume = form.cleaned_data["manual_resume"]
-        check.save(
-            update_fields=(
-                "filter_subject",
-                "filter_body",
-                "filter_http_body",
-                "filter_default_fail",
-                "start_kw",
-                "success_kw",
-                "failure_kw",
-                "methods",
-                "manual_resume",
-            )
+        update_fields = (
+            "filter_subject",
+            "filter_body",
+            "filter_http_body",
+            "filter_default_fail",
+            "start_kw",
+            "success_kw",
+            "failure_kw",
+            "methods",
+            "manual_resume",
         )
+        for field in update_fields:
+            setattr(check, field, form.cleaned_data[field])
+        check.save(update_fields=update_fields)
 
     return redirect("hc-details", code)
 
