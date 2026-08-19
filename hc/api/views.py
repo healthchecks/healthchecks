@@ -397,13 +397,11 @@ def _update(check: Check, spec: Spec, v: int) -> None:
 
     check.alert_after = check.going_down_after()
     update_fields.add("alert_after")
-    if check.pk is None:
-        # This is an insert
+    if check._state.adding:
         check.save()
     else:
-        # This is an update. Update only the fields that were in the spec.
-        # Updating all fields risks overwriting concurrent changes
-        # with older values.
+        # Update only the fields that were in the spec. Updating all fields risks
+        # overwriting concurrent changes with older values.
         check.save(update_fields=update_fields)
 
     # This needs to be done after saving the check, because of
