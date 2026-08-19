@@ -63,6 +63,7 @@ class UpdateCheckTestCase(BaseTestCase):
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.name, "Foo")
+        self.assertEqual(self.check.slug, "foo")
         self.assertEqual(self.check.tags, "bar,baz")
         self.assertEqual(self.check.timeout.total_seconds(), 3600)
         self.assertEqual(self.check.grace.total_seconds(), 60)
