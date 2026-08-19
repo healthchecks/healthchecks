@@ -48,6 +48,10 @@ def _makeheader(k: str, v: str) -> bytes:
     return key_bytes + b":" + value_bytes
 
 
+def _is_private(ip: str) -> bool:
+    return ipaddress.ip_address(ip).is_private
+
+
 def request(
     method: str,
     url: str,
@@ -125,10 +129,9 @@ def request(
 
     def opensocket(purpose: int, curl_address: CurlSockAddr) -> socket.socket | int:
         family, socktype, protocol, address = curl_address
-        if not settings.INTEGRATIONS_ALLOW_PRIVATE_IPS:
-            if ipaddress.ip_address(address[0]).is_private:
-                opensocket_rejected_ips.append(address[0])
-                return pycurl.SOCKET_BAD
+        if not settings.INTEGRATIONS_ALLOW_PRIVATE_IPS and _is_private(address[0]):
+            opensocket_rejected_ips.append(address[0])
+            return pycurl.SOCKET_BAD
 
         return socket.socket(family, socktype, protocol)
 
