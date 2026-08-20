@@ -26,7 +26,7 @@ class LaxURLField(forms.URLField):
 
     """
 
-    default_validators = [WebhookValidator()]
+    default_validators = (WebhookValidator(),)
 
 
 class NameTagsForm(forms.Form):
