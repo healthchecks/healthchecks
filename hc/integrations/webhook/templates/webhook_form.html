@@ -70,7 +70,7 @@
                 </div>
                 {% if form.url_down.errors %}
                 <div class="help-block">
-                    {{ form.url_down.errors|join:"" }}
+                    {{ form.url_down.errors|join:" " }}
                 </div>
                 {% endif %}
             </div>
@@ -84,7 +84,7 @@
                     placeholder='{"status": "$STATUS"}'>{{ form.body_down.value|default:"" }}</textarea>
                 {% if form.body_down.errors %}
                 <div class="help-block">
-                    {{ form.body_down.errors|join:"" }}
+                    {{ form.body_down.errors|join:" " }}
                 </div>
                 {% endif %}
             </div>
@@ -98,7 +98,7 @@
                     placeholder="X-Sample-Header: $NAME has gone down">{{ form.headers_down.value|default:"" }}</textarea>
                 <div class="help-block">
                     {% if form.headers_down.errors %}
-                        {{ form.headers_down.errors|join:"" }}
+                        {{ form.headers_down.errors|join:" " }}
                     {% else %}
                         Optional "Header-Name: value" pairs, one pair per line.
                     {% endif %}
@@ -127,7 +127,7 @@
 
                 {% if form.url_up.errors %}
                 <div class="help-block">
-                    {{ form.url_up.errors|join:"" }}
+                    {{ form.url_up.errors|join:" " }}
                 </div>
                 {% endif %}
             </div>
@@ -140,7 +140,7 @@
                     placeholder='{"status": "$STATUS"}'>{{ form.body_up.value|default:"" }}</textarea>
                 {% if form.post_data.errors %}
                 <div class="help-block">
-                    {{ form.post_data.errors|join:"" }}
+                    {{ form.post_data.errors|join:" " }}
                 </div>
                 {% endif %}
             </div>
@@ -154,7 +154,7 @@
                     placeholder="X-Sample-Header: $NAME is back up">{{ form.headers_up.value|default:"" }}</textarea>
                 <div class="help-block">
                     {% if form.headers_up.errors %}
-                        {{ form.headers_up.errors|join:"" }}
+                        {{ form.headers_up.errors|join:" " }}
                     {% else %}
                         Optional "Header-Name: value" pairs, one pair per line.
                     {% endif %}
