@@ -1069,9 +1069,9 @@ class Channel(models.Model):
 
     def make_token(self) -> str:
         key_bytes = settings.SECRET_KEY.encode()
-        seed = str(self.code) + self.email.value
-        seed_bytes = seed.encode()
-        return hmac.new(key_bytes, seed_bytes, "sha256").hexdigest()
+        msg = str(self.code) + self.email.value
+        msg_bytes = msg.encode()
+        return hmac.new(key_bytes, msg_bytes, "sha256").hexdigest()
 
     def send_verify_link(self) -> None:
         args = [self.code, self.make_token()]
