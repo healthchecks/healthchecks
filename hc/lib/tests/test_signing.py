@@ -5,7 +5,6 @@ from unittest import TestCase
 from django.core.signing import BadSignature
 
 from hc.lib.signing import (
-    HexTimestampSigner,
     ShortHexTimestampSigner,
     sign_bounce_id,
     unsign_bounce_id,
@@ -14,14 +13,14 @@ from hc.lib.signing import (
 
 class SigningTestCase(TestCase):
     def test_it_works(self) -> None:
-        signer = HexTimestampSigner()
+        signer = ShortHexTimestampSigner()
         for i in range(1, 100):
             sample = "x" * i
             signed = signer.sign(sample)
             self.assertEqual(signer.unsign(signed), sample)
 
     def test_it_allows_lowercase(self) -> None:
-        signer = HexTimestampSigner()
+        signer = ShortHexTimestampSigner()
         signed = signer.sign("hello world").lower()
         self.assertEqual(signer.unsign(signed), "hello world")
 
@@ -36,10 +35,6 @@ class SignBounceIdTestCase(TestCase):
 
 
 class UnsignBounceIdTestCase(TestCase):
-    def test_it_handles_valid_hextimestampsigner_output(self) -> None:
-        signed = HexTimestampSigner(sep=".", algorithm="sha1").sign("hello")
-        unsign_bounce_id(signed, max_age=60)
-
     def test_it_handles_valid_shorthextimestampsigner_output(self) -> None:
         signed = ShortHexTimestampSigner(sep=".").sign("hello")
         unsign_bounce_id(signed, max_age=60)
