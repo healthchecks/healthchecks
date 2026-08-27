@@ -38,3 +38,8 @@ class VerifyEmailTestCase(BaseTestCase):
 
         r = self.client.get(url)
         assert r.status_code == 404
+
+    def test_make_token_depends_on_email(self) -> None:
+        token = self.channel.make_token()
+        self.channel.value = "bob@example.org"
+        self.assertNotEqual(self.channel.make_token(), token)
