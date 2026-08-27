@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import socket
 import uuid
@@ -1067,9 +1068,10 @@ class Channel(models.Model):
         self.checks.add(*checks)
 
     def make_token(self) -> str:
-        seed = str(self.code) + settings.SECRET_KEY
+        key_bytes = settings.SECRET_KEY.encode()
+        seed = str(self.code) + self.email.value
         seed_bytes = seed.encode()
-        return hashlib.sha256(seed_bytes).hexdigest()
+        return hmac.new(key_bytes, seed_bytes, "sha256").hexdigest()
 
     def send_verify_link(self) -> None:
         args = [self.code, self.make_token()]
