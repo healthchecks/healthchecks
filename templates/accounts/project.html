@@ -305,8 +305,6 @@
                        data-toggle="modal"
                        data-target="#remove-project-modal">Remove Project</a>
                     This will permanently remove project {{ project }}.
-                <form action="{% url 'hc-remove-project' project.code %}" method="post">
-                </form>
             </div>
         </div>
         {% endif %}
