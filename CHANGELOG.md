@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 
 ## v4.4 - 2026-08-31
 
+Important: this Healthchecks release is using Django 6.1, which has dropped support
+for PostgreSQL < 15, MySQL < 8.4, MariaDB < 10.11.
+
 ### Improvements
 - Send flapping notices to all team members (not just the owner)
 - Upgrade to Django 6.1
