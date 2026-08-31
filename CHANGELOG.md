@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v4.4-dev - Unreleased
+## v4.4 - 2026-08-31
 
 ### Improvements
 - Send flapping notices to all team members (not just the owner)
