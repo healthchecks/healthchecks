@@ -9,7 +9,7 @@ Hello,
     {% if membership.project.name %}
         <strong>{{ membership.project.owner.email }}</strong> invites you to their
         <a href="{% site_root %}">{% site_name %}</a>
-        project <strong>{{ membership.project }}</strong>.
+        project <strong>{{ membership.project|mangle_link }}</strong>.
     {% else %}
         <strong>{{ membership.project.owner.email }}</strong> invites you to their
         <a href="{% site_root %}">{% site_name %}</a> account.

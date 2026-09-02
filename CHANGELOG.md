@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v4.5-dev - Unreleased
+
+### Improvements
+- Fix project invite email template to mangle URLs in project names
+
 ## v4.4 - 2026-08-31
 
 Important: this Healthchecks release is using Django 6.1, which has dropped support
