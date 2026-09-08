@@ -13,7 +13,7 @@ from uuid import UUID
 from cronsim import CronSim, CronSimError
 from django.conf import settings
 from django.core.signing import BadSignature
-from django.db import connection, transaction
+from django.db import connection
 from django.db.models import Prefetch
 from django.db.models.functions import Length
 from django.http import (
