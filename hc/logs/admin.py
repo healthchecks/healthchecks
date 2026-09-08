@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
 from django.http import HttpRequest
@@ -11,7 +13,7 @@ from hc.logs.models import Record
 @admin.register(Record)
 class RecordsAdmin(ModelAdmin[Record]):
     class Media:
-        css = {"all": ("css/admin/records.css",)}
+        css: ClassVar = {"all": ("css/admin/records.css",)}
 
     search_fields = ("name", "message")
     readonly_fields = ("message",)

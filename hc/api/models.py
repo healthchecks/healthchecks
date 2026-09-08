@@ -226,7 +226,7 @@ class Check(models.Model):
     past_downtimes: list[DowntimeRecord] | None = None
 
     class Meta:
-        indexes = [
+        indexes = (
             # Index for the alert_after field. Exclude rows with status=down.
             # Used in the sendalerts management command.
             models.Index(
@@ -235,7 +235,7 @@ class Check(models.Model):
                 condition=~models.Q(status="down"),
             ),
             models.Index(fields=["project_id", "slug"], name="api_check_project_slug"),
-        ]
+        )
 
     def __str__(self) -> str:
         return "%s (%d)" % (self.name or self.code, self.id)
@@ -1366,7 +1366,7 @@ class Flip(models.Model):
     reason = models.CharField(max_length=8, choices=REASONS, default="")
 
     class Meta:
-        indexes = [
+        indexes = (
             # For quickly looking up unprocessed flips.
             # Used in the sendalerts management command.
             models.Index(
@@ -1379,7 +1379,7 @@ class Flip(models.Model):
                 fields=["owner", "created"],
                 name="api_flip_owner_created",
             ),
-        ]
+        )
 
     def to_dict(self) -> FlipDict:
         return {

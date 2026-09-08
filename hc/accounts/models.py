@@ -610,11 +610,11 @@ class Member(models.Model):
     role = models.CharField(max_length=1, default=Role.REGULAR, choices=Role.choices)
 
     class Meta:
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
                 fields=["user", "project"], name="accounts_member_no_duplicates"
-            )
-        ]
+            ),
+        )
 
     def can_accept(self) -> bool:
         return self.user.profile.can_accept(self.project)

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from datetime import date, datetime
-from typing import TypedDict
+from typing import ClassVar, TypedDict
 
 from django.contrib import admin
 from django.contrib.admin import ModelAdmin
@@ -76,7 +76,7 @@ class ProfileAnnotations(TypedDict):
 @admin.register(Profile)
 class ProfileAdmin(ModelAdmin[Profile]):
     class Media:
-        css = {"all": ("css/admin/profiles.css",)}
+        css: ClassVar = {"all": ("css/admin/profiles.css",)}
 
     readonly_fields = ("email",)
     search_fields = ("id", "user__email")
@@ -256,7 +256,7 @@ class ProjectAdmin(ModelAdmin[Project]):
     search_fields = ("id", "name", "owner__email", "code")
 
     class Media:
-        css = {"all": ("css/admin/projects.css",)}
+        css: ClassVar = {"all": ("css/admin/projects.css",)}
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[Project]:
         qs = super().get_queryset(request)

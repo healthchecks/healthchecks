@@ -3,7 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable
 from datetime import date
 from datetime import timedelta as td
-from typing import TypedDict
+from typing import ClassVar, TypedDict
 from uuid import UUID
 
 from django.contrib import admin
@@ -29,7 +29,7 @@ class CheckAnnotations(TypedDict):
 @admin.register(Check)
 class ChecksAdmin(ModelAdmin[Check]):
     class Media:
-        css = {"all": ("css/admin/checks.css",)}
+        css: ClassVar = {"all": ("css/admin/checks.css",)}
 
     search_fields = ("id", "name", "slug", "code", "project__owner__email")
     readonly_fields = ("code", "badge_key")
@@ -193,7 +193,7 @@ class ChannelAnnotations(TypedDict):
 @admin.register(Channel)
 class ChannelsAdmin(ModelAdmin[Channel]):
     class Media:
-        css = {"all": ("css/admin/channels.css",)}
+        css: ClassVar = {"all": ("css/admin/channels.css",)}
 
     search_fields = ("value", "project__owner__email", "name", "code")
     readonly_fields = ("code",)
@@ -294,7 +294,7 @@ class ErrorFilter(admin.SimpleListFilter):
 @admin.register(Notification)
 class NotificationsAdmin(ModelAdmin[Notification]):
     class Media:
-        css = {"all": ("css/admin/notifications.css",)}
+        css: ClassVar = {"all": ("css/admin/notifications.css",)}
 
     search_fields = ("owner__name", "owner__code", "channel__value", "error", "code")
     readonly_fields = ("owner", "code")
