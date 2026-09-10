@@ -66,7 +66,7 @@ To set up Healthchecks development environment:
 
   ```sh
   sudo apt update
-  sudo apt install -y gcc python3-dev python3-venv libpq-dev libcurl4-openssl-dev libssl-dev
+  sudo apt install -y python3-venv
   ```
 
 * Prepare directory for project code and virtualenv. Feel free to use a
@@ -83,7 +83,6 @@ To set up Healthchecks development environment:
   ```sh
   python3 -m venv .venv
   source .venv/bin/activate
-  pip3 install wheel # make sure wheel is installed in the venv
   ```
 
 * Check out project code:
