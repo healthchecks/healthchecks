@@ -452,7 +452,7 @@ if (BASE_DIR / "hc/local_settings.py").exists():
 # Overrides for testing
 if sys.argv[1:2] == ["test"]:
     # For speed:
-    PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
     # Send emails synchronously
     BLOCKING_EMAILS = True
     # Make sure MAILERS is set as hc.lib.emails.send() requires it
