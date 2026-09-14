@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 from __future__ import annotations
 
 import os
+import sys
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any, overload
@@ -198,7 +199,6 @@ LOGGING = {
 }
 
 WSGI_APPLICATION = "hc.wsgi.application"
-TEST_RUNNER = "hc.api.tests.CustomRunner"
 
 
 # Default database engine is SQLite. So one can just check out code,
@@ -448,3 +448,17 @@ ZULIP_ENABLED = envbool("ZULIP_ENABLED", "True")
 # Read additional configuration from hc/local_settings.py if it exists
 if (BASE_DIR / "hc/local_settings.py").exists():
     from .local_settings import *
+
+# Overrides for testing
+if sys.argv[1:2] == ["test"]:
+    # For speed:
+    PASSWORD_HASHERS = ("django.contrib.auth.hashers.MD5PasswordHasher",)
+    # Send emails synchronously
+    BLOCKING_EMAILS = True
+    # Make sure MAILERS is set as hc.lib.emails.send() requires it
+    MAILERS = {
+        "default": {
+            "BACKEND": "django.core.mail.backends.smtp.EmailBackend",
+            "OPTIONS": {},
+        },
+    }
