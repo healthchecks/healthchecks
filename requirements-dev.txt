@@ -1,5 +1,5 @@
 apprise==1.13.1
-django-stubs==6.1.0
+django-stubs==6.1.1
 Markdown==3.10.2
 minio==7.2.20
 mypy==2.3.1
