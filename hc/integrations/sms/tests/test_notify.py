@@ -17,6 +17,9 @@ class NotifySmsTestCase(BaseTestCase):
     def setUp(self) -> None:
         super().setUp()
 
+        self.profile.sms_limit = 50
+        self.profile.save()
+
         self.check = Check(project=self.project)
         self.check.name = "Foo"
         # Transport classes should use flip.new_status,
