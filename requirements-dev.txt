@@ -3,8 +3,8 @@ django-stubs==6.1.1
 Markdown==3.10.2
 minio==7.2.20
 mypy==2.3.1
-Pygments==2.20.0
-time-machine==3.5.0
+Pygments==2.21.0
+time-machine==3.5.1
 types-Markdown
 types-pycurl
 types-pygments
