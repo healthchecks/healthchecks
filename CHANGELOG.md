@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Fix project invite email template to mangle URLs in project names
+- Fix transfer request email template to mangle URLs in project names
 
 ## v4.4 - 2026-08-31
 

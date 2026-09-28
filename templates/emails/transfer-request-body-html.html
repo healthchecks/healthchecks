@@ -7,7 +7,7 @@ Hello,
 
 <strong>{{ project.owner.email }}</strong> would like to transfer the ownership of
 their project
-{% if project.name %}<strong>{{ project.name }}</strong>{% endif %} to you.
+{% if project.name %}<strong>{{ project.name|mangle_link }}</strong>{% endif %} to you.
 <br /><br />
 To accept or reject this request, please visit the project's Settings
 page:

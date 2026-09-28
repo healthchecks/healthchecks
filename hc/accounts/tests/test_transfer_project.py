@@ -34,6 +34,17 @@ class TransferProjectTestCase(BaseTestCase):
         quoted_settings_url = quote_plus(self.url)
         self.assertTrue(f"/?next={quoted_settings_url}" in body)
 
+    def test_it_mangles_project_name_in_transfer_email(self) -> None:
+        self.project.name = "https://example.org"
+        self.project.save()
+
+        self.client.login(username="alice@example.org", password="password")
+
+        form = {"transfer_project": "1", "email": "bob@example.org"}
+        self.client.post(self.url, form)
+        self.assertEmailContainsHtml("<span>.</span>")
+        self.assertEmailContainsHtml("<span>://</span>")
+
     def test_transfer_project_checks_ownership(self) -> None:
         self.client.login(username="bob@example.org", password="password")
 
