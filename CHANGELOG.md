@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 - Fix project invite email template to mangle URLs in project names
 - Fix transfer request email template to mangle URLs in project names
 
+### Bug Fixes
+- Fix the email integration to handle SMTP connection errors gracefully (#1346)
+
 ## v4.4 - 2026-08-31
 
 Important: this Healthchecks release is using Django 6.1, which has dropped support

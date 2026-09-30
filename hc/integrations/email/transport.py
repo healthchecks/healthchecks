@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 import email
+import logging
 from email.message import EmailMessage
+from smtplib import SMTPDataError, SMTPServerDisconnected
 
 from hc.accounts.models import Profile
 from hc.api.models import Flip, Notification
 from hc.api.transports import Transport, TransportError, get_ping_body_bytes
 from hc.lib import emails
 from hc.lib.signing import sign_bounce_id
+
+logger = logging.getLogger(__name__)
 
 
 class Email(Transport):
@@ -76,7 +80,11 @@ class Email(Transport):
             "ping_attached": attachment is not None,
         }
 
-        emails.alert(self.channel.email.value, ctx, headers, attachment)
+        try:
+            emails.alert(self.channel.email.value, ctx, headers, attachment)
+        except (SMTPServerDisconnected, SMTPDataError, ConnectionRefusedError):
+            logger.exception("Exception while sending email")
+            raise TransportError("SMTP connection error")
 
     def is_noop(self, status: str) -> bool:
         if status == "down":

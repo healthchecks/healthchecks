@@ -4,6 +4,7 @@ import email
 import json
 from datetime import datetime, timezone
 from datetime import timedelta as td
+from smtplib import SMTPDataError, SMTPServerDisconnected
 from unittest.mock import Mock, patch
 
 import time_machine
@@ -486,3 +487,27 @@ Content-Transfer-Encoding: 8bit
         eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
         for line in eml.split("\n"):
             self.assertLess(len(line), 80)
+
+    @patch("hc.integrations.email.transport.logger")
+    @patch("hc.lib.emails.send", Mock(side_effect=SMTPServerDisconnected))
+    def test_it_handles_server_disconnected(self, logger: Mock) -> None:
+        self.channel.notify(self.flip)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "SMTP connection error")
+        self.assertTrue(logger.exception.called)
+
+    @patch("hc.integrations.email.transport.logger")
+    @patch("hc.lib.emails.send", Mock(side_effect=SMTPDataError(123, "oh no")))
+    def test_it_handles_data_error(self, logger: Mock) -> None:
+        self.channel.notify(self.flip)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "SMTP connection error")
+        self.assertTrue(logger.exception.called)
+
+    @patch("hc.integrations.email.transport.logger")
+    @patch("hc.lib.emails.send", Mock(side_effect=ConnectionRefusedError))
+    def test_it_handles_connection_refused_error(self, logger: Mock) -> None:
+        self.channel.notify(self.flip)
+        n = Notification.objects.get()
+        self.assertEqual(n.error, "SMTP connection error")
+        self.assertTrue(logger.exception.called)
