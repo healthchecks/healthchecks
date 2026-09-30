@@ -328,6 +328,7 @@ if os.getenv("EMAIL_HOST"):
                 "use_ssl": envbool("EMAIL_USE_SSL", "False"),
                 "username": os.getenv("EMAIL_HOST_USER", ""),
                 "password": envsecret("EMAIL_HOST_PASSWORD", ""),
+                "timeout": 30,
             },
         },
     }
