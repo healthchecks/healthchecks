@@ -125,8 +125,8 @@ class Command(BaseCommand):
             if not loop:
                 break
 
-            # Sleep for 60 seconds before looking for more work
-            for i in range(60):
+            # Sleep for 10 seconds before looking for more work
+            for i in range(10):
                 if not self.shutdown:
                     time.sleep(1)
 
