@@ -17,7 +17,7 @@ from hc.accounts.models import NO_NAG, Profile
 
 class Command(BaseCommand):
     help = "Send due monthly reports and nags"
-    tmpl = "Sent monthly report to %s"
+    tmpl = "Sent %s report to %s"
 
     def pause(self) -> None:
         time.sleep(1)
@@ -60,7 +60,7 @@ class Command(BaseCommand):
             return True
 
         if profile.send_report():
-            self.stdout.write(self.tmpl % profile.user.email)
+            self.stdout.write(self.tmpl % (profile.reports, profile.user.email))
             # Pause before next report to avoid hitting sending quota
             self.pause()
 

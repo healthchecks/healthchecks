@@ -50,7 +50,8 @@ class SendReportsTestCase(BaseTestCase):
         self.flip.save()
 
     def test_it_sends_monthly_report(self) -> None:
-        cmd = Command(stdout=Mock())
+        stdout = Mock()
+        cmd = Command(stdout=stdout)
         found = cmd.handle_one_report()
         self.assertTrue(found)
 
@@ -62,6 +63,20 @@ class SendReportsTestCase(BaseTestCase):
 
         email = mail.outbox[0]
         self.assertEqual(email.subject, "Monthly Report")
+
+        stdout.write.assert_called_with("Sent monthly report to alice@example.org\n")
+
+    def test_it_sends_weekly_report(self) -> None:
+        self.profile.reports = "weekly"
+        self.profile.save()
+
+        stdout = Mock()
+        Command(stdout=stdout).handle_one_report()
+
+        email = mail.outbox[0]
+        self.assertEqual(email.subject, "Weekly Report")
+
+        stdout.write.assert_called_with("Sent weekly report to alice@example.org\n")
 
     def test_it_obeys_next_report_date(self) -> None:
         self.profile.next_report_date = CURRENT_TIME + td(days=1)
