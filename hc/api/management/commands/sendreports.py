@@ -20,7 +20,7 @@ class Command(BaseCommand):
     tmpl = "Sent monthly report to %s"
 
     def pause(self) -> None:
-        time.sleep(3)
+        time.sleep(1)
 
     def add_arguments(self, parser: ArgumentParser) -> None:
         parser.add_argument(
