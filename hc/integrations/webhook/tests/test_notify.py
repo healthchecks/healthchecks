@@ -43,7 +43,7 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.flip.new_status = status
 
     @patch("hc.api.transports.curl.request", autospec=True)
-    def test_webhook(self, mock_get: Mock) -> None:
+    def test_it_works(self, mock_get: Mock) -> None:
         definition = {
             "method_down": "GET",
             "url_down": "http://example",
@@ -54,10 +54,31 @@ class NotifyWebhookTestCase(BaseTestCase):
         self._setup_data(json.dumps(definition))
         mock_get.return_value.status_code = 200
 
-        self.channel.notify(self.flip)
+        error = self.channel.notify(self.flip)
+        self.assertEqual(error, "")
+
+        mock_get.assert_called_once()
         args, kwargs = mock_get.call_args
         self.assertEqual(args, ("get", "http://example"))
         self.assertEqual(kwargs["timeout"], 30)
+
+    @patch("hc.api.transports.curl.request", autospec=True)
+    def test_it_handles_http_205(self, mock_get: Mock) -> None:
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://example",
+            "body_down": "",
+            "headers_down": {},
+        }
+
+        self._setup_data(json.dumps(definition))
+        mock_get.return_value.status_code = 205
+
+        error = self.channel.notify(self.flip)
+        self.assertEqual(error, "")
+
+        mock_get.assert_called_once()
+        self.assertEqual(mock_get.call_args.args, ("get", "http://example"))
 
     @patch(
         "hc.api.transports.curl.request",

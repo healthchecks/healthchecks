@@ -158,7 +158,7 @@ class HttpTransport(Transport):
                 auth=auth,
                 timeout=30,
             )
-            if r.status_code not in (200, 201, 202, 204):
+            if r.status_code not in (200, 201, 202, 204, 205):
                 cls.raise_for_response(r)
         except curl.CurlError as e:
             raise TransportError(e.message)
