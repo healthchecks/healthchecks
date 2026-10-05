@@ -10,11 +10,9 @@ from django.utils.timezone import now
 from hc.lib.urls import absolute_reverse
 from hc.logs.models import Record
 
-YEAR_AGO = now() - td(days=365)
-
 
 class Command(BaseCommand):
-    help = """Send notification to admins about new log events."""
+    help = """Send notification to admins about new log events, delete old entries."""
 
     def handle(self, **options: Any) -> str:
         threshold = now() - td(hours=24)
@@ -29,5 +27,9 @@ class Command(BaseCommand):
             """
             mail_admins(message, message, html_message=html_message)
             return f"Done, {count} new log record{s_maybe}."
+
+        # Delete records older than 7 days
+        threshold = now() - td(days=7)
+        Record.objects.filter(created__lt=threshold).delete()
 
         return "Done, no new log records."
