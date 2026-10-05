@@ -15,6 +15,10 @@ class Command(BaseCommand):
     help = """Send notification to admins about new log events, delete old entries."""
 
     def handle(self, **options: Any) -> str:
+        # First, delete records older than 7 days
+        threshold = now() - td(days=7)
+        Record.objects.filter(created__lt=threshold).delete()
+
         threshold = now() - td(hours=24)
         count = Record.objects.filter(created__gt=threshold).count()
         if count > 0:
@@ -27,9 +31,5 @@ class Command(BaseCommand):
             """
             mail_admins(message, message, html_message=html_message)
             return f"Done, {count} new log record{s_maybe}."
-
-        # Delete records older than 7 days
-        threshold = now() - td(days=7)
-        Record.objects.filter(created__lt=threshold).delete()
 
         return "Done, no new log records."

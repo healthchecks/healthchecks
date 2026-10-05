@@ -32,6 +32,15 @@ class SendLogsTestCase(BaseTestCase):
 
     def test_it_removes_records_older_than_week(self) -> None:
         Record.objects.create(
+            created=now(),
+            host="testhost",
+            name="hc.test",
+            level=20,
+            message="test message",
+            traceback="",
+        )
+
+        Record.objects.create(
             created=now() - td(days=8),
             host="testhost",
             name="hc.test",
@@ -40,7 +49,5 @@ class SendLogsTestCase(BaseTestCase):
             traceback="",
         )
 
-        result = Command().handle()
-        self.assertEqual(result, "Done, no new log records.")
-
-        self.assertEqual(Record.objects.count(), 0)
+        Command().handle()
+        self.assertEqual(Record.objects.count(), 1)
