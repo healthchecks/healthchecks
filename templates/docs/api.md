@@ -376,32 +376,34 @@ Creates a new check and returns its ping URL.
 All request parameters are optional and will use their default
 values if omitted.
 
-With this API call, you can create both Simple and Cron checks:
+With this API call, you can create simple, cron, and systemd OnCalendar checks:
 
-* To create a Simple check, specify the `timeout` parameter.
-* To create a Cron check, specify the `schedule` and `tz` parameters.
+* To create a simple check, specify the `timeout` parameter.
+* To create a cron or systemd OnCalendar check,
+  specify the `schedule` and `tz` parameters.
 
 ### Request Parameters
 
 name
-:   string, optional, default value: ""
+:   String, optional, default value: "".
 
-    Name for the new check.
+    Name for the new check. Must not exceed 100 characters in length.
 
-    Changed in API v3: the check's slug is no longer automatically generated
+    **Changed in API v3:** the check's slug is no longer automatically generated
     from the check's name. Instead, the client can specify the slug explicitly
     via the `slug` field.
 
 slug
-:   string, optional, default value: ""
+:   String, optional, default value: "".
 
-    Slug for the new check. The slug should only contain the following
-    characters: `a-z`, `0-9`, hyphens, underscores. Example:
+    Slug for the new check. Must not exceed 100 characters in length.
+    The slug should only contain the following characters: `a-z`, `0-9`, hyphens,
+    underscores. Example:
 
     <pre>{"slug": "my-custom-slug"}</pre>
 
 tags
-:   string, optional, default value: ""
+:   String, optional, default value: "".
 
     A space-delimited list of tags for the new check.
     Example:
@@ -409,12 +411,12 @@ tags
     <pre>{"tags": "reports staging"}</pre>
 
 desc
-:   string, optional.
+:   String, optional.
 
     Description of the check.
 
 timeout
-:   number, optional, default value: {{ default_timeout }}.
+:   Number, optional, default value: {{ default_timeout }}.
 
     The expected period of this check in seconds.
 
@@ -425,14 +427,14 @@ timeout
     <pre>{"timeout": 300}</pre>
 
 grace
-:   number, optional, default value: {{ default_grace }}.
+:   Number, optional, default value: {{ default_grace }}.
 
     The grace period for this check in seconds.
 
     Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
 schedule
-:   string, optional.
+:   String, optional.
 
     A cron or systemd OnCalendar expression defining this check's schedule.
     SITE_NAME will detect the expression type (cron or OnCalendar) automatically.
@@ -451,7 +453,7 @@ schedule
     <pre>{"schedule": "\*-\*~1 12:00"}</pre>
 
 tz
-:   string, optional, default value: "UTC".
+:   String, optional, default value: "UTC".
 
     Server's timezone. This setting only has an effect in combination with the
     `schedule` parameter.
@@ -461,7 +463,7 @@ tz
     <pre>{"tz": "Europe/Riga"}</pre>
 
 manual_resume
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Controls whether a paused check automatically resumes when pinged (the default)
     or not. If set to false, a paused check will leave the paused state when it receives
@@ -469,7 +471,7 @@ manual_resume
     you manually resume it from the web dashboard.
 
 methods
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the allowed HTTP methods for making ping requests.
     Must be one of the two values: "" (an empty string) or "POST".
@@ -484,7 +486,7 @@ methods
     <pre>{"methods": "POST"}</pre>
 
 channels
-:   string, optional.
+:   String, optional.
 
     By default, this API call assigns no integrations to the newly created
     check.
@@ -513,7 +515,7 @@ channels
     <pre>{"channels": "Email to Alice,SMS to Alice"}</pre>
 
 unique
-:   array of string values, optional, default value: [].
+:   Array of string values, optional, default value: [].
 
     Enables "upsert" functionality. Before creating a check, SITE_NAME looks for
     existing checks, filtered by fields listed in `unique`.
@@ -535,7 +537,7 @@ unique
     Otherwise, a new check will be created and returned.
 
 start_kw
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the keywords for classifying inbound email messages and HTTP pings as
     start signals. Separate multiple keywords using commas. Keywords are
@@ -552,7 +554,7 @@ start_kw
     Subject line contains the word "STARTED".
 
 success_kw
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the keywords for classifying inbound email messages and HTTP pings as
     success signals. Separate multiple keywords using commas. Keywords are
@@ -569,7 +571,7 @@ success_kw
     contains either the word "SUCCESS" or the word "COMPLETED".
 
 failure_kw
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the keywords for classifying inbound email messages and HTTP pings as
     failure signals. Separate multiple keywords using commas. Keywords are
@@ -586,13 +588,13 @@ failure_kw
     contains either the word "FAILED" or the word "ERROR".
 
 filter_subject
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Enables filtering of inbound email messages by looking for keywords in their
     subject lines. See also the `start_kw`, `success_kw`, and `failure_kw` fields.
 
 filter_body
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Enables filtering of inbound email messages by looking for keywords in the
     message body. See also the `start_kw`, `success_kw`, and `failure_kw` fields.
@@ -601,14 +603,14 @@ filter_body
     keywords both in the plain text and the HTML message contents.
 
 filter_http_body
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Enables filtering of HTTP pings by looking for keywords in the first
     PING_BODY_LIMIT_FORMATTED of the HTTP request body. See also the
     `start_kw`, `success_kw`, and `failure_kw` fields.
 
 filter_default_fail
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Determines the handling of email and HTTP pings when keyword filtering is enabled,
     but no keywords match.
@@ -715,24 +717,25 @@ parameter, SITE_NAME will leave its value unchanged.
 ### Request Parameters
 
 name
-:   string, optional.
+:   String, optional.
 
-    Name for the check.
+    Name for the check. Must not exceed 100 characters in length.
 
-    Changed in API v3: the check's slug is no longer automatically generated
+    **Changed in API v3:** the check's slug is no longer automatically generated
     from the check's name. Instead, the client can specify the slug explicitly
     via the `slug` field.
 
 slug
-:   string, optional
+:   String, optional.
 
-    Slug for the new check. The slug should only contain the following
-    characters: `a-z`, `0-9`, hyphens, underscores. Example:
+    Slug for the new check. Must not exceed 100 characters in length. The slug
+    should only contain the following characters: `a-z`, `0-9`, hyphens, underscores.
+    Example:
 
     <pre>{"slug": "my-custom-slug"}</pre>
 
 tags
-:   string, optional.
+:   String, optional.
 
     A space-delimited list of tags for the check.
 
@@ -741,12 +744,12 @@ tags
     <pre>{"tags": "reports staging"}</pre>
 
 desc
-:   string, optional.
+:   String, optional.
 
     Description of the check.
 
 timeout
-:   number, optional.
+:   Number, optional.
 
     The expected period of this check in seconds.
 
@@ -757,14 +760,14 @@ timeout
     <pre>{"timeout": 300}</pre>
 
 grace
-:   number, optional.
+:   Number, optional.
 
     The grace period for this check in seconds.
 
     Minimum: 60 (one minute), maximum: 31536000 (365 days).
 
 schedule
-:   string, optional.
+:   String, optional.
 
     A cron or systemd OnCalendar expression defining this check's schedule.
     SITE_NAME will detect the expression type (cron or OnCalendar) automatically.
@@ -783,7 +786,7 @@ schedule
     <pre>{"schedule": "\*-\*~1 12:00"}</pre>
 
  tz
-:   string, optional.
+:   String, optional.
 
     Server's timezone. This setting only has an effect in combination with the
     "schedule" parameter.
@@ -793,7 +796,7 @@ schedule
     <pre>{"tz": "Europe/Riga"}</pre>
 
 manual_resume
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Controls whether a paused ping automatically resumes when pinged (the default),
     or not. If set to false, a paused check will leave the paused state when it receives
@@ -801,7 +804,7 @@ manual_resume
     you manually resume it from the web dashboard.
 
 methods
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the allowed HTTP methods for making ping requests.
     Must be one of the two values: "" (an empty string) or "POST".
@@ -816,7 +819,7 @@ methods
     <pre>{"methods": "POST"}</pre>
 
 channels
-:   string, optional.
+:   String, optional.
 
     Set this field to a special value "*" to automatically assign all existing
     integrations. Example:
@@ -847,7 +850,7 @@ channels
     <pre>{"channels": "Email to Alice,SMS to Alice"}</pre>
 
 start_kw
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the keywords for classifying inbound email messages and HTTP pings as
     start signals. Separate multiple keywords using commas. Keywords are
@@ -864,7 +867,7 @@ start_kw
     Subject line contains the word "STARTED".
 
 success_kw
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the keywords for classifying inbound email messages and HTTP pings as
     success signals. Separate multiple keywords using commas. Keywords are
@@ -881,7 +884,7 @@ success_kw
     contains either the word "SUCCESS" or the word "COMPLETED".
 
 failure_kw
-:   string, optional, default value: "".
+:   String, optional, default value: "".
 
     Specifies the keywords for classifying inbound email messages and HTTP pings as
     failure signals. Separate multiple keywords using commas. Keywords are
@@ -898,13 +901,13 @@ failure_kw
     contains either the word "FAILED" or the word "ERROR".
 
 filter_subject
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Enables filtering of inbound email messages by looking for keywords in their
     subject lines. See also the `start_kw`, `success_kw`, and `failure_kw` fields.
 
 filter_body
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Enables filtering of inbound email messages by looking for keywords in the
     message body. See also the `start_kw`, `success_kw`, and `failure_kw` fields.
@@ -913,14 +916,14 @@ filter_body
     keywords both in the plain text and the HTML message contents.
 
 filter_http_body
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Enables filtering of HTTP pings by looking for keywords in the first
     PING_BODY_LIMIT_FORMATTED of the HTTP request body. See also the
     `start_kw`, `success_kw`, and `failure_kw` fields.
 
 filter_default_fail
-:   boolean, optional, default value: false.
+:   Boolean, optional, default value: false.
 
     Determines the handling of email and HTTP pings when keyword filtering is enabled,
     but no keywords match.
