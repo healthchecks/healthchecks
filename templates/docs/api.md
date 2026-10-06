@@ -413,7 +413,7 @@ tags
 desc
 :   String, optional.
 
-    Description of the check.
+    Description of the check. Must not exceed 10'000 characters in length.
 
 timeout
 :   Number, optional, default value: {{ default_timeout }}.
@@ -746,7 +746,7 @@ tags
 desc
 :   String, optional.
 
-    Description of the check.
+    Description of the check. Must not exceed 10'000 characters in length.
 
 timeout
 :   Number, optional.

@@ -60,7 +60,7 @@ def guess_kind(schedule: str) -> str:
 
 class Spec(BaseModel):
     channels: str | None = None
-    desc: str | None = None
+    desc: str | None = Field(None, max_length=10000)
     failure_kw: str | None = Field(None, max_length=200)
     filter_subject: bool | None = None
     filter_body: bool | None = None

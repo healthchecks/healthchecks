@@ -33,7 +33,7 @@ class NameTagsForm(forms.Form):
     name = forms.CharField(max_length=100, required=False)
     slug = forms.SlugField(max_length=100, required=False)
     tags = forms.CharField(max_length=500, required=False)
-    desc = forms.CharField(required=False)
+    desc = forms.CharField(max_length=10000, required=False)
 
     def clean_tags(self) -> str:
         result = []

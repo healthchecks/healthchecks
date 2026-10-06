@@ -103,3 +103,10 @@ class UpdateNameTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 405)
+
+    def test_it_rejects_long_desc(self) -> None:
+        payload = {"desc": "X" * 10001}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, data=payload)
+        self.assertEqual(r.status_code, 400)

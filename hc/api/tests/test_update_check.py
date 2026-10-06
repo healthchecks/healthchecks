@@ -21,13 +21,19 @@ class UpdateCheckTestCase(BaseTestCase):
         self,
         code: uuid.UUID | str,
         data: JSONDict,
+        expect_fragment: str | None = None,
         v: int = 1,
         api_key: str = "X" * 32,
     ) -> TestHttpResponse:
         url = f"/api/v{v}/checks/{code}"
-        return self.csrf_client.post(
+        r = self.csrf_client.post(
             url, data, content_type="application/json", HTTP_X_API_KEY=api_key
         )
+        if expect_fragment:
+            self.assertEqual(r.status_code, 400)
+            self.assertIn(expect_fragment, r.json()["error"])
+
+        return r
 
     def test_it_works(self) -> None:
         self.check.last_ping = now()
@@ -445,3 +451,8 @@ class UpdateCheckTestCase(BaseTestCase):
             r = self.post(self.check.code, {"name": "foo"})
 
         self.assertEqual(r.status_code, 404)
+
+    def test_it_rejects_long_desc(self) -> None:
+        self.post(
+            self.check.code, {"desc": "X" * 10001}, expect_fragment="desc is too long"
+        )

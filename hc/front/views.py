@@ -559,12 +559,14 @@ def update_name(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
     check = _get_rw_check_for_user(request, code)
 
     form = forms.NameTagsForm(request.POST)
-    if form.is_valid():
-        check.name = form.cleaned_data["name"]
-        check.slug = form.cleaned_data["slug"]
-        check.tags = form.cleaned_data["tags"]
-        check.desc = form.cleaned_data["desc"]
-        check.save(update_fields=("name", "slug", "tags", "desc"))
+    if not form.is_valid():
+        return HttpResponseBadRequest()
+
+    check.name = form.cleaned_data["name"]
+    check.slug = form.cleaned_data["slug"]
+    check.tags = form.cleaned_data["tags"]
+    check.desc = form.cleaned_data["desc"]
+    check.save(update_fields=("name", "slug", "tags", "desc"))
 
     if "/details/" in request.headers.get("Referer", ""):
         return redirect("hc-details", code)

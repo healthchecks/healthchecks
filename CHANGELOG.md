@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix the email integration to handle SMTP connection errors gracefully (#1346)
+- Add 10'000 character length limit for check's description field
 
 ## v4.4 - 2026-08-31
 
