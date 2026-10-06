@@ -478,3 +478,8 @@ class UpdateCheckTestCase(BaseTestCase):
         self.post(
             self.check.code, {"desc": "X" * 10001}, expect_fragment="desc is too long"
         )
+
+    def test_it_rejects_long_tags(self) -> None:
+        self.post(
+            self.check.code, {"tags": "X" * 501}, expect_fragment="tags is too long"
+        )

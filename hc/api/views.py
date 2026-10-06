@@ -76,7 +76,7 @@ class Spec(BaseModel):
     subject: str | None = Field(None, max_length=200)
     subject_fail: str | None = Field(None, max_length=200)
     success_kw: str | None = Field(None, max_length=200)
-    tags: str | None = None
+    tags: str | None = Field(None, max_length=500)
     timeout: td | None = Field(None, ge=60, le=31536000)
     tz: str | None = None
     unique: list[Literal["name", "slug", "tags", "timeout", "grace"]] | None = None

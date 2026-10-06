@@ -110,3 +110,10 @@ class UpdateNameTestCase(BaseTestCase):
         self.client.login(username="alice@example.org", password="password")
         r = self.client.post(self.url, data=payload)
         self.assertEqual(r.status_code, 400)
+
+    def test_it_rejects_long_tags(self) -> None:
+        payload = {"tags": "x" * 501}
+
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, data=payload)
+        self.assertEqual(r.status_code, 400)

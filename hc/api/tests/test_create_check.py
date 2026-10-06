@@ -485,3 +485,6 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_long_desc(self) -> None:
         self.post({"desc": "X" * 10001}, expect_fragment="desc is too long")
+
+    def test_it_rejects_long_tags(self) -> None:
+        self.post({"tags": "X" * 501}, expect_fragment="tags is too long")
