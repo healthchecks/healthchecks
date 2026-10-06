@@ -128,5 +128,5 @@ including logs from the cron daemon.</p>
 </code></pre></div>
 
 <p>To see the logs from e.g. the last hour, and only from the cron daemon:</p>
-<div class="highlight"><pre><span></span><code>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">&quot;1 hour ago&quot;</span><span class="w"> </span>-t<span class="w"> </span>CRON
+<div class="highlight"><pre><span></span><code>journalctl<span class="w"> </span>--since<span class="w"> </span><span class="s2">"1 hour ago"</span><span class="w"> </span>-t<span class="w"> </span>CRON
 </code></pre></div>

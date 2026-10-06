@@ -221,12 +221,12 @@ read more in <a href="https://docs.djangoproject.com/en/6.1/ref/settings/#std-se
 To configure SMTP server in the <code>local_settings.py</code> file, use the
 <code>MAILERS</code> setting, not the individual <code>EMAIL_*</code> settings:</p>
 <div class="highlight"><pre><span></span><code><span class="n">MAILERS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s">&quot;default&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s">&quot;BACKEND&quot;</span><span class="p">:</span> <span class="s">&quot;django.core.mail.backends.smtp.EmailBackend&quot;</span><span class="p">,</span>
-        <span class="s">&quot;OPTIONS&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s">&quot;host&quot;</span><span class="p">:</span> <span class="s">&quot;smtp.example.org&quot;</span><span class="p">,</span>
-            <span class="s">&quot;username&quot;</span><span class="p">:</span> <span class="s">&quot;example-username&quot;</span><span class="p">,</span>
-            <span class="s">&quot;password&quot;</span><span class="p">:</span> <span class="s">&quot;example-password&quot;</span><span class="p">,</span>
+    <span class="s">"default"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s">"BACKEND"</span><span class="p">:</span> <span class="s">"django.core.mail.backends.smtp.EmailBackend"</span><span class="p">,</span>
+        <span class="s">"OPTIONS"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s">"host"</span><span class="p">:</span> <span class="s">"smtp.example.org"</span><span class="p">,</span>
+            <span class="s">"username"</span><span class="p">:</span> <span class="s">"example-username"</span><span class="p">,</span>
+            <span class="s">"password"</span><span class="p">:</span> <span class="s">"example-password"</span><span class="p">,</span>
         <span class="p">},</span>
     <span class="p">},</span>
 <span class="p">}</span>
@@ -572,8 +572,8 @@ time Healthchecks reads <code>local_settings.py</code>. Therefore, if you config
 using the <code>local_settings.py</code> file instead of environment variables, and specify
 <code>REMOTE_USER_HEADER</code> there, you will also need a line which sets the other setting,
 <code>AUTHENTICATION_BACKENDS</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="n">REMOTE_USER_HEADER</span> <span class="o">=</span> <span class="s">&quot;HTTP_X_AUTHENTICATED_USER&quot;</span>
-<span class="n">AUTHENTICATION_BACKENDS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;hc.accounts.backends.CustomHeaderBackend&quot;</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="n">REMOTE_USER_HEADER</span> <span class="o">=</span> <span class="s">"HTTP_X_AUTHENTICATED_USER"</span>
+<span class="n">AUTHENTICATION_BACKENDS</span> <span class="o">=</span> <span class="p">[</span><span class="s">"hc.accounts.backends.CustomHeaderBackend"</span><span class="p">]</span>
 </code></pre></div>
 
 <h2 id="ROCKETCHAT_ENABLED"><code>ROCKETCHAT_ENABLED</code></h2>
@@ -662,7 +662,7 @@ When Healthchecks reads settings from environment variables, it expects
 If you set <code>SECURE_PROXY_SSL_HEADER</code> in <code>local_settings.py</code>, it should be a tuple
 with two elements instead:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># in local_settings.py</span>
-<span class="na">SECURE_PROXY_SSL_HEADER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">(&quot;HTTP_X_FORWARDED_PROTO&quot;, &quot;https&quot;)</span>
+<span class="na">SECURE_PROXY_SSL_HEADER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">("HTTP_X_FORWARDED_PROTO", "https")</span>
 </code></pre></div>
 
 <p>This environment variable maps to a standard Django setting, read more in
@@ -807,7 +807,7 @@ where to forward channel messages by invoking Telegram's
 <a href="https://core.telegram.org/bots/api#setwebhook">setWebhook</a> API call:</li>
 </ul>
 <div class="highlight"><pre><span></span><code>$<span class="w"> </span>./manage.py<span class="w"> </span>settelegramwebhook
-Done,<span class="w"> </span>Telegram<span class="err">&#39;</span>s<span class="w"> </span>webhook<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to:<span class="w"> </span>https://my-monitoring-project.com/integrations/telegram/bot/
+Done,<span class="w"> </span>Telegram<span class="err">'</span>s<span class="w"> </span>webhook<span class="w"> </span><span class="nb">set</span><span class="w"> </span>to:<span class="w"> </span>https://my-monitoring-project.com/integrations/telegram/bot/
 </code></pre></div>
 
 <p>For this to work, your <code>SITE_ROOT</code> must be publicly accessible and use the "https://"

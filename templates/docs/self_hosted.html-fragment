@@ -103,11 +103,11 @@ environment variables:</p>
 <ul>
 <li>Implicit TLS (<em>recommended</em>):</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_FROM_EMAIL</span> <span class="o">=</span> <span class="s2">&quot;valid-sender-address@example.org&quot;</span>
-<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.example.org&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_FROM_EMAIL</span> <span class="o">=</span> <span class="s2">"valid-sender-address@example.org"</span>
+<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s2">"smtp.example.org"</span>
 <span class="n">EMAIL_PORT</span> <span class="o">=</span> <span class="mi">465</span>
-<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s2">&quot;example-username&quot;</span>
-<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;example-password&quot;</span>
+<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s2">"example-username"</span>
+<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s2">"example-password"</span>
 <span class="n">EMAIL_USE_TLS</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">EMAIL_USE_SSL</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>
@@ -118,11 +118,11 @@ to use a TLS certificate and not an SSL one.</p>
 <ul>
 <li>Explicit TLS:</li>
 </ul>
-<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_FROM_EMAIL</span> <span class="o">=</span> <span class="s2">&quot;valid-sender-address@example.org&quot;</span>
-<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s2">&quot;smtp.example.org&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="n">DEFAULT_FROM_EMAIL</span> <span class="o">=</span> <span class="s2">"valid-sender-address@example.org"</span>
+<span class="n">EMAIL_HOST</span> <span class="o">=</span> <span class="s2">"smtp.example.org"</span>
 <span class="n">EMAIL_PORT</span> <span class="o">=</span> <span class="mi">587</span>
-<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s2">&quot;example-username&quot;</span>
-<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s2">&quot;example-password&quot;</span>
+<span class="n">EMAIL_HOST_USER</span> <span class="o">=</span> <span class="s2">"example-username"</span>
+<span class="n">EMAIL_HOST_PASSWORD</span> <span class="o">=</span> <span class="s2">"example-password"</span>
 <span class="n">EMAIL_USE_TLS</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>
 
@@ -137,10 +137,10 @@ checks by sending email messages.</p>
 </code></pre></div>
 
 <p>Send a test email:</p>
-<div class="highlight"><pre><span></span><code>$<span class="w"> </span>curl<span class="w"> </span>--url<span class="w"> </span><span class="s1">&#39;smtp://127.0.0.1:2525&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--mail-from<span class="w"> </span><span class="s1">&#39;foo@example.org&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>--mail-rcpt<span class="w"> </span><span class="s1">&#39;11111111-1111-1111-1111-111111111111@my-hc.example.org&#39;</span><span class="w"> </span><span class="se">\</span>
-<span class="w">    </span>-F<span class="w"> </span><span class="s1">&#39;=&#39;</span>
+<div class="highlight"><pre><span></span><code>$<span class="w"> </span>curl<span class="w"> </span>--url<span class="w"> </span><span class="s1">'smtp://127.0.0.1:2525'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mail-from<span class="w"> </span><span class="s1">'foo@example.org'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--mail-rcpt<span class="w"> </span><span class="s1">'11111111-1111-1111-1111-111111111111@my-hc.example.org'</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>-F<span class="w"> </span><span class="s1">'='</span>
 </code></pre></div>
 
 <h2>Sending Status Notifications</h2>
