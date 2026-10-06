@@ -207,9 +207,11 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(check.channel_set.count(), 1)
 
     def test_it_rejects_bad_channel_code(self) -> None:
-        r = self.post(self.check.code, {"channels": "abc", "name": "New Name"})
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "invalid channel identifier: abc")
+        self.post(
+            self.check.code,
+            {"channels": "abc", "name": "New Name"},
+            expect_fragment="invalid channel identifier: abc",
+        )
 
         # The name should be unchanged
         self.check.refresh_from_db()
@@ -217,9 +219,11 @@ class UpdateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_missing_channel(self) -> None:
         code = str(uuid.uuid4())
-        r = self.post(self.check.code, {"channels": code})
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "invalid channel identifier: " + code)
+        self.post(
+            self.check.code,
+            {"channels": code},
+            expect_fragment=f"invalid channel identifier: {code}",
+        )
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
@@ -228,17 +232,21 @@ class UpdateCheckTestCase(BaseTestCase):
         charlies_channel = Channel.objects.create(project=self.charlies_project)
         code = str(charlies_channel.code)
 
-        r = self.post(self.check.code, {"channels": code})
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "invalid channel identifier: " + code)
+        self.post(
+            self.check.code,
+            {"channels": code},
+            expect_fragment=f"invalid channel identifier: {code}",
+        )
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_handles_channel_lookup_by_name_with_no_results(self) -> None:
-        r = self.post(self.check.code, {"channels": "foo"})
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "invalid channel identifier: foo")
+        self.post(
+            self.check.code,
+            {"channels": "foo"},
+            expect_fragment="invalid channel identifier: foo",
+        )
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
@@ -247,9 +255,11 @@ class UpdateCheckTestCase(BaseTestCase):
         Channel.objects.create(project=self.project, name="foo")
         Channel.objects.create(project=self.project, name="foo")
 
-        r = self.post(self.check.code, {"channels": "foo"})
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "non-unique channel identifier: foo")
+        self.post(
+            self.check.code,
+            {"channels": "foo"},
+            expect_fragment="non-unique channel identifier: foo",
+        )
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
@@ -257,20 +267,26 @@ class UpdateCheckTestCase(BaseTestCase):
     def test_it_rejects_multiple_empty_channel_names(self) -> None:
         Channel.objects.create(project=self.project, name="")
 
-        r = self.post(self.check.code, {"channels": ","})
-        self.assertEqual(r.status_code, 400)
-        self.assertEqual(r.json()["error"], "empty channel identifier")
+        self.post(
+            self.check.code,
+            {"channels": ","},
+            expect_fragment="empty channel identifier",
+        )
 
         self.check.refresh_from_db()
         self.assertEqual(self.check.channel_set.count(), 0)
 
     def test_it_rejects_non_string_channels_key(self) -> None:
-        r = self.post(self.check.code, {"channels": 123})
-        self.assertEqual(r.status_code, 400)
+        self.post(
+            self.check.code,
+            {"channels": 123},
+            expect_fragment="channels is not a string",
+        )
 
     def test_it_rejects_non_string_desc(self) -> None:
-        r = self.post(self.check.code, {"desc": 123})
-        self.assertEqual(r.status_code, 400)
+        self.post(
+            self.check.code, {"desc": 123}, expect_fragment="desc is not a string"
+        )
 
     def test_it_rejects_null_values(self) -> None:
         for field in [
@@ -355,8 +371,11 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.methods, "POST")
 
     def test_it_rejects_bad_methods_value(self) -> None:
-        r = self.post(self.check.code, {"methods": "bad-value"})
-        self.assertEqual(r.status_code, 400)
+        self.post(
+            self.check.code,
+            {"methods": "bad-value"},
+            expect_fragment="methods has unexpected value",
+        )
 
     def test_it_sets_success_kw(self) -> None:
         r = self.post(self.check.code, {"subject": "SUCCESS,COMPLETE"})
@@ -394,8 +413,11 @@ class UpdateCheckTestCase(BaseTestCase):
         self.assertEqual(self.check.timeout.total_seconds(), 60 * 24 * 3600)
 
     def test_it_rejects_out_of_range_timeout(self) -> None:
-        r = self.post(self.check.code, {"timeout": 500 * 24 * 3600})
-        self.assertEqual(r.status_code, 400)
+        self.post(
+            self.check.code,
+            {"timeout": 500 * 24 * 3600},
+            expect_fragment="timeout is too large",
+        )
 
     def test_it_prioritizes_filter_subject_field(self) -> None:
         r = self.post(self.check.code, {"subject": "SUCCESS", "filter_subject": False})
