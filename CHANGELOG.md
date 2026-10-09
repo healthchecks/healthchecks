@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 - Fix project invite email template to mangle URLs in project names
 - Fix transfer request email template to mangle URLs in project names
 - Update HTTP notification transports to accept HTTP 205 (#1347)
+- Update the smtpd management command to use the minismtpd library
 
 ### Bug Fixes
 - Fix the email integration to handle SMTP connection errors gracefully (#1346)

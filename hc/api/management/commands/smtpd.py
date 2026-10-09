@@ -3,17 +3,14 @@ from __future__ import annotations
 import email
 import email.policy
 import re
-import time
 from argparse import ArgumentParser
 from email.message import EmailMessage
 from typing import Any, Protocol
 
-from aiosmtpd.controller import Controller
-from aiosmtpd.smtp import SMTP, Envelope, Session
-from asgiref.sync import sync_to_async
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import close_old_connections, connection
+from minismtpd import SMTPServer
 
 from hc.api.models import Check
 from hc.lib.html import html2text
@@ -102,39 +99,24 @@ def _process_message(remote_addr: str, mailfrom: str, mailto: str, data: bytes) 
     return f"Processed ping for {mailto}"
 
 
-class PingHandler:
-    def __init__(self, stdout: LogSink) -> None:
+class Server(SMTPServer):
+    def __init__(self, server_address: tuple[str, int], stdout: LogSink):
+        super().__init__(server_address)
         self.stdout = stdout
-        self.process_message = sync_to_async(_process_message)
 
-    async def handle_RCPT(
-        self,
-        server: SMTP,
-        session: Session,
-        envelope: Envelope,
-        address: str,
-        rcpt_options: list[str],
-    ) -> str:
-        mbox, domain = address.split("@", maxsplit=1)
+    def process_rcpt(self, rcptto: str) -> str | None:
+        mbox, domain = rcptto.split("@", maxsplit=1)
         if domain != settings.PING_EMAIL_DOMAIN:
             return "550 5.1.1 Recipient rejected"
         if not RE_UUID.match(mbox) and not RE_PING_KEY_SLUG.match(mbox):
             return "550 5.1.1 Invalid mailbox"
+        return None
 
-        envelope.rcpt_tos.append(address)
-        return "250 OK"
-
-    async def handle_DATA(
-        self, server: SMTP, session: Session, envelope: Envelope
-    ) -> str:
-        assert session.peer
-        remote_addr = session.peer[0]
-        mailfrom = envelope.mail_from
-        assert mailfrom
-        data = envelope.content
-        assert isinstance(data, bytes)
-        for mailto in envelope.rcpt_tos:
-            result = await self.process_message(remote_addr, mailfrom, mailto, data)
+    def process_message(
+        self, peer: tuple[str, int], mailfrom: str, rcpttos: list[str], data: bytes
+    ) -> str | None:
+        for mailto in rcpttos:
+            result = _process_message(peer[0], mailfrom, mailto, data)
             self.stdout.write(result)
 
         return "250 OK"
@@ -152,14 +134,7 @@ class Command(BaseCommand):
         )
 
     def handle(self, host: str, port: int, **options: Any) -> None:
-        handler = PingHandler(self.stdout)
-        controller = Controller(handler, hostname=host, port=port)
         print(f"Starting SMTP listener on {host}:{port} ...")
-        controller.start()
-        while True:
-            try:
-                time.sleep(2**32)  # Sleep with a very large timeout
-            except KeyboardInterrupt:
-                print("Interrupt received, exiting.")
-                break
-        controller.stop()
+        with Server((host, port), self.stdout) as server:
+            # Run until Ctrl-C
+            server.serve_forever()
