@@ -1,5 +1,5 @@
 cronsim==2.7
-Django[argon2]==6.1.1
+Django[argon2]==6.1.2
 django-compressor==4.6
 django-stubs-ext==6.1.2
 fido2==2.2.1
@@ -7,7 +7,7 @@ minismtpd==0.2
 oncalendar==1.1
 psycopg==3.3.6
 pycurl==7.48.0
-pydantic==2.13.5
+pydantic==2.14.0
 PyJWT[crypto]==2.15.1
 pyotp==2.10.0
 segno==1.6.6
