@@ -138,7 +138,7 @@
                 {% if support_email %}
                 <p>
                     Please contact us at
-                    <a href="mailto:{{ support_email }}">{{ support_email }}</a>
+                    <a href="mailto:{% support_email %}">{% support_email %}</a>
                     in case you need assistance!
                 </p>
                 {% endif %}
