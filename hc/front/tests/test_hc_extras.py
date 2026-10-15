@@ -13,7 +13,7 @@ from hc.front.templatetags.hc_extras import (
     mask_ro_key,
     mask_rw_key,
     site_hostname,
-    support_email,
+    obfuscated_support_email,
 )
 
 
@@ -103,11 +103,11 @@ class MaskKeyTestCase(TestCase):
         self.assertEqual(mask_rw_key(key), "hcw_ABCD" + "*" * 24)
         self.assertEqual(mask_ro_key(key), "hcr_ABCD" + "*" * 24)
 
-class SupportEmailTestCase(TestCase):
+class ObfuscatedSupportEmailTestCase(TestCase):
     @override_settings(SUPPORT_EMAIL="aa")
     def test_it_obfuscates(self) -> None:
-        self.assertEqual(support_email(), "&#97;&#97;")
+        self.assertEqual(obfuscated_support_email(), "&#97;&#97;")
 
     @override_settings(SUPPORT_EMAIL=None)
     def test_it_handles_none(self) -> None:
-        self.assertIsNone(support_email())
+        self.assertIsNone(obfuscated_support_email())
