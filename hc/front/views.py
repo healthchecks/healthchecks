@@ -57,6 +57,7 @@ from hc.front.templatetags.hc_extras import (
     num_down_title,
     site_hostname,
     sortchecks,
+    obfuscated_support_email,
 )
 from hc.front.validators import CronValidator, OnCalendarValidator
 from hc.lib.badges import get_badge_url
@@ -463,6 +464,7 @@ def _replace_placeholders(doc: str, html: str) -> str:
         "PING_BODY_LIMIT_FORMATTED": limit_fmt,
         "PING_BODY_LIMIT": str(limit),
         "IMG_URL": os.path.join(settings.STATIC_URL, "img/docs"),
+        "OBFUSCATED_SUPPORT_EMAIL": obfuscated_support_email(),
     }
 
     for placeholder, value in replaces.items():

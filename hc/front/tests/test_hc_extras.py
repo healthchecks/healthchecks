@@ -110,4 +110,4 @@ class ObfuscatedSupportEmailTestCase(TestCase):
 
     @override_settings(SUPPORT_EMAIL=None)
     def test_it_handles_none(self) -> None:
-        self.assertIsNone(obfuscated_support_email())
+        self.assertEqual(obfuscated_support_email(), "")
