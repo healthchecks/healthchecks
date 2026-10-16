@@ -13,9 +13,9 @@
         goes up or down.</p>
 
         <p>
-            You can use placeholders <strong>$NAME</strong>, <strong>$STATUS</strong>
-            and others
-            <a href="#" data-toggle="modal" data-target="#reference-modal">(quick reference)</a>.
+            You can use environment variables <strong>$NAME</strong>, <strong>$STATUS</strong>
+            and others in the command
+            <a href="#" data-toggle="modal" data-target="#reference-modal">(reference)</a>.
         </p>
         <br />
 
@@ -70,13 +70,13 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4>Supported Placeholders</h4>
+                <h4>Environment Variables</h4>
             </div>
             <div class="modal-body">
                 <p>
-                    You can use the below placeholders in the command.
-                    {{ site_name }} will replace the placeholders
-                    with the correct values.
+                    You can use the following environment variables in the command.
+                    {{ site_name }} sets them with the correct values before
+                    executing the command.
                 </p>
 
                 <table id="webhook-variables" class="table modal-body">

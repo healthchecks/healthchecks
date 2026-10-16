@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-import shlex
+from subprocess import call
 
 from django.conf import settings
 
@@ -11,23 +11,6 @@ from hc.lib.string import replace
 
 
 class Shell(Transport):
-    def prepare(self, template: str, flip: Flip) -> str:
-        """Replace placeholders with actual values."""
-
-        check = flip.owner
-        ctx = {
-            "$CODE": str(check.code),
-            "$STATUS": flip.new_status,
-            "$NOW": flip.created.replace(microsecond=0).isoformat(),
-            "$NAME": shlex.quote(check.name),
-            "$TAGS": shlex.quote(check.tags),
-        }
-
-        for i, tag in enumerate(check.tags_list()):
-            ctx[f"$TAG{i + 1}"] = shlex.quote(tag)
-
-        return replace(template, ctx)
-
     def is_noop(self, status: str) -> bool:
         if status == "down" and not self.channel.shell.cmd_down:
             return True
@@ -46,8 +29,18 @@ class Shell(Transport):
         elif flip.new_status == "down":
             cmd = self.channel.shell.cmd_down
 
-        cmd = self.prepare(cmd, flip)
-        code = os.system(cmd)
+        check = flip.owner
+        env = {
+            "CODE": str(check.code),
+            "STATUS": flip.new_status,
+            "NOW": flip.created.replace(microsecond=0).isoformat(),
+            "NAME": check.name,
+            "TAGS": check.tags,
+        }
 
+        for i, tag in enumerate(check.tags_list()):
+            env[f"TAG{i + 1}"] = tag
+
+        code = call(cmd, env=env, shell=True)
         if code != 0:
             raise TransportError(f"Command returned exit code {code}")

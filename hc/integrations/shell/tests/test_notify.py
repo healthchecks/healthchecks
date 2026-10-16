@@ -34,106 +34,55 @@ class NotifyTestCase(BaseTestCase):
         self.flip.old_status = "new"
         self.flip.new_status = status
 
-    @patch("hc.integrations.shell.transport.os.system")
+    @patch("hc.integrations.shell.transport.call")
     @override_settings(SHELL_ENABLED=True)
-    def test_shell(self, mock_system: Mock) -> None:
+    def test_shell(self, call: Mock) -> None:
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
-        mock_system.return_value = 0
+        call.return_value = 0
 
         self.channel.notify(self.flip)
-        mock_system.assert_called_with("logger hello")
+        self.assertEqual(call.call_args.args[0], "logger hello")
 
-    @patch("hc.integrations.shell.transport.os.system")
+    @patch("hc.integrations.shell.transport.call")
     @override_settings(SHELL_ENABLED=True)
-    def test_shell_handles_nonzero_exit_code(self, mock_system: Mock) -> None:
+    def test_shell_handles_nonzero_exit_code(self, call: Mock) -> None:
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
-        mock_system.return_value = 123
+        call.return_value = 123
 
         self.channel.notify(self.flip)
         n = Notification.objects.get()
         self.assertEqual(n.error, "Command returned exit code 123")
 
-    @patch("hc.integrations.shell.transport.os.system")
+    @patch("hc.integrations.shell.transport.call")
     @override_settings(SHELL_ENABLED=True)
-    def test_shell_supports_variables(self, mock_system: Mock) -> None:
+    def test_shell_supports_variables(self, call: Mock) -> None:
         definition = {"cmd_down": "logger $NAME is $STATUS ($TAG1)", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
-        mock_system.return_value = 0
+        call.return_value = 0
 
         self.check.name = "Database"
         self.check.tags = "foo bar"
         self.check.save()
         self.channel.notify(self.flip)
 
-        mock_system.assert_called_with("logger Database is down (foo)")
+        env = call.call_args.kwargs["env"]
+        self.assertEqual(env["CODE"], str(self.check.code))
+        self.assertEqual(env["STATUS"], "down")
+        self.assertEqual(env["NAME"], "Database")
+        self.assertEqual(env["TAGS"], "foo bar")
+        self.assertEqual(env["TAG1"], "foo")
+        self.assertEqual(env["TAG2"], "bar")
 
-    @patch("hc.integrations.shell.transport.os.system")
+    @patch("hc.integrations.shell.transport.call")
     @override_settings(SHELL_ENABLED=False)
-    def test_shell_disabled(self, mock_system: Mock) -> None:
+    def test_shell_disabled(self, call: Mock) -> None:
         definition = {"cmd_down": "logger hello", "cmd_up": ""}
         self._setup_data("shell", json.dumps(definition))
 
         self.channel.notify(self.flip)
-        mock_system.assert_not_called()
+        call.assert_not_called()
 
         n = Notification.objects.get()
         self.assertEqual(n.error, "Shell commands are not enabled")
-
-    @patch("hc.integrations.shell.transport.os.system")
-    @override_settings(SHELL_ENABLED=True)
-    def test_shell_escapes_name(self, mock_system: Mock) -> None:
-        definition = {"cmd_down": "logger $NAME", "cmd_up": ""}
-        self._setup_data("shell", json.dumps(definition))
-        mock_system.return_value = 0
-
-        samples = {
-            "a&b": "logger 'a&b'",
-            "a'b": """logger 'a'"'"'b'""",
-        }
-
-        for name, escaped_cmd in samples.items():
-            self.check.name = name
-            self.check.save()
-            self.channel.notify(self.flip)
-
-            mock_system.assert_called_with(escaped_cmd)
-
-    @patch("hc.integrations.shell.transport.os.system")
-    @override_settings(SHELL_ENABLED=True)
-    def test_shell_escapes_tags(self, mock_system: Mock) -> None:
-        definition = {"cmd_down": "logger $TAGS", "cmd_up": ""}
-        self._setup_data("shell", json.dumps(definition))
-        mock_system.return_value = 0
-
-        samples = {
-            "a&b": "logger 'a&b'",
-            "a'b": """logger 'a'"'"'b'""",
-        }
-
-        for tags, escaped_cmd in samples.items():
-            self.check.tags = tags
-            self.check.save()
-            self.channel.notify(self.flip)
-
-            mock_system.assert_called_with(escaped_cmd)
-
-    @patch("hc.integrations.shell.transport.os.system")
-    @override_settings(SHELL_ENABLED=True)
-    def test_shell_escapes_tag1(self, mock_system: Mock) -> None:
-        definition = {"cmd_down": "logger $TAG1", "cmd_up": ""}
-        self._setup_data("shell", json.dumps(definition))
-        mock_system.return_value = 0
-
-        samples = {
-            "a&b anothertag": "logger 'a&b'",
-            "a'b anothertag": """logger 'a'"'"'b'""",
-        }
-
-        for tags, escaped_cmd in samples.items():
-            self.check.tags = tags
-            self.check.save()
-            self.channel.notify(self.flip)
-
-            mock_system.assert_called_with(escaped_cmd)
