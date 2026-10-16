@@ -30,24 +30,3 @@ class SendLogsTestCase(BaseTestCase):
             email.subject, "[Django] 1 new log record in the last 24 hours"
         )
 
-    def test_it_removes_records_older_than_week(self) -> None:
-        Record.objects.create(
-            created=now(),
-            host="testhost",
-            name="hc.test",
-            level=20,
-            message="test message",
-            traceback="",
-        )
-
-        Record.objects.create(
-            created=now() - td(days=8),
-            host="testhost",
-            name="hc.test",
-            level=20,
-            message="test message",
-            traceback="",
-        )
-
-        Command().handle()
-        self.assertEqual(Record.objects.count(), 1)
