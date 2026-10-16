@@ -1054,13 +1054,14 @@ class Channel(models.Model):
     def is_editable(self) -> bool:
         return self.kind in (
             "email",
-            "webhook",
-            "sms",
-            "signal",
-            "whatsapp",
-            "ntfy",
-            "group",
             "gotify",
+            "group",
+            "ntfy",
+            "shell",
+            "signal",
+            "sms",
+            "webhook",
+            "whatsapp",
         )
 
     def assign_all_checks(self) -> None:

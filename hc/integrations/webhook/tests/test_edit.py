@@ -82,7 +82,7 @@ class EditWebhookTestCase(BaseTestCase):
         self.assertFalse(self.channel.checks.exists())
 
     def test_it_requires_kind_webhook(self) -> None:
-        self.channel.kind = "shell"
+        self.channel.kind = "googlechat"
         self.channel.save()
 
         self.client.login(username="alice@example.org", password="password")

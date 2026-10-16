@@ -1,7 +1,13 @@
 {% extends "base_project.html" %}
 {% load compress humanize static hc_extras %}
 
-{% block title %}Add Shell Command - {{ site_name }}{% endblock %}
+{% block title %}
+    {% if is_new %}
+    Add Shell Command - {% site_name %}
+    {% else %}
+    Shell Command Settings - {% site_name %}
+    {% endif %}
+{% endblock %}
 
 
 {% block content %}
@@ -19,7 +25,7 @@
         </p>
         <br />
 
-        <form id="add-shell-form" method="post">
+        <form method="post">
         {% csrf_token %}
 
         <div class="row">

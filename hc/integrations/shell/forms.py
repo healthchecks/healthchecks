@@ -5,7 +5,7 @@ import json
 from django import forms
 
 
-class AddShellForm(forms.Form):
+class ShellForm(forms.Form):
     error_css_class = "has-error"
 
     cmd_down = forms.CharField(max_length=1000, required=False)

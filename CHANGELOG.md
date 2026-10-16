@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 - Update HTTP notification transports to accept HTTP 205 (#1347)
 - Update the smtpd management command to use the minismtpd library
 - Update the Shell integration to use env variables instead of text substitution
+- Add ability to edit existing Shell integrations
 
 ### Bug Fixes
 - Fix the email integration to handle SMTP connection errors gracefully (#1346)

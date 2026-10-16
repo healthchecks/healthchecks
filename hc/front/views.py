@@ -1383,6 +1383,10 @@ def edit_channel(request: AuthenticatedHttpRequest, code: UUID) -> HttpResponse:
         from hc.integrations.gotify.views import gotify_form
 
         return gotify_form(request, channel)
+    elif channel.kind == "shell":
+        from hc.integrations.shell.views import shell_form
+
+        return shell_form(request, channel)
 
     return HttpResponseBadRequest()
 
