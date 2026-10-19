@@ -3,7 +3,7 @@ FROM python:3.14.8-slim-trixie AS builder
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 
 COPY requirements.txt /tmp
-# build-essential is required to build uswsi, psycopg, mysqlclient
+# build-essential is required to build psycopg and mysqlclient
 # libffi-dev is required to build cffi (a dependency of minio and cryptography)
 # libpq-dev is required to build psycopg[c]
 # libmaria-dev is required to build mysqlclient
