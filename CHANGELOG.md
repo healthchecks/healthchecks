@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Update the smtpd management command to use the minismtpd library
 - Update the Shell integration to use env variables instead of text substitution
 - Add ability to edit existing Shell integrations
+- Update the Docker image to use gunicorn instead of uWSGI (#1349, #1201)
 
 ### Bug Fixes
 - Fix the email integration to handle SMTP connection errors gracefully (#1346)

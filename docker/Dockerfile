@@ -12,12 +12,14 @@ COPY requirements.txt /tmp
 RUN \
     apt-get update && \
     apt-get install -y build-essential libffi-dev libpq-dev libmariadb-dev libcurl4-openssl-dev pkg-config
-RUN pip wheel --wheel-dir /wheels apprise uwsgi mysqlclient minio==7.2.20 "psycopg[c]" -r /tmp/requirements.txt
+RUN pip wheel --wheel-dir /wheels apprise gunicorn mysqlclient minio==7.2.20 "psycopg[c]" -r /tmp/requirements.txt
 
 COPY . /opt/healthchecks/
 RUN \
     rm -rf /opt/healthchecks/.git && \
-    rm -rf /opt/healthchecks/stuff
+    rm -rf /opt/healthchecks/.github && \
+    rm -rf /opt/healthchecks/stuff && \
+    rm -rf /opt/healthchecks/docker
 
 FROM python:3.14.8-slim-trixie
 
@@ -37,6 +39,7 @@ RUN --mount=type=bind,target=/wheels,source=/wheels,from=builder \
 
 COPY --from=builder /opt/healthchecks/ /opt/healthchecks/
 COPY docker/fetchstatus.py /opt/healthchecks/
+COPY docker/run.sh /opt/healthchecks/
 
 RUN \
     rm -f /opt/healthchecks/hc/local_settings.py && \
@@ -49,4 +52,4 @@ USER hc
 
 ENV USE_GZIP_MIDDLEWARE=True
 HEALTHCHECK --start-period=20s --start-interval=5s --interval=60s --retries=1 CMD ./fetchstatus.py
-CMD [ "uwsgi", "/opt/healthchecks/docker/uwsgi.ini"]
+CMD [ "run.sh"]
