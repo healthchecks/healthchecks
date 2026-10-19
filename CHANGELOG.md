@@ -1,7 +1,23 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v4.5-dev - Unreleased
+## v5.0-dev - Unreleased
+
+This release changes the web server included in docker images from uWSGI to
+gunicorn. This change may affect existing setups, hence the major version bump.
+
+The docker image now uses the `GUNICORN_WORKERS` environment variable to determine
+how many worker processes to launch. For backwards compatibility, if `GUNICORN_WORKERS`
+is not set, the docker image then falls back to the `UWSGI_PROCESSES` environment
+variable. If neither is set, it defaults to 4 workers.
+
+The handling of crashes in child processes has changed. Before v5.0, if any child
+process (`sendalerts`, `sendreports`, `smtpd`) inside the container crashes,
+it gets automatically restarted, but the other processes are unaffected. If the
+the problematic child process keeps crashing, it may end up in a restart loop while
+other processes keep operating. In v5.0, when any child process crashes, the entire
+container terminates. If docker is configured to restart the container, the net effect
+is that a crash in any child process causes a restart of all child processes.
 
 ### Improvements
 - Fix project invite email template to mangle URLs in project names

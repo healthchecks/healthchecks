@@ -32,13 +32,14 @@ GUNICORN_WORKERS="${GUNICORN_WORKERS:-${UWSGI_PROCESSES:-4}}"
 # Listen on IPv4 only by default.
 # If $LISTEN_IPV6 is set then listen on IPv4 and IPv6.
 if [ -z $LISTEN_IPV6 ]; then
-	GUNICORN_BIND='0.0.0.0:8000'
+	GUNICORN_BIND=':8000'
 else
 	GUNICORN_BIND='[::]:8000'
 fi
 
 gunicorn hc.wsgi:application \
 	--no-control-socket \
+	--forwarded-allow-ips '*' \
 	--bind $GUNICORN_BIND \
 	--workers $GUNICORN_WORKERS \
 	--access-logfile - &

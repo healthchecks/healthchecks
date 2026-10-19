@@ -47,18 +47,22 @@ $<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> <
   the credentials from the previous step.</p>
 </li>
 </ul>
-<h2>uWSGI Configuration</h2>
-<p>The reference Dockerfile uses <a href="https://uwsgi-docs.readthedocs.io/en/latest/">uWSGI</a>
-as the WSGI server. You can configure uWSGI by setting <code>UWSGI_...</code> environment
-variables in <code>docker/.env</code>. For example, to disable HTTP request logging, set:</p>
-<div class="highlight"><pre><span></span><code>UWSGI_DISABLE_LOGGING=1
+<h2>Gunicorn Configuration</h2>
+<p>The reference Dockerfile starting from v5.0 uses <a href="https://gunicorn.org/">gunicorn</a>
+as the WSGI server.</p>
+<p>To adjust the number of gunicorn worker processes (for example, to save memory), set:</p>
+<div class="highlight"><pre><span></span><code>GUNICORN_WORKERS=2
 </code></pre></div>
 
-<p>To adjust the number of uWSGI processes (for example, to save memory), set:</p>
-<div class="highlight"><pre><span></span><code>UWSGI_PROCESSES=2
+<h2>IPv6</h2>
+<p>The web server is configured to listen on IPv4 only by default. To also listen on IPv6,
+set the LISTEN_IPV6 environment variable:</p>
+<div class="highlight"><pre><span></span><code>LISTEN_IPV6=1
 </code></pre></div>
 
-<p>Read more about configuring uWSGI in <a href="https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables">uWSGI documentation</a>.</p>
+<p>Unfortunately this cannot be enabled by default because on an IPv4-only system
+the web server would crash on startup while trying to open an IPv6 socket
+with a <code>Address family not supported by protocol</code> message in logs.</p>
 <h2 id="SMTPD_PORT">SMTP Listener Configuration via <code>SMTPD_PORT</code></h2>
 <p>Healthchecks comes with a <code>smtpd</code> management command, which runs a SMTP listener
 service. With the command running, you can ping your checks by sending email messages
@@ -71,8 +75,8 @@ on the value of the <code>SMTPD_PORT</code> environment value:</p>
   You may also need to edit <code>docker-compose.yml</code> to expose the listening port
   (see the "ports" section under the "web" service in <code>docker-compose.yml</code>).</li>
 </ul>
-<p>The conditional logic lives in uWSGI configuration file,
-<a href="https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini">uwsgi.ini</a>.</p>
+<p>The conditional logic lives in the startup shell script,
+<a href="https://github.com/healthchecks/healthchecks/blob/master/docker/run.sh">run.sh</a>.</p>
 <p>See also: the <a href="../self_hosted_configuration/#PING_EMAIL_DOMAIN">PING_EMAIL_DOMAIN</a>
 environment variable for customizing the domain part of the email addresses.</p>
 <h2 id="tls-termination">Reverse Proxy, TLS Termination, and CSRF Protection</h2>
@@ -82,11 +86,11 @@ put a TLS-terminating reverse proxy or a load balancer in front of it.</p>
 header. Healthchecks trusts it to determine the client's IP address. If the proxy
 does not set the <code>X-Forwarded-For</code> header, the clients can pass their own value and
 circumvent, among other things, the IP-based rate limiting in the login form.</p>
-<p><strong>Important:</strong> This Dockerfile uses uWSGI, which relies on the <a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
-header to determine if a request is secure or not. Without this information you
-may run into HTTP 403 "CSRF verification failed." errors when using your Healthchecks
-instance. See <a href="https://github.com/healthchecks/healthchecks/discussions/851#discussioncomment-6293396">this issue comment</a>
-for more information.</p>
+<p><strong>Important:</strong> This Dockerfile uses the
+<a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto">X-Forwarded-Proto</a>
+request header to determine if a request is secure or not. If this header is not set
+you may run into HTTP 403 "CSRF verification failed." errors when using your
+Healthchecks instance.</p>
 <p>Make sure your TLS-terminating reverse proxy:</p>
 <ul>
 <li>Discards the <code>X-Forwarded-Proto</code> header sent by the end user.</li>
@@ -156,9 +160,8 @@ The images are built automatically for every new release.</p>
 <p>The Docker images:</p>
 <ul>
 <li>Support amd64, arm/v7 and arm64 architectures.</li>
-<li>Use uWSGI as the web server. uWSGI is configured to perform database migrations
-  on startup, and to run <code>sendalerts</code>, <code>sendreports</code>, and <code>smtpd</code> in the background.
-  You do not need to run them separately.</li>
+<li>Run database migrations on startup, and to run <code>sendalerts</code>, <code>sendreports</code>, and
+  <code>smtpd</code> in the background. You do not need to run them separately.</li>
 <li>Ship with both PostgreSQL and MySQL database drivers.</li>
 <li>Serve static files using the whitenoise library.</li>
 <li>Have the apprise library preinstalled.</li>

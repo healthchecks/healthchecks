@@ -52,30 +52,25 @@ termination.
   docker compose run web /opt/healthchecks/manage.py <command>
   ```
 
-## uWSGI Configuration
+## Gunicorn Configuration
 
-The reference Dockerfile uses [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/)
-as the WSGI server. You can configure uWSGI by setting `UWSGI_...` environment
-variables in `docker/.env`. For example, to disable HTTP request logging, set:
+The reference Dockerfile starting from v5.0 uses [gunicorn](https://gunicorn.org/)
+as the WSGI server.
 
-    UWSGI_DISABLE_LOGGING=1
+To adjust the number of gunicorn worker processes (for example, to save memory), set:
 
-To adjust the number of uWSGI processes (for example, to save memory), set:
-
-    UWSGI_PROCESSES=2
-
-Read more about configuring uWSGI in [uWSGI documentation](https://uwsgi-docs.readthedocs.io/en/latest/Configuration.html#environment-variables).
+    GUNICORN_WORKERS=2
 
 ## IPv6
 
-uWSGI is configured to listen on IPv4 only by default. To also listen on IPv6, set
-the LISTEN_IPV6 environment variable:
+The web server is configured to listen on IPv4 only by default. To also listen on IPv6,
+set the LISTEN_IPV6 environment variable:
 
     LISTEN_IPV6=1
 
 Unfortunately this cannot be enabled by default because on an IPv4-only system
-uWSGI would crash while trying to open an IPv6 socket
-(see [issue #1207](https://github.com/healthchecks/healthchecks/issues/1207)).
+the web server would crash on startup while trying to open an IPv6 socket
+with a `Address family not supported by protocol` message in logs.
 
 ## SMTP Listener Configuration via `SMTPD_PORT`
 
@@ -91,19 +86,24 @@ on the value of the `SMTPD_PORT` environment value:
   You may also need to edit `docker-compose.yml` to expose the listening port
   (see the "ports" section under the "web" service in `docker-compose.yml`).
 
-The conditional logic lives in uWSGI configuration file,
-[uwsgi.ini](https://github.com/healthchecks/healthchecks/blob/master/docker/uwsgi.ini).
+The conditional logic lives in the startup shell script,
+[run.sh](https://github.com/healthchecks/healthchecks/blob/master/docker/run.sh).
 
 ## TLS Termination and CSRF Protection
 
 If you plan to expose your Healthchecks instance to the public internet, make sure you
 put a TLS-terminating reverse proxy or load balancer in front of it.
 
-**Important:** This Dockerfile uses uWSGI, which relies on the [X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
-header to determine if a request is secure or not. Without this information you
-may run into HTTP 403 "CSRF verification failed." errors when using your Healthchecks
-instance. See [this issue comment](https://github.com/healthchecks/healthchecks/discussions/851#discussioncomment-6293396)
-for more information.
+**Important:** configure the reverse proxy to set the `X-Forwarded-For` request
+header. Healthchecks trusts it to determine the client's IP address. If the proxy
+does not set the `X-Forwarded-For` header, the clients can pass their own value and
+circumvent, among other things, the IP-based rate limiting in the login form.
+
+**Important:** This Dockerfile uses
+[X-Forwarded-Proto](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-Forwarded-Proto)
+request header to determine if a request is secure or not. If this header is not set
+you may run into HTTP 403 "CSRF verification failed." errors when using your
+Healthchecks instance.
 
 Make sure your TLS-terminating reverse proxy:
 
@@ -158,10 +158,10 @@ built automatically for every new release.
 The Docker images:
 
 * Support amd64, arm/v7 and arm64 architectures.
-* Use uWSGI as the web server. uWSGI is configured to perform database migrations
-  on startup, and to run `sendalerts`, `sendreports`, and `smtpd` in the background.
-  You do not need to run them separately. The SMTP listener (`manage.py smtpd`) is
-  started conditionally, [based on the value of the `SMTPD_PORT` environment variable](https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port).
+* Run database migrations on startup, and to run `sendalerts`, `sendreports`, and
+  `smtpd` in the background. You do not need to run them separately. The SMTP listener
+  (`manage.py smtpd`) is started conditionally, [based on the value of the `SMTPD_PORT`
+  environment variable](https://github.com/healthchecks/healthchecks/tree/master/docker#smtp-listener-configuration-via-smtpd_port).
 * Ship with both PostgreSQL and MySQL database drivers.
 * Serve static files using the whitenoise library.
 * Have the apprise library preinstalled.
