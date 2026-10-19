@@ -3,8 +3,11 @@ from __future__ import annotations
 import email
 import email.policy
 import re
+import signal
 from argparse import ArgumentParser
 from email.message import EmailMessage
+from threading import Thread
+from types import FrameType
 from typing import Any, Protocol
 
 from django.conf import settings
@@ -133,8 +136,25 @@ class Command(BaseCommand):
             "--port", help="port to listen on, default 25", type=int, default=25
         )
 
-    def handle(self, host: str, port: int, **options: Any) -> None:
+    def on_singal(self, signum: int, frame: FrameType | None) -> None:
+        desc = signal.strsignal(signum)
+        self.stdout.write(f"{desc}, finishing...\n")
+
+    def handle(self, host: str, port: int, **options: Any) -> str:
         print(f"Starting SMTP listener on {host}:{port} ...")
         with Server((host, port), self.stdout) as server:
+
+            def on_signal(signum: int, frame: FrameType | None) -> None:
+                desc = signal.strsignal(signum)
+                self.stdout.write(f"{desc}, finishing...\n")
+                # server.shutdown must be run on a different thread
+                Thread(target=server.shutdown).start()
+                # server._BaseServer__shutdown_request = True
+
+            signal.signal(signal.SIGINT, on_signal)
+            signal.signal(signal.SIGTERM, on_signal)
+
             # Run until Ctrl-C
             server.serve_forever()
+
+        return "smtpd stopped"
