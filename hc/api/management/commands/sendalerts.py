@@ -213,4 +213,4 @@ class Command(BaseCommand):
                 time.sleep(2)
 
         self.executor.shutdown(wait=True)
-        return "Done."
+        return "sendalerts stopped"

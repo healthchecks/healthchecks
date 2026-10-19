@@ -130,4 +130,4 @@ class Command(BaseCommand):
                 if not self.shutdown:
                     time.sleep(1)
 
-        return "Done."
+        return "sendreports stopped"
