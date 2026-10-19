@@ -52,4 +52,4 @@ USER hc
 
 ENV USE_GZIP_MIDDLEWARE=True
 HEALTHCHECK --start-period=20s --start-interval=5s --interval=60s --retries=1 CMD ./fetchstatus.py
-CMD [ "run.sh"]
+CMD [ "/opt/healthchecks/run.sh"]
