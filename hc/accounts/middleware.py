@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from typing import cast
 
 from django.conf import settings
@@ -10,8 +9,7 @@ from django.http import HttpRequest, HttpResponse
 
 from hc.accounts.http import AuthenticatedHttpRequest
 from hc.accounts.models import Profile
-
-MiddlewareFunc = Callable[[HttpRequest], HttpResponse]
+from hc.lib.typealias import MiddlewareFunc
 
 
 class TeamAccessMiddleware:
