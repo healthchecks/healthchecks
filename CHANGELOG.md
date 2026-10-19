@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 This release changes the web server included in docker images from uWSGI to
 gunicorn. This change may affect existing setups, hence the major version bump.
 
+If you use a customized `docker-compose.yml` file, the `command` parameter
+needs to updated to execute `/opt/healthchecks/run.sh` instead of `uwsgi`.
+See the [docker-compose.yml file in the repository](https://github.com/healthchecks/healthchecks/blob/master/docker/docker-compose.yml)
+for an example.
+
 The docker image now uses the `GUNICORN_WORKERS` environment variable to determine
 how many worker processes to launch. For backwards compatibility, if `GUNICORN_WORKERS`
 is not set, the docker image then falls back to the `UWSGI_PROCESSES` environment
