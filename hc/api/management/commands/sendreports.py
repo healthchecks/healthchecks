@@ -93,8 +93,8 @@ class Command(BaseCommand):
         return True
 
     def on_signal(self, signum: int, frame: FrameType | None) -> None:
-        desc = signal.strsignal(signum)
-        self.stdout.write(f"{desc}, finishing...\n")
+        desc = signal.Signals(signum).name
+        self.stdout.write(f"sendreports was sent {desc}!\n")
         self.shutdown = True
 
     def handle(self, loop: bool, **options: Any) -> str:
