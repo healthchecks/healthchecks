@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v5.0-dev - Unreleased
+## v5.0 - 2026-10-20
 
 This release changes the web server included in docker images from uWSGI to
 gunicorn. This change may affect existing setups, hence the major version bump.
