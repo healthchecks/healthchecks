@@ -44,5 +44,6 @@ gunicorn hc.wsgi:application \
 	--workers $GUNICORN_WORKERS \
 	--access-logfile - &
 
+# Wait for any process to exit, return its exit code
 wait -n
 exit $?
