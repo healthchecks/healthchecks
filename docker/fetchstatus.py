@@ -10,9 +10,11 @@ This script is intended to be used in the Dockerfile, in the HEALTHCHECK instruc
 
 """
 
+from os import getenv
 from urllib.request import urlopen
 
-with urlopen("http://127.0.0.1:8000/health") as response:
+port = getenv("GUNICORN_PORT", "8000")
+with urlopen(f"http://127.0.0.1:{port}/health") as response:
     assert response.status == 200
 
 print("Status OK")
