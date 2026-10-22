@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v5.0.1-dev - Unreleased
+## v5.0.1 - 2026-10-22
 
 ### Improvements
 - Docker, add support for custom HTTP listening port via $GUNICORN_PORT (#1354)
