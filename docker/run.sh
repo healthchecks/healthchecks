@@ -29,12 +29,15 @@ fi
 # Otherwise, default to 4.
 GUNICORN_WORKERS="${GUNICORN_WORKERS:-${UWSGI_PROCESSES:-4}}"
 
+# Listening port:
+GUNICORN_PORT=${GUNICORN_PORT:-8000}
+
 # Listen on IPv4 only by default.
 # If $LISTEN_IPV6 is set then listen on IPv4 and IPv6.
 if [ -z $LISTEN_IPV6 ]; then
-	GUNICORN_BIND=':8000'
+	GUNICORN_BIND=":$GUNICORN_PORT"
 else
-	GUNICORN_BIND='[::]:8000'
+	GUNICORN_BIND="[::]:$GUNICORN_PORT"
 fi
 
 gunicorn hc.wsgi:application \

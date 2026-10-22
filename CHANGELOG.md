@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v5.0.1-dev - Unreleased
+
+### Improvements
+- Docker, add support for custom HTTP listening port via $GUNICORN_PORT (#1354)
+
 ## v5.0 - 2026-10-20
 
 This release changes the web server included in docker images from uWSGI to
