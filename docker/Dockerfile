@@ -40,6 +40,7 @@ RUN --mount=type=bind,target=/wheels,source=/wheels,from=builder \
 COPY --from=builder /opt/healthchecks/ /opt/healthchecks/
 COPY docker/fetchstatus.py /opt/healthchecks/
 COPY docker/run.sh /opt/healthchecks/
+COPY docker/gunicorn.conf.py /opt/healthchecks/
 
 RUN \
     rm -f /opt/healthchecks/hc/local_settings.py && \

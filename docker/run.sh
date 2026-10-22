@@ -23,38 +23,8 @@ if [ ! -z $SMTPD_PORT ]; then
 	./manage.py smtpd --port $SMTPD_PORT &
 fi
 
-# Worker count:
-# If $GUNICORN_WORKERS is set, use that.
-# Otherwise, if $UWSGI_PROCESSES is set, use that (for backwards compatibility).
-# Otherwise, default to 4.
-GUNICORN_WORKERS="${GUNICORN_WORKERS:-${UWSGI_PROCESSES:-4}}"
-
-# Listening port:
-GUNICORN_PORT=${GUNICORN_PORT:-8000}
-
-# Listen on IPv4 only by default.
-# If $LISTEN_IPV6 is set then listen on IPv4 and IPv6.
-if [ -z $LISTEN_IPV6 ]; then
-	GUNICORN_BIND=":$GUNICORN_PORT"
-else
-	GUNICORN_BIND="[::]:$GUNICORN_PORT"
-fi
-
-# Enable access log to stdout by default.
-# Disable if either $GUNICORN_DISABLE_LOGGING or $UWSGI_DISABLE_LOGGING
-# is set to a non-empty value.
-if [ ! -z $GUNICORN_DISABLE_LOGGING ] || [ ! -z $UWSGI_DISABLE_LOGGING ]; then
-	GUNICORN_LOGGING=""
-else
-	GUNICORN_LOGGING="--access-logfile -"
-fi
-
-gunicorn hc.wsgi:application \
-	--no-control-socket \
-	--forwarded-allow-ips '*' \
-	--bind $GUNICORN_BIND \
-	--workers $GUNICORN_WORKERS \
-	$GUNICORN_LOGGING &
+# Start the HTTP server
+gunicorn hc.wsgi:application &
 
 # Wait for any process to exit, return its exit code
 wait -n
