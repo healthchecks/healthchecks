@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Improvements
 - Docker, add support for custom HTTP listening port via $GUNICORN_PORT (#1354)
+- Update Docker base image to python:3.14.9-slim-trixie
 
 ## v5.0 - 2026-10-20
 
