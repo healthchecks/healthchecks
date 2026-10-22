@@ -61,16 +61,22 @@ def month(dt: datetime) -> date:
 class ProfileManager(models.Manager["Profile"]):
     def for_user(self, user: User) -> Profile:
         try:
+            # If user.profile is already loaded, this completes with 0 DB queries
+            # If profile exists in the DB but is not loaded, this runs a DB query
+            # If profile does not exist in the DB, the except branch will create it
             return user.profile
         except Profile.DoesNotExist:
-            profile = Profile(user=user)
-            if not settings.USE_PAYMENTS:
+            # Use get_or_create instead of Profile() to avoid a race condition
+            # where concurrent for_user calls try to create a profile for the same
+            # user, one wins, others hit a user_id uniqueness constraint
+            profile, created = Profile.objects.get_or_create(user=user)
+            if created and not settings.USE_PAYMENTS:
+                # This is a freshly created profile.
                 # If not using payments, set high limits
                 profile.check_limit = 10000
                 profile.sms_limit = 10000
                 profile.call_limit = 10000
-
-            profile.save()
+                profile.save()
             return profile
 
 

@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v5.1-dev - Unreleased
+
+### Improvements
+- In the docker image, move gunicorn configuration to gunicorn.conf.py
+- In the the docker image, tighten the `secure_scheme_headers` gunicorn setting
+
+### Bug Fixes
+- Fix a race condition in Profile.for_user()
+
 ## v5.0.1 - 2026-10-22
 
 ### Improvements
