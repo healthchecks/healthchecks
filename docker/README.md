@@ -61,6 +61,14 @@ To adjust the number of gunicorn worker processes (for example, to save memory),
 
     GUNICORN_WORKERS=2
 
+To adjust the HTTP listening port, set:
+
+    GUNICORN_PORT=<port-number>
+
+To disable access log to container's stdout, set:
+
+    GUNICORN_DISABLE_LOGGING=1
+
 ## IPv6
 
 The web server is configured to listen on IPv4 only by default. To also listen on IPv6,

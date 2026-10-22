@@ -51,13 +51,21 @@ $<span class="w"> </span>docker<span class="w"> </span>compose<span class="w"> <
 <p>The reference Dockerfile starting from v5.0 uses <a href="https://gunicorn.org/">gunicorn</a>
 as the WSGI server.</p>
 <p>To adjust the number of gunicorn worker processes (for example, to save memory), set:</p>
-<div class="highlight"><pre><span></span><code>GUNICORN_WORKERS=2
+<div class="highlight"><pre><span></span><code><span class="nv">GUNICORN_WORKERS</span><span class="o">=</span><span class="m">2</span>
+</code></pre></div>
+
+<p>To adjust the HTTP listening port, set:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">GUNICORN_PORT</span><span class="o">=</span>&lt;port-number&gt;
+</code></pre></div>
+
+<p>To disable access log to container's stdout, set:</p>
+<div class="highlight"><pre><span></span><code><span class="nv">GUNICORN_DISABLE_LOGGING</span><span class="o">=</span><span class="m">1</span>
 </code></pre></div>
 
 <h2>IPv6</h2>
 <p>The web server is configured to listen on IPv4 only by default. To also listen on IPv6,
 set the LISTEN_IPV6 environment variable:</p>
-<div class="highlight"><pre><span></span><code>LISTEN_IPV6=1
+<div class="highlight"><pre><span></span><code><span class="nv">LISTEN_IPV6</span><span class="o">=</span><span class="m">1</span>
 </code></pre></div>
 
 <p>Unfortunately this cannot be enabled by default because on an IPv4-only system

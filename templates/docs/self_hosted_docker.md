@@ -49,14 +49,30 @@ as the WSGI server.
 
 To adjust the number of gunicorn worker processes (for example, to save memory), set:
 
-    GUNICORN_WORKERS=2
+```sh
+GUNICORN_WORKERS=2
+```
+
+To adjust the HTTP listening port, set:
+
+```sh
+GUNICORN_PORT=<port-number>
+```
+
+To disable access log to container's stdout, set:
+
+```sh
+GUNICORN_DISABLE_LOGGING=1
+```
 
 ## IPv6
 
 The web server is configured to listen on IPv4 only by default. To also listen on IPv6,
 set the LISTEN_IPV6 environment variable:
 
-    LISTEN_IPV6=1
+```sh
+LISTEN_IPV6=1
+```
 
 Unfortunately this cannot be enabled by default because on an IPv4-only system
 the web server would crash on startup while trying to open an IPv6 socket

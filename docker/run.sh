@@ -40,12 +40,21 @@ else
 	GUNICORN_BIND="[::]:$GUNICORN_PORT"
 fi
 
+# Enable access log to stdout by default.
+# Disable if either $GUNICORN_DISABLE_LOGGING or $UWSGI_DISABLE_LOGGING
+# is set to a non-empty value.
+if [ ! -z $GUNICORN_DISABLE_LOGGING ] || [ ! -z $UWSGI_DISABLE_LOGGING ]; then
+	GUNICORN_LOGGING=""
+else
+	GUNICORN_LOGGING="--access-logfile -"
+fi
+
 gunicorn hc.wsgi:application \
 	--no-control-socket \
 	--forwarded-allow-ips '*' \
 	--bind $GUNICORN_BIND \
 	--workers $GUNICORN_WORKERS \
-	--access-logfile - &
+	$GUNICORN_LOGGING &
 
 # Wait for any process to exit, return its exit code
 wait -n
