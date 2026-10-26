@@ -6,7 +6,6 @@ import re
 import signal
 from argparse import ArgumentParser
 from email.message import EmailMessage
-from threading import Thread
 from types import FrameType
 from typing import Any, Protocol
 
@@ -143,8 +142,7 @@ class Command(BaseCommand):
             def on_signal(signum: int, frame: FrameType | None) -> None:
                 desc = signal.Signals(signum).name
                 self.stdout.write(f"smtpd was sent {desc}!\n")
-                # server.shutdown must be run on a different thread
-                Thread(target=server.shutdown).start()
+                server.shutdown()
 
             signal.signal(signal.SIGINT, on_signal)
             signal.signal(signal.SIGTERM, on_signal)

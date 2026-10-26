@@ -1,7 +1,7 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-## v5.1-dev - Unreleased
+## v5.0.2 - 2026-10-26
 
 ### Improvements
 - In the docker image, move gunicorn configuration to gunicorn.conf.py
@@ -9,6 +9,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Fix a race condition in Profile.for_user()
+- Upgrade minismtpd to v0.5 to enable concurrent SMTP sessions (#1359)
 
 ## v5.0.1 - 2026-10-22
 
