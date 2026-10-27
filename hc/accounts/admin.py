@@ -109,6 +109,7 @@ class ProfileAdmin(ModelAdmin[Profile]):
         "remove_totp",
         "schedule_for_deletion",
         "unschedule_for_deletion",
+        "delete_user",
     )
 
     _profile_fields = (
@@ -240,6 +241,12 @@ class ProfileAdmin(ModelAdmin[Profile]):
     def unschedule_for_deletion(self, r: HttpRequest, qs: QuerySet[Profile]) -> None:
         num_unscheduled = qs.update(deletion_scheduled_date=None)
         self.message_user(r, f"{num_unscheduled} user(s) unscheduled for deletion")
+
+    def delete_user(
+        self, r: HttpRequest, qs: QuerySet[Profile]
+    ) -> HttpResponseRedirect:
+        profile = qs.get()
+        return redirect("admin:auth_user_delete", profile.user_id)
 
 
 class ProjectAnnotations(TypedDict):
