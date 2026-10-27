@@ -299,7 +299,6 @@ class HcUserAdmin(UserAdmin[User]):
     list_display = (
         "id",
         "email",
-        "usage",
         "date_joined",
         "last_login",
         "last_active",
@@ -310,11 +309,11 @@ class HcUserAdmin(UserAdmin[User]):
     list_filter = ("last_login", "date_joined", "is_staff", "is_active")
     actions = ("activate", "deactivate")
     ordering = ("-id",)
+    search_fields = ("id", "email")
+    show_full_result_count = False
 
     def get_queryset(self, request: HttpRequest) -> QuerySet[User]:
         qs = super().get_queryset(request)
-        qs = qs.annotate(num_checks=Count("project__check", distinct=True))
-        qs = qs.annotate(num_channels=Count("project__channel", distinct=True))
         qs = qs.annotate(last_active_date=F("profile__last_active_date"))
 
         return qs
@@ -323,9 +322,6 @@ class HcUserAdmin(UserAdmin[User]):
         self, user: WithAnnotations[User, UserAnnotations]
     ) -> datetime | None:
         return user.last_active_date
-
-    def usage(self, user: WithAnnotations[User, UserAnnotations]) -> str:
-        return _format_usage(user.num_checks, user.num_channels)
 
     def activate(self, request: HttpRequest, qs: QuerySet[User]) -> None:
         for user in qs:
