@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## v5.0.3 - 2026-10-27
+
+### Improvements
 - Update Docker base image to python:3.14.10-slim-trixie
 
 ## v5.0.2 - 2026-10-26
