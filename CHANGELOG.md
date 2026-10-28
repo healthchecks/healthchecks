@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - Security: strip CR and LF from header lines in the webhook integration
+- Fix Management API validation logic to reject NUL characters
 
 ## v5.0.3 - 2026-10-27
 

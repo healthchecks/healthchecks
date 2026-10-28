@@ -316,7 +316,7 @@ class CreateCheckTestCase(BaseTestCase):
         self.assertTrue("timeout" not in doc)
 
     def test_it_validates_cron_expression(self) -> None:
-        for expr in ["bad-expression", "* * * * * *"]:
+        for expr in ["bad-expression", "* * * * * *", "* * * * *\x00"]:
             r = self.post(
                 {"schedule": expr, "tz": "Europe/Riga", "grace": 60},
                 expect_fragment="schedule is not a valid cron or OnCalendar expression",
@@ -488,3 +488,19 @@ class CreateCheckTestCase(BaseTestCase):
 
     def test_it_rejects_long_tags(self) -> None:
         self.post({"tags": "X" * 501}, expect_fragment="tags is too long")
+
+    def test_it_rejects_nul_chars(self) -> None:
+        for key in (
+            "name",
+            "desc",
+            "failure_kw",
+            "success_kw",
+            "start_kw",
+            "subject",
+            "subject_fail",
+            "tags",
+        ):
+            self.post(
+                {key: "\x00"},
+                expect_fragment=f"null characters in {key} are not allowed",
+            )

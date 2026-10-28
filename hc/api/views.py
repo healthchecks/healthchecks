@@ -140,6 +140,22 @@ class Spec(BaseModel):
 
         return None
 
+    @field_validator(
+        "desc",
+        "failure_kw",
+        "name",
+        "start_kw",
+        "subject",
+        "subject_fail",
+        "success_kw",
+        "tags",
+    )
+    @classmethod
+    def check_nul(cls, v: str) -> str:
+        if "\x00" in v:
+            raise PydanticCustomError("nul", "null characters are not allowed")
+        return v
+
 
 CUSTOM_ERRORS = {
     "too_long": "%s is too long",
@@ -155,6 +171,7 @@ CUSTOM_ERRORS = {
     "cron_syntax": "%s is not a valid cron or OnCalendar expression",
     "tz_syntax": "%s is not a valid timezone",
     "time_delta_type": "%s is not a number",
+    "nul": "null characters in %s are not allowed",
 }
 
 
