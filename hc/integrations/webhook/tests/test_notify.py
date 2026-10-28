@@ -400,6 +400,23 @@ class NotifyWebhookTestCase(BaseTestCase):
         self.assertEqual(headers["X-Foo"], "½")
 
     @patch("hc.api.transports.curl.request", autospec=True)
+    def test_webhooks_replace_cr_lf_in_headers(self, mock_request: Mock) -> None:
+        definition = {
+            "method_down": "GET",
+            "url_down": "http://foo.com",
+            "headers_down": {"X-Foo": "foo\rbar\nbaz"},
+            "body_down": "",
+        }
+
+        self._setup_data(json.dumps(definition))
+        self.check.save()
+
+        self.channel.notify(self.flip)
+
+        headers = mock_request.call_args.kwargs["headers"]
+        self.assertEqual(headers["X-Foo"], "foo bar baz")
+
+    @patch("hc.api.transports.curl.request", autospec=True)
     def test_webhooks_support_json_variable(self, mock_post: Mock) -> None:
         definition = {
             "method_down": "POST",

@@ -16,7 +16,7 @@ class Webhook(HttpTransport):
         template: str,
         flip: Flip,
         urlencode: bool = False,
-        latin1: bool = False,
+        is_header: bool = False,
         allow_ping_body: bool = False,
     ) -> str:
         """Replace variables with actual values."""
@@ -52,9 +52,11 @@ class Webhook(HttpTransport):
             ctx[f"$TAG{i + 1}"] = safe(tag)
 
         result = replace(template, ctx)
-        if latin1:
+        if is_header:
             # Replace non-latin-1 characters with XML character references.
             result = result.encode("latin-1", "xmlcharrefreplace").decode("latin-1")
+            # CR and LF are not allowed in header line, replace with spaces
+            result = result.replace("\r", " ").replace("\n", " ")
 
         return result
 
@@ -87,7 +89,8 @@ class Webhook(HttpTransport):
 
         headers = {}
         for key, value in spec.headers.items():
-            # Header values should contain ASCII and latin-1 only
-            headers[key] = self.prepare(value, flip, latin1=True)
+            # Header values must contain ASCII and latin-1 only.
+            # Header lines must not contain CR or LF.
+            headers[key] = self.prepare(value, flip, is_header=True)
 
         self.request(method, url, retry=retry, data=body_bytes, headers=headers)

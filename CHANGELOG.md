@@ -1,6 +1,11 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
+## v5.1-dev - Unreleased
+
+### Bug Fixes
+- Security: strip CR and LF from header lines in the webhook integration
+
 ## v5.0.3 - 2026-10-27
 
 ### Improvements
