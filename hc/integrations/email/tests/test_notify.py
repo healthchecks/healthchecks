@@ -511,3 +511,22 @@ Content-Transfer-Encoding: 8bit
         n = Notification.objects.get()
         self.assertEqual(n.error, "SMTP connection error")
         self.assertTrue(logger.exception.called)
+
+    @patch(
+        "hc.integrations.email.transport.Email.bytes_to_sanitized_message",
+        Mock(side_effect=TypeError),
+    )
+    def test_it_handles_exception_when_parsing_email(self) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = b"""Subject: Foo bar baz
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua.
+
+"""
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        message = mail.outbox[0]
+        self.assertEqual(len(message.attachments), 0)

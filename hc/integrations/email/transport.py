@@ -65,8 +65,11 @@ class Email(Transport):
         body_bytes = get_ping_body_bytes(ping)
         subject, attachment = None, None
         if ping is not None and ping.scheme == "email" and body_bytes:
-            attachment = self.bytes_to_sanitized_message(body_bytes)
-            subject = attachment.get("subject", "")
+            try:
+                attachment = self.bytes_to_sanitized_message(body_bytes)
+                subject = attachment.get("subject", "")
+            except Exception:
+                logger.exception(f"Exception while parsing email (ping {ping.id})")
 
         ctx = {
             "flip": flip,
