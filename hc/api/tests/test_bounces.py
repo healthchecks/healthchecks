@@ -112,6 +112,17 @@ To: foo@example.com
         # side and so should not be treated as permanent:
         self.assertFalse(self.channel.disabled)
 
+    def test_it_categorizes_5_4_0_as_transient(self) -> None:
+        self.post(status="5.4.0")
+
+        self.channel.refresh_from_db()
+        self.assertEqual(
+            self.channel.last_error, "Delivery failed (SMTP status code: 5.4.0)"
+        )
+        # 5.4.4 ("Unable to route") can be caused by DNS problems on our
+        # side and so should not be treated as permanent:
+        self.assertFalse(self.channel.disabled)
+
     def test_it_handles_notification_non_bounce(self) -> None:
         r = self.post(status="2.0.0")
         self.assertEqual(r.status_code, 200)

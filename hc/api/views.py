@@ -918,8 +918,10 @@ def bounces(request: HttpRequest) -> HttpResponse:
 
     permanent = status.startswith("5.")
     transient = status.startswith("4.")
-    # Special case 5.4.4 (unable to route, probably due to DNS issues) as transient
-    if status == "5.4.4":
+    # Special case the following as transient:
+    # * 5.4.4 (unable to route, probably due to DNS issues)
+    # * 5.4.0 (no usable MXs)
+    if status in ("5.4.0", "5.4.4"):
         permanent = False
         transient = True
 
