@@ -694,6 +694,7 @@ def cron_preview(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def oncalendar_preview(request: HttpRequest) -> HttpResponse:
+    ctx: dict[str, object]
     form = forms.OnCalendarPreviewForm(request.POST)
     if not form.is_valid():
         if "tz" in form.errors:
@@ -704,7 +705,7 @@ def oncalendar_preview(request: HttpRequest) -> HttpResponse:
 
     schedule = form.cleaned_data["schedule"]
     tz = form.cleaned_data["tz"]
-    ctx: dict[str, object] = {"tz": tz, "dates": []}
+    ctx = {"tz": tz, "dates": []}
 
     now_local = now().astimezone(ZoneInfo(tz))
     try:
