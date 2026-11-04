@@ -25,13 +25,21 @@ class ValidateScheduleTestCase(BaseTestCase):
         self.assertTrue(r.json()["result"])
 
     def test_it_rejects_bad_schedules(self) -> None:
+        spaces = " " * 100
         # Bad cron schedules
-        for v in ["a", "* * * *", "1-1000 * * * *", "0 0 */100 * MON#2", "* * * * * *"]:
+        for v in [
+            "a",
+            "* * * *",
+            "1-1000 * * * *",
+            "0 0 */100 * MON#2",
+            "* * * * * *",
+            f"* * * * {spaces} *",
+        ]:
             r = self.client.get(self._url(v, "cron"))
             self.assertEqual(r.status_code, 200)
-            self.assertFalse(r.json()["result"])
+            self.assertFalse(r.json()["result"], f"Accepted bad expression: {v}")
         # Bad oncalendar schedules
-        for v in ["12:345"]:
+        for v in ["12:345", "*-*-* {spaces} *:*"]:
             r = self.client.get(self._url(v, "oncalendar"))
             self.assertEqual(r.status_code, 200)
-            self.assertFalse(r.json()["result"])
+            self.assertFalse(r.json()["result"], f"Accepted bad expression: {v}")

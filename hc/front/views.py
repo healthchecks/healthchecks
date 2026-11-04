@@ -55,9 +55,9 @@ from hc.front import forms
 from hc.front.templatetags.hc_extras import (
     down_title,
     num_down_title,
+    obfuscated_support_email,
     site_hostname,
     sortchecks,
-    obfuscated_support_email,
 )
 from hc.front.validators import CronValidator, OnCalendarValidator
 from hc.lib.badges import get_badge_url
@@ -694,13 +694,17 @@ def cron_preview(request: HttpRequest) -> HttpResponse:
 @require_POST
 @login_required
 def oncalendar_preview(request: HttpRequest) -> HttpResponse:
-    schedule = request.POST.get("schedule", "")
-    tz = request.POST.get("tz")
-    ctx: dict[str, object] = {"tz": tz, "dates": []}
-
-    if tz not in all_timezones:
-        ctx["bad_tz"] = True
+    form = forms.OnCalendarPreviewForm(request.POST)
+    if not form.is_valid():
+        if "tz" in form.errors:
+            ctx = {"bad_tz": True}
+        else:
+            ctx = {"bad_schedule": True}
         return render(request, "front/oncalendar_preview.html", ctx)
+
+    schedule = form.cleaned_data["schedule"]
+    tz = form.cleaned_data["tz"]
+    ctx: dict[str, object] = {"tz": tz, "dates": []}
 
     now_local = now().astimezone(ZoneInfo(tz))
     try:
@@ -717,6 +721,10 @@ def oncalendar_preview(request: HttpRequest) -> HttpResponse:
 
 
 def validate_schedule(request: HttpRequest) -> HttpResponse:
+    schedule = request.GET.get("schedule", "")
+    if len(schedule) > 100:
+        return JsonResponse({"result": False})
+
     kind = request.GET.get("kind", "")
 
     validator: CronValidator | OnCalendarValidator
@@ -727,7 +735,6 @@ def validate_schedule(request: HttpRequest) -> HttpResponse:
     else:
         return HttpResponseBadRequest()
 
-    schedule = request.GET.get("schedule", "")
     try:
         validator(schedule)
         return JsonResponse({"result": True})

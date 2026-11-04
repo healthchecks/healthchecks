@@ -113,6 +113,11 @@ class CronForm(forms.Form):
         return td(seconds=self.cleaned_data["grace"])
 
 
+class OnCalendarPreviewForm(forms.Form):
+    schedule = forms.CharField(max_length=100, validators=[OnCalendarValidator()])
+    tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])
+
+
 class OnCalendarForm(forms.Form):
     schedule = forms.CharField(max_length=100, validators=[OnCalendarValidator()])
     tz = forms.CharField(max_length=36, validators=[TimezoneValidator()])

@@ -22,3 +22,15 @@ class OnCalendarPreviewTestCase(BaseTestCase):
         r = self.client.post(self.url, payload)
         self.assertContains(r, "oncalendar-preview-title", status_code=200)
         self.assertContains(r, "2020-02-01 00:00:00 UTC")
+
+    def test_it_rejects_too_long_schedule(self) -> None:
+        payload = {"schedule": "*:*\n" * 100, "tz": "UTC"}
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, "Invalid OnCalendar expression")
+
+    def test_it_rejects_bad_timezone(self) -> None:
+        payload = {"schedule": "*:*", "tz": "Europe/Surprise"}
+        self.client.login(username="alice@example.org", password="password")
+        r = self.client.post(self.url, payload)
+        self.assertContains(r, "Invalid timezone")
