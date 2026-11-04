@@ -39,7 +39,7 @@ class ValidateScheduleTestCase(BaseTestCase):
             self.assertEqual(r.status_code, 200)
             self.assertFalse(r.json()["result"], f"Accepted bad expression: {v}")
         # Bad oncalendar schedules
-        for v in ["12:345", "*-*-* {spaces} *:*"]:
+        for v in ["12:345", f"*-*-* {spaces} *:*"]:
             r = self.client.get(self._url(v, "oncalendar"))
             self.assertEqual(r.status_code, 200)
             self.assertFalse(r.json()["result"], f"Accepted bad expression: {v}")
