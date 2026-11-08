@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import email
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from datetime import timedelta as td
 from smtplib import SMTPDataError, SMTPServerDisconnected
 from unittest.mock import Mock, patch
@@ -13,9 +13,10 @@ from django.core import mail
 from django.test.utils import override_settings
 
 from hc.api.models import Channel, Check, Flip, Notification, Ping
+from hc.integrations.email.transport import Email
 from hc.test import BaseTestCase
 
-EPOCH = datetime(2020, 1, 1, tzinfo=timezone.utc)
+EPOCH = datetime(2020, 1, 1, tzinfo=UTC)
 
 
 class NotifyEmailTestCase(BaseTestCase):
@@ -530,3 +531,10 @@ tempor incididunt ut labore et dolore magna aliqua.
 
         message = mail.outbox[0]
         self.assertEqual(len(message.attachments), 0)
+
+    def test_bytes_to_sanitized_message_handles_octet_stream(self) -> None:
+        Email.bytes_to_sanitized_message(b"""Content-Type: application/octet-stream
+
+Hello
+
+""")

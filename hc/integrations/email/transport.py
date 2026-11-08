@@ -15,7 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class Email(Transport):
-    def bytes_to_sanitized_message(self, data: bytes) -> EmailMessage:
+    @classmethod
+    def bytes_to_sanitized_message(cls, data: bytes) -> EmailMessage:
         m = email.message_from_bytes(data, policy=email.policy.SMTP)
         if m.is_multipart():
             parts = m.get_payload()
@@ -34,8 +35,14 @@ class Email(Transport):
                     part.set_content(part.get_content())
         else:
             # Call set_content to force correct content-transfer-encoding
-            # selection and line wrapping
-            m.set_content(m.get_content())
+            # selection and line wrapping.
+            content = m.get_content()
+            if isinstance(content, bytes):
+                maintype = m.get_content_maintype()
+                subtype = m.get_content_subtype()
+                m.set_content(content, maintype, subtype)
+            else:
+                m.set_content(content)
         return m
 
     def notify(self, flip: Flip, notification: Notification) -> None:

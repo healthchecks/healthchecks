@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 - Security: strip CR and LF from header lines in the webhook integration
 - Fix Management API validation logic to reject NUL characters
 - Fix schedule validation to reject very long schedules (reported by @nwtsmnt)
+- Fix the email integration to handle ping bodies that contain emails with
+  content type application/octet-stream
 
 ## v5.0.3 - 2026-10-27
 
