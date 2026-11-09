@@ -28,7 +28,9 @@ def join(alias: str) -> str:
     url = settings.MATRIX_HOMESERVER
     url += "/_matrix/client/v3/join/" + quote(alias)
     headers = {"Authorization": f"Bearer {settings.MATRIX_ACCESS_TOKEN}"}
-    r = curl.post(url, headers=headers)
+    # Matrix client-server API endpoints require the client to supply a request body
+    # containing a (potentially empty) JSON object.
+    r = curl.post(url, headers=headers, json={})
     if r.status_code in JOIN_ERRORS:
         raise JoinError(JOIN_ERRORS[r.status_code])
 

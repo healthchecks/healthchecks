@@ -36,6 +36,11 @@ class AddMatrixTestCase(BaseTestCase):
         self.assertEqual(c.value, "fake-room-id")
         self.assertEqual(c.project, self.project)
 
+        args, kwargs = mock_post.call_args
+        url = "fake-homeserver/_matrix/client/v3/join/%21foo%3Aexample.org"
+        self.assertEqual(args[0], url)
+        self.assertEqual(kwargs["json"], {})
+
     @patch("hc.integrations.matrix.client.curl.post")
     def test_it_handles_invalid_join_responses(self, mock_post: Mock) -> None:
         mock_post.return_value.status_code = 200
