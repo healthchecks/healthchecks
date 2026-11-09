@@ -123,6 +123,13 @@ To: foo@example.com
         # side and so should not be treated as permanent:
         self.assertFalse(self.channel.disabled)
 
+    def test_it_categorizes_no_usable_mxs_as_transient(self) -> None:
+        diagnostic_code = "Diagnostic-Code: smtp; 500 5.0.0 No usable MXs, sorry"
+        self.post(status="5.0.0", diagnostic_code=diagnostic_code)
+
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.disabled)
+
     def test_it_handles_notification_non_bounce(self) -> None:
         r = self.post(status="2.0.0")
         self.assertEqual(r.status_code, 200)

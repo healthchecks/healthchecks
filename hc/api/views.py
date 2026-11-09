@@ -921,7 +921,7 @@ def bounces(request: HttpRequest) -> HttpResponse:
     # Special case the following as transient:
     # * 5.4.4 (unable to route, probably due to DNS issues)
     # * 5.4.0 (no usable MXs)
-    if status in ("5.4.0", "5.4.4"):
+    if status in ("5.4.0", "5.4.4") or "No usable MXs" in diagnostic:
         permanent = False
         transient = True
 
