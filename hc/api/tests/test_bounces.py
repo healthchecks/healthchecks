@@ -130,6 +130,13 @@ To: foo@example.com
         self.channel.refresh_from_db()
         self.assertFalse(self.channel.disabled)
 
+    def test_it_categorizes_mx_lookup_error_as_transient(self) -> None:
+        diagnostic_code = "Diagnostic-Code: smtp; 554 5.0.0 MX lookup error"
+        self.post(status="5.0.0", diagnostic_code=diagnostic_code)
+
+        self.channel.refresh_from_db()
+        self.assertFalse(self.channel.disabled)
+
     def test_it_handles_notification_non_bounce(self) -> None:
         r = self.post(status="2.0.0")
         self.assertEqual(r.status_code, 200)
