@@ -538,3 +538,61 @@ tempor incididunt ut labore et dolore magna aliqua.
 Hello
 
 """)
+
+    def test_it_handles_empty_charset_in_multipart_message(self) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = b"""Subject: testing
+Content-Type: multipart/alternative; boundary="0000000000003d3077065730508f"
+
+--0000000000003d3077065730508f
+Content-Type: text/plain; charset=""
+Content-Transfer-Encoding: 8bit
+
+Hello
+
+--0000000000003d3077065730508f--
+"""
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        message = mail.outbox[0]
+        attachment = message.attachments[0]
+        self.assertIn("Hello", attachment.content.as_string())
+
+    def test_it_handles_invalid_charset_in_multipart_message(self) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = b"""Subject: testing
+Content-Type: multipart/alternative; boundary="0000000000003d3077065730508f"
+
+--0000000000003d3077065730508f
+Content-Type: text/plain; charset="surprise"
+Content-Transfer-Encoding: 8bit
+
+Hello
+
+--0000000000003d3077065730508f--
+"""
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        message = mail.outbox[0]
+        attachment = message.attachments[0]
+        self.assertIn("Hello", attachment.content.as_string())
+
+    def test_it_handles_invalid_charset_in_simple_message(self) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = b"""Subject: testing
+Content-Type: text/plain; charset="surprise"
+
+Hello
+
+"""
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        message = mail.outbox[0]
+        attachment = message.attachments[0]
+        self.assertIn("Hello", attachment.content.as_string())

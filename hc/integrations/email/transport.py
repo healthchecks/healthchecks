@@ -14,35 +14,50 @@ from hc.lib.signing import sign_bounce_id
 logger = logging.getLogger(__name__)
 
 
+def _rewrap(m: EmailMessage) -> None:
+    """Call set_content(get_content()).
+
+    This forces correct content-transfer-encoding selection and line wrapping.
+    """
+    charset = m.get_param("charset")
+    if charset is not None:
+        # If the message has invalid charset then get_content() will raise.
+        # Test if the charset is something we can decode.
+        # If we can not, remove charset (will fall back to ASCII)
+        try:
+            b"dummy".decode(charset)
+        except LookupError:
+            m.del_param("charset")
+
+    content = m.get_content()
+    if isinstance(content, bytes):
+        maintype = m.get_content_maintype()
+        subtype = m.get_content_subtype()
+        m.set_content(content, maintype, subtype)
+    else:
+        m.set_content(content)
+
+
 class Email(Transport):
     @classmethod
     def bytes_to_sanitized_message(cls, data: bytes) -> EmailMessage:
         m = email.message_from_bytes(data, policy=email.policy.SMTP)
-        if m.is_multipart():
-            parts = m.get_payload()
-            # If is_multipart=True then get_payload() returns list[Message].
-            # Mypy does not know this, hence the assert.
-            assert isinstance(parts, list)
-            # use list() here so we don't mutate the same list we're iterating
-            for part in list(parts):
-                if part.get_content_type() == "message/rfc822":
-                    # Drop message/rfc822 parts to avoid recursion issues with
-                    # deep attachment-within-attachment stacks.
-                    parts.remove(part)
-                if part.get_content_maintype() == "text":
-                    # Call set_content to force correct content-transfer-encoding
-                    # selection and line wrapping
-                    part.set_content(part.get_content())
-        else:
-            # Call set_content to force correct content-transfer-encoding
-            # selection and line wrapping.
-            content = m.get_content()
-            if isinstance(content, bytes):
-                maintype = m.get_content_maintype()
-                subtype = m.get_content_subtype()
-                m.set_content(content, maintype, subtype)
+        if not m.is_multipart():
+            _rewrap(m)
+            return m
+
+        parts = m.get_payload()
+        # If is_multipart=True then get_payload() returns list[Message].
+        # Mypy does not know this, hence the assert.
+        assert isinstance(parts, list)
+        # use list() here so we don't mutate the same list we're iterating
+        for part in list(parts):
+            if part.get_content_type() == "message/rfc822":
+                # Drop message/rfc822 parts to avoid recursion issues with
+                # deep attachment-within-attachment stacks.
+                parts.remove(part)
             else:
-                m.set_content(content)
+                _rewrap(part)
         return m
 
     def notify(self, flip: Flip, notification: Notification) -> None:

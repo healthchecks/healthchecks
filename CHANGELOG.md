@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 - Fix the email integration to handle ping bodies that contain emails with
   content type application/octet-stream
 - Fix missing request body in Matrix join API call (#1366)
+- Fix the handling of ping bodies that contains emails with invalid charset
 
 ## v5.0.3 - 2026-10-27
 
