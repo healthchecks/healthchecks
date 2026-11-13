@@ -25,7 +25,7 @@ def _rewrap(m: EmailMessage) -> None:
         # Test if the charset is something we can decode.
         # If we can not, remove charset (will fall back to ASCII)
         try:
-            b"dummy".decode(charset)
+            b"dummy".decode(str(charset))
         except LookupError:
             m.del_param("charset")
 
