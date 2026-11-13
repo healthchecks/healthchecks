@@ -51,6 +51,14 @@ class AddTelegramTestCase(BaseTestCase):
         self.assertEqual(c.telegram.thread_id, None)
         self.assertEqual(c.project, self.project)
 
+    def test_post_requires_recipient(self) -> None:
+        self.client.login(username="alice@example.org", password="password")
+        form = {"project": str(self.project.code)}
+        r = self.client.post(self.url, form)
+        self.assertEqual(r.status_code, 400)
+
+        self.assertFalse(Channel.objects.exists())
+
     def test_it_saves_thread_id(self) -> None:
         payload = signing.dumps(
             {"id": 123, "type": "group", "name": "My Group", "thread_id": 456}

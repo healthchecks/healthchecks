@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
   content type application/octet-stream
 - Fix missing request body in Matrix join API call (#1366)
 - Fix the handling of ping bodies that contains emails with invalid charset
+- Fix the "Add Telegram" form to prevent creation of integrations with no recipient data
 
 ## v5.0.3 - 2026-10-27
 

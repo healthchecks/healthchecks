@@ -110,6 +110,9 @@ def add(request: AuthenticatedHttpRequest) -> HttpResponse:
             return render(request, "bad_link.html")
 
     if request.method == "POST":
+        if recipient is None:
+            return HttpResponseBadRequest()
+
         form = forms.AddTelegramForm(request.POST)
         if not form.is_valid():
             return HttpResponseBadRequest()
