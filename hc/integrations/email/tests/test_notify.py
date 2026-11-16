@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import email
 import json
 from datetime import UTC, datetime
 from datetime import timedelta as td
 from smtplib import SMTPDataError, SMTPServerDisconnected
+from textwrap import dedent
 from unittest.mock import Mock, patch
 
 import time_machine
@@ -13,10 +13,14 @@ from django.core import mail
 from django.test.utils import override_settings
 
 from hc.api.models import Channel, Check, Flip, Notification, Ping
-from hc.integrations.email.transport import Email
+from hc.integrations.email.transport import bytes_to_sanitized_message
 from hc.test import BaseTestCase
 
 EPOCH = datetime(2020, 1, 1, tzinfo=UTC)
+
+
+def _sample(s: str) -> bytes:
+    return dedent(s).strip().encode()
 
 
 class NotifyEmailTestCase(BaseTestCase):
@@ -155,7 +159,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEmailContains("received a failure signal")
 
     @override_settings(DEFAULT_FROM_EMAIL='"Alerts" <alerts@example.org>')
-    def test_it_message_id_generation_handles_angle_brackets(self) -> None:
+    def test_message_id_generation_handles_angle_brackets(self) -> None:
         self.channel.notify(self.flip)
 
         email = mail.outbox[0]
@@ -293,7 +297,7 @@ class NotifyEmailTestCase(BaseTestCase):
         self.assertEqual(Notification.objects.count(), 0)
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_it_handles_amperstand(self) -> None:
+    def test_it_handles_ampersand(self) -> None:
         self.check.name = "Foo & Bar"
         self.check.save()
 
@@ -377,144 +381,105 @@ tempor incididunt ut labore et dolore magna aliqua.
         attachment = message.attachments[0]
         self.assertIn("Lorem ipsum", attachment.content.as_string())
 
-    @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
     def test_it_removes_message_rfc822_parts_from_last_ping_body(self) -> None:
-        self.ping.scheme = "email"
-        self.ping.body_raw = b"""MIME-Version: 1.0
-Subject: Outer subject
-Content-Type: multipart/mixed; boundary="00000000000068ccbb0650421339"
+        sample = _sample("""
+        MIME-Version: 1.0
+        Subject: Outer subject
+        Content-Type: multipart/mixed; boundary="AAA"
 
---00000000000068ccbb0650421339
-Content-Type: text/plain; charset="UTF-8"
+        --AAA
+        Content-Type: text/plain; charset="UTF-8"
 
-Hello 456
+        Hello 456
 
---00000000000068ccbb0650421339
-Content-Type: message/rfc822; name="Hello.eml"
-Content-Disposition: attachment; filename="Hello.eml"
+        --AAA
+        Content-Type: message/rfc822; name="Hello.eml"
+        Content-Disposition: attachment; filename="Hello.eml"
 
-MIME-Version: 1.0
-Subject: Inner subject
-Content-Type: text/plain; charset="UTF-8"
+        MIME-Version: 1.0
+        Subject: Inner subject
+        Content-Type: text/plain; charset="UTF-8"
 
-Hello 123
+        Hello 123
 
+        --AAA--
+        """)
 
---00000000000068ccbb0650421339--
-"""
-        self.ping.save()
-
-        self.channel.notify(self.flip)
-
-        self.assertEmailContainsText("Last ping subject: Outer subject")
-        self.assertEmailContains("See the attachment")
-
-        message = mail.outbox[0]
-        attachment = message.attachments[0]
-        attachment_str = attachment.content.as_string()
-        self.assertIn("Outer subject", attachment_str)
-        self.assertIn("Hello 456", attachment_str)
+        s = bytes_to_sanitized_message(sample).as_string()
+        self.assertIn("Outer subject", s)
+        self.assertIn("Hello 456", s)
         # The message/rfc822 part should have been removed
-        self.assertNotIn("Inner subject", attachment_str)
-        self.assertNotIn("Hello 123", attachment_str)
+        self.assertNotIn("Inner subject", s)
+        self.assertNotIn("Hello 123", s)
 
-    @override_settings(DEFAULT_FROM_EMAIL="alerts@example.org")
-    @patch("hc.lib.emails.send")
-    def test_it_handles_non_ascii_in_last_ping_body(self, send: Mock) -> None:
-        self.ping.scheme = "email"
-        self.ping.body_raw = """Subject: testing
+    def test_it_handles_non_ascii_in_last_ping_body(self) -> None:
+        sample = _sample("""
+        Subject: testing
 
-glāžšķūņu rūķīši
-""".encode()
-        self.ping.save()
+        glāžšķūņu rūķīši
 
-        self.channel.notify(self.flip)
+        """)
 
-        self.assertTrue(send.called)
-
-        # Make sure the assembled message serializes to bytes.
+        # Make sure the sanitized message serializes to bytes.
         # If it does not, the real SMTP backend will throw an exception
-        message = send.call_args.args[0]
-        message.message(policy=email.policy.SMTP).as_bytes()
+        bytes_to_sanitized_message(sample).as_bytes()
 
-    @patch("hc.lib.emails.send")
-    def test_it_wraps_long_8bit_body(self, send: Mock) -> None:
-        self.ping.scheme = "email"
-        self.ping.body_raw = f"""Subject: testing
-Content-Transfer-Encoding: 8bit
+    def test_it_wraps_long_8bit_body(self) -> None:
+        sample = _sample(f"""
+        Content-Transfer-Encoding: 8bit
 
-{"0123456789" * 10}
-""".encode()
-        self.ping.save()
+        {"0123456789" * 10}
 
-        self.channel.notify(self.flip)
+        """)
 
-        self.assertTrue(send.called)
-
-        # Make sure the email message has no lines longer than 80 characters
-        message = send.call_args.args[0]
-        eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
-        for line in eml.split("\n"):
+        s = bytes_to_sanitized_message(sample).as_string()
+        for line in s.split("\n"):
             self.assertLess(len(line), 80)
 
-    @patch("hc.lib.emails.send")
-    def test_it_wraps_long_8bit_mime_part(self, send: Mock) -> None:
+    def test_it_wraps_long_8bit_mime_part(self) -> None:
         self.ping.scheme = "email"
-        self.ping.body_raw = f"""Subject: testing
-Content-Type: multipart/alternative; boundary="0000000000003d3077065730508f"
+        sample = _sample(f"""
+        Subject: testing
+        Content-Type: multipart/alternative; boundary="AAA"
 
---0000000000003d3077065730508f
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+        --AAA
+        Content-Type: text/plain; charset="UTF-8"
+        Content-Transfer-Encoding: 8bit
 
-{"0123456789" * 10}
+        {"0123456789" * 10}
 
---0000000000003d3077065730508f
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+        --AAA
+        Content-Type: text/html; charset="UTF-8"
+        Content-Transfer-Encoding: 8bit
 
-<div>{"0123456789" * 10}</div>
+        <div>{"0123456789" * 10}</div>
 
---0000000000003d3077065730508f--
-""".encode()
-        self.ping.save()
+        --AAA--
+        """)
 
-        self.channel.notify(self.flip)
-
-        self.assertTrue(send.called)
-
-        # Make sure the email message has no lines longer than 80 characters
-        message = send.call_args.args[0]
-        eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
-        for line in eml.split("\n"):
+        s = bytes_to_sanitized_message(sample).as_string()
+        for line in s.split("\n"):
             self.assertLess(len(line), 80)
 
-    @patch("hc.lib.emails.send")
-    def test_it_wraps_long_8bit_mime_part_deeper(self, send: Mock) -> None:
+    def test_it_wraps_long_8bit_mime_part_deeper(self) -> None:
         self.ping.scheme = "email"
-        self.ping.body_raw = f"""Subject: testing
-Content-Type: multipart/mixed; boundary="AAA"
---AAA
-Content-Type: multipart/alternative; boundary="BBB"
+        sample = _sample(f"""
+        Subject: testing
+        Content-Type: multipart/mixed; boundary="AAA"
+        --AAA
+        Content-Type: multipart/alternative; boundary="BBB"
 
---BBB
-{"0123456789" * 10}
+        --BBB
+        {"0123456789" * 10}
 
---BBB
+        --BBB
 
---AAA
+        --AAA
 
-""".encode()
-        self.ping.save()
+        """)
 
-        self.channel.notify(self.flip)
-
-        self.assertTrue(send.called)
-
-        # Make sure the email message has no lines longer than 80 characters
-        message = send.call_args.args[0]
-        eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
-        for line in eml.split("\n"):
+        s = bytes_to_sanitized_message(sample).as_string()
+        for line in s.split("\n"):
             self.assertLess(len(line), 80)
 
     @patch("hc.integrations.email.transport.logger")
@@ -542,17 +507,12 @@ Content-Type: multipart/alternative; boundary="BBB"
         self.assertTrue(logger.exception.called)
 
     @patch(
-        "hc.integrations.email.transport.Email.bytes_to_sanitized_message",
+        "hc.integrations.email.transport.bytes_to_sanitized_message",
         Mock(side_effect=TypeError),
     )
     def test_it_handles_exception_when_parsing_email(self) -> None:
         self.ping.scheme = "email"
-        self.ping.body_raw = b"""Subject: Foo bar baz
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua.
-
-"""
+        self.ping.body_raw = b"""Subject: Foo bar baz"""
         self.ping.save()
 
         self.channel.notify(self.flip)
@@ -561,66 +521,57 @@ tempor incididunt ut labore et dolore magna aliqua.
         self.assertEqual(len(message.attachments), 0)
 
     def test_bytes_to_sanitized_message_handles_octet_stream(self) -> None:
-        Email.bytes_to_sanitized_message(b"""Content-Type: application/octet-stream
+        sample = _sample("""
+        Content-Type: application/octet-stream
 
-Hello
+        Hello
+        """)
 
-""")
+        s = bytes_to_sanitized_message(sample).as_string()
+        self.assertIn("SGVsbG8=", s)  # base64 encoded "hello"
 
     def test_it_handles_empty_charset_in_multipart_message(self) -> None:
-        self.ping.scheme = "email"
-        self.ping.body_raw = b"""Subject: testing
-Content-Type: multipart/alternative; boundary="0000000000003d3077065730508f"
+        sample = _sample("""
+        Subject: testing
+        Content-Type: multipart/alternative; boundary="AAA"
 
---0000000000003d3077065730508f
-Content-Type: text/plain; charset=""
-Content-Transfer-Encoding: 8bit
+        --AAA
+        Content-Type: text/plain; charset=""
+        Content-Transfer-Encoding: 8bit
 
-Hello
+        Hello
 
---0000000000003d3077065730508f--
-"""
-        self.ping.save()
+        --AAA--
+        """)
 
-        self.channel.notify(self.flip)
-
-        message = mail.outbox[0]
-        attachment = message.attachments[0]
-        self.assertIn("Hello", attachment.content.as_string())
+        s = bytes_to_sanitized_message(sample).as_string()
+        self.assertIn("Hello", s)
 
     def test_it_handles_invalid_charset_in_multipart_message(self) -> None:
-        self.ping.scheme = "email"
-        self.ping.body_raw = b"""Subject: testing
-Content-Type: multipart/alternative; boundary="0000000000003d3077065730508f"
+        sample = _sample("""
+        Subject: testing
+        Content-Type: multipart/alternative; boundary="AAA"
 
---0000000000003d3077065730508f
-Content-Type: text/plain; charset="surprise"
-Content-Transfer-Encoding: 8bit
+        --AAA
+        Content-Type: text/plain; charset="surprise"
+        Content-Transfer-Encoding: 8bit
 
-Hello
+        Hello
 
---0000000000003d3077065730508f--
-"""
-        self.ping.save()
+        --AAA--
+        """)
 
-        self.channel.notify(self.flip)
-
-        message = mail.outbox[0]
-        attachment = message.attachments[0]
-        self.assertIn("Hello", attachment.content.as_string())
+        s = bytes_to_sanitized_message(sample).as_string()
+        self.assertIn("Hello", s)
 
     def test_it_handles_invalid_charset_in_simple_message(self) -> None:
-        self.ping.scheme = "email"
-        self.ping.body_raw = b"""Subject: testing
-Content-Type: text/plain; charset="surprise"
+        sample = _sample("""
+        Subject: testing
+        Content-Type: text/plain; charset="surprise"
 
-Hello
+        Hello
 
-"""
-        self.ping.save()
+        """)
 
-        self.channel.notify(self.flip)
-
-        message = mail.outbox[0]
-        attachment = message.attachments[0]
-        self.assertIn("Hello", attachment.content.as_string())
+        s = bytes_to_sanitized_message(sample).as_string()
+        self.assertIn("Hello", s)

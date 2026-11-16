@@ -54,13 +54,13 @@ def _rewrap(m: EmailMessage) -> None:
         m.set_content(content)
 
 
-class Email(Transport):
-    @classmethod
-    def bytes_to_sanitized_message(cls, data: bytes) -> EmailMessage:
-        m = email.message_from_bytes(data, policy=email.policy.SMTP)
-        _rewrap(m)
-        return m
+def bytes_to_sanitized_message(data: bytes) -> EmailMessage:
+    m = email.message_from_bytes(data, policy=email.policy.SMTP)
+    _rewrap(m)
+    return m
 
+
+class Email(Transport):
     def notify(self, flip: Flip, notification: Notification) -> None:
         if not self.channel.email_verified:
             raise TransportError("Email not verified")
@@ -89,7 +89,7 @@ class Email(Transport):
         subject, attachment = None, None
         if ping is not None and ping.scheme == "email" and body_bytes:
             try:
-                attachment = self.bytes_to_sanitized_message(body_bytes)
+                attachment = bytes_to_sanitized_message(body_bytes)
                 subject = attachment.get("subject", "")
             except Exception:
                 logger.exception(f"Exception while parsing email (ping {ping.id})")
