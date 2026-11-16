@@ -15,10 +15,26 @@ logger = logging.getLogger(__name__)
 
 
 def _rewrap(m: EmailMessage) -> None:
-    """Call set_content(get_content()).
+    """Recursively call set_content(get_content()) on all message parts."""
 
-    This forces correct content-transfer-encoding selection and line wrapping.
-    """
+    # If this is a multipart message, iterate over parts and
+    # * remove rfc822 parts to avoid deep attachment-in-attachment stacks,
+    # * recursively call _rewrap on all other parts
+    if m.is_multipart():
+        parts = m.get_payload()
+        # If is_multipart=True then get_payload() returns list[Message].
+        # Mypy does not know this, hence the assert.
+        assert isinstance(parts, list)
+        # use list() here so we don't mutate the same list we're iterating
+        for part in list(parts):
+            if part.get_content_type() == "message/rfc822":
+                parts.remove(part)
+            else:
+                _rewrap(part)
+        return
+
+    # If this is not a multipart message then call set_content(get_content())
+    # on it to force correct content-transfer-encoding selection and line wrapping.
     charset = m.get_param("charset")
     if charset is not None:
         # If the message has invalid charset then get_content() will raise.
@@ -42,22 +58,7 @@ class Email(Transport):
     @classmethod
     def bytes_to_sanitized_message(cls, data: bytes) -> EmailMessage:
         m = email.message_from_bytes(data, policy=email.policy.SMTP)
-        if not m.is_multipart():
-            _rewrap(m)
-            return m
-
-        parts = m.get_payload()
-        # If is_multipart=True then get_payload() returns list[Message].
-        # Mypy does not know this, hence the assert.
-        assert isinstance(parts, list)
-        # use list() here so we don't mutate the same list we're iterating
-        for part in list(parts):
-            if part.get_content_type() == "message/rfc822":
-                # Drop message/rfc822 parts to avoid recursion issues with
-                # deep attachment-within-attachment stacks.
-                parts.remove(part)
-            else:
-                _rewrap(part)
+        _rewrap(m)
         return m
 
     def notify(self, flip: Flip, notification: Notification) -> None:

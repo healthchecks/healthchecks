@@ -489,6 +489,34 @@ Content-Transfer-Encoding: 8bit
         for line in eml.split("\n"):
             self.assertLess(len(line), 80)
 
+    @patch("hc.lib.emails.send")
+    def test_it_wraps_long_8bit_mime_part_deeper(self, send: Mock) -> None:
+        self.ping.scheme = "email"
+        self.ping.body_raw = f"""Subject: testing
+Content-Type: multipart/mixed; boundary="AAA"
+--AAA
+Content-Type: multipart/alternative; boundary="BBB"
+
+--BBB
+{"0123456789" * 10}
+
+--BBB
+
+--AAA
+
+""".encode()
+        self.ping.save()
+
+        self.channel.notify(self.flip)
+
+        self.assertTrue(send.called)
+
+        # Make sure the email message has no lines longer than 80 characters
+        message = send.call_args.args[0]
+        eml = message.message(policy=email.policy.SMTP).as_bytes().decode()
+        for line in eml.split("\n"):
+            self.assertLess(len(line), 80)
+
     @patch("hc.integrations.email.transport.logger")
     @patch("hc.lib.emails.send", Mock(side_effect=SMTPServerDisconnected))
     def test_it_handles_server_disconnected(self, logger: Mock) -> None:
