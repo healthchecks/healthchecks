@@ -575,3 +575,16 @@ tempor incididunt ut labore et dolore magna aliqua.
 
         s = bytes_to_sanitized_message(sample).as_string()
         self.assertIn("Hello", s)
+
+    def test_it_handles_utf16_charset(self) -> None:
+        sample = _sample("""
+        Subject: testing
+        Content-Type: text/plain; charset="UTF-16"
+        Content-Transfer-Encoding: base64
+
+        //5oAGUAbABsAG8A
+
+        """)
+
+        s = bytes_to_sanitized_message(sample).as_string()
+        self.assertIn("hello", s)

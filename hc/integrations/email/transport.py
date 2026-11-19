@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import codecs
 import email
 import logging
 from email.message import EmailMessage
@@ -41,7 +42,7 @@ def _rewrap(m: EmailMessage) -> None:
         # Test if the charset is something we can decode.
         # If we can not, remove charset (will fall back to ASCII)
         try:
-            b"dummy".decode(str(charset))
+            codecs.lookup(str(charset))
         except LookupError:
             m.del_param("charset")
 
