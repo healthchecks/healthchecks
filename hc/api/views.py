@@ -428,7 +428,7 @@ def _update(check: Check, spec: Spec, v: int) -> None:
 
 
 @authorize_read
-def get_checks(request: ApiRequest) -> JsonResponse:
+def get_checks(request: ApiRequest) -> JsonResponse | HttpResponseBadRequest:
     q = Check.objects.filter(project=request.project)
     if not request.readonly:
         # Use QuerySet.only() and Prefetch() to prefetch channel codes only:
@@ -437,10 +437,14 @@ def get_checks(request: ApiRequest) -> JsonResponse:
 
     tags = set(request.GET.getlist("tag"))
     for tag in tags:
+        if "\x00" in tag:
+            return HttpResponseBadRequest()
         # approximate filtering by tags
         q = q.filter(tags__contains=tag)
 
     if slug := request.GET.get("slug"):
+        if "\x00" in slug:
+            return HttpResponseBadRequest()
         q = q.filter(slug=slug)
 
     checks = []

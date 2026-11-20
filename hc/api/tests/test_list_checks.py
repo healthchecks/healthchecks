@@ -147,6 +147,13 @@ class ListChecksTestCase(BaseTestCase):
         self.assertTrue("checks" in doc)
         self.assertEqual(len(doc["checks"]), 0)
 
+    def test_it_handles_nul_in_tags_param(self) -> None:
+        r = self.client.get(
+            "/api/v1/checks/?tag=%00",
+            HTTP_X_API_KEY="X" * 32,
+        )
+        self.assertEqual(r.status_code, 400)
+
     def test_readonly_key_works(self) -> None:
         self.project.api_key_readonly = "R" * 32
         self.project.save()
@@ -191,3 +198,7 @@ class ListChecksTestCase(BaseTestCase):
         self.assertEqual(len(doc["checks"]), 1)
         check = doc["checks"][0]
         self.assertEqual(check["name"], "Alice 1")
+
+    def test_it_handles_nul_byte_in_slug_param(self) -> None:
+        r = self.client.get("/api/v1/checks/?slug=%00", HTTP_X_API_KEY="X" * 32)
+        self.assertEqual(r.status_code, 400)

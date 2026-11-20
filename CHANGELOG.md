@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - Fix the handling of ping bodies that contains emails with invalid charset
 - Fix the "Add Telegram" form to prevent creation of integrations with no recipient data
 - Security: improve the TOTP code replay protection
+- Fix the "List Checks" API call to handle NUL bytes in query parameters
 
 ## v5.0.3 - 2026-10-27
 
