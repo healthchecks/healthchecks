@@ -1559,15 +1559,6 @@ class TokenBucket(models.Model):
         return TokenBucket.authorize(value, 96, 3600 * 24)
 
     @staticmethod
-    def authorize_totp_code(user: User, code: str) -> bool:
-        value = f"totpc-{user.id}-{code}"
-
-        # A code has a validity period of 3 * 30 = 90 seconds.
-        # During that period, allow the code to only be used once,
-        # so an eavesdropping attacker cannot reuse a code.
-        return TokenBucket.authorize(value, 1, 90)
-
-    @staticmethod
     def s3_is_healthy() -> bool:
         """Return True if fewer than 3 GetObject errors in the last minute."""
         try:

@@ -7,7 +7,8 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.http import HttpRequest
-from pyotp.totp import TOTP
+from pyotp import TOTP
+from pyotp.exceptions import OTPVerificationError
 
 from hc.accounts.models import REPORT_CHOICES, Member
 from hc.api.models import TokenBucket
@@ -173,14 +174,18 @@ class TotpForm(forms.Form):
 
     def __init__(self, totp: TOTP, post: Any = None):
         self.totp = totp
+        self.timecode: int | None = None
         super().__init__(post)
 
     def clean_code(self) -> str:
-        assert isinstance(self.cleaned_data["code"], str)
-        if not self.totp.verify(self.cleaned_data["code"], valid_window=1):
+        code = self.cleaned_data["code"]
+        assert isinstance(code, str)
+        try:
+            self.timecode = self.totp.verify_and_get_timecode(code, valid_window=1)
+        except OTPVerificationError:
             raise forms.ValidationError("The code you entered was incorrect.")
 
-        return self.cleaned_data["code"]
+        return code
 
 
 class TzForm(forms.Form):

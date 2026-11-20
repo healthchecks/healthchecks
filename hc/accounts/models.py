@@ -111,6 +111,7 @@ class Profile(models.Model):
 
     totp = models.CharField(max_length=32, null=True, blank=True)
     totp_created = models.DateTimeField(null=True, blank=True)
+    totp_last_timecode = models.IntegerField(null=True)
 
     objects = ProfileManager()
 
@@ -398,6 +399,12 @@ class Profile(models.Model):
     def schedule_for_deletion(self) -> None:
         self.deletion_scheduled_date = now() + DELETION_GRACE
         self.save()
+
+    def update_totp_last_timecode(self, value: int) -> bool:
+        q = Profile.objects.filter(id=self.id)
+        q = q.filter(Q(totp_last_timecode__lt=value) | Q(totp_last_timecode=None))
+        num_updated = q.update(totp_last_timecode=value)
+        return num_updated == 1
 
 
 class ProjectManager(models.Manager["Project"]):

@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from unittest.mock import Mock, patch
 
+from pyotp.exceptions import OTPVerificationError
+
 from hc.test import BaseTestCase
 
 
@@ -27,9 +29,9 @@ class AddTotpTestCase(BaseTestCase):
         # It should put a "totp_secret" key in the session:
         self.assertIn("totp_secret", self.client.session)
 
-    @patch("hc.accounts.views.pyotp.totp.TOTP")
-    def test_it_adds_totp(self, mock_TOTP: Mock) -> None:
-        mock_TOTP.return_value.verify.return_value = True
+    @patch("hc.accounts.views.pyotp.TOTP")
+    def test_it_adds_totp(self, TOTP: Mock) -> None:
+        TOTP.return_value.verify_and_get_timecode.return_value = 123
 
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
@@ -46,10 +48,10 @@ class AddTotpTestCase(BaseTestCase):
         self.assertTrue(self.profile.totp)
         self.assertTrue(self.profile.totp_created)
 
-    @patch("hc.accounts.views.pyotp.totp.TOTP")
-    def test_it_handles_wrong_code(self, mock_TOTP: Mock) -> None:
-        mock_TOTP.return_value.verify.return_value = False
-        mock_TOTP.return_value.provisioning_uri.return_value = "test-uri"
+    @patch("hc.accounts.views.pyotp.TOTP")
+    def test_it_handles_wrong_code(self, TOTP: Mock) -> None:
+        TOTP.return_value.verify_and_get_timecode.side_effect = OTPVerificationError
+        TOTP.return_value.provisioning_uri.return_value = "test-uri"
 
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
@@ -72,11 +74,7 @@ class AddTotpTestCase(BaseTestCase):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 400)
 
-    @patch("hc.accounts.views.pyotp.totp.TOTP")
-    def test_it_handles_non_numeric_code(self, mock_TOTP: Mock) -> None:
-        mock_TOTP.return_value.verify.return_value = False
-        mock_TOTP.return_value.provisioning_uri.return_value = "test-uri"
-
+    def test_it_handles_non_numeric_code(self) -> None:
         self.client.login(username="alice@example.org", password="password")
         self.set_sudo_flag()
 

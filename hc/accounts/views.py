@@ -761,7 +761,7 @@ def add_totp(request: AuthenticatedHttpRequest) -> HttpResponse:
     if "totp_secret" not in request.session:
         request.session["totp_secret"] = pyotp.random_base32()
 
-    totp = pyotp.totp.TOTP(request.session["totp_secret"])
+    totp = pyotp.TOTP(request.session["totp_secret"])
 
     if request.method == "POST":
         form = forms.TotpForm(totp, request.POST)
@@ -900,7 +900,7 @@ def login_totp(request: HttpRequest) -> HttpResponse:
     if not user.profile.totp:
         return HttpResponseBadRequest()
 
-    totp = pyotp.totp.TOTP(user.profile.totp)
+    totp = pyotp.TOTP(user.profile.totp)
     if request.method == "POST":
         # To guard against brute-forcing TOTP codes, we allow
         # 96 attempts per user per 24h.
@@ -909,9 +909,10 @@ def login_totp(request: HttpRequest) -> HttpResponse:
 
         form = forms.TotpForm(totp, request.POST)
         if form.is_valid():
-            # We blacklist an used TOTP code for 90 seconds,
-            # so an attacker cannot reuse a stolen code.
-            if not TokenBucket.authorize_totp_code(user, form.cleaned_data["code"]):
+            # Track the last timecode to prevent TOTP code reuse
+            # https://pyauth.github.io/pyotp/#preventing-replay-attacks
+            assert isinstance(form.timecode, int)
+            if not user.profile.update_totp_last_timecode(form.timecode):
                 return render(request, "try_later.html")
 
             request.session.pop("2fa_user")
