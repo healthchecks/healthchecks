@@ -1,4 +1,4 @@
-cronsim==2.8
+cronsim==2.9
 Django[argon2]==6.1.3
 django-compressor==4.7
 django-stubs-ext==6.1.2
